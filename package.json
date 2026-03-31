@@ -1,0 +1,18 @@
+{
+  "name": "krea-ai-skill",
+  "version": "1.0.0",
+  "description": "Generate images, videos, upscale/enhance, and train LoRA styles using the Krea.ai API. 20+ image models, 7 video models, 3 upscalers.",
+  "keywords": ["agent-skill", "krea", "image-generation", "video-generation", "ai-art", "lora"],
+  "author": "albertsalgueda",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/krea-ai/skills.git"
+  },
+  "files": [
+    "SKILL.md",
+    "PIPELINES.md",
+    "COOKBOOK.md",
+    "scripts/"
+  ]
+}

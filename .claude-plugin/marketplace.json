@@ -1,0 +1,12 @@
+{
+  "name": "krea-ai",
+  "description": "Generate images, videos, upscale/enhance with 20+ AI models via the Krea.ai API",
+  "version": "1.0.0",
+  "skills": [
+    {
+      "name": "krea-ai",
+      "source": ".",
+      "description": "Generate images (Flux, Imagen, GPT Image, Ideogram, Seedream), videos (Kling, Veo, Hailuo, Wan), upscale to 22K (Topaz), and train LoRA styles"
+    }
+  ]
+}

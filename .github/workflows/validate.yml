@@ -1,0 +1,31 @@
+name: Validate Skill
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Validate SKILL.md
+        run: npx skills validate --strict
+
+      - name: Check scripts parse
+        run: |
+          for f in scripts/*.py; do
+            python3 -c "import ast; ast.parse(open('$f').read())" || exit 1
+          done
+
+      - name: Verify clawhub build
+        run: |
+          bash build_clawhub.sh
+          grep -q 'codex/skills/krea' clawhub/SKILL.md
