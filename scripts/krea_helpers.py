@@ -19,6 +19,10 @@ import requests
 API_BASE = "https://api.krea.ai"
 OPENAPI_URL = f"{API_BASE}/openapi.json"
 
+LOCAL_VERSION = "1.1.0"
+REPO_OWNER = "krea-ai"
+REPO_NAME = "skills"
+
 # ── Dynamic model discovery from OpenAPI ─────────────────
 
 _CACHE_DIR = os.path.join(os.path.expanduser("~"), ".cache", "krea")
@@ -115,6 +119,8 @@ def _fetch_openapi_data():
     global _openapi_data
     if _openapi_data is not None:
         return _openapi_data
+
+    check_for_updates()
 
     cached = _load_disk_cache(allow_stale=False)
     if cached:
@@ -537,6 +543,43 @@ def output_path(filename, output_dir=None):
         os.makedirs(output_dir, exist_ok=True)
         return os.path.join(output_dir, os.path.basename(filename))
     return filename
+
+
+# ── Version check ────────────────────────────────────────
+
+_VERSION_CACHE = os.path.join(_CACHE_DIR, "version_check.json")
+_VERSION_CHECK_TTL = 86400  # once per day
+
+
+def check_for_updates():
+    """Check GitHub for a newer version. Prints a note if one exists.
+    Non-blocking, best-effort, never raises."""
+    try:
+        if os.path.isfile(_VERSION_CACHE):
+            mtime = os.path.getmtime(_VERSION_CACHE)
+            if time.time() - mtime < _VERSION_CHECK_TTL:
+                return
+
+        r = requests.get(
+            f"https://raw.githubusercontent.com/{REPO_OWNER}/{REPO_NAME}/main/package.json",
+            timeout=5,
+        )
+        if not r.ok:
+            return
+        remote_version = r.json().get("version", "")
+
+        os.makedirs(_CACHE_DIR, exist_ok=True)
+        with open(_VERSION_CACHE, "w") as f:
+            json.dump({"remote": remote_version, "local": LOCAL_VERSION}, f)
+
+        if remote_version and remote_version != LOCAL_VERSION:
+            print(
+                f"Note: krea-ai skill update available ({LOCAL_VERSION} → {remote_version}). "
+                f"Run: npx skills add {REPO_OWNER}/{REPO_NAME}",
+                file=sys.stderr,
+            )
+    except Exception:
+        pass
 
 
 # ── Desktop notification ─────────────────────────────────
