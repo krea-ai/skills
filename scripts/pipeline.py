@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from krea_helpers import (
     get_api_key, api_post, api_get, poll_job, download_file, output_path,
     get_cu_estimate, ensure_image_url, send_notification,
-    IMAGE_MODELS, VIDEO_MODELS, ENHANCERS, DEFAULT_ENHANCER_MODELS,
+    get_image_models, get_video_models, get_enhancers, DEFAULT_ENHANCER_MODELS,
     resolve_model as resolve,
 )
 
@@ -242,10 +242,14 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
     else:
         print(f"\n=== Step {step_num}/{total}: {action} ===", file=sys.stderr)
 
+    image_models = get_image_models()
+    video_models = get_video_models()
+    enhancers = get_enhancers()
+
     result_urls = []
 
     if action == "generate_image":
-        endpoint = resolve(step.get("model", "flux"), IMAGE_MODELS, "/generate/image/")
+        endpoint = resolve(step.get("model", "nano-banana-2"), image_models, "/generate/image/")
         body = {"prompt": step["prompt"]}
         for k in ("width", "height", "seed", "steps", "batchSize", "quality", "aspectRatio", "resolution"):
             if k in step:
@@ -253,7 +257,7 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
         if "guidance_scale" in step:
             body["guidance_scale_flux"] = step["guidance_scale"]
         if step.get("use_previous") and prev_urls:
-            if step.get("model", "flux").startswith("flux"):
+            if step.get("model", "nano-banana-2").startswith("flux"):
                 body["imageUrl"] = prev_urls[0]
             else:
                 body["imageUrls"] = [prev_urls[0]]
@@ -268,10 +272,10 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
         result = poll_job(api_key, job["job_id"])
         result_urls = result.get("result", {}).get("urls", [])
         if progress:
-            progress.add_cu("generate_image", step.get("model", "flux"))
+            progress.add_cu("generate_image", step.get("model", "nano-banana-2"))
 
     elif action == "generate_video":
-        endpoint = resolve(step.get("model", "kling-2.5"), VIDEO_MODELS, "/generate/video/")
+        endpoint = resolve(step.get("model", "veo-3.1-fast"), video_models, "/generate/video/")
         body = {"prompt": step["prompt"]}
         for k in ("duration", "aspectRatio", "resolution", "mode", "generateAudio"):
             if k in step:
@@ -289,11 +293,11 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
         if url:
             result_urls = [url]
         if progress:
-            progress.add_cu("generate_video", step.get("model", "kling-2.5"))
+            progress.add_cu("generate_video", step.get("model", "veo-3.1-fast"))
 
     elif action == "enhance":
         enhancer_name = step.get("enhancer", "topaz")
-        endpoint = resolve(enhancer_name, ENHANCERS, "/generate/enhance/")
+        endpoint = resolve(enhancer_name, enhancers, "/generate/enhance/")
         image_url = step.get("image_url")
         if step.get("use_previous") and prev_urls:
             image_url = prev_urls[0]
@@ -334,14 +338,14 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
                 sub_action = sub.get("action", "generate_image")
 
                 if sub_action == "generate_image":
-                    endpoint = resolve(sub.get("model", "flux"), IMAGE_MODELS, "/generate/image/")
+                    endpoint = resolve(sub.get("model", "nano-banana-2"), image_models, "/generate/image/")
                     body = {"prompt": sub.get("prompt", "")}
                     for k in ("width", "height", "seed", "steps", "batchSize", "quality", "aspectRatio", "resolution"):
                         if k in sub:
                             body[k] = sub[k]
                     if "guidance_scale" in sub:
                         body["guidance_scale_flux"] = sub["guidance_scale"]
-                    if sub.get("model", "flux").startswith("flux"):
+                    if sub.get("model", "nano-banana-2").startswith("flux"):
                         body["imageUrl"] = src_url
                     else:
                         body["imageUrls"] = [src_url]
@@ -349,7 +353,7 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
                         body["styles"] = sub["styles"]
                     interval = 3
                 elif sub_action == "generate_video":
-                    endpoint = resolve(sub.get("model", "kling-2.5"), VIDEO_MODELS, "/generate/video/")
+                    endpoint = resolve(sub.get("model", "veo-3.1-fast"), video_models, "/generate/video/")
                     body = {"prompt": sub.get("prompt", "")}
                     for k in ("duration", "aspectRatio", "resolution", "mode", "generateAudio"):
                         if k in sub:
@@ -358,7 +362,7 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
                     interval = 5
                 elif sub_action == "enhance":
                     enhancer_name = sub.get("enhancer", "topaz")
-                    endpoint = resolve(enhancer_name, ENHANCERS, "/generate/enhance/")
+                    endpoint = resolve(enhancer_name, enhancers, "/generate/enhance/")
                     body = {
                         "image_url": src_url,
                         "width": sub.get("width", 4096),
@@ -399,13 +403,12 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
                     model = sub.get("model") or sub.get("enhancer", "topaz")
                     progress.add_cu(sub_action, model)
         else:
-            # Sequential fan_out (original behavior)
             for i, src_url in enumerate(sources):
                 print(f"\n  --- fan_out {i + 1}/{len(sources)} ---", file=sys.stderr)
                 sub = dict(sub_template)
                 sub["use_previous"] = False
                 if sub.get("action") == "generate_image":
-                    if sub.get("model", "flux").startswith("flux"):
+                    if sub.get("model", "nano-banana-2").startswith("flux"):
                         sub["imageUrl"] = src_url
                     else:
                         sub["imageUrls"] = [src_url]
@@ -421,7 +424,6 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
                 result_urls.extend(urls)
 
     # Download results
-    # For parallel fan_out, use per-sub-step filenames (already {i}-resolved)
     if action == "fan_out" and step.get("parallel", False) and sub_steps_info:
         ext = ".mp4" if step.get("step", {}).get("action") == "generate_video" else ".png"
         url_idx = 0
@@ -526,7 +528,6 @@ def main():
     for i, step in enumerate(steps, 1):
         step_key = str(i)
 
-        # Resume: restore prev_urls from manifest if step was already completed
         if args.resume and step_key in manifest["steps"]:
             saved = manifest["steps"][step_key]
             saved_urls = saved.get("urls", [])
@@ -539,7 +540,6 @@ def main():
         prev_urls = urls
         all_results.append({"step": i, "action": step.get("action"), "urls": urls})
 
-        # Save to manifest after each successful step
         manifest["steps"][step_key] = {"urls": urls, "action": step.get("action")}
         save_manifest(args.output_dir, manifest)
 

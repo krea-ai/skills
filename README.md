@@ -4,32 +4,17 @@ Generate images, videos, upscale/enhance with 20+ AI models through the [Krea.ai
 
 ## Install
 
-### Vercel Skills (recommended)
+### Agent Skills (recommended)
 
 ```bash
 npx skills add krea-ai/skills
 ```
 
-Works with Claude Code, Cursor, Copilot, Codex, Windsurf, and 15+ other agents.
-
-### Claude Code Plugin
-
-```
-/plugin marketplace add krea-ai/skills
-```
-
-Then select `krea-ai` and install.
-
-### skillpm (npm)
-
-```bash
-npx skillpm install krea-ai-skill
-```
+Works with Claude Code, Cursor, Copilot, Codex, Windsurf, and [many other agents](https://skills.sh).
 
 ### Manual
 
 ```bash
-# Clone and set up
 git clone https://github.com/krea-ai/skills.git
 export KREA_API_TOKEN="your-token-here"
 ```
@@ -47,7 +32,7 @@ Then ask your agent: *"Generate an image of a cyberpunk city at night"*
 | Script | Description |
 |--------|-------------|
 | `scripts/generate_image.py` | Generate images with 20+ models (Flux, Imagen, GPT Image, etc.) |
-| `scripts/generate_video.py` | Generate videos with Kling, Veo, Hailuo, Wan |
+| `scripts/generate_video.py` | Generate videos with Veo, Kling, Hailuo, Wan, Sora |
 | `scripts/enhance_image.py` | Upscale/enhance with Topaz (up to 22K resolution) |
 | `scripts/list_models.py` | List all models live from the API |
 | `scripts/pipeline.py` | Multi-step workflows with fan_out, templates, parallel execution |
@@ -61,19 +46,22 @@ All scripts use `uv run` (inline dependencies, no install needed).
 
 - **[SKILL.md](SKILL.md)** — Full reference: models, parameters, LoRA training, error handling
 - **[PIPELINES.md](PIPELINES.md)** — Pipeline reference: JSON format, examples, advanced features
-- **[COOKBOOK.md](COOKBOOK.md)** — 5 real-world recipes: ad campaigns, brand LoRA training, product-to-video pipelines, storyboard production, creative iteration
+- **[COOKBOOK.md](COOKBOOK.md)** — Real-world recipes: ad campaigns, brand LoRA training, product-to-video pipelines, storyboard production, creative iteration
 
 ## Quick Examples
 
 ```bash
 # Generate an image
-uv run scripts/generate_image.py --prompt "A cyberpunk cat" --filename "cat.png" --model flux
+uv run scripts/generate_image.py --prompt "A cyberpunk cat" --filename "cat.png"
 
 # Generate a video with audio
-uv run scripts/generate_video.py --prompt "Ocean waves at sunset" --filename "waves.mp4" --model veo-3 --generate-audio
+uv run scripts/generate_video.py --prompt "Ocean waves at sunset" --filename "waves.mp4" --generate-audio
 
 # Upscale to 4K
 uv run scripts/enhance_image.py --image-url "https://..." --filename "upscaled.png" --width 4096 --height 4096
+
+# List available models (live from API)
+uv run scripts/list_models.py
 
 # Run a multi-step pipeline
 uv run scripts/pipeline.py --pipeline pipeline.json --dry-run

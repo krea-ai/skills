@@ -1,0 +1,6 @@
+{
+  "name": "krea-ai",
+  "version": "1.0.0",
+  "description": "Generate images, videos, upscale/enhance with 20+ AI models via the Krea.ai API",
+  "skills": ["./"]
+}

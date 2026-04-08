@@ -8,6 +8,7 @@
 import json
 import os
 import platform
+import re
 import shutil
 import subprocess
 import sys
@@ -16,73 +17,198 @@ import mimetypes
 import requests
 
 API_BASE = "https://api.krea.ai"
+OPENAPI_URL = f"{API_BASE}/openapi.json"
 
-# ── Model endpoint maps (single source of truth) ─────────
+# ── Dynamic model discovery from OpenAPI ─────────────────
+#
+# All model endpoints are fetched from the live OpenAPI spec.
+# Results are cached in memory (per-process) and on disk (~/.cache/krea/, 1 hr).
+# Short aliases (e.g. "flux" → "flux-1-dev") are a thin UX convenience layer;
+# the endpoint paths always come from the spec.
 
-IMAGE_MODELS = {
-    "z-image": "/generate/image/z-image/z-image",
-    "flux": "/generate/image/bfl/flux-1-dev",
-    "flux-kontext": "/generate/image/bfl/flux-1-kontext-dev",
-    "flux-pro": "/generate/image/bfl/flux-1.1-pro",
-    "flux-pro-ultra": "/generate/image/bfl/flux-1.1-pro-ultra",
-    "nano-banana": "/generate/image/google/nano-banana",
-    "nano-banana-flash": "/generate/image/google/nano-banana-flash",
-    "nano-banana-pro": "/generate/image/google/nano-banana-pro",
-    "imagen-3": "/generate/image/google/imagen-3",
-    "imagen-4": "/generate/image/google/imagen-4",
-    "imagen-4-fast": "/generate/image/google/imagen-4-fast",
-    "imagen-4-ultra": "/generate/image/google/imagen-4-ultra",
-    "ideogram-2-turbo": "/generate/image/ideogram/ideogram-2-turbo",
-    "ideogram-3": "/generate/image/ideogram/ideogram-3",
-    "gpt-image": "/generate/image/openai/gpt-image",
-    "runway-gen4": "/generate/image/runway/gen-4",
-    "seedream-3": "/generate/image/bytedance/seedream-3",
-    "seedream-4": "/generate/image/bytedance/seedream-4",
-    "seedream-5-lite": "/generate/image/bytedance/seedream-5-lite",
-    "qwen": "/generate/image/qwen/2512",
+_CACHE_DIR = os.path.join(os.path.expanduser("~"), ".cache", "krea")
+_CACHE_FILE = os.path.join(_CACHE_DIR, "openapi_models.json")
+_CACHE_TTL = 3600
+
+_openapi_data = None
+
+_IMAGE_ALIASES = {
+    "flux": "flux-1-dev",
+    "flux-kontext": "flux-1-kontext-dev",
+    "flux-pro": "flux-1.1-pro",
+    "flux-pro-ultra": "flux-1.1-pro-ultra",
+    "nano-banana-flash": "nano-banana-2",
+    "runway-gen4": "gen-4-image",
+    "qwen": "2512",
 }
 
-VIDEO_MODELS = {
-    "kling-1.0": "/generate/video/kling/kling-1.0",
-    "kling-1.5": "/generate/video/kling/kling-1.5",
-    "kling-2.5": "/generate/video/kling/kling-2.5",
-    "veo-3": "/generate/video/google/veo-3",
-    "veo-3.1": "/generate/video/google/veo-3.1",
-    "hailuo-2.3": "/generate/video/hailuo/hailuo-2.3",
-    "wan-2.5": "/generate/video/alibaba/wan-2.5",
-}
+_VIDEO_ALIASES = {}
 
-ENHANCERS = {
-    "topaz": "/generate/enhance/topaz/standard-enhance",
-    "topaz-generative": "/generate/enhance/topaz/generative-enhance",
-    "topaz-bloom": "/generate/enhance/topaz/bloom-enhance",
+_ENHANCER_ALIASES = {
+    "topaz": "topaz-standard-enhance",
+    "topaz-generative": "topaz-generative-enhance",
+    "topaz-bloom": "topaz-bloom-enhance",
 }
 
 DEFAULT_ENHANCER_MODELS = {
     "topaz": "Standard V2",
+    "topaz-standard-enhance": "Standard V2",
     "topaz-generative": "Redefine",
+    "topaz-generative-enhance": "Redefine",
     "topaz-bloom": "Reimagine",
+    "topaz-bloom-enhance": "Reimagine",
 }
 
-# ── CU cost estimates (used for dry-run) ─────────────────
 
-IMAGE_MODEL_CU = {
-    "z-image": 3, "flux": 5, "flux-kontext": 9, "flux-pro": 31,
-    "flux-pro-ultra": 47, "nano-banana": 32, "nano-banana-flash": 48,
-    "nano-banana-pro": 119, "imagen-3": 32, "imagen-4": 32,
-    "imagen-4-fast": 16, "imagen-4-ultra": 47, "ideogram-2-turbo": 20,
-    "ideogram-3": 54, "gpt-image": 184, "runway-gen4": 40,
-    "seedream-3": 24, "seedream-4": 24, "seedream-5-lite": 28, "qwen": 9,
-}
+def _load_disk_cache(allow_stale=False):
+    if not os.path.isfile(_CACHE_FILE):
+        return None
+    try:
+        mtime = os.path.getmtime(_CACHE_FILE)
+        if not allow_stale and (time.time() - mtime > _CACHE_TTL):
+            return None
+        with open(_CACHE_FILE) as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return None
 
-VIDEO_MODEL_CU = {
-    "kling-1.0": 282, "kling-1.5": 300, "kling-2.5": 300,
-    "veo-3": 1017, "veo-3.1": 1017, "hailuo-2.3": 300, "wan-2.5": 569,
-}
 
-ENHANCER_CU = {
-    "topaz": 51, "topaz-generative": 137, "topaz-bloom": 256,
-}
+def _save_disk_cache(data):
+    try:
+        os.makedirs(_CACHE_DIR, exist_ok=True)
+        with open(_CACHE_FILE, "w") as f:
+            json.dump(data, f)
+    except OSError:
+        pass
+
+
+def _parse_openapi_spec(spec):
+    """Extract model data from a parsed OpenAPI spec."""
+    image_models = {}
+    video_models = {}
+    enhancers = {}
+
+    for path, methods in spec.get("paths", {}).items():
+        post = methods.get("post")
+        if not post:
+            continue
+        description = post.get("description", post.get("summary", ""))
+        rb = (
+            post.get("requestBody", {})
+            .get("content", {})
+            .get("application/json", {})
+            .get("schema", {})
+        )
+        params = sorted((rb.get("properties") or {}).keys())
+
+        cu = None
+        cu_match = re.search(r"~?(\d+)\s*(?:CU|compute units)", description, re.IGNORECASE)
+        if cu_match:
+            cu = int(cu_match.group(1))
+        elif "Compute Units" in description:
+            table_match = re.search(r"\|\s*~?(\d+)\s*\|", description)
+            if table_match:
+                cu = int(table_match.group(1))
+        entry = {"endpoint": path, "params": params, "cu": cu}
+
+        if path.startswith("/generate/image/"):
+            parts = path.replace("/generate/image/", "").split("/")
+            model_id = parts[1] if len(parts) > 1 else parts[0]
+            image_models[model_id] = entry
+        elif path.startswith("/generate/video/"):
+            parts = path.replace("/generate/video/", "").split("/")
+            model_id = parts[1] if len(parts) > 1 else parts[0]
+            video_models[model_id] = entry
+        elif path.startswith("/generate/enhance/"):
+            parts = path.replace("/generate/enhance/", "").split("/")
+            provider = parts[0] if parts else ""
+            model_name = parts[1] if len(parts) > 1 else parts[0]
+            eid = f"{provider}-{model_name}" if provider != model_name else model_name
+            enhancers[eid] = entry
+
+    return {
+        "image_models": image_models,
+        "video_models": video_models,
+        "enhancers": enhancers,
+    }
+
+
+def _fetch_openapi_data():
+    """Get model data: memory → fresh disk cache → live API → stale disk → None."""
+    global _openapi_data
+    if _openapi_data is not None:
+        return _openapi_data
+
+    cached = _load_disk_cache(allow_stale=False)
+    if cached:
+        _openapi_data = cached
+        return cached
+
+    try:
+        r = requests.get(OPENAPI_URL, timeout=15)
+        r.raise_for_status()
+        data = _parse_openapi_spec(r.json())
+        _openapi_data = data
+        _save_disk_cache(data)
+        return data
+    except Exception as e:
+        print(
+            f"Warning: Could not fetch live OpenAPI spec ({e}), checking stale cache...",
+            file=sys.stderr,
+        )
+
+    stale = _load_disk_cache(allow_stale=True)
+    if stale:
+        print("Warning: Using stale model cache. Run list_models.py to refresh.", file=sys.stderr)
+        _openapi_data = stale
+        return stale
+
+    print(
+        "Warning: No model data available (network unreachable, no cache). "
+        "Model names will be resolved as endpoint suffixes.",
+        file=sys.stderr,
+    )
+    return None
+
+
+def _build_models_dict(category, aliases):
+    """Build {name: endpoint} from OpenAPI data + aliases."""
+    data = _fetch_openapi_data()
+    result = {}
+    if data:
+        for model_id, info in data.get(category, {}).items():
+            result[model_id] = info["endpoint"]
+    for alias, target_id in aliases.items():
+        if target_id in result and alias not in result:
+            result[alias] = result[target_id]
+    return result
+
+
+def get_image_models():
+    """Return {name: endpoint} for all image models (from OpenAPI + aliases)."""
+    return _build_models_dict("image_models", _IMAGE_ALIASES)
+
+
+def get_video_models():
+    """Return {name: endpoint} for all video models (from OpenAPI + aliases)."""
+    return _build_models_dict("video_models", _VIDEO_ALIASES)
+
+
+def get_enhancers():
+    """Return {name: endpoint} for all enhancers (from OpenAPI + aliases)."""
+    return _build_models_dict("enhancers", _ENHANCER_ALIASES)
+
+
+def _get_endpoint_params(endpoint_path):
+    """Get the set of accepted request body params for an endpoint."""
+    data = _fetch_openapi_data()
+    if not data:
+        return None
+    for category in ("image_models", "video_models", "enhancers"):
+        for info in data.get(category, {}).values():
+            if info["endpoint"] == endpoint_path:
+                return set(info.get("params", []))
+    return None
 
 
 def resolve_model(model_arg, models_dict, prefix):
@@ -99,14 +225,26 @@ def resolve_model(model_arg, models_dict, prefix):
 
 
 def get_cu_estimate(action, model_or_enhancer):
-    """Return estimated CU cost for a model/enhancer, or None if unknown."""
-    if action == "generate_image":
-        return IMAGE_MODEL_CU.get(model_or_enhancer)
-    elif action == "generate_video":
-        return VIDEO_MODEL_CU.get(model_or_enhancer)
-    elif action == "enhance":
-        return ENHANCER_CU.get(model_or_enhancer)
-    return None
+    """Return estimated CU cost from OpenAPI descriptions, or None if unknown."""
+    data = _fetch_openapi_data()
+    if not data:
+        return None
+    category_map = {
+        "generate_image": "image_models",
+        "generate_video": "video_models",
+        "enhance": "enhancers",
+    }
+    alias_map = {
+        "generate_image": _IMAGE_ALIASES,
+        "generate_video": _VIDEO_ALIASES,
+        "enhance": _ENHANCER_ALIASES,
+    }
+    category = category_map.get(action)
+    if not category:
+        return None
+    model_id = alias_map.get(action, {}).get(model_or_enhancer, model_or_enhancer)
+    info = data.get(category, {}).get(model_id)
+    return info.get("cu") if info else None
 
 
 # ── API key ──────────────────────────────────────────────
@@ -121,14 +259,81 @@ def get_api_key(args_key=None):
 
 # ── Error formatting ─────────────────────────────────────
 
+def _format_loc(loc):
+    if loc is None:
+        return ""
+    if isinstance(loc, (list, tuple)):
+        return ".".join(str(x) for x in loc if x not in ("body", "query", "path"))
+    return str(loc)
+
+
+def extract_validation_details(data):
+    """Pull field-level validation messages from common API JSON error shapes."""
+    if not isinstance(data, dict):
+        return []
+    lines = []
+
+    detail = data.get("detail")
+    if isinstance(detail, list):
+        for item in detail:
+            if isinstance(item, dict):
+                loc = _format_loc(item.get("loc") or item.get("path"))
+                m = item.get("msg") or item.get("message") or item.get("type") or ""
+                if loc and m:
+                    lines.append(f"{loc}: {m}")
+                elif m:
+                    lines.append(m)
+            elif isinstance(item, str):
+                lines.append(item)
+    elif isinstance(detail, str) and detail.strip():
+        lines.append(detail.strip())
+
+    for key in ("errors", "issues", "validationErrors", "validation_errors"):
+        arr = data.get(key)
+        if not isinstance(arr, list):
+            continue
+        for item in arr:
+            if isinstance(item, dict):
+                loc = _format_loc(item.get("path") or item.get("loc") or item.get("field"))
+                m = item.get("message") or item.get("msg") or item.get("error") or item.get("type")
+                if loc and m:
+                    lines.append(f"{loc}: {m}")
+                elif m:
+                    lines.append(str(m))
+            elif isinstance(item, str):
+                lines.append(item)
+
+    nested = data.get("error")
+    if isinstance(nested, dict):
+        lines.extend(extract_validation_details(nested))
+
+    return lines
+
+
 def format_api_error(status_code, response_text):
     """Return a human-readable error message for API errors."""
     msg = f"API error {status_code}"
+    data = None
     try:
         data = json.loads(response_text)
-        error = data.get("error", "")
-    except (json.JSONDecodeError, AttributeError):
-        error = response_text
+    except (json.JSONDecodeError, TypeError):
+        pass
+
+    error = ""
+    if isinstance(data, dict):
+        err_field = data.get("error")
+        if isinstance(err_field, str):
+            error = err_field
+        elif err_field is not None and not isinstance(err_field, dict):
+            error = str(err_field)
+        if not error:
+            error = data.get("message", "") or ""
+        if isinstance(error, str) and error.lower() in ("validation failed", "request validation failed"):
+            error = ""
+    else:
+        error = response_text if isinstance(response_text, str) else ""
+
+    validation_lines = extract_validation_details(data) if isinstance(data, dict) else []
 
     if status_code == 401:
         return f"{msg}: Authentication failed. Check your KREA_API_TOKEN."
@@ -141,8 +346,78 @@ def format_api_error(status_code, response_text):
         return f"{msg}: Payment required — {error}"
     elif status_code == 429:
         return f"{msg}: Rate limited (too many concurrent jobs). Will retry..."
-    else:
+    elif status_code == 422 and validation_lines:
+        joined = "; ".join(validation_lines)
+        return f"{msg} (validation): {joined}"
+    elif status_code == 422 and error:
         return f"{msg}: {error}"
+    elif status_code == 422:
+        return f"{msg}: {response_text[:500]}"
+    else:
+        if validation_lines:
+            extra = "; ".join(validation_lines)
+            base = error or response_text[:300]
+            return f"{msg}: {base} — {extra}" if base else f"{msg}: {extra}"
+        return f"{msg}: {error or response_text[:500]}"
+
+
+# ── Image dimensions / aspect ratio ──────────────────────
+
+def image_endpoint_supports_aspect_ratio(endpoint_path):
+    """Check via OpenAPI if this endpoint accepts aspectRatio."""
+    params = _get_endpoint_params(endpoint_path)
+    if params is not None:
+        return "aspectRatio" in params
+    return "/google/nano-banana" in endpoint_path
+
+
+def image_endpoint_accepts_pixel_dimensions(endpoint_path):
+    """Check via OpenAPI if this endpoint accepts width/height."""
+    params = _get_endpoint_params(endpoint_path)
+    if params is not None:
+        return "width" in params or "height" in params
+    return True
+
+
+def parse_aspect_ratio(ratio):
+    """Parse '16:9' / '9:16' into positive floats (width_factor, height_factor)."""
+    s = ratio.strip().replace(" ", "")
+    if ":" not in s:
+        raise ValueError(f"Invalid aspect ratio {ratio!r}: expected W:H (e.g. 16:9)")
+    a, b = s.split(":", 1)
+    try:
+        aw, ah = float(a), float(b)
+    except ValueError as e:
+        raise ValueError(f"Invalid aspect ratio {ratio!r}: {e}") from e
+    if aw <= 0 or ah <= 0:
+        raise ValueError(f"Invalid aspect ratio {ratio!r}: parts must be positive")
+    return aw, ah
+
+
+def aspect_ratio_to_dimensions(ratio, max_side=1024, multiple=8):
+    """Map aspect ratio to pixel width/height (longer side ~= max_side, multiples of `multiple`)."""
+    aw, ah = parse_aspect_ratio(ratio)
+    if aw >= ah:
+        w = max_side
+        h = w * ah / aw
+    else:
+        h = max_side
+        w = h * aw / ah
+    w = max(multiple, int(round(w / multiple)) * multiple)
+    h = max(multiple, int(round(h / multiple)) * multiple)
+    return w, h
+
+
+def height_for_width_aspect(width, ratio, multiple=8):
+    aw, ah = parse_aspect_ratio(ratio)
+    h = width * ah / aw
+    return max(multiple, int(round(h / multiple)) * multiple)
+
+
+def width_for_height_aspect(height, ratio, multiple=8):
+    aw, ah = parse_aspect_ratio(ratio)
+    w = height * aw / ah
+    return max(multiple, int(round(w / multiple)) * multiple)
 
 
 # ── API call with retry ──────────────────────────────────

@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from krea_helpers import (
     get_api_key, api_post, poll_job, download_file, ensure_image_url, output_path,
-    VIDEO_MODELS, resolve_model as _resolve,
+    get_video_models, resolve_model as _resolve,
 )
 
 
@@ -20,7 +20,7 @@ def main():
     parser = argparse.ArgumentParser(description="Generate videos with Krea AI")
     parser.add_argument("--prompt", required=True, help="Text description")
     parser.add_argument("--filename", required=True, help="Output filename")
-    parser.add_argument("--model", default="kling-2.5", help="Model ID, raw name, or full endpoint path")
+    parser.add_argument("--model", default="veo-3.1-fast", help="Model ID, raw name, or full endpoint path")
     parser.add_argument("--duration", type=int, help="Duration in seconds")
     parser.add_argument("--aspect-ratio", default="16:9", choices=["16:9", "9:16", "1:1"], help="Aspect ratio")
     parser.add_argument("--start-image", help="Starting image URL or local file path for image-to-video")
@@ -33,7 +33,7 @@ def main():
     args = parser.parse_args()
 
     api_key = get_api_key(args.api_key)
-    endpoint = _resolve(args.model, VIDEO_MODELS, "/generate/video/")
+    endpoint = _resolve(args.model, get_video_models(), "/generate/video/")
 
     body = {"prompt": args.prompt}
     if args.aspect_ratio:

@@ -7,11 +7,13 @@
 
 import argparse
 import json
+import os
 import re
 import sys
 import requests
 
-OPENAPI_URL = "https://api.krea.ai/openapi.json"
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from krea_helpers import OPENAPI_URL
 
 
 def fetch_models():
@@ -33,11 +35,23 @@ def fetch_models():
         description = post.get("description", summary)
         tags = post.get("tags", [])
 
-        # Extract compute units and time from description
+        cu = None
         cu_match = re.search(r"~?(\d+)\s*(?:CU|compute units)", description, re.IGNORECASE)
-        time_match = re.search(r"~?(\d+)\s*(?:s|seconds)", description, re.IGNORECASE)
-        cu = int(cu_match.group(1)) if cu_match else None
-        time_est = f"~{time_match.group(1)}s" if time_match else None
+        if cu_match:
+            cu = int(cu_match.group(1))
+        elif "Compute Units" in description:
+            table_match = re.search(r"\|\s*~?(\d+)\s*\|", description)
+            if table_match:
+                cu = int(table_match.group(1))
+
+        time_est = None
+        time_match = re.search(r"~?(\d+)\s*(?:seconds)", description, re.IGNORECASE)
+        if time_match:
+            time_est = f"~{time_match.group(1)}s"
+        elif "Completion Time" in description:
+            table_time = re.search(r"\|\s*~?(\d+)\s*seconds?\s*\|", description, re.IGNORECASE)
+            if table_time:
+                time_est = f"~{table_time.group(1)}s"
 
         # Extract parameters from request body schema
         body_schema = {}
@@ -85,10 +99,25 @@ def fetch_models():
     return image_models, video_models, enhancers
 
 
+def _param_summary(params, max_len=56):
+    """Comma-separated OpenAPI body fields, truncated for terminal width."""
+    if not params:
+        return "—"
+    s = ", ".join(sorted(params))
+    if len(s) <= max_len:
+        return s
+    return s[: max_len - 3] + "..."
+
+
 def main():
     parser = argparse.ArgumentParser(description="List available Krea AI models (live from API)")
     parser.add_argument("--type", choices=["image", "video", "enhance", "all"], default="all", help="Filter by type")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
+    parser.add_argument(
+        "--no-params",
+        action="store_true",
+        help="Hide the request-body field list (from OpenAPI) in text output",
+    )
     args = parser.parse_args()
 
     try:
@@ -108,34 +137,66 @@ def main():
         print(json.dumps(result, indent=2))
         return
 
+    show_params = not args.no_params
+
     if args.type in ("all", "image"):
         print("=== Image Models ===")
-        print(f"{'Model':<25} {'CU':>5} {'Time':<8} {'Endpoint'}")
-        print("-" * 80)
-        for name, info in sorted(image_models.items(), key=lambda x: (x[1]["compute_units"] or 9999)):
-            cu = str(info["compute_units"]) if info["compute_units"] else "?"
-            time_est = info["estimated_time"] or "?"
-            print(f"{name:<25} {cu:>5} {time_est:<8} {info['endpoint']}")
+        if show_params:
+            print(f"{'Model':<22} {'CU':>4} {'Time':<7} {'Body fields (OpenAPI)'}")
+            print("-" * 120)
+            for name, info in sorted(image_models.items(), key=lambda x: (x[1]["compute_units"] or 9999)):
+                cu = str(info["compute_units"]) if info["compute_units"] else "?"
+                time_est = info["estimated_time"] or "?"
+                ps = _param_summary(info.get("parameters") or [])
+                print(f"{name:<22} {cu:>4} {time_est:<7} {ps}")
+                print(f"{'':22} {'':4} {'':7} {info['endpoint']}")
+        else:
+            print(f"{'Model':<25} {'CU':>5} {'Time':<8} {'Endpoint'}")
+            print("-" * 80)
+            for name, info in sorted(image_models.items(), key=lambda x: (x[1]["compute_units"] or 9999)):
+                cu = str(info["compute_units"]) if info["compute_units"] else "?"
+                time_est = info["estimated_time"] or "?"
+                print(f"{name:<25} {cu:>5} {time_est:<8} {info['endpoint']}")
         print()
 
     if args.type in ("all", "video"):
         print("=== Video Models ===")
-        print(f"{'Model':<25} {'CU':>5} {'Time':<10} {'Endpoint'}")
-        print("-" * 80)
-        for name, info in sorted(video_models.items(), key=lambda x: (x[1]["compute_units"] or 9999)):
-            cu = str(info["compute_units"]) if info["compute_units"] else "?"
-            time_est = info["estimated_time"] or "?"
-            print(f"{name:<25} {cu:>5} {time_est:<10} {info['endpoint']}")
+        if show_params:
+            print(f"{'Model':<22} {'CU':>4} {'Time':<9} {'Body fields (OpenAPI)'}")
+            print("-" * 120)
+            for name, info in sorted(video_models.items(), key=lambda x: (x[1]["compute_units"] or 9999)):
+                cu = str(info["compute_units"]) if info["compute_units"] else "?"
+                time_est = info["estimated_time"] or "?"
+                ps = _param_summary(info.get("parameters") or [])
+                print(f"{name:<22} {cu:>4} {time_est:<9} {ps}")
+                print(f"{'':22} {'':4} {'':9} {info['endpoint']}")
+        else:
+            print(f"{'Model':<25} {'CU':>5} {'Time':<10} {'Endpoint'}")
+            print("-" * 80)
+            for name, info in sorted(video_models.items(), key=lambda x: (x[1]["compute_units"] or 9999)):
+                cu = str(info["compute_units"]) if info["compute_units"] else "?"
+                time_est = info["estimated_time"] or "?"
+                print(f"{name:<25} {cu:>5} {time_est:<10} {info['endpoint']}")
         print()
 
     if args.type in ("all", "enhance"):
         print("=== Enhancers ===")
-        print(f"{'Enhancer':<25} {'CU':>5} {'Time':<8} {'Endpoint'}")
-        print("-" * 80)
-        for name, info in sorted(enhancers.items(), key=lambda x: (x[1]["compute_units"] or 9999)):
-            cu = str(info["compute_units"]) if info["compute_units"] else "?"
-            time_est = info["estimated_time"] or "?"
-            print(f"{name:<25} {cu:>5} {time_est:<8} {info['endpoint']}")
+        if show_params:
+            print(f"{'Enhancer':<22} {'CU':>4} {'Time':<7} {'Body fields (OpenAPI)'}")
+            print("-" * 120)
+            for name, info in sorted(enhancers.items(), key=lambda x: (x[1]["compute_units"] or 9999)):
+                cu = str(info["compute_units"]) if info["compute_units"] else "?"
+                time_est = info["estimated_time"] or "?"
+                ps = _param_summary(info.get("parameters") or [])
+                print(f"{name:<22} {cu:>4} {time_est:<7} {ps}")
+                print(f"{'':22} {'':4} {'':7} {info['endpoint']}")
+        else:
+            print(f"{'Enhancer':<25} {'CU':>5} {'Time':<8} {'Endpoint'}")
+            print("-" * 80)
+            for name, info in sorted(enhancers.items(), key=lambda x: (x[1]["compute_units"] or 9999)):
+                cu = str(info["compute_units"]) if info["compute_units"] else "?"
+                time_est = info["estimated_time"] or "?"
+                print(f"{name:<25} {cu:>5} {time_est:<8} {info['endpoint']}")
         print()
 
 

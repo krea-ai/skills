@@ -8,7 +8,7 @@ license: MIT
 
 Generate images, videos, upscale/enhance images, and train LoRA styles using the Krea.ai API. Supports 20+ image models (Flux, Imagen, GPT Image, Ideogram, Seedream...), 7 video models (Kling, Veo, Hailuo, Wan), and 3 upscalers (Topaz up to 22K).
 
-**IMPORTANT:** Do NOT invent model names. Before generating, run `list_models.py` to get the live list of available models from the Krea API. The tables below are a reference, but the API may have newer models. Scripts also accept full endpoint paths from `list_models.py --json` output (e.g. `--model /generate/image/google/imagen-4-ultra`).
+**IMPORTANT:** Do NOT invent model names. Run `list_models.py` to get the **live** list of models, CU costs, and accepted parameters from the Krea API's OpenAPI spec. All scripts resolve models dynamically from the spec — there are no hardcoded endpoint tables. Scripts also accept full endpoint paths from `list_models.py --json` output (e.g. `--model /generate/image/google/imagen-4-ultra`).
 
 ## Usage
 
@@ -16,12 +16,12 @@ Scripts are in the `scripts/` directory alongside this file. Run them with `uv r
 
 **Generate image:**
 ```bash
-uv run scripts/generate_image.py --prompt "your description" --filename "output.png" [--model flux] [--width 1024] [--height 1024] [--api-key KEY]
+uv run scripts/generate_image.py --prompt "your description" --filename "output.png" [--model nano-banana-2] [--width 1024] [--height 1024] [--api-key KEY]
 ```
 
 **Generate video:**
 ```bash
-uv run scripts/generate_video.py --prompt "your description" --filename "output.mp4" [--model kling-2.5] [--duration 5] [--aspect-ratio 16:9] [--api-key KEY]
+uv run scripts/generate_video.py --prompt "your description" --filename "output.mp4" [--model veo-3.1-fast] [--duration 5] [--aspect-ratio 16:9] [--api-key KEY]
 ```
 
 **Enhance/upscale image:**
@@ -55,7 +55,7 @@ uv run scripts/get_job.py --job-id "uuid" [--api-key KEY]
 
 Goal: fast iteration without burning CU on expensive models until the prompt is right.
 
-- **Draft (cheap/fast):** use `--model z-image` or `--model flux` (3-5 CU, ~5s)
+- **Draft (cheap/fast):** use `--model z-image` or `--model flux` (3-5 CU, ~5s) for quick iteration
   ```bash
   uv run scripts/generate_image.py --prompt "<draft prompt>" --filename "yyyy-mm-dd-hh-mm-ss-draft.png" --model flux
   ```
@@ -67,68 +67,40 @@ Goal: fast iteration without burning CU on expensive models until the prompt is 
   uv run scripts/generate_image.py --prompt "<final prompt>" --filename "yyyy-mm-dd-hh-mm-ss-final.png" --model nano-banana-pro
   ```
 
-## Image Models (sorted by cost)
+## Available Models
 
-| Model | CU | Time | Best for |
-|-------|-----|------|----------|
-| `z-image` | 3 | ~5s | Fastest, cheapest |
-| `flux` | 5 | ~5s | Fast, LoRA support (default) |
-| `flux-kontext` | 9 | ~5s | Context-aware editing |
-| `qwen` | 9 | ~15s | Good quality, cheap |
-| `imagen-4-fast` | 16 | ~17s | Fast Google model |
-| `ideogram-2-turbo` | 20 | ~8s | Good typography |
-| `seedream-4` | 24 | ~20s | Photorealistic |
-| `seedream-5-lite` | 28 | ~20s | Latest Seedream |
-| `flux-pro` | 31 | ~11s | High quality Flux |
-| `nano-banana` | 32 | ~10s | Balanced |
-| `imagen-3` | 32 | ~32s | Google Imagen 3 |
-| `imagen-4` | 32 | ~32s | Google Imagen 4 |
-| `runway-gen4` | 40 | ~60s | Needs reference images |
-| `flux-pro-ultra` | 47 | ~18s | Best Flux |
-| `imagen-4-ultra` | 47 | ~30s | Best Imagen |
-| `nano-banana-flash` | 48 | ~15s | Fast photorealism |
-| `ideogram-3` | 54 | ~18s | Best text rendering |
-| `nano-banana-pro` | 119 | ~30s | Superior photorealism |
-| `gpt-image` | 184 | ~60s | Highest quality overall |
+Models, CU costs, and accepted body fields are fetched **live** from the Krea API's OpenAPI spec (`/openapi.json`). Run `list_models.py` to see what's currently available:
 
-Map user requests:
+```bash
+uv run scripts/list_models.py                     # all models with params
+uv run scripts/list_models.py --type image         # image models only
+uv run scripts/list_models.py --json               # machine-readable
+```
+
+Short aliases (e.g. `flux` for `flux-1-dev`) are maintained for convenience. The scripts resolve them automatically via the spec. If a model isn't in the alias list, pass the full OpenAPI model ID or endpoint path.
+
+### Model selection guidance
+
+Map user requests for **images**:
 - "fast", "quick", "cheap" → `flux` or `z-image`
 - "high quality", "best" → `nano-banana-pro` or `gpt-image`
 - "text in image", "typography" → `ideogram-3`
 - "photorealistic" → `seedream-4` or `nano-banana-pro`
-- No preference → `flux`
+- No preference → `nano-banana-2`
 
-## Video Models
-
-| Model | CU | Best for |
-|-------|-----|----------|
-| `kling-1.0` | 282 | Camera control, 5-10s |
-| `kling-1.5` | varies | Complex scenes |
-| `kling-2.5` | varies | Realistic physics (default) |
-| `veo-3` | 608-1281 | Can generate audio |
-| `veo-3.1` | varies | Cinematic quality |
-| `hailuo-2.3` | varies | Fast, smooth motion |
-| `wan-2.5` | 569 | Style control |
-
-Map user requests:
+Map user requests for **video**:
 - "fast" → `hailuo-2.3`
 - "cinematic", "high quality" → `veo-3.1`
 - "with sound", "with audio" → `veo-3` with `--generate-audio`
-- No preference → `kling-2.5`
+- No preference → `veo-3.1-fast`
 
-## Enhancers
-
-| Enhancer | CU | Max Resolution | Best for |
-|----------|-----|----------------|----------|
-| `topaz` | 51 | 22K | Faithful upscaling (default) |
-| `topaz-generative` | 137 | 16K | Creative enhancement |
-| `topaz-bloom` | 256 | 10K | Adding creative details |
+**Enhancers:** `topaz` (faithful upscaling, default), `topaz-generative` (creative enhancement), `topaz-bloom` (adding creative details).
 
 ## Image Generation Parameters
 
 | Param | Description | Default |
 |-------|-------------|---------|
-| `--model` | Model ID from table above | `flux` |
+| `--model` | Model ID or alias (run list_models.py) | `nano-banana-2` |
 | `--prompt` | Text description (required) | — |
 | `--filename` | Output filename (required) | — |
 | `--width` | Width in pixels (512-4096) | 1024 |
@@ -150,7 +122,7 @@ Map user requests:
 
 | Param | Description | Default |
 |-------|-------------|---------|
-| `--model` | Model ID from table above | `kling-2.5` |
+| `--model` | Model ID or alias (run list_models.py) | `veo-3.1-fast` |
 | `--prompt` | Text description (required) | — |
 | `--filename` | Output filename (required) | — |
 | `--duration` | Duration in seconds | 5 |
@@ -261,7 +233,7 @@ Preserve user's creative intent in all cases.
 
 **Quick draft image:**
 ```bash
-uv run scripts/generate_image.py --prompt "A serene Japanese garden with cherry blossoms" --filename "2026-03-31-14-23-05-japanese-garden.png" --model flux
+uv run scripts/generate_image.py --prompt "A serene Japanese garden with cherry blossoms" --filename "2026-03-31-14-23-05-japanese-garden.png"
 ```
 
 **High quality final:**
@@ -300,5 +272,5 @@ For multi-step workflows (generate → enhance → animate, fan_out branching, t
 
 Quick example:
 ```bash
-uv run scripts/pipeline.py --pipeline '{"steps":[{"action":"generate_image","model":"flux","prompt":"a cat astronaut","filename":"cat"},{"action":"enhance","use_previous":true,"enhancer":"topaz","width":4096,"height":4096,"filename":"cat-4k"}]}'
+uv run scripts/pipeline.py --pipeline '{"steps":[{"action":"generate_image","prompt":"a cat astronaut","filename":"cat"},{"action":"enhance","use_previous":true,"enhancer":"topaz","width":4096,"height":4096,"filename":"cat-4k"}]}'
 ```

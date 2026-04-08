@@ -12,14 +12,15 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from krea_helpers import (
     get_api_key, api_post, poll_job, download_file, ensure_image_url, output_path,
-    ENHANCERS, DEFAULT_ENHANCER_MODELS, resolve_model as _resolve,
+    get_enhancers, DEFAULT_ENHANCER_MODELS, resolve_model as _resolve,
 )
 
 
 def resolve_enhancer(enhancer_arg):
-    if enhancer_arg in ENHANCERS:
-        return enhancer_arg, ENHANCERS[enhancer_arg]
-    endpoint = _resolve(enhancer_arg, ENHANCERS, "/generate/enhance/")
+    enhancers = get_enhancers()
+    if enhancer_arg in enhancers:
+        return enhancer_arg, enhancers[enhancer_arg]
+    endpoint = _resolve(enhancer_arg, enhancers, "/generate/enhance/")
     return enhancer_arg, endpoint
 
 
@@ -45,7 +46,6 @@ def main():
     api_key = get_api_key(args.api_key)
     enhancer_name, endpoint = resolve_enhancer(args.enhancer)
 
-    # Resolve local files to URLs
     image_url = ensure_image_url(args.image_url, api_key)
 
     body = {

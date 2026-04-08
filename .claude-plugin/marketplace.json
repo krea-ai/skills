@@ -1,8 +1,12 @@
 {
-  "name": "krea-ai",
+  "name": "krea-ai-skills",
   "description": "Generate images, videos, upscale/enhance with 20+ AI models via the Krea.ai API",
   "version": "1.0.0",
-  "skills": [
+  "owner": {
+    "name": "Krea AI",
+    "url": "https://krea.ai"
+  },
+  "plugins": [
     {
       "name": "krea-ai",
       "source": ".",

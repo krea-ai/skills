@@ -18,11 +18,9 @@ This repository is an agent skill for the Krea.ai API, distributed across multip
 
 ## Distribution Channels
 
-- **skills.sh** — `npx skills add krea-ai/skills`
-- **Claude Code** — `/plugin marketplace add krea-ai/skills`
-- **skillpm** — `npx skillpm install krea-ai-skill`
+- **Agent Skills** (recommended) — `npx skills add krea-ai/skills`
+- **Manual** — Clone repo + set `KREA_API_TOKEN`
 - **ClawHub** — Upload `clawhub/` folder to clawhub.ai/upload
-- **agentskill.sh** — Connect GitHub, auto-sync
 
 ## CI
 
