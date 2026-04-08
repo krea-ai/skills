@@ -119,7 +119,7 @@ def main():
 
     if args.image_url:
         image_url = ensure_image_url(args.image_url, api_key)
-        if args.model.startswith("flux"):
+        if "flux" in args.model:
             body["imageUrl"] = image_url
         else:
             body["imageUrls"] = [image_url]

@@ -26,7 +26,7 @@ uv run scripts/generate_video.py --prompt "your description" --filename "output.
 
 **Enhance/upscale image:**
 ```bash
-uv run scripts/enhance_image.py --image-url "https://..." --filename "upscaled.png" --width 4096 --height 4096 [--enhancer topaz] [--api-key KEY]
+uv run scripts/enhance_image.py --image-url "https://..." --filename "upscaled.png" --width 4096 --height 4096 [--enhancer topaz-standard-enhance] [--api-key KEY]
 ```
 
 **Train a LoRA style:**
@@ -55,9 +55,9 @@ uv run scripts/get_job.py --job-id "uuid" [--api-key KEY]
 
 Goal: fast iteration without burning CU on expensive models until the prompt is right.
 
-- **Draft (cheap/fast):** use `--model z-image` or `--model flux` (3-5 CU, ~5s) for quick iteration
+- **Draft (cheap/fast):** use `--model z-image` or `--model flux-1-dev` (3-5 CU, ~5s) for quick iteration
   ```bash
-  uv run scripts/generate_image.py --prompt "<draft prompt>" --filename "yyyy-mm-dd-hh-mm-ss-draft.png" --model flux
+  uv run scripts/generate_image.py --prompt "<draft prompt>" --filename "yyyy-mm-dd-hh-mm-ss-draft.png" --model flux-1-dev
   ```
 
 - **Iterate:** adjust prompt, keep trying with cheap models
@@ -82,7 +82,7 @@ Short aliases (e.g. `flux` for `flux-1-dev`) are maintained for convenience. The
 ### Model selection guidance
 
 Map user requests for **images**:
-- "fast", "quick", "cheap" → `flux` or `z-image`
+- "fast", "quick", "cheap" → `flux-1-dev` or `z-image`
 - "high quality", "best" → `nano-banana-pro` or `gpt-image`
 - "text in image", "typography" → `ideogram-3`
 - "photorealistic" → `seedream-4` or `nano-banana-pro`
@@ -94,7 +94,7 @@ Map user requests for **video**:
 - "with sound", "with audio" → `veo-3` with `--generate-audio`
 - No preference → `veo-3.1-fast`
 
-**Enhancers:** `topaz` (faithful upscaling, default), `topaz-generative` (creative enhancement), `topaz-bloom` (adding creative details).
+**Enhancers:** `topaz-standard-enhance` (faithful upscaling, default), `topaz-generative-enhance` (creative enhancement), `topaz-bloom-enhance` (adding creative details).
 
 ## Image Generation Parameters
 
@@ -139,7 +139,7 @@ Map user requests for **video**:
 
 | Param | Description | Default |
 |-------|-------------|---------|
-| `--enhancer` | topaz, topaz-generative, topaz-bloom | `topaz` |
+| `--enhancer` | Enhancer ID (run list_models.py --type enhance) | `topaz-standard-enhance` |
 | `--image-url` | Source image URL or local file path (required) | — |
 | `--filename` | Output filename (required) | — |
 | `--width` | Target width (required) | — |
@@ -176,7 +176,7 @@ Training requires 3-2000 images. The script validates all URLs before submitting
 
 Use the style ID with `--style-id` in `generate_image.py`:
 ```bash
-uv run scripts/generate_image.py --prompt "mystyle product on white background" --style-id "style_abc123" --model flux --filename "branded.png"
+uv run scripts/generate_image.py --prompt "mystyle product on white background" --style-id "style_abc123" --model flux-1-dev --filename "branded.png"
 ```
 
 ## API Key
@@ -272,5 +272,5 @@ For multi-step workflows (generate → enhance → animate, fan_out branching, t
 
 Quick example:
 ```bash
-uv run scripts/pipeline.py --pipeline '{"steps":[{"action":"generate_image","prompt":"a cat astronaut","filename":"cat"},{"action":"enhance","use_previous":true,"enhancer":"topaz","width":4096,"height":4096,"filename":"cat-4k"}]}'
+uv run scripts/pipeline.py --pipeline '{"steps":[{"action":"generate_image","prompt":"a cat astronaut","filename":"cat"},{"action":"enhance","use_previous":true,"enhancer":"topaz-standard-enhance","width":4096,"height":4096,"filename":"cat-4k"}]}'
 ```

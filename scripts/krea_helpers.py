@@ -20,44 +20,12 @@ API_BASE = "https://api.krea.ai"
 OPENAPI_URL = f"{API_BASE}/openapi.json"
 
 # ── Dynamic model discovery from OpenAPI ─────────────────
-#
-# All model endpoints are fetched from the live OpenAPI spec.
-# Results are cached in memory (per-process) and on disk (~/.cache/krea/, 1 hr).
-# Short aliases (e.g. "flux" → "flux-1-dev") are a thin UX convenience layer;
-# the endpoint paths always come from the spec.
 
 _CACHE_DIR = os.path.join(os.path.expanduser("~"), ".cache", "krea")
 _CACHE_FILE = os.path.join(_CACHE_DIR, "openapi_models.json")
 _CACHE_TTL = 3600
 
 _openapi_data = None
-
-_IMAGE_ALIASES = {
-    "flux": "flux-1-dev",
-    "flux-kontext": "flux-1-kontext-dev",
-    "flux-pro": "flux-1.1-pro",
-    "flux-pro-ultra": "flux-1.1-pro-ultra",
-    "nano-banana-flash": "nano-banana-2",
-    "runway-gen4": "gen-4-image",
-    "qwen": "2512",
-}
-
-_VIDEO_ALIASES = {}
-
-_ENHANCER_ALIASES = {
-    "topaz": "topaz-standard-enhance",
-    "topaz-generative": "topaz-generative-enhance",
-    "topaz-bloom": "topaz-bloom-enhance",
-}
-
-DEFAULT_ENHANCER_MODELS = {
-    "topaz": "Standard V2",
-    "topaz-standard-enhance": "Standard V2",
-    "topaz-generative": "Redefine",
-    "topaz-generative-enhance": "Redefine",
-    "topaz-bloom": "Reimagine",
-    "topaz-bloom-enhance": "Reimagine",
-}
 
 
 def _load_disk_cache(allow_stale=False):
@@ -109,7 +77,16 @@ def _parse_openapi_spec(spec):
             table_match = re.search(r"\|\s*~?(\d+)\s*\|", description)
             if table_match:
                 cu = int(table_match.group(1))
+        # Extract default for "model" field if it exists (used by enhancers)
+        model_schema = (rb.get("properties") or {}).get("model", {})
+        default_model = (
+            model_schema.get("const")
+            or model_schema.get("default")
+            or (model_schema.get("enum", [None])[0])
+        )
         entry = {"endpoint": path, "params": params, "cu": cu}
+        if default_model:
+            entry["default_model"] = default_model
 
         if path.startswith("/generate/image/"):
             parts = path.replace("/generate/image/", "").split("/")
@@ -171,32 +148,36 @@ def _fetch_openapi_data():
     return None
 
 
-def _build_models_dict(category, aliases):
-    """Build {name: endpoint} from OpenAPI data + aliases."""
+def _build_models_dict(category):
+    """Build {name: endpoint} from OpenAPI data."""
     data = _fetch_openapi_data()
-    result = {}
-    if data:
-        for model_id, info in data.get(category, {}).items():
-            result[model_id] = info["endpoint"]
-    for alias, target_id in aliases.items():
-        if target_id in result and alias not in result:
-            result[alias] = result[target_id]
-    return result
+    if not data:
+        return {}
+    return {model_id: info["endpoint"] for model_id, info in data.get(category, {}).items()}
 
 
 def get_image_models():
-    """Return {name: endpoint} for all image models (from OpenAPI + aliases)."""
-    return _build_models_dict("image_models", _IMAGE_ALIASES)
+    """Return {name: endpoint} for all image models (from OpenAPI)."""
+    return _build_models_dict("image_models")
 
 
 def get_video_models():
-    """Return {name: endpoint} for all video models (from OpenAPI + aliases)."""
-    return _build_models_dict("video_models", _VIDEO_ALIASES)
+    """Return {name: endpoint} for all video models (from OpenAPI)."""
+    return _build_models_dict("video_models")
 
 
 def get_enhancers():
-    """Return {name: endpoint} for all enhancers (from OpenAPI + aliases)."""
-    return _build_models_dict("enhancers", _ENHANCER_ALIASES)
+    """Return {name: endpoint} for all enhancers (from OpenAPI)."""
+    return _build_models_dict("enhancers")
+
+
+def get_default_enhancer_model(enhancer_id):
+    """Return the default sub-model for an enhancer (from OpenAPI schema), or None."""
+    data = _fetch_openapi_data()
+    if not data:
+        return None
+    info = data.get("enhancers", {}).get(enhancer_id)
+    return info.get("default_model") if info else None
 
 
 def _get_endpoint_params(endpoint_path):
@@ -220,8 +201,14 @@ def resolve_model(model_arg, models_dict, prefix):
     for ep in models_dict.values():
         if ep.endswith("/" + model_arg):
             return ep
-    print(f"Warning: Unknown model '{model_arg}', trying as endpoint path", file=sys.stderr)
-    return f"{prefix}{model_arg}"
+    available = ", ".join(sorted(models_dict.keys())[:15])
+    print(
+        f"Error: Unknown model '{model_arg}'. "
+        f"Run list_models.py to see available models.\n"
+        f"  Some available: {available} ...",
+        file=sys.stderr,
+    )
+    sys.exit(1)
 
 
 def get_cu_estimate(action, model_or_enhancer):
@@ -234,16 +221,10 @@ def get_cu_estimate(action, model_or_enhancer):
         "generate_video": "video_models",
         "enhance": "enhancers",
     }
-    alias_map = {
-        "generate_image": _IMAGE_ALIASES,
-        "generate_video": _VIDEO_ALIASES,
-        "enhance": _ENHANCER_ALIASES,
-    }
     category = category_map.get(action)
     if not category:
         return None
-    model_id = alias_map.get(action, {}).get(model_or_enhancer, model_or_enhancer)
-    info = data.get(category, {}).get(model_id)
+    info = data.get(category, {}).get(model_or_enhancer)
     return info.get("cu") if info else None
 
 
@@ -288,7 +269,7 @@ def extract_validation_details(data):
     elif isinstance(detail, str) and detail.strip():
         lines.append(detail.strip())
 
-    for key in ("errors", "issues", "validationErrors", "validation_errors"):
+    for key in ("details", "errors", "issues", "validationErrors", "validation_errors"):
         arr = data.get(key)
         if not isinstance(arr, list):
             continue

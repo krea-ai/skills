@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from krea_helpers import (
     get_api_key, api_post, api_get, poll_job, download_file, output_path,
     get_cu_estimate, ensure_image_url, send_notification,
-    get_image_models, get_video_models, get_enhancers, DEFAULT_ENHANCER_MODELS,
+    get_image_models, get_video_models, get_enhancers, get_default_enhancer_model,
     resolve_model as resolve,
 )
 
@@ -144,7 +144,7 @@ def estimate_cu(steps, fan_out_multiplier=4):
         if action == "fan_out":
             sub = step.get("step", {})
             sub_action = sub.get("action", "generate_image")
-            model = sub.get("model") or sub.get("enhancer", "topaz")
+            model = sub.get("model") or sub.get("enhancer", "topaz-standard-enhance")
             cu = get_cu_estimate(sub_action, model)
             if cu is not None:
                 step_cu = cu * fan_out_multiplier
@@ -154,7 +154,7 @@ def estimate_cu(steps, fan_out_multiplier=4):
                 unknown.append(f"Step {i} fan_out [{model}]")
                 print(f"  Step {i} (fan_out x ~{fan_out_multiplier}): {sub_action} [{model}] = ? CU (unknown)", file=sys.stderr)
         else:
-            model = step.get("model") or step.get("enhancer", "topaz")
+            model = step.get("model") or step.get("enhancer", "topaz-standard-enhance")
             cu = get_cu_estimate(action, model)
             if cu is not None:
                 total += cu
@@ -257,7 +257,7 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
         if "guidance_scale" in step:
             body["guidance_scale_flux"] = step["guidance_scale"]
         if step.get("use_previous") and prev_urls:
-            if step.get("model", "nano-banana-2").startswith("flux"):
+            if "flux" in step.get("model", "nano-banana-2"):
                 body["imageUrl"] = prev_urls[0]
             else:
                 body["imageUrls"] = [prev_urls[0]]
@@ -296,7 +296,7 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
             progress.add_cu("generate_video", step.get("model", "veo-3.1-fast"))
 
     elif action == "enhance":
-        enhancer_name = step.get("enhancer", "topaz")
+        enhancer_name = step.get("enhancer", "topaz-standard-enhance")
         endpoint = resolve(enhancer_name, enhancers, "/generate/enhance/")
         image_url = step.get("image_url")
         if step.get("use_previous") and prev_urls:
@@ -308,8 +308,10 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
             "image_url": image_url,
             "width": step.get("width", 4096),
             "height": step.get("height", 4096),
-            "model": step.get("model", DEFAULT_ENHANCER_MODELS.get(enhancer_name, "Standard V2")),
         }
+        model_val = step.get("model") or get_default_enhancer_model(enhancer_name)
+        if model_val:
+            body["model"] = model_val
         for k in ("prompt", "creativity", "face_enhancement", "sharpen", "denoise", "output_format"):
             if k in step:
                 body[k] = step[k]
@@ -345,7 +347,7 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
                             body[k] = sub[k]
                     if "guidance_scale" in sub:
                         body["guidance_scale_flux"] = sub["guidance_scale"]
-                    if sub.get("model", "nano-banana-2").startswith("flux"):
+                    if "flux" in sub.get("model", "nano-banana-2"):
                         body["imageUrl"] = src_url
                     else:
                         body["imageUrls"] = [src_url]
@@ -361,14 +363,16 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
                     body["startImage"] = src_url
                     interval = 5
                 elif sub_action == "enhance":
-                    enhancer_name = sub.get("enhancer", "topaz")
+                    enhancer_name = sub.get("enhancer", "topaz-standard-enhance")
                     endpoint = resolve(enhancer_name, enhancers, "/generate/enhance/")
                     body = {
                         "image_url": src_url,
                         "width": sub.get("width", 4096),
                         "height": sub.get("height", 4096),
-                        "model": sub.get("model", DEFAULT_ENHANCER_MODELS.get(enhancer_name, "Standard V2")),
                     }
+                    model_val = sub.get("model") or get_default_enhancer_model(enhancer_name)
+                    if model_val:
+                        body["model"] = model_val
                     for k in ("prompt", "creativity", "face_enhancement", "sharpen", "denoise", "output_format"):
                         if k in sub:
                             body[k] = sub[k]
@@ -400,7 +404,7 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
                     urls = result.get("result", {}).get("urls", [])
                     result_urls.extend(urls)
                 if progress:
-                    model = sub.get("model") or sub.get("enhancer", "topaz")
+                    model = sub.get("model") or sub.get("enhancer", "topaz-standard-enhance")
                     progress.add_cu(sub_action, model)
         else:
             for i, src_url in enumerate(sources):
@@ -408,7 +412,7 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
                 sub = dict(sub_template)
                 sub["use_previous"] = False
                 if sub.get("action") == "generate_image":
-                    if sub.get("model", "nano-banana-2").startswith("flux"):
+                    if "flux" in sub.get("model", "nano-banana-2"):
                         sub["imageUrl"] = src_url
                     else:
                         sub["imageUrls"] = [src_url]
@@ -459,7 +463,7 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
 def main():
     parser = argparse.ArgumentParser(
         description="Run multi-step Krea AI pipelines",
-        epilog='Example: pipeline.py --pipeline \'{"steps":[{"action":"generate_image","model":"flux","prompt":"a cat","filename":"cat"}]}\'',
+        epilog='Example: pipeline.py --pipeline \'{"steps":[{"action":"generate_image","prompt":"a cat","filename":"cat"}]}\'',
     )
     parser.add_argument("--pipeline", required=True, help="Path to pipeline JSON file, or inline JSON string")
     parser.add_argument("--api-key", help="Krea API token")
