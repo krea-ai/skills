@@ -6,6 +6,7 @@
 """Shared helpers for Krea AI scripts: API calls, polling, retry, error handling."""
 
 import json
+import mimetypes
 import os
 import platform
 import re
@@ -13,7 +14,7 @@ import shutil
 import subprocess
 import sys
 import time
-import mimetypes
+
 import requests
 
 API_BASE = "https://api.krea.ai"
@@ -366,6 +367,14 @@ def image_endpoint_accepts_pixel_dimensions(endpoint_path):
     return True
 
 
+def image_endpoint_uses_single_image_url(endpoint_path):
+    """Check via OpenAPI if this endpoint uses imageUrl (singular) vs imageUrls (list)."""
+    params = _get_endpoint_params(endpoint_path)
+    if params is not None:
+        return "imageUrl" in params
+    return False
+
+
 def parse_aspect_ratio(ratio):
     """Parse '16:9' / '9:16' into positive floats (width_factor, height_factor)."""
     s = ratio.strip().replace(" ", "")
@@ -502,24 +511,13 @@ def ensure_image_url(path_or_url, api_key):
     mime_type = mimetypes.guess_type(local_path)[0] or "application/octet-stream"
     ext = os.path.splitext(local_path)[1].lstrip(".")
 
-    boundary = f"----KreaBoundary{int(time.time())}"
-    with open(local_path, "rb") as f:
-        file_data = f.read()
-
-    parts = []
-    parts.append(f"--{boundary}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"upload.{ext}\"\r\nContent-Type: {mime_type}\r\n\r\n".encode())
-    parts.append(file_data)
-    parts.append(b"\r\n")
-    parts.append(f"--{boundary}--\r\n".encode())
-
-    body = b"".join(parts)
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": f"multipart/form-data; boundary={boundary}",
-    }
-
     print(f"  Uploading local file: {local_path}...", file=sys.stderr)
-    r = requests.post(f"{API_BASE}/assets", headers=headers, data=body)
+    with open(local_path, "rb") as f:
+        r = requests.post(
+            f"{API_BASE}/assets",
+            headers={"Authorization": f"Bearer {api_key}"},
+            files={"file": (f"upload.{ext}", f, mime_type)},
+        )
     if not r.ok:
         msg = format_api_error(r.status_code, r.text)
         print(f"Error uploading asset: {msg}", file=sys.stderr)
@@ -591,9 +589,23 @@ def send_notification(title, message):
         if system == "Linux" and shutil.which("notify-send"):
             subprocess.run(["notify-send", title, message], timeout=5)
         elif system == "Darwin":
-            script = f'display notification "{message}" with title "{title}"'
+            safe_title = title.replace("\\", "\\\\").replace('"', '\\"')
+            safe_msg = message.replace("\\", "\\\\").replace('"', '\\"')
+            script = f'display notification "{safe_msg}" with title "{safe_title}"'
             subprocess.run(["osascript", "-e", script], timeout=5)
         else:
             print("\a", end="", file=sys.stderr)
     except Exception:
         pass
+
+
+def emit_structured(data: dict):
+    """Emit a structured JSON line to stdout for orchestrator parsing.
+
+    The orchestrator reads these lines to extract job metadata (job_id, action,
+    model, urls) from Bash tool results. Lines are JSON objects with a ``type``
+    field — either ``krea_job`` (emitted at submission) or ``krea_result``
+    (emitted after completion).
+    """
+    print(json.dumps(data))
+    sys.stdout.flush()

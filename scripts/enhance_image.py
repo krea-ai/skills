@@ -11,8 +11,18 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from krea_helpers import (
-    get_api_key, api_post, poll_job, download_file, ensure_image_url, output_path,
-    get_enhancers, get_default_enhancer_model, resolve_model as _resolve,
+    api_post,
+    download_file,
+    emit_structured,
+    ensure_image_url,
+    get_api_key,
+    get_default_enhancer_model,
+    get_enhancers,
+    output_path,
+    poll_job,
+)
+from krea_helpers import (
+    resolve_model as _resolve,
 )
 
 
@@ -76,6 +86,7 @@ def main():
     job = api_post(api_key, endpoint, body)
     job_id = job.get("job_id")
     print(f"Job created: {job_id}", file=sys.stderr)
+    emit_structured({"type": "krea_job", "job_id": job_id, "action": "enhance", "enhancer": enhancer_name})
 
     result = poll_job(api_key, job_id, interval=5)
     urls = result.get("result", {}).get("urls", [])
@@ -83,6 +94,8 @@ def main():
     if not urls:
         print("Error: No image URL in result", file=sys.stderr)
         sys.exit(1)
+
+    emit_structured({"type": "krea_result", "job_id": job_id, "action": "enhance", "urls": urls, "enhancer": enhancer_name})
 
     out = output_path(args.filename, args.output_dir)
     path = download_file(urls[0], out)

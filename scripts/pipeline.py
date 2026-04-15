@@ -11,13 +11,24 @@ import os
 import re
 import sys
 import threading
-import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from krea_helpers import (
-    get_api_key, api_post, api_get, poll_job, download_file, output_path,
-    get_cu_estimate, ensure_image_url, send_notification,
-    get_image_models, get_video_models, get_enhancers, get_default_enhancer_model,
+    api_post,
+    download_file,
+    emit_structured,
+    get_api_key,
+    get_cu_estimate,
+    get_default_enhancer_model,
+    get_enhancers,
+    get_image_models,
+    get_video_models,
+    image_endpoint_uses_single_image_url,
+    output_path,
+    poll_job,
+    send_notification,
+)
+from krea_helpers import (
     resolve_model as resolve,
 )
 
@@ -111,9 +122,8 @@ def validate_pipeline(steps):
         if action == "enhance":
             if not step.get("use_previous") and not step.get("image_url"):
                 errors.append(f"Step {i} (enhance): needs 'image_url' or 'use_previous: true'")
-            if not step.get("use_previous"):
-                if not step.get("width") or not step.get("height"):
-                    errors.append(f"Step {i} (enhance): needs 'width' and 'height'")
+            if not step.get("width") or not step.get("height"):
+                errors.append(f"Step {i} (enhance): needs 'width' and 'height'")
 
         if step.get("use_previous") and i == 1:
             errors.append(f"Step {i}: 'use_previous' cannot be used on the first step")
@@ -209,14 +219,19 @@ def _run_fan_out_job(api_key, endpoint, body, interval):
 def run_fan_out_parallel(api_key, sub_jobs, max_parallel):
     """Run fan_out sub-jobs in parallel with concurrency limit.
     sub_jobs: list of (endpoint, body, interval) tuples.
-    Returns list of result dicts in order."""
+    Returns list of result dicts in order. Failed jobs get an error sentinel."""
     results = [None] * len(sub_jobs)
+    errors = []
     semaphore = threading.Semaphore(max_parallel)
 
     def worker(idx, endpoint, body, interval):
         with semaphore:
             print(f"  --- fan_out {idx + 1}/{len(sub_jobs)} (parallel) ---", file=sys.stderr)
-            results[idx] = _run_fan_out_job(api_key, endpoint, body, interval)
+            try:
+                results[idx] = _run_fan_out_job(api_key, endpoint, body, interval)
+            except SystemExit as e:
+                results[idx] = {"__error__": True, "code": e.code}
+                errors.append(idx)
 
     threads = []
     for i, (endpoint, body, interval) in enumerate(sub_jobs):
@@ -226,6 +241,10 @@ def run_fan_out_parallel(api_key, sub_jobs, max_parallel):
 
     for t in threads:
         t.join()
+
+    if errors:
+        print(f"Error: {len(errors)} parallel fan_out job(s) failed (indices: {errors})", file=sys.stderr)
+        sys.exit(1)
 
     return results
 
@@ -257,7 +276,7 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
         if "guidance_scale" in step:
             body["guidance_scale_flux"] = step["guidance_scale"]
         if step.get("use_previous") and prev_urls:
-            if "flux" in step.get("model", "nano-banana-2"):
+            if image_endpoint_uses_single_image_url(endpoint):
                 body["imageUrl"] = prev_urls[0]
             else:
                 body["imageUrls"] = [prev_urls[0]]
@@ -269,8 +288,11 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
             body["styles"] = step["styles"]
 
         job = api_post(api_key, endpoint, body)
+        emit_structured({"type": "krea_job", "job_id": job["job_id"], "action": "generate_image", "model": step.get("model", "nano-banana-2"), "prompt": step.get("prompt", "")})
         result = poll_job(api_key, job["job_id"])
         result_urls = result.get("result", {}).get("urls", [])
+        if result_urls:
+            emit_structured({"type": "krea_result", "job_id": job["job_id"], "action": "generate_image", "urls": result_urls, "model": step.get("model", "nano-banana-2"), "prompt": step.get("prompt", "")})
         if progress:
             progress.add_cu("generate_image", step.get("model", "nano-banana-2"))
 
@@ -288,10 +310,12 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
             body["endImage"] = step["endImage"]
 
         job = api_post(api_key, endpoint, body)
+        emit_structured({"type": "krea_job", "job_id": job["job_id"], "action": "generate_video", "model": step.get("model", "veo-3.1-fast"), "prompt": step.get("prompt", "")})
         result = poll_job(api_key, job["job_id"], interval=5)
         url = get_result_url(result)
         if url:
             result_urls = [url]
+            emit_structured({"type": "krea_result", "job_id": job["job_id"], "action": "generate_video", "urls": [url], "model": step.get("model", "veo-3.1-fast"), "prompt": step.get("prompt", "")})
         if progress:
             progress.add_cu("generate_video", step.get("model", "veo-3.1-fast"))
 
@@ -317,8 +341,11 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
                 body[k] = step[k]
 
         job = api_post(api_key, endpoint, body)
+        emit_structured({"type": "krea_job", "job_id": job["job_id"], "action": "enhance", "enhancer": enhancer_name})
         result = poll_job(api_key, job["job_id"], interval=5)
         result_urls = result.get("result", {}).get("urls", [])
+        if result_urls:
+            emit_structured({"type": "krea_result", "job_id": job["job_id"], "action": "enhance", "urls": result_urls, "enhancer": enhancer_name})
         if progress:
             progress.add_cu("enhance", enhancer_name)
 
@@ -347,7 +374,7 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
                             body[k] = sub[k]
                     if "guidance_scale" in sub:
                         body["guidance_scale_flux"] = sub["guidance_scale"]
-                    if "flux" in sub.get("model", "nano-banana-2"):
+                    if image_endpoint_uses_single_image_url(endpoint):
                         body["imageUrl"] = src_url
                     else:
                         body["imageUrls"] = [src_url]
@@ -394,15 +421,21 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
 
             results = run_fan_out_parallel(api_key, sub_jobs, max_parallel)
 
+            per_sub_urls = []
             for i, (result, sub) in enumerate(zip(results, sub_steps_info)):
                 sub_action = sub.get("action", "generate_image")
+                job_id = result.get("id") or result.get("job_id", "")
                 if sub_action == "generate_video":
                     url = get_result_url(result)
+                    sub_urls = [url] if url else []
                     if url:
-                        result_urls.append(url)
+                        emit_structured({"type": "krea_result", "job_id": job_id, "action": "generate_video", "urls": [url], "model": sub.get("model", ""), "prompt": sub.get("prompt", "")})
                 else:
-                    urls = result.get("result", {}).get("urls", [])
-                    result_urls.extend(urls)
+                    sub_urls = result.get("result", {}).get("urls", [])
+                    if sub_urls:
+                        emit_structured({"type": "krea_result", "job_id": job_id, "action": sub_action, "urls": sub_urls, "model": sub.get("model", ""), "prompt": sub.get("prompt", "")})
+                per_sub_urls.append(sub_urls)
+                result_urls.extend(sub_urls)
                 if progress:
                     model = sub.get("model") or sub.get("enhancer", "topaz-standard-enhance")
                     progress.add_cu(sub_action, model)
@@ -412,7 +445,8 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
                 sub = dict(sub_template)
                 sub["use_previous"] = False
                 if sub.get("action") == "generate_image":
-                    if "flux" in sub.get("model", "nano-banana-2"):
+                    ep = resolve(sub.get("model", "nano-banana-2"), image_models, "/generate/image/")
+                    if image_endpoint_uses_single_image_url(ep):
                         sub["imageUrl"] = src_url
                     else:
                         sub["imageUrls"] = [src_url]
@@ -430,16 +464,17 @@ def run_step(api_key, step, step_num, total, prev_urls, out_dir=None, progress=N
     # Download results
     if action == "fan_out" and step.get("parallel", False) and sub_steps_info:
         ext = ".mp4" if step.get("step", {}).get("action") == "generate_video" else ".png"
-        url_idx = 0
-        for sub_info in sub_steps_info:
+        for sub_info, sub_urls in zip(sub_steps_info, per_sub_urls):
             sub_base = sub_info.get("filename", f"step-{step_num}-fan")
-            if url_idx < len(result_urls):
-                fname = f"{sub_base}{ext}" if not sub_base.endswith(ext) else sub_base
-                path = download_file(result_urls[url_idx], output_path(fname, out_dir))
+            for j, url in enumerate(sub_urls):
+                if len(sub_urls) == 1:
+                    fname = f"{sub_base}{ext}" if not sub_base.endswith(ext) else sub_base
+                else:
+                    fname = f"{sub_base}-{j + 1}{ext}"
+                path = download_file(url, output_path(fname, out_dir))
                 print(f"  Saved: {path}", file=sys.stderr)
                 if progress:
                     progress.add_files(1)
-                url_idx += 1
     else:
         base_name = step.get("filename", f"step-{step_num}")
         for i, url in enumerate(result_urls):
@@ -492,10 +527,11 @@ def main():
             key, val = v.split("=", 1)
             variables[key] = val
 
-    # Substitute variables before parsing JSON
+    # Substitute variables before parsing JSON (escape for JSON string context)
     if variables:
         for key, val in variables.items():
-            raw = raw.replace("{{" + key + "}}", val)
+            escaped = val.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n").replace("\t", "\\t")
+            raw = raw.replace("{{" + key + "}}", escaped)
 
     pipeline = json.loads(raw)
 

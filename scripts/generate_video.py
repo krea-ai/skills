@@ -11,8 +11,17 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from krea_helpers import (
-    get_api_key, api_post, poll_job, download_file, ensure_image_url, output_path,
-    get_video_models, resolve_model as _resolve,
+    api_post,
+    download_file,
+    emit_structured,
+    ensure_image_url,
+    get_api_key,
+    get_video_models,
+    output_path,
+    poll_job,
+)
+from krea_helpers import (
+    resolve_model as _resolve,
 )
 
 
@@ -28,6 +37,7 @@ def main():
     parser.add_argument("--resolution", choices=["720p", "1080p"], help="Resolution (veo only)")
     parser.add_argument("--mode", choices=["std", "pro"], help="Quality mode (kling only)")
     parser.add_argument("--generate-audio", action="store_true", help="Generate audio (veo-3 only)")
+    parser.add_argument("--timeout", type=int, default=600, help="Polling timeout in seconds (default: 600)")
     parser.add_argument("--output-dir", help="Output directory (default: cwd)")
     parser.add_argument("--api-key", help="Krea API token")
     args = parser.parse_args()
@@ -55,8 +65,9 @@ def main():
     job = api_post(api_key, endpoint, body)
     job_id = job.get("job_id")
     print(f"Job created: {job_id}", file=sys.stderr)
+    emit_structured({"type": "krea_job", "job_id": job_id, "action": "generate_video", "model": args.model, "prompt": args.prompt})
 
-    result = poll_job(api_key, job_id, interval=5)
+    result = poll_job(api_key, job_id, interval=5, timeout=args.timeout)
     urls = result.get("result", {}).get("urls", [])
     video_url = result.get("result", {}).get("video_url")
 
@@ -64,6 +75,8 @@ def main():
     if not url:
         print("Error: No video URL in result", file=sys.stderr)
         sys.exit(1)
+
+    emit_structured({"type": "krea_result", "job_id": job_id, "action": "generate_video", "urls": [url], "model": args.model, "prompt": args.prompt})
 
     out = output_path(args.filename, args.output_dir)
     path = download_file(url, out)

@@ -11,7 +11,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from krea_helpers import get_api_key, api_get
+from krea_helpers import api_get, get_api_key
 
 
 def main():

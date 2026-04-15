@@ -10,6 +10,7 @@ import json
 import os
 import re
 import sys
+
 import requests
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -33,7 +34,6 @@ def fetch_models():
 
         summary = post.get("summary", "")
         description = post.get("description", summary)
-        tags = post.get("tags", [])
 
         cu = None
         cu_match = re.search(r"~?(\d+)\s*(?:CU|compute units)", description, re.IGNORECASE)

@@ -11,19 +11,23 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from krea_helpers import (
-    get_api_key,
     api_post,
-    poll_job,
-    download_file,
-    ensure_image_url,
-    output_path,
-    get_image_models,
-    resolve_model as _resolve,
-    image_endpoint_supports_aspect_ratio,
-    image_endpoint_accepts_pixel_dimensions,
     aspect_ratio_to_dimensions,
+    download_file,
+    emit_structured,
+    ensure_image_url,
+    get_api_key,
+    get_image_models,
     height_for_width_aspect,
+    image_endpoint_accepts_pixel_dimensions,
+    image_endpoint_supports_aspect_ratio,
+    image_endpoint_uses_single_image_url,
+    output_path,
+    poll_job,
     width_for_height_aspect,
+)
+from krea_helpers import (
+    resolve_model as _resolve,
 )
 
 
@@ -119,7 +123,7 @@ def main():
 
     if args.image_url:
         image_url = ensure_image_url(args.image_url, api_key)
-        if "flux" in args.model:
+        if image_endpoint_uses_single_image_url(endpoint):
             body["imageUrl"] = image_url
         else:
             body["imageUrls"] = [image_url]
@@ -131,6 +135,7 @@ def main():
     job = api_post(api_key, endpoint, body)
     job_id = job.get("job_id")
     print(f"Job created: {job_id}", file=sys.stderr)
+    emit_structured({"type": "krea_job", "job_id": job_id, "action": "generate_image", "model": args.model, "prompt": args.prompt})
 
     result = poll_job(api_key, job_id)
     urls = result.get("result", {}).get("urls", [])
@@ -138,6 +143,8 @@ def main():
     if not urls:
         print("Error: No image URLs in result", file=sys.stderr)
         sys.exit(1)
+
+    emit_structured({"type": "krea_result", "job_id": job_id, "action": "generate_image", "urls": urls, "model": args.model, "prompt": args.prompt})
 
     for i, url in enumerate(urls):
         if len(urls) == 1:

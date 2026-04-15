@@ -36,6 +36,10 @@ uv run scripts/pipeline.py --pipeline pipeline.json [--api-key KEY]
 
 **Key casing:** Pipeline-own fields use `snake_case` (`use_previous`, `fan_out`, `image_url`). Krea API fields use `camelCase` (`aspectRatio`, `batchSize`, `generateAudio`, `startImage`). Match the casing shown in the examples below.
 
+**Template syntax:** Two kinds of substitution exist and serve different purposes:
+- `{i}` — fan_out iteration index (1, 2, 3...). Only replaced inside `fan_out` sub-steps.
+- `{{key}}` — user-provided template variables via `--var key=value`. Replaced globally before execution.
+
 ## Pipeline Parameters
 
 | Param | Description | Default |
