@@ -46,6 +46,7 @@ All scripts use `uv run` (inline dependencies, no install needed).
 
 - **[SKILL.md](SKILL.md)** — Full reference: models, parameters, LoRA training, error handling
 - **[PIPELINES.md](PIPELINES.md)** — Pipeline reference: JSON format, examples, advanced features
+- **[VIDEO_PRODUCTION.md](VIDEO_PRODUCTION.md)** — Multi-scene video production: frame-first workflow, ffmpeg post-production
 - **[COOKBOOK.md](COOKBOOK.md)** — Real-world recipes: ad campaigns, brand LoRA training, product-to-video pipelines, storyboard production, creative iteration
 
 ## Quick Examples

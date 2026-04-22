@@ -108,7 +108,7 @@ Map user requests for **video**:
 | `--aspect-ratio` | Aspect ratio (1:1, 16:9, 9:16, 4:3, 3:2, etc.) | — |
 | `--resolution` | 1K, 2K, 4K (nano-banana models) | — |
 | `--seed` | Seed for reproducibility | — |
-| `--image-url` | Input image URL or local file path for image-to-image | — |
+| `--image-url` | Input image URL(s) or local file path(s) for image-to-image. Accepts multiple values — models like `nano-banana-pro` use `imageUrls` for face/reference injection | — |
 | `--style-id` | LoRA style ID to apply | — |
 | `--style-strength` | LoRA strength (-2 to 2) | 1.0 |
 | `--batch-size` | Number of images (1-4) | 1 |
@@ -218,6 +218,8 @@ Generate filenames with the pattern: `yyyy-mm-dd-hh-mm-ss-name.ext`
 
 **For image-to-image:** Use `--image-url` with the source image and describe the desired transformation in `--prompt`.
 
+**For face/reference injection:** Use `--image-url` with multiple face photos or reference images. Models that support `imageUrls` (e.g. `nano-banana-pro`) will use all provided images as conditioning references.
+
 **For video from image:** Use `--start-image` with the source image and describe the desired motion/action in `--prompt`.
 
 Preserve user's creative intent in all cases.
@@ -244,6 +246,11 @@ uv run scripts/generate_image.py --prompt "A serene Japanese garden with cherry 
 **Image-to-image edit:**
 ```bash
 uv run scripts/generate_image.py --prompt "transform to watercolor painting style" --filename "2026-03-31-14-30-00-watercolor.png" --image-url "https://example.com/photo.jpg" --model nano-banana-pro
+```
+
+**Face-conditioned generation (multiple reference images):**
+```bash
+uv run scripts/generate_image.py --prompt "Two colleagues presenting at a conference, dramatic stage lighting" --image-url face1.png face2.png --model nano-banana-pro --filename "2026-03-31-14-35-00-presenters.png" --width 720 --height 1280
 ```
 
 **Generate video:**
@@ -274,3 +281,9 @@ Quick example:
 ```bash
 uv run scripts/pipeline.py --pipeline '{"steps":[{"action":"generate_image","prompt":"a cat astronaut","filename":"cat"},{"action":"enhance","use_previous":true,"enhancer":"topaz-standard-enhance","width":4096,"height":4096,"filename":"cat-4k"}]}'
 ```
+
+## Video Production (Multi-Scene Storytelling)
+
+For multi-scene video production — short films, promos, team intros, music videos, product launches — see [VIDEO_PRODUCTION.md](VIDEO_PRODUCTION.md).
+
+Covers the full interactive workflow: shot planning, frame-first generation with user approval gates, face-conditioned scenes, video animation, ffmpeg normalization/concatenation, and audio overlay. Includes model selection, prompt engineering, and failure pattern reference.

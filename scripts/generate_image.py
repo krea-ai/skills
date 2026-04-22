@@ -43,7 +43,7 @@ def main():
     parser.add_argument("--seed", type=int, help="Random seed")
     parser.add_argument("--steps", type=int, help="Inference steps (flux models)")
     parser.add_argument("--guidance-scale", type=float, help="Guidance scale (flux models)")
-    parser.add_argument("--image-url", help="Input image URL or local file path for image-to-image")
+    parser.add_argument("--image-url", nargs="+", help="Input image URL(s) or local file path(s) for image-to-image. Multiple values supported for models that accept imageUrls (e.g. nano-banana-pro for face references).")
     parser.add_argument("--style-id", help="LoRA style ID")
     parser.add_argument("--style-strength", type=float, default=1.0, help="LoRA strength (-2 to 2)")
     parser.add_argument("--batch-size", type=int, help="Number of images (1-4)")
@@ -122,11 +122,16 @@ def main():
         body["quality"] = args.quality
 
     if args.image_url:
-        image_url = ensure_image_url(args.image_url, api_key)
+        image_urls = [ensure_image_url(u, api_key) for u in args.image_url]
         if image_endpoint_uses_single_image_url(endpoint):
-            body["imageUrl"] = image_url
+            if len(image_urls) > 1:
+                print(
+                    f"Warning: This model only supports a single imageUrl. Using first of {len(image_urls)} provided.",
+                    file=sys.stderr,
+                )
+            body["imageUrl"] = image_urls[0]
         else:
-            body["imageUrls"] = [image_url]
+            body["imageUrls"] = image_urls
 
     if args.style_id:
         body["styles"] = [{"id": args.style_id, "strength": args.style_strength}]

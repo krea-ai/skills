@@ -20,7 +20,7 @@ import requests
 API_BASE = "https://api.krea.ai"
 OPENAPI_URL = f"{API_BASE}/openapi.json"
 
-LOCAL_VERSION = "1.1.0"
+LOCAL_VERSION = "1.2.0"
 REPO_OWNER = "krea-ai"
 REPO_NAME = "skills"
 

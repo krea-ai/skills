@@ -6,6 +6,7 @@ This repository is an agent skill for the Krea.ai API, distributed across multip
 
 - `SKILL.md` — Skill instructions (Agent Skills standard with YAML frontmatter)
 - `PIPELINES.md` — Pipeline reference: JSON format, examples, advanced features
+- `VIDEO_PRODUCTION.md` — Multi-scene video production: interactive frame-first workflow, ffmpeg post-production
 - `COOKBOOK.md` — 5 real-world recipes
 - `scripts/` — Python scripts (uv run, inline dependencies)
 - `build_clawhub.sh` — Generates `clawhub/` bundle for ClawHub upload (gitignored output)
