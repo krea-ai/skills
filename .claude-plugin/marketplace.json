@@ -1,16 +1,37 @@
 {
-  "name": "krea-ai-skills",
-  "description": "Generate images, videos, upscale/enhance with 20+ AI models via the Krea.ai API",
-  "version": "1.0.0",
+  "name": "krea",
   "owner": {
     "name": "Krea AI",
     "url": "https://krea.ai"
   },
   "plugins": [
     {
-      "name": "krea-ai",
-      "source": ".",
-      "description": "Generate images (Flux, Imagen, GPT Image, Ideogram, Seedream), videos (Kling, Veo, Hailuo, Wan), upscale to 22K (Topaz), and train LoRA styles"
+      "name": "krea",
+      "source": "./",
+      "description": "Image/video generation, architectural visualization, marketing creative, and developer integration patterns via the Krea public API MCP.",
+      "version": "2.1.0",
+      "skills": [
+        {
+          "name": "ai",
+          "path": "krea-ai",
+          "invoke": "/krea:ai"
+        },
+        {
+          "name": "archviz",
+          "path": "krea-archviz",
+          "invoke": "/krea:archviz"
+        },
+        {
+          "name": "marketing",
+          "path": "krea-marketing",
+          "invoke": "/krea:marketing"
+        },
+        {
+          "name": "build",
+          "path": "krea-build",
+          "invoke": "/krea:build"
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://cursor.com/schemas/cursor-plugin/plugin.json",
+  "name": "krea",
+  "displayName": "Krea AI",
+  "version": "2.1.0",
+  "description": "Image/video generation, architectural visualization, marketing creative, and developer integration patterns via the Krea public API MCP.",
+  "author": {
+    "name": "Krea AI"
+  },
+  "publisher": "KreaAI",
+  "homepage": "https://krea.ai",
+  "repository": "https://github.com/krea-ai/skills",
+  "license": "MIT",
+  "category": "ai-content",
+  "keywords": [
+    "krea",
+    "image-generation",
+    "video-generation",
+    "mcp",
+    "archviz",
+    "marketing",
+    "product-photography"
+  ]
+}

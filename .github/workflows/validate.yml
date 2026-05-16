@@ -1,4 +1,4 @@
-name: Validate Skill
+name: Validate Skills
 
 on:
   push:
@@ -16,16 +16,88 @@ jobs:
         with:
           node-version: 20
 
-      - name: Validate SKILL.md
-        run: npx skills validate --strict
+      - name: Validate frontmatter — krea-ai
+        run: npx skills validate --strict krea-ai/SKILL.md
 
-      - name: Check scripts parse
+      - name: Validate frontmatter — krea-build
+        run: npx skills validate --strict krea-build/SKILL.md
+
+      - name: Validate frontmatter — krea-archviz
+        run: npx skills validate --strict krea-archviz/SKILL.md
+
+      - name: Validate frontmatter — krea-marketing
+        run: npx skills validate --strict krea-marketing/SKILL.md
+
+      - name: Check Python scripts parse
         run: |
-          for f in scripts/*.py; do
+          for f in krea-ai/scripts/*.py; do
             python3 -c "import ast; ast.parse(open('$f').read())" || exit 1
           done
 
-      - name: Verify clawhub build
+      - name: Validate plugin manifest JSON
         run: |
-          bash build_clawhub.sh
-          grep -q 'codex/skills/krea' clawhub/SKILL.md
+          for f in .claude-plugin/*.json .codex-plugin/*.json .cursor-plugin/*.json; do
+            jq -e . "$f" >/dev/null || { echo "::error::Invalid JSON: $f"; exit 1; }
+            echo "OK $f"
+          done
+
+      - name: Smoke-test eval runner syntax
+        run: |
+          bash -n evals/run.sh
+          echo "OK evals/run.sh syntax"
+
+      - name: Check internal relative paths in vertical skills resolve
+        run: |
+          fail=0
+          # Walk every markdown file in the vertical skills and resolve any ../krea-ai/* path.
+          for f in krea-archviz/SKILL.md krea-archviz/references/*.md \
+                   krea-marketing/SKILL.md krea-marketing/references/*.md; do
+            # Find lines that reference krea-ai/ with a relative prefix and resolve them.
+            grep -oE '\.\.(\/\.\.)?\/krea-ai\/[^[:space:]`)]+' "$f" 2>/dev/null | \
+              while read -r p; do
+                # Resolve relative to the file's directory.
+                resolved="$(cd "$(dirname "$f")" && cd "$(dirname "$p")" 2>/dev/null && pwd)/$(basename "$p")"
+                # Strip any anchors / fragments.
+                target="${resolved%#*}"
+                if [ ! -e "$target" ]; then
+                  echo "::error::Broken reference in $f: $p (resolved to $target)"
+                  fail=1
+                fi
+              done
+          done
+          exit $fail
+
+      - name: Enforce VERSION sync across all declaration sites
+        run: |
+          VERSION="$(tr -d '[:space:]' < VERSION)"
+          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::VERSION file is not semver: $VERSION"
+            exit 1
+          fi
+          fail=0
+          check() {
+            local label="$1" expected="$2" actual="$3"
+            if [ "$actual" != "$expected" ]; then
+              echo "::error::Version drift in $label: expected $expected, got $actual"
+              fail=1
+            else
+              echo "OK $label = $actual"
+            fi
+          }
+          check "package.json"                    "$VERSION" "$(jq -r .version package.json)"
+          check "krea-ai/SKILL.md"                "$VERSION" "$(awk '/^version:/ {print $2; exit}' krea-ai/SKILL.md)"
+          check "krea-build/SKILL.md"             "$VERSION" "$(awk '/^version:/ {print $2; exit}' krea-build/SKILL.md)"
+          check "krea-archviz/SKILL.md"           "$VERSION" "$(awk '/^version:/ {print $2; exit}' krea-archviz/SKILL.md)"
+          check "krea-marketing/SKILL.md"         "$VERSION" "$(awk '/^version:/ {print $2; exit}' krea-marketing/SKILL.md)"
+          check ".claude-plugin/plugin.json"      "$VERSION" "$(jq -r .version .claude-plugin/plugin.json)"
+          check ".claude-plugin/marketplace.json" "$VERSION" "$(jq -r '.plugins[0].version' .claude-plugin/marketplace.json)"
+          check ".codex-plugin/plugin.json"       "$VERSION" "$(jq -r .version .codex-plugin/plugin.json)"
+          check ".cursor-plugin/plugin.json"      "$VERSION" "$(jq -r .version .cursor-plugin/plugin.json)"
+          exit $fail
+
+      - name: Smoke-test update-check script
+        run: |
+          chmod +x scripts/update-check.sh
+          SKILLS_STATE=/tmp/krea-skills-test bash scripts/update-check.sh
+          test -f /tmp/krea-skills-test/last-update-check
+          echo "OK update-check.sh wrote cache file"

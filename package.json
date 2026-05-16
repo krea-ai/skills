@@ -1,19 +1,26 @@
 {
   "name": "krea-ai-skill",
-  "version": "1.2.0",
-  "description": "Generate images, videos, upscale/enhance, and train LoRA styles using the Krea.ai API. 20+ image models, 7 video models, 3 upscalers.",
-  "keywords": ["agent-skill", "krea", "image-generation", "video-generation", "ai-art", "lora"],
-  "author": "albertsalgueda",
+  "version": "2.1.0",
+  "description": "Four Agent Skills for Krea.ai: krea-ai (router), krea-archviz (architectural visualization), krea-marketing (commercial creative), krea-build (developer integration). Image, video, enhancement, LoRA training, multi-step pipelines.",
+  "keywords": ["agent-skill", "krea", "image-generation", "video-generation", "ai-art", "lora", "mcp", "archviz", "marketing"],
+  "author": "Krea AI",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/krea-ai/skills.git"
   },
   "files": [
-    "SKILL.md",
-    "PIPELINES.md",
-    "VIDEO_PRODUCTION.md",
-    "COOKBOOK.md",
-    "scripts/"
+    "krea-ai/",
+    "krea-archviz/",
+    "krea-marketing/",
+    "krea-build/",
+    "evals/",
+    "scripts/",
+    ".claude-plugin/",
+    ".codex-plugin/",
+    ".cursor-plugin/",
+    "VERSION",
+    "LICENSE",
+    "README.md"
   ]
 }

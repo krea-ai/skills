@@ -1,76 +1,183 @@
-# Krea AI Skill
+# Krea AI Skills
 
-Generate images, videos, upscale/enhance with 20+ AI models through the [Krea.ai](https://krea.ai) API. Works with Claude Code, Cursor, Copilot, Codex, Windsurf, and other AI agents.
+Four Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get all four.
+
+| Skill | When to use |
+|---|---|
+| **`krea-ai`** | Default router. Image, video, enhancement via the Krea MCP. Routes to a vertical skill automatically when the brief is clearly arch-viz or marketing. Ships standalone power-user Python scripts for multi-step pipelines and LoRA training. |
+| **`krea-archviz`** | Architectural visualization. 3D-screenshot-to-render, materials vocabulary, lighting recipes, multi-image composition. For architects, interior designers, archviz professionals. |
+| **`krea-marketing`** | Commercial creative. Product photography (hero, lifestyle, white-bg, social), video ads (UGC, talking head, demo, before/after), brand-consistent batch generation, click-to-ad from URL. For DTC brands, marketing teams, social media managers. |
+| **`krea-build`** | Patterns for developers writing apps that integrate the Krea API: auth, polling, error handling, validation, frontend snippets for SvelteKit / React / Vue. |
+
+Works with Claude Code, Cursor, Codex, Windsurf, OpenCode, Gemini CLI, OpenClaw, and any agent that picks up `~/.<agent>/skills/<name>/SKILL.md`.
 
 ## Install
 
-### Agent Skills (recommended)
+### npm (works across all agents)
 
 ```bash
 npx skills add krea-ai/skills
 ```
 
-Works with Claude Code, Cursor, Copilot, Codex, Windsurf, and [many other agents](https://skills.sh).
+Installs all four skills.
 
-### Manual
+### Claude Code marketplace
+
+```
+/plugin marketplace add krea-ai/skills
+/plugin install krea@krea
+```
+
+Registers each skill as `/krea:ai`, `/krea:archviz`, `/krea:marketing`, `/krea:build`.
+
+### Codex CLI
+
+```bash
+codex skill install krea-ai/skills
+```
+
+### Cursor
+
+```bash
+cursor extension install krea-ai/skills
+```
+
+### Manual (universal fallback)
 
 ```bash
 git clone https://github.com/krea-ai/skills.git
-export KREA_API_TOKEN="your-token-here"
+cd skills
+# Symlink each skill into your agent's expected directory.
 ```
 
-Then ask your agent: *"Generate an image of a cyberpunk city at night"*
+## Use
 
-## Setup
+### Default — `krea-ai` and the vertical skills auto-route
 
-1. Get your API token at [krea.ai/settings/api-tokens](https://krea.ai/settings/api-tokens)
-2. Set `KREA_API_TOKEN` environment variable (or pass `--api-key` to any script)
-3. Ensure `uv` is installed (`curl -LsSf https://astral.sh/uv/install.sh | sh`)
+```
+> Generate an image of a cyberpunk cat in neon rain.
+> Make a 5-second video of waves at sunset.
+> Upscale this photo to 4K.
+```
 
-## Available Scripts
+These stay in `krea-ai` and route to the right model via the live MCP catalog.
 
-| Script | Description |
-|--------|-------------|
-| `scripts/generate_image.py` | Generate images with 20+ models (Flux, Imagen, GPT Image, etc.) |
-| `scripts/generate_video.py` | Generate videos with Veo, Kling, Hailuo, Wan, Sora |
-| `scripts/enhance_image.py` | Upscale/enhance with Topaz (up to 22K resolution) |
-| `scripts/list_models.py` | List all models live from the API |
-| `scripts/pipeline.py` | Multi-step workflows with fan_out, templates, parallel execution |
-| `scripts/train_style.py` | Train custom LoRA styles on brand images |
-| `scripts/get_job.py` | Check job status |
-| `scripts/krea_helpers.py` | Shared helpers (retry, polling, error handling) |
+```
+> Render this Sketchup screenshot in golden hour, photoreal.
+> Make my Revit model interior look photoreal, midday.
+> Take this chair, put it in this room, in this style.
+```
 
-All scripts use `uv run` (inline dependencies, no install needed).
+These trigger `krea-archviz` — vertical-specific archviz workflows, materials vocabulary, lighting recipes.
 
-## Documentation
+```
+> Make a hero product shot of my new perfume bottle.
+> Generate a TikTok ad for my sneakers.
+> Take this product URL and give me a hero + 4 social variants.
+```
 
-- **[SKILL.md](SKILL.md)** — Full reference: models, parameters, LoRA training, error handling
-- **[PIPELINES.md](PIPELINES.md)** — Pipeline reference: JSON format, examples, advanced features
-- **[VIDEO_PRODUCTION.md](VIDEO_PRODUCTION.md)** — Multi-scene video production: frame-first workflow, ffmpeg post-production
-- **[COOKBOOK.md](COOKBOOK.md)** — Real-world recipes: ad campaigns, brand LoRA training, product-to-video pipelines, storyboard production, creative iteration
+These trigger `krea-marketing` — product photography, video ads, click-to-ad from URL, brand-consistent batch generation.
 
-## Quick Examples
+```
+> Help me add a Krea image generator to my SvelteKit app.
+> Set up server-side polling for video generation in my Next.js app.
+```
+
+These trigger `krea-build` — developer-focused integration patterns.
+
+### Power-user scripts (optional)
+
+For multi-step batch pipelines or LoRA training, the package ships standalone Python scripts:
+
+- `krea-ai/scripts/pipeline.py` — multi-step pipelines (chain, fan-out, parallel, resume)
+- `krea-ai/scripts/train_style.py` — LoRA training for brand styles, products, characters
+
+Both require `KREA_API_TOKEN` set and `uv` installed.
+
+## Repository structure
+
+```
+.
+├── VERSION                        # repo-wide version (source of truth)
+├── krea-ai/                       # router / generic generation
+│   ├── SKILL.md
+│   ├── references/                # loaded on demand
+│   │   ├── model-catalog.md       # intent → archetype, no hardcoded IDs
+│   │   ├── prompt-engineering.md
+│   │   ├── media-inputs.md
+│   │   ├── async-polling.md
+│   │   ├── preferences.md
+│   │   ├── video-production.md
+│   │   ├── pipelines.md
+│   │   ├── lora-training.md
+│   │   ├── cookbook.md
+│   │   └── troubleshooting.md
+│   └── scripts/                   # power-user, bypass MCP
+│       ├── pipeline.py
+│       ├── train_style.py
+│       └── krea_helpers.py
+├── krea-archviz/                  # architectural visualization vertical
+│   ├── SKILL.md
+│   └── references/
+│       ├── screenshot-to-render.md
+│       ├── materials.md
+│       ├── lighting.md
+│       ├── composition.md
+│       └── aspect-ratios.md
+├── krea-marketing/                # commercial creative vertical
+│   ├── SKILL.md
+│   └── references/
+│       ├── product-photography.md
+│       ├── video-ads.md
+│       ├── brand-consistency.md
+│       ├── ad-formats.md
+│       └── marketing-prompts.md
+├── krea-build/                    # developer integration patterns
+│   ├── SKILL.md
+│   └── references/
+│       ├── integration-patterns.md
+│       ├── api-client.md
+│       ├── validation.md
+│       └── frontend-snippets.md
+├── evals/                         # regression tests (20 scenarios)
+│   ├── README.md
+│   ├── scenarios.md
+│   └── run.sh
+├── scripts/
+│   └── update-check.sh            # opt-in version check (run once per session)
+├── .claude-plugin/                # Claude Code marketplace + plugin manifest
+├── .codex-plugin/                 # Codex plugin manifest
+├── .cursor-plugin/                # Cursor plugin manifest
+├── .github/workflows/validate.yml # CI: frontmatter + version sync + path resolution + eval syntax
+├── package.json
+├── LICENSE
+└── README.md
+```
+
+## Updates
+
+The skill includes an opt-in update notification. Once per session, the agent runs `scripts/update-check.sh` which checks `https://raw.githubusercontent.com/krea-ai/skills/main/VERSION` against the local `VERSION` file. If a newer version exists, it prints `UPGRADE_AVAILABLE <local> <remote>` to stdout — the agent surfaces this once, then continues. Snoozes 24h → 48h → 7d to avoid nagging.
+
+**To upgrade**, re-run your install command (`npx skills add krea-ai/skills`, etc.).
+
+**To disable the check**: `touch ~/.krea-skills/update-check-disabled`.
+
+**To force a fresh check**: `bash scripts/update-check.sh --force`.
+
+Single-source version: `VERSION` file at repo root. CI enforces that `VERSION`, `package.json`, all four `SKILL.md` files, and all four plugin manifests agree.
+
+## API key (only for power-user scripts)
+
+Get your token at [krea.ai/settings/api-tokens](https://krea.ai/settings/api-tokens). Set it as `KREA_API_TOKEN` for `pipeline.py` and `train_style.py`. The MCP-backed skills handle auth on their own.
+
+## Evals
+
+`evals/run.sh` runs 20 regression scenarios through `claude -p` in headless mode and grades responses with regex (PASS / FAIL / MANUAL_REVIEW). See `evals/README.md` for methodology.
 
 ```bash
-# Generate an image
-uv run scripts/generate_image.py --prompt "A cyberpunk cat" --filename "cat.png"
-
-# Generate a video with audio
-uv run scripts/generate_video.py --prompt "Ocean waves at sunset" --filename "waves.mp4" --generate-audio
-
-# Upscale to 4K
-uv run scripts/enhance_image.py --image-url "https://..." --filename "upscaled.png" --width 4096 --height 4096
-
-# List available models (live from API)
-uv run scripts/list_models.py
-
-# Run a multi-step pipeline
-uv run scripts/pipeline.py --pipeline pipeline.json --dry-run
+bash evals/run.sh                 # v1 — regex + manual review
+bash evals/run.sh --judge         # v2 — Claude-CLI judge (disabled in v1)
 ```
-
-## API Key
-
-Get your token at [krea.ai/settings/api-tokens](https://krea.ai/settings/api-tokens). Set as `KREA_API_TOKEN` environment variable or pass `--api-key` to any script.
 
 ## License
 

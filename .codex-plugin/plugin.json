@@ -1,0 +1,40 @@
+{
+  "name": "krea",
+  "version": "2.1.0",
+  "description": "Image/video generation, architectural visualization, marketing creative, and developer integration patterns via the Krea public API MCP.",
+  "author": {
+    "name": "Krea AI",
+    "url": "https://krea.ai"
+  },
+  "homepage": "https://krea.ai",
+  "repository": "https://github.com/krea-ai/skills",
+  "license": "MIT",
+  "keywords": [
+    "krea",
+    "image-generation",
+    "video-generation",
+    "mcp",
+    "archviz",
+    "marketing",
+    "product-photography"
+  ],
+  "skills": "./",
+  "interface": {
+    "displayName": "Krea AI",
+    "shortDescription": "Generate images and videos with Krea's full model lineup, plus vertical playbooks for archviz and marketing.",
+    "longDescription": "Krea AI Skills turn your agent into a Krea-native creative collaborator. Four skills layer together: krea-ai routes raw image and video generation through the Krea MCP server; krea-archviz adds architectural visualization workflows (3D-screenshot-to-render, materials, lighting, multi-image composition); krea-marketing covers product photography, video ads, brand-consistent batch generation, and click-to-ad pipelines; krea-build helps developers integrate Krea into their own applications. Auth and request shapes are handled by the MCP server, so no per-machine API key setup is needed for Claude users.",
+    "developerName": "Krea AI",
+    "category": "Design",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://krea.ai",
+    "defaultPrompt": [
+      "Generate an image of a cyberpunk cat at golden hour",
+      "Render this Sketchup screenshot in photoreal evening light",
+      "Create a hero product shot of my new perfume bottle for the homepage",
+      "Help me integrate Krea image generation into my SvelteKit app"
+    ]
+  }
+}

@@ -5,3 +5,13 @@ __pycache__/
 .pipeline-state.json
 node_modules/
 clawhub/
+
+# Internal research dumps (competitor recon, scratch). Never publish.
+research/
+
+# Eval results — write-only local cache, never committed
+runs/
+
+# Local env (API keys for eval runner, etc.)
+.env.local
+.env.*.local

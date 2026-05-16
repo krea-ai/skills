@@ -1,6 +1,23 @@
 {
-  "name": "krea-ai",
-  "version": "1.0.0",
-  "description": "Generate images, videos, upscale/enhance with 20+ AI models via the Krea.ai API",
-  "skills": ["./"]
+  "name": "krea",
+  "version": "2.1.0",
+  "description": "Krea AI skills: image and video generation via MCP, architectural visualization, marketing creative, and developer integration patterns.",
+  "author": {
+    "name": "Krea AI",
+    "url": "https://krea.ai"
+  },
+  "homepage": "https://krea.ai",
+  "repository": "https://github.com/krea-ai/skills",
+  "license": "MIT",
+  "keywords": [
+    "krea",
+    "image-generation",
+    "video-generation",
+    "mcp",
+    "archviz",
+    "marketing",
+    "product-photography",
+    "ai-art",
+    "lora"
+  ]
 }

@@ -3,7 +3,12 @@
 # dependencies = ["requests"]
 # ///
 
-"""Shared helpers for Krea AI scripts: API calls, polling, retry, error handling."""
+"""Shared helpers for the standalone Krea AI scripts (pipeline.py, train_style.py).
+
+For day-to-day generation, prefer the MCP tools (`mcp__krea-public-api__*`) via the
+agent. These scripts exist for power-user batch workflows and LoRA training,
+where direct API access is more convenient than MCP tool orchestration.
+"""
 
 import json
 import mimetypes
@@ -20,7 +25,7 @@ import requests
 API_BASE = "https://api.krea.ai"
 OPENAPI_URL = f"{API_BASE}/openapi.json"
 
-LOCAL_VERSION = "1.2.0"
+LOCAL_VERSION = "2.0.0"
 REPO_OWNER = "krea-ai"
 REPO_NAME = "skills"
 
@@ -56,7 +61,6 @@ def _save_disk_cache(data):
 
 
 def _parse_openapi_spec(spec):
-    """Extract model data from a parsed OpenAPI spec."""
     image_models = {}
     video_models = {}
     enhancers = {}
@@ -82,7 +86,7 @@ def _parse_openapi_spec(spec):
             table_match = re.search(r"\|\s*~?(\d+)\s*\|", description)
             if table_match:
                 cu = int(table_match.group(1))
-        # Extract default for "model" field if it exists (used by enhancers)
+
         model_schema = (rb.get("properties") or {}).get("model", {})
         default_model = (
             model_schema.get("const")
@@ -116,12 +120,9 @@ def _parse_openapi_spec(spec):
 
 
 def _fetch_openapi_data():
-    """Get model data: memory → fresh disk cache → live API → stale disk → None."""
     global _openapi_data
     if _openapi_data is not None:
         return _openapi_data
-
-    check_for_updates()
 
     cached = _load_disk_cache(allow_stale=False)
     if cached:
@@ -136,27 +137,19 @@ def _fetch_openapi_data():
         _save_disk_cache(data)
         return data
     except Exception as e:
-        print(
-            f"Warning: Could not fetch live OpenAPI spec ({e}), checking stale cache...",
-            file=sys.stderr,
-        )
+        print(f"Warning: Could not fetch live OpenAPI spec ({e}).", file=sys.stderr)
 
     stale = _load_disk_cache(allow_stale=True)
     if stale:
-        print("Warning: Using stale model cache. Run list_models.py to refresh.", file=sys.stderr)
+        print("Warning: Using stale model cache.", file=sys.stderr)
         _openapi_data = stale
         return stale
 
-    print(
-        "Warning: No model data available (network unreachable, no cache). "
-        "Model names will be resolved as endpoint suffixes.",
-        file=sys.stderr,
-    )
+    print("Warning: No model data available (offline, no cache).", file=sys.stderr)
     return None
 
 
 def _build_models_dict(category):
-    """Build {name: endpoint} from OpenAPI data."""
     data = _fetch_openapi_data()
     if not data:
         return {}
@@ -164,22 +157,18 @@ def _build_models_dict(category):
 
 
 def get_image_models():
-    """Return {name: endpoint} for all image models (from OpenAPI)."""
     return _build_models_dict("image_models")
 
 
 def get_video_models():
-    """Return {name: endpoint} for all video models (from OpenAPI)."""
     return _build_models_dict("video_models")
 
 
 def get_enhancers():
-    """Return {name: endpoint} for all enhancers (from OpenAPI)."""
     return _build_models_dict("enhancers")
 
 
 def get_default_enhancer_model(enhancer_id):
-    """Return the default sub-model for an enhancer (from OpenAPI schema), or None."""
     data = _fetch_openapi_data()
     if not data:
         return None
@@ -188,7 +177,6 @@ def get_default_enhancer_model(enhancer_id):
 
 
 def _get_endpoint_params(endpoint_path):
-    """Get the set of accepted request body params for an endpoint."""
     data = _fetch_openapi_data()
     if not data:
         return None
@@ -200,7 +188,6 @@ def _get_endpoint_params(endpoint_path):
 
 
 def resolve_model(model_arg, models_dict, prefix):
-    """Resolve a short model name, raw suffix, or full endpoint path."""
     if model_arg in models_dict:
         return models_dict[model_arg]
     if model_arg.startswith(prefix):
@@ -211,7 +198,7 @@ def resolve_model(model_arg, models_dict, prefix):
     available = ", ".join(sorted(models_dict.keys())[:15])
     print(
         f"Error: Unknown model '{model_arg}'. "
-        f"Run list_models.py to see available models.\n"
+        f"Run list_models via the MCP to see available models.\n"
         f"  Some available: {available} ...",
         file=sys.stderr,
     )
@@ -219,7 +206,6 @@ def resolve_model(model_arg, models_dict, prefix):
 
 
 def get_cu_estimate(action, model_or_enhancer):
-    """Return estimated CU cost from OpenAPI descriptions, or None if unknown."""
     data = _fetch_openapi_data()
     if not data:
         return None
@@ -233,6 +219,13 @@ def get_cu_estimate(action, model_or_enhancer):
         return None
     info = data.get(category, {}).get(model_or_enhancer)
     return info.get("cu") if info else None
+
+
+def image_endpoint_uses_single_image_url(endpoint_path):
+    params = _get_endpoint_params(endpoint_path)
+    if params is not None:
+        return "imageUrl" in params
+    return False
 
 
 # ── API key ──────────────────────────────────────────────
@@ -256,7 +249,6 @@ def _format_loc(loc):
 
 
 def extract_validation_details(data):
-    """Pull field-level validation messages from common API JSON error shapes."""
     if not isinstance(data, dict):
         return []
     lines = []
@@ -299,7 +291,6 @@ def extract_validation_details(data):
 
 
 def format_api_error(status_code, response_text):
-    """Return a human-readable error message for API errors."""
     msg = f"API error {status_code}"
     data = None
     try:
@@ -349,77 +340,9 @@ def format_api_error(status_code, response_text):
         return f"{msg}: {error or response_text[:500]}"
 
 
-# ── Image dimensions / aspect ratio ──────────────────────
-
-def image_endpoint_supports_aspect_ratio(endpoint_path):
-    """Check via OpenAPI if this endpoint accepts aspectRatio."""
-    params = _get_endpoint_params(endpoint_path)
-    if params is not None:
-        return "aspectRatio" in params
-    return "/google/nano-banana" in endpoint_path
-
-
-def image_endpoint_accepts_pixel_dimensions(endpoint_path):
-    """Check via OpenAPI if this endpoint accepts width/height."""
-    params = _get_endpoint_params(endpoint_path)
-    if params is not None:
-        return "width" in params or "height" in params
-    return True
-
-
-def image_endpoint_uses_single_image_url(endpoint_path):
-    """Check via OpenAPI if this endpoint uses imageUrl (singular) vs imageUrls (list)."""
-    params = _get_endpoint_params(endpoint_path)
-    if params is not None:
-        return "imageUrl" in params
-    return False
-
-
-def parse_aspect_ratio(ratio):
-    """Parse '16:9' / '9:16' into positive floats (width_factor, height_factor)."""
-    s = ratio.strip().replace(" ", "")
-    if ":" not in s:
-        raise ValueError(f"Invalid aspect ratio {ratio!r}: expected W:H (e.g. 16:9)")
-    a, b = s.split(":", 1)
-    try:
-        aw, ah = float(a), float(b)
-    except ValueError as e:
-        raise ValueError(f"Invalid aspect ratio {ratio!r}: {e}") from e
-    if aw <= 0 or ah <= 0:
-        raise ValueError(f"Invalid aspect ratio {ratio!r}: parts must be positive")
-    return aw, ah
-
-
-def aspect_ratio_to_dimensions(ratio, max_side=1024, multiple=8):
-    """Map aspect ratio to pixel width/height (longer side ~= max_side, multiples of `multiple`)."""
-    aw, ah = parse_aspect_ratio(ratio)
-    if aw >= ah:
-        w = max_side
-        h = w * ah / aw
-    else:
-        h = max_side
-        w = h * aw / ah
-    w = max(multiple, int(round(w / multiple)) * multiple)
-    h = max(multiple, int(round(h / multiple)) * multiple)
-    return w, h
-
-
-def height_for_width_aspect(width, ratio, multiple=8):
-    aw, ah = parse_aspect_ratio(ratio)
-    h = width * ah / aw
-    return max(multiple, int(round(h / multiple)) * multiple)
-
-
-def width_for_height_aspect(height, ratio, multiple=8):
-    aw, ah = parse_aspect_ratio(ratio)
-    w = height * aw / ah
-    return max(multiple, int(round(w / multiple)) * multiple)
-
-
 # ── API call with retry ──────────────────────────────────
 
 def api_post(api_key, endpoint, body, max_retries=3):
-    """POST to the Krea API with automatic retry on 429."""
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
     delays = [5, 15, 45]
 
@@ -438,7 +361,6 @@ def api_post(api_key, endpoint, body, max_retries=3):
 
 
 def api_get(api_key, path, max_retries=3):
-    """GET from the Krea API with automatic retry on 429."""
     headers = {"Authorization": f"Bearer {api_key}"}
     delays = [5, 15, 45]
 
@@ -459,7 +381,6 @@ def api_get(api_key, path, max_retries=3):
 # ── Job polling ──────────────────────────────────────────
 
 def poll_job(api_key, job_id, interval=3, timeout=600):
-    """Poll a job until it reaches a terminal state."""
     start = time.time()
     while time.time() - start < timeout:
         job = api_get(api_key, f"/jobs/{job_id}")
@@ -482,7 +403,6 @@ def poll_job(api_key, job_id, interval=3, timeout=600):
 # ── File download ────────────────────────────────────────
 
 def download_file(url, filename):
-    """Download a URL to a local file."""
     os.makedirs(os.path.dirname(filename), exist_ok=True) if os.path.dirname(filename) else None
     r = requests.get(url, stream=True)
     r.raise_for_status()
@@ -495,8 +415,6 @@ def download_file(url, filename):
 # ── Local image → URL helper ─────────────────────────────
 
 def ensure_image_url(path_or_url, api_key):
-    """If the input is a local file path, upload it via the Krea assets API
-    and return the hosted URL. If it's already a URL, return as-is."""
     if path_or_url.startswith("http://") or path_or_url.startswith("https://"):
         return path_or_url
 
@@ -536,54 +454,15 @@ def ensure_image_url(path_or_url, api_key):
 # ── Output path helper ───────────────────────────────────
 
 def output_path(filename, output_dir=None):
-    """Join filename with output_dir if provided."""
     if output_dir:
         os.makedirs(output_dir, exist_ok=True)
         return os.path.join(output_dir, os.path.basename(filename))
     return filename
 
 
-# ── Version check ────────────────────────────────────────
-
-_VERSION_CACHE = os.path.join(_CACHE_DIR, "version_check.json")
-_VERSION_CHECK_TTL = 86400  # once per day
-
-
-def check_for_updates():
-    """Check GitHub for a newer version. Prints a note if one exists.
-    Non-blocking, best-effort, never raises."""
-    try:
-        if os.path.isfile(_VERSION_CACHE):
-            mtime = os.path.getmtime(_VERSION_CACHE)
-            if time.time() - mtime < _VERSION_CHECK_TTL:
-                return
-
-        r = requests.get(
-            f"https://raw.githubusercontent.com/{REPO_OWNER}/{REPO_NAME}/main/package.json",
-            timeout=5,
-        )
-        if not r.ok:
-            return
-        remote_version = r.json().get("version", "")
-
-        os.makedirs(_CACHE_DIR, exist_ok=True)
-        with open(_VERSION_CACHE, "w") as f:
-            json.dump({"remote": remote_version, "local": LOCAL_VERSION}, f)
-
-        if remote_version and remote_version != LOCAL_VERSION:
-            print(
-                f"Note: krea-ai skill update available ({LOCAL_VERSION} → {remote_version}). "
-                f"Run: npx skills add {REPO_OWNER}/{REPO_NAME}",
-                file=sys.stderr,
-            )
-    except Exception:
-        pass
-
-
 # ── Desktop notification ─────────────────────────────────
 
 def send_notification(title, message):
-    """Send a desktop notification. Best-effort, never raises."""
     try:
         system = platform.system()
         if system == "Linux" and shutil.which("notify-send"):
@@ -600,12 +479,6 @@ def send_notification(title, message):
 
 
 def emit_structured(data: dict):
-    """Emit a structured JSON line to stdout for orchestrator parsing.
-
-    The orchestrator reads these lines to extract job metadata (job_id, action,
-    model, urls) from Bash tool results. Lines are JSON objects with a ``type``
-    field — either ``krea_job`` (emitted at submission) or ``krea_result``
-    (emitted after completion).
-    """
+    """Emit a structured JSON line to stdout for orchestrator parsing."""
     print(json.dumps(data))
     sys.stdout.flush()
