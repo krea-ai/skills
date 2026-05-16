@@ -105,6 +105,31 @@ upload = upload_asset(filename, mimeType, fileData=<base64>)
 
 Pass the returned asset id/url into the next call's `input.imageUrl` / `input.imageUrls` / `input.startImage` per the model's schema.
 
+> **⚠️ Silent-drop warning — read before every reference call.**
+>
+> The Krea MCP returns HTTP 200 and produces text-to-image output **even when you pass a reference URL under the wrong key.** There is no validation error to catch. A "reasonable" guess like `image: "<url>"` on a model that wants `imageStyleRefs` will look like it worked, return a 200, deliver a completely unrelated image, and silently waste the credit.
+>
+> Mitigation rule (mandatory whenever you pass any reference media):
+>
+> 1. **Call `get_model_schema(model=<id>)` before every `generate_image` / `generate_video` / `enhance_image` invocation in a new session.** Do not skip this on the assumption that "the field name is probably `imageUrl`" — it's wrong on most models.
+> 2. **Pass only keys present in `inputSchema.properties`.** Field names are case-sensitive AND vary per model — `imageUrl` (camelCase) on `bfl/flux-1-kontext-dev`, `image_url` (snake_case) on `topaz/standard-enhance`, `startImage` + `referenceImages` on `bytedance/seedance-2-fast`, `styleImages` + `imageStyleRefs` (NOT `image`) on `bfl/flux-1-dev`. See `references/media-inputs.md` for the full per-model table.
+> 3. **After the call, vision-verify the output against the brief.** If you asked for image-to-image and got something unrelated to your reference, you probably hit the silent-drop trap — re-read the schema, fix the field name, and retry.
+>
+> Worked example. Don't do this — `bfl/flux-1-dev` has no `image` field, so this call drops the reference and returns a fresh text-to-image apple:
+>
+> ```json
+> {"name":"generate_image","arguments":{
+>   "model":"bfl/flux-1-dev",
+>   "input":{
+>     "prompt":"the same apple, but green",
+>     "image":"https://gen.krea.ai/images/...apple.png"
+>   },
+>   "sync":true
+> }}
+> ```
+>
+> Do this instead — call `get_model_schema(model="bfl/flux-1-dev")`, see that the reference fields are `styleImages` and `imageStyleRefs`, then pass under the correct key per that model's schema.
+
 ### 7. Submit
 
 **Images and enhancement** finish fast. Use sync:
@@ -171,7 +196,7 @@ Load on demand:
 - `scripts/pipeline.py` — multi-step generation pipelines (chain, fan-out, template vars, parallel, resume). See `references/pipelines.md`.
 - `scripts/train_style.py` — train LoRA styles. See `references/lora-training.md`.
 
-Both need `KREA_API_TOKEN` set and run via `uv`. For day-to-day work, prefer the MCP.
+Both need `KREA_API_KEY` set and run via `uv`. For day-to-day work, prefer the MCP.
 
 ## Vertical skills
 

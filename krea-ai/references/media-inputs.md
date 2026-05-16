@@ -60,6 +60,19 @@ Each model declares which input shape it accepts. Use `get_model_schema(model=<i
 - **`imageUrl`** (string, singular) — one reference. Most models.
 - **`imageUrls`** (array of strings) — multiple references. Models like the nano-banana-pro family use this for face injection from several photos.
 
+## Per-model field names — verified table
+
+Field names are **not** standardized across models. Camel vs snake casing varies, and the singular/plural shape varies. Always re-confirm via `get_model_schema(model=<id>)` — the table below is a starting point, not a substitute. Passing a reasonable-sounding name that isn't in the schema causes a **silent drop**: the MCP returns 200 and quietly generates text-to-image. See `troubleshooting.md` → "Silent-drop on unknown params" for the full repro.
+
+| Model | Reference image field(s) | Casing | Other notable fields |
+|---|---|---|---|
+| `bfl/flux-1-kontext-dev` | `imageUrl` | camel | — |
+| `bytedance/seedance-2-fast` | `startImage`, `referenceImages` | camel | — |
+| `topaz/standard-enhance` | `image_url` | snake | `output_format`, `face_enhancement` (snake) |
+| `bfl/flux-1-dev` | `styleImages`, `imageStyleRefs` (**NOT** `image`) | camel | — |
+
+If your model isn't in the table, you must call `get_model_schema` before passing references — do not extrapolate from a related model.
+
 ## Reference image quality
 
 Reference images that are too small (< 512px on the long side) often fail to anchor the generation well, even when the call succeeds. The model can fall back to a fresh text-to-image pass that ignores the reference. For best results:
