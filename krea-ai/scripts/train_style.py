@@ -65,7 +65,7 @@ def main():
     parser.add_argument("--timeout", type=int, default=3600, help="Polling timeout in seconds (default: 3600)")
     parser.add_argument("--skip-validation", action="store_true", help="Skip URL HEAD-check validation")
     parser.add_argument("--output-dir", help="Directory to save training manifest")
-    parser.add_argument("--api-key", help="Krea API token")
+    parser.add_argument("--api-key", help="Krea API key (overrides KREA_API_KEY env var)")
     args = parser.parse_args()
 
     api_key = get_api_key(args.api_key)

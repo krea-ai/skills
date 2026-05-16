@@ -48,7 +48,7 @@ The script:
 | `--timeout` | Polling timeout in seconds | 3600 |
 | `--skip-validation` | Skip URL HEAD-check | false |
 | `--output-dir` | Where to save `training-manifest.json` | — |
-| `--api-key` | Krea API token | env `KREA_API_TOKEN` |
+| `--api-key` | Krea API key | env `KREA_API_KEY` |
 
 ## Type selection
 

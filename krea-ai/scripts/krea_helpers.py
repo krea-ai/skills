@@ -231,9 +231,10 @@ def image_endpoint_uses_single_image_url(endpoint_path):
 # ── API key ──────────────────────────────────────────────
 
 def get_api_key(args_key=None):
-    key = args_key or os.environ.get("KREA_API_TOKEN")
+    # KREA_API_TOKEN is the legacy name; KREA_API_KEY is canonical going forward.
+    key = args_key or os.environ.get("KREA_API_KEY") or os.environ.get("KREA_API_TOKEN")
     if not key:
-        print("Error: No API key provided. Set KREA_API_TOKEN or pass --api-key", file=sys.stderr)
+        print("Error: No API key provided. Set KREA_API_KEY or pass --api-key", file=sys.stderr)
         sys.exit(1)
     return key
 
@@ -315,7 +316,7 @@ def format_api_error(status_code, response_text):
     validation_lines = extract_validation_details(data) if isinstance(data, dict) else []
 
     if status_code == 401:
-        return f"{msg}: Authentication failed. Check your KREA_API_TOKEN."
+        return f"{msg}: Authentication failed. Check your KREA_API_KEY."
     elif status_code == 402:
         err_str = str(error).lower()
         if "insufficient" in err_str or "balance" in err_str:

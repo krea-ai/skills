@@ -501,7 +501,7 @@ def main():
         epilog='Example: pipeline.py --pipeline \'{"steps":[{"action":"generate_image","prompt":"a cat","filename":"cat"}]}\'',
     )
     parser.add_argument("--pipeline", required=True, help="Path to pipeline JSON file, or inline JSON string")
-    parser.add_argument("--api-key", help="Krea API token")
+    parser.add_argument("--api-key", help="Krea API key (overrides KREA_API_KEY env var)")
     parser.add_argument("--dry-run", action="store_true", help="Estimate CU cost without executing")
     parser.add_argument("--resume", action="store_true", help="Skip completed steps (uses .pipeline-state.json manifest)")
     parser.add_argument("--output-dir", help="Output directory for all generated files")

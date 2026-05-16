@@ -50,7 +50,7 @@ Reach for `pipeline.py` when:
 - The pipeline is **long** and could be interrupted (resume support).
 - You want a **dry-run cost estimate** before committing.
 
-It bypasses the MCP and hits the Krea API directly. Needs `KREA_API_TOKEN` set.
+It bypasses the MCP and hits the Krea API directly. Needs `KREA_API_KEY` set.
 
 ```bash
 uv run scripts/pipeline.py --pipeline pipeline.json
@@ -95,7 +95,7 @@ uv run scripts/pipeline.py --pipeline pipeline.json
 | Flag | Description | Default |
 |---|---|---|
 | `--pipeline` | Path to JSON file or inline JSON string (required) | — |
-| `--api-key` | Krea API token | env `KREA_API_TOKEN` |
+| `--api-key` | Krea API key | env `KREA_API_KEY` |
 | `--output-dir` | Output directory for generated files | cwd |
 | `--dry-run` | Estimate CU cost without executing | false |
 | `--resume` | Skip completed steps (uses `.pipeline-state.json`) | false |

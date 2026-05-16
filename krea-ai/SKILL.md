@@ -171,7 +171,7 @@ Load on demand:
 - `scripts/pipeline.py` — multi-step generation pipelines (chain, fan-out, template vars, parallel, resume). See `references/pipelines.md`.
 - `scripts/train_style.py` — train LoRA styles. See `references/lora-training.md`.
 
-Both need `KREA_API_TOKEN` set and run via `uv`. For day-to-day work, prefer the MCP.
+Both need `KREA_API_KEY` set and run via `uv`. For day-to-day work, prefer the MCP.
 
 ## Vertical skills
 

@@ -92,7 +92,7 @@ For multi-step batch pipelines or LoRA training, the package ships standalone Py
 - `krea-ai/scripts/pipeline.py` — multi-step pipelines (chain, fan-out, parallel, resume)
 - `krea-ai/scripts/train_style.py` — LoRA training for brand styles, products, characters
 
-Both require `KREA_API_TOKEN` set and `uv` installed.
+Both require `KREA_API_KEY` set and `uv` installed.
 
 ## Repository structure
 
@@ -168,7 +168,7 @@ Single-source version: `VERSION` file at repo root. CI enforces that `VERSION`, 
 
 ## API key (only for power-user scripts)
 
-Get your token at [krea.ai/settings/api-tokens](https://krea.ai/settings/api-tokens). Set it as `KREA_API_TOKEN` for `pipeline.py` and `train_style.py`. The MCP-backed skills handle auth on their own.
+Get your key at [krea.ai/settings/api-tokens](https://krea.ai/settings/api-tokens). Set it as `KREA_API_KEY` for `pipeline.py` and `train_style.py`. The MCP-backed skills handle auth on their own. (Legacy `KREA_API_TOKEN` is still honored as a fallback, but is deprecated.)
 
 ## Evals
 
