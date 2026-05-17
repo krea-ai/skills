@@ -1,6 +1,6 @@
 {
   "name": "krea",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Krea AI skills: image and video generation via CLI by default with MCP fallback, architectural visualization, marketing creative, and developer integration patterns.",
   "author": {
     "name": "Krea AI",

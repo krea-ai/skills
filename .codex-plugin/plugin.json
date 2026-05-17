@@ -1,6 +1,6 @@
 {
   "name": "krea",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Image/video generation, architectural visualization, marketing creative, and developer integration patterns via the Krea CLI by default with MCP fallback.",
   "author": {
     "name": "Krea AI",

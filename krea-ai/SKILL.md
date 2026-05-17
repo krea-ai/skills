@@ -1,7 +1,7 @@
 ---
-version: 0.1.0
+version: 0.2.0
 name: krea-ai
-description: "Generate images, videos, and enhance/upscale through Krea's full model lineup via the Krea CLI by default, with Krea MCP as a fallback. Routes intent to the right model from a live catalog (Flux, Imagen, GPT Image, Ideogram, Seedream for images; Kling, Veo, Hailuo, Wan for video; Topaz for upscaling) without hardcoding model names. Use when the user wants to generate an image or video, enhance a photo, animate a still, or build a multi-step creative workflow. For LoRA training and repeatable pipelines, see references/lora-training.md and references/pipelines.md."
+description: "Generate images, videos, and enhance/upscale through Krea's full model lineup via the Krea CLI by default, with Krea MCP as a fallback. Routes intent to the right model from a live catalog (Flux, Imagen, GPT Image, Ideogram, Seedream for images; Kling, Veo, Hailuo, Wan for video; Topaz for upscaling) without hardcoding model names. Use when the user wants to generate an image or video, enhance a photo, animate a still, or build a multi-step creative workflow. For video work, the canonical flow is storyboard-first / interactive (see references/storyboard-method.md). For LoRA training and repeatable pipelines, see references/lora-training.md and references/pipelines.md."
 license: MIT
 ---
 
@@ -74,14 +74,21 @@ If the user is annoyed by the nag, tell them: `touch ~/.krea-skills/update-check
 ## UX Rules
 
 1. **Be concise.** Send the result URL + a one-line summary. No raw IDs, no JSON dumps, no narration of `list_models`/`get_model_schema` chatter.
-2. **No premature questions.** Pick a sane default model and submit. Ask only when the brief is genuinely ambiguous (e.g. "make a video" with no subject).
-3. **Don't proactively explain model selection.** If the user asks ("why this model?", "what about X?") then explain in one line. Otherwise stay silent on the choice.
-4. **Detect the user's language** from their first message and reply in it. Technical args (parameter names, IDs) stay English.
-5. **Vision-first.**
+2. **No premature questions for image / enhance — pick a sane default and submit.** Ask only when the brief is genuinely ambiguous (e.g. "make an image" with no subject).
+3. **Video is different: clarify and storyboard FIRST. Always.** Video jobs cost ~100× an image (e.g. ~1564 CU per 15s seedance-2 720p) and run 8–15 min. Skipping clarification or generating without an approved storyboard burns credits *and* trust — you end up delivering "videos random que no tenen sentit". The canonical flow for every video request:
+   1. **Clarify in one short message** (single batched ask, skip whatever the user already volunteered): aspect (9:16 / 16:9 / 1:1), duration (5 / 10 / 15s), one-line concept/mood, identity refs needed (face photos / brand assets / mascot), style notes (palette, brand, references), and 4–6 key beats.
+   2. **Generate storyboard(s) first** — 1 if the brief is tight, 2–3 variations if loose. Use a text-friendly image model (e.g. `openai/gpt-image-2`, pulled live from `list_models`) at high quality.
+   3. **Show the user, wait for the pick** before any `generate video` call. Iterate on the storyboard (cheap, fast) until the user OKs it — never on the video.
+   4. **Then animate** with `bytedance/seedance-2` (NOT `seedance-2-fast` unless the user explicitly asks for speed), 720p, the user's chosen aspect. Use a TIMELINE prompt (`0:00–0:Xs` / `0:Xs–0:Ys`…) plus STYLE / CAMERA / TRANSITIONS / OUTPUT blocks.
+
+   For ≤15s vertical/square social shorts, follow the single-storyboard-sheet method in `references/storyboard-method.md` (the default). For >15s narrative work with multiple disparate scenes, use the multi-scene approach in `references/video-production.md`.
+4. **Don't proactively explain model selection.** If the user asks ("why this model?", "what about X?") then explain in one line. Otherwise stay silent on the choice.
+5. **Detect the user's language** from their first message and reply in it. Technical args (parameter names, IDs) stay English.
+6. **Vision-first.**
    - When the user attaches an image, `Read` it with vision **before** generating to understand context.
    - When generation finishes, download the result and `Read` it. Verify it matches the brief. If it clearly doesn't, say so and offer to retry — don't pretend a bad output is fine.
    - Vision here is the agent's own image reading (`Read` tool on local files). It is **different** from `upload_asset`, which sends a file to Krea's servers as a reference for a model. Use both, for different purposes.
-6. **No raw model IDs in chat output.** Mention model names only if the user asks.
+7. **No raw model IDs in chat output.** Mention model names only if the user asks.
 
 ## Workflow
 
@@ -167,13 +174,23 @@ result = generate_image(model=<id>, input={prompt, ...}, sync=true, timeoutSecon
 result = enhance_image(model=<id>, input={imageUrl, width, height, ...}, sync=true, timeoutSeconds=60)
 ```
 
-**Video** routinely runs longer than the 300s sync cap. Always async + poll.
+**Video** routinely runs longer than the 300s sync cap, AND is expensive enough that you must follow the storyboard-first flow from UX rule 3 — do NOT submit a `generate video` call before the user has approved a storyboard. See `references/storyboard-method.md` (default, ≤15s social) or `references/video-production.md` (multi-scene narrative).
+
+Once the storyboard is approved, video is always async + poll:
 
 **CLI:**
 ```bash
-JOB=$(krea generate video -m <id> -p "..." --json | jq -r .job_id)
+JOB=$(krea generate video -m bytedance/seedance-2 \
+  --aspect 9:16 --duration 15 \
+  -i resolution=720p \
+  -i referenceImages='["<storyboard-url>"]' \
+  -p "<timeline-prompt>" --json | jq -r .job_id)
 krea jobs wait $JOB --json   # blocks server-side until terminal
 ```
+
+Do NOT pass `--start-image` when you need the output aspect to follow `--aspect` — a `startImage` forces the output to match the source image dimensions. For 9:16 vertical, leave `--start-image` empty and let `referenceImages` carry the visual reference.
+
+Avoid the words "slow", "gentle", "soft" in seedance prompts — they force slow-motion playback. Use "smooth", "steady", "fluid" instead.
 
 `krea jobs wait` does the polling for you — no loop in your code. See `references/async-polling.md` for status semantics and `references/cli-or-mcp.md` for the full parallel reference.
 
@@ -221,7 +238,8 @@ Load on demand:
 - `references/async-polling.md` — the 300s sync cap, exact `get_job` loop
 - `references/troubleshooting.md` — error codes and what they mean
 - `references/cookbook.md` — five worked end-to-end recipes
-- `references/video-production.md` — multi-scene shot-list workflow
+- `references/storyboard-method.md` — **canonical** single-storyboard-sheet flow for ≤15s social/vertical video
+- `references/video-production.md` — multi-scene shot-list workflow for >15s narrative video
 - `references/pipelines.md` — multi-step orchestration patterns (agent-driven and via `krea-build` for repeatable scripts in the user's stack)
 - `references/lora-training.md` — LoRA training API surface and language-neutral examples
 

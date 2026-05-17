@@ -1,8 +1,19 @@
 # Video Production — Multi-Scene Storytelling
 
-Create multi-scene videos with AI-generated visuals using the Krea MCP for generation and `ffmpeg` for post-production. Works for short films, product launches, team intros, promo reels, music videos, explainers, event recaps.
+Create multi-scene videos with AI-generated visuals using the Krea CLI (or MCP fallback) for generation and `ffmpeg` for post-production. Works for short films, product launches, team intros, promo reels, music videos, explainers, event recaps — anywhere you need **multiple distinct cuts** stitched together.
 
-> Requires: the Krea MCP (`mcp__krea-public-api__*`), `ffmpeg`.
+> Requires: the Krea CLI (`krea`) or the Krea MCP (`mcp__krea-public-api__*`), plus `ffmpeg`.
+
+## Pick the right workflow first
+
+| Brief                                                  | Use |
+|---|---|
+| ≤15s vertical/square social short (GRWM, ad, UGC, "day in the life") | `storyboard-method.md` — **default for social** |
+| One character, one location, single continuous video    | `storyboard-method.md` |
+| >15s with multiple distinct cuts / locations / subjects | **this file** |
+| Narrative short film, multi-scene product launch, promo reel with hard cuts between disparate scenes | **this file** |
+
+If unsure, default to the single-storyboard-sheet method (`storyboard-method.md`). It produces a more coherent result for almost every social brief, and avoids the "varis videos enganxats" (stitched snippets) feel that multi-scene concatenation can have when overused.
 
 ## The golden rule
 
@@ -11,10 +22,21 @@ Create multi-scene videos with AI-generated visuals using the Krea MCP for gener
 Video generation is expensive and slow. Image generation is cheap and fast. Get the visuals right as stills, get user approval, **then** animate.
 
 ```
-Plan shot list → Generate frames → User reviews each frame → Animate approved frames → Normalize → Concat → Add audio
+Clarify brief → Plan shot list → Generate frames → User reviews each frame → Animate approved frames → Normalize → Concat → Add audio
 ```
 
 Generating all videos before the user has even seen the first frame is a bad workflow. Approval comes first.
+
+## Before any frame: clarify
+
+Same single-batched ask as in `storyboard-method.md`. Don't skip it:
+
+- Aspect (9:16 / 16:9 / 1:1)
+- Target total duration
+- Concept / mood
+- Identity refs needed (face photos / brand assets / mascot)
+- Style notes (palette, brand, references)
+- Beat list (the shot list you'll work from)
 
 ---
 
@@ -245,6 +267,12 @@ Power keywords: "cinematic", "dramatic lighting", "editorial photography", "volu
 
 Describe what HAPPENS — motion, not the static scene.
 
+**Banned words for seedance**: "slow", "gentle", "soft", "slow motion" — seedance literally interprets these as slow-motion playback. Use "smooth", "steady", "fluid" instead unless slow-mo is the actual intent.
+
+**Aspect-ratio trap**: if you pass a horizontal `startImage`, seedance forces a horizontal output even with `--aspect 9:16`. For vertical output, either use a vertical start frame, or omit `--start-image` and let `referenceImages` carry the visual reference.
+
+**Cost note**: seedance-2 15s 720p ≈ 1564 CU and runs 8–15 min per job. Prefer `seedance-2` over `seedance-2-fast` for quality unless the user explicitly asks for speed.
+
 ```
 Keynote:
 "The speakers gesture toward the screen, camera slowly pushes in, audience applauds, spotlights shift"
@@ -300,6 +328,12 @@ When the user wants to replace a single scene in an already-assembled video:
 | Concat produces glitches | Mixed resolutions/codecs/framerates | Normalize ALL clips to identical specs before concat |
 | Title cards too long | Default video duration is 5s | Trim to 1.5–2s with `ffmpeg -t` |
 | `bc: command not found` | bc not installed | Use `python3 -c "print(...)"` for float math |
+| Output is slow motion | Prompt contained "slow", "gentle", "soft" | Strip those words, rewrite with "smooth", "steady", "fluid" |
+| Output is horizontal despite `--aspect 9:16` | Passed a landscape `--start-image` | Drop start-image, rely on `referenceImages`; or generate a vertical start frame |
+| Video feels like "varis videos enganxats" (snippets stitched) | Multi-scene concat on a brief that wanted a single coherent video | Switch to the single-storyboard-sheet method in `storyboard-method.md` |
+| `krea upload --json` returns empty `url` | Known issue #6 | Resolve `id` via `GET https://api.krea.ai/assets/<id>`, read `.image_url` |
+| External (non-Krea) URL rejected by Kontext/Seedream-4 | Known issue #7 | Always upload local assets to Krea first; use Krea-hosted URLs |
+| Identity drift across cuts | Single face ref / weak likeness | Pass 2–3 face refs from varied angles; if still weak, train a LoRA (`lora-training.md`) |
 
 ---
 
