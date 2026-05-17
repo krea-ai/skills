@@ -1,5 +1,5 @@
 ---
-version: 0.1.0
+version: 0.2.0
 name: krea-build
 description: "Patterns for building applications that integrate the Krea API. Auth, polling discipline, error handling, validation, frontend integration (SvelteKit/React/Vue), and the 'prototype in chat, productize in app' workflow. Use when the user is writing code that calls the Krea API directly — building a generator UI, a content pipeline, a creative tool — not when they just want to generate one image. For interactive generation use the sibling krea-ai skill instead."
 license: MIT

@@ -8,8 +8,8 @@
     {
       "name": "krea",
       "source": "./",
-      "description": "Image/video generation, architectural visualization, marketing creative, and developer integration patterns via the Krea CLI by default with MCP fallback.",
-      "version": "0.1.0",
+      "description": "Intent-first Krea workflows for image/video generation, architectural visualization, marketing creative, enhancement, LoRA training, and developer integration patterns.",
+      "version": "0.2.0",
       "skills": [
         {
           "name": "ai",

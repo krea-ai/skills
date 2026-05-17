@@ -1,7 +1,7 @@
 {
   "name": "krea",
-  "version": "0.1.0",
-  "description": "Image/video generation, architectural visualization, marketing creative, and developer integration patterns via the Krea CLI by default with MCP fallback.",
+  "version": "0.2.0",
+  "description": "Intent-first Krea workflows for image/video generation, architectural visualization, marketing creative, enhancement, LoRA training, and developer integration patterns.",
   "author": {
     "name": "Krea AI",
     "url": "https://krea.ai"
@@ -21,8 +21,8 @@
   "skills": "./",
   "interface": {
     "displayName": "Krea AI",
-    "shortDescription": "Generate images and videos with Krea's full model lineup, plus vertical playbooks for archviz and marketing.",
-    "longDescription": "Krea AI Skills turn your agent into a Krea-native creative collaborator. Four skills layer together: krea-ai routes raw image and video generation through the Krea CLI by default, with MCP as fallback; krea-archviz adds architectural visualization workflows (3D-screenshot-to-render, materials, lighting, multi-image composition); krea-marketing covers product photography, video ads, brand-consistent batch generation, and click-to-ad pipelines; krea-build helps developers integrate Krea into their own applications.",
+    "shortDescription": "Generate images and videos with Krea through intent-first workflow prefabs.",
+    "longDescription": "Krea AI Skills turn your agent into a Krea-native creative collaborator. krea-ai is now the canonical intent-first router for image, video, enhancement, LoRA, product, campaign, and archviz workflows. krea-marketing and krea-archviz remain as redirect stubs for compatibility, while krea-build helps developers integrate Krea into their own applications.",
     "developerName": "Krea AI",
     "category": "Design",
     "capabilities": [
