@@ -1,5 +1,5 @@
 ---
-version: 2.1.0
+version: 0.1.0
 name: krea-marketing
 description: "Commercial creative workflows with Krea — product photography (hero, lifestyle, white-background, social-square), video ads (UGC, talking head, product showcase, before/after, demo), brand-consistent batch generation via LoRA training, and click-to-ad pipelines (URL → product info → hero image → social variants). Use when the user asks for a product photo, ad, commercial creative, social media content, marketing campaign, brand assets, UGC video, or anything DTC-flavored. NOT for architectural visualization (use krea-archviz) or generic image generation (use krea-ai)."
 license: MIT
@@ -11,7 +11,7 @@ A vertical skill for product photography, video ads, and brand creative. Built o
 
 ## Bootstrap
 
-Requires the Krea MCP server (`mcp__krea-public-api__*` tools). Inherits all bootstrap and UX rules from `../krea-ai/SKILL.md`. For click-to-ad workflows, also requires `WebFetch` to be available.
+Requires the Krea CLI (`npm install -g @krea-ai/cli && krea auth login`) by default, with Krea MCP (`mcp__krea-public-api__*` tools) as the fallback if the CLI is unavailable. See `../krea-ai/SKILL.md` Bootstrap section for full detection + install flow, and `../krea-ai/references/cli-or-mcp.md` for the parallel operation table. This skill inherits all bootstrap and UX rules from `../krea-ai/SKILL.md`. For click-to-ad workflows, also requires `WebFetch` to be available.
 
 ## When to use this skill
 
@@ -63,7 +63,7 @@ Each has model archetype, prompt template, duration, aspect, audio flag in `refe
 For repeat campaigns where the brand look should hold across many generations.
 
 ```
-1. Train a brand LoRA via ../krea-ai/scripts/train_style.py with 15-20 brand images
+1. Train a brand LoRA via the `/styles/train` API with 15-20 brand images (see `../krea-ai/references/lora-training.md`). One-off: run curl inline. Repeatable: agent writes a training script in the user's stack via `krea-build`.
 2. Pin the resulting style_id in KREA_PREFERENCES.md (see `../krea-ai/references/preferences.md`)
 3. For each subsequent generation, include the style_id with strength ~0.8-1.0
 4. Iterate strength based on how dominant the brand style should be
@@ -169,7 +169,7 @@ A "champion" on the marketing team owns this file; the rest of the team's agent 
 
 Be honest about the gaps so the user knows when the skill is the wrong tool:
 
-- **Pre-built avatar / talent library.** No curated face library server-side. For UGC or talking-head video with a specific presenter, the user uploads photos as references — or trains a character LoRA via `../krea-ai/scripts/train_style.py` if the schema supports `Character` type. Identity drift is real; vision-verify after every generation.
+- **Pre-built avatar / talent library.** No curated face library server-side. For UGC or talking-head video with a specific presenter, the user uploads photos as references — or trains a character LoRA via the `/styles/train` API with `type: "Character"` (see `../krea-ai/references/lora-training.md`). Identity drift is real; vision-verify after every generation.
 - **URL-based brand-kit extraction.** No automatic logo / palette / font scraping from a brand website beyond what `WebFetch` returns as text. The user provides those explicitly.
 - **Pre-composed ad-format layouts.** No template gallery for "headline format", "carousel slide 1", etc. The user describes the layout intent in the prompt and we render it.
 - **In-platform performance data.** No CTR / engagement integration. The user runs ads externally and feeds winners back as references for the next batch.

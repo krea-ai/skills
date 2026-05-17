@@ -1,7 +1,7 @@
 {
   "name": "krea",
-  "version": "2.1.0",
-  "description": "Image/video generation, architectural visualization, marketing creative, and developer integration patterns via the Krea public API MCP.",
+  "version": "0.1.0",
+  "description": "Image/video generation, architectural visualization, marketing creative, and developer integration patterns via the Krea CLI by default with MCP fallback.",
   "author": {
     "name": "Krea AI",
     "url": "https://krea.ai"
@@ -22,7 +22,7 @@
   "interface": {
     "displayName": "Krea AI",
     "shortDescription": "Generate images and videos with Krea's full model lineup, plus vertical playbooks for archviz and marketing.",
-    "longDescription": "Krea AI Skills turn your agent into a Krea-native creative collaborator. Four skills layer together: krea-ai routes raw image and video generation through the Krea MCP server; krea-archviz adds architectural visualization workflows (3D-screenshot-to-render, materials, lighting, multi-image composition); krea-marketing covers product photography, video ads, brand-consistent batch generation, and click-to-ad pipelines; krea-build helps developers integrate Krea into their own applications. Auth and request shapes are handled by the MCP server, so no per-machine API key setup is needed for Claude users.",
+    "longDescription": "Krea AI Skills turn your agent into a Krea-native creative collaborator. Four skills layer together: krea-ai routes raw image and video generation through the Krea CLI by default, with MCP as fallback; krea-archviz adds architectural visualization workflows (3D-screenshot-to-render, materials, lighting, multi-image composition); krea-marketing covers product photography, video ads, brand-consistent batch generation, and click-to-ad pipelines; krea-build helps developers integrate Krea into their own applications.",
     "developerName": "Krea AI",
     "category": "Design",
     "capabilities": [

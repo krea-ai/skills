@@ -1,5 +1,5 @@
 ---
-version: 2.1.0
+version: 0.1.0
 name: krea-archviz
 description: "Architectural visualization workflows with Krea — turn 3D screenshots from Sketchup, Rhino, Revit, or Blender into photoreal renders; compose interior or exterior scenes from multiple reference images; explore materials, lighting, and time-of-day variants. Use when the user asks for a render, an architectural visualization, an interior or exterior, a facade study, a moodboard for a building or space, or wants to apply a different style to a 3D model output. NOT for product photography (use krea-marketing) or generic image generation (use krea-ai)."
 license: MIT
@@ -13,7 +13,7 @@ If you're handling a generic image request (cyberpunk cat, anime character, ad c
 
 ## Bootstrap
 
-Requires the Krea MCP server (`mcp__krea-public-api__*` tools). If they're missing, route the user to install Krea MCP first — same prerequisite as `krea-ai`. See `../krea-ai/SKILL.md` for the full bootstrap and UX rules; this skill inherits them.
+Requires the Krea CLI (`npm install -g @krea-ai/cli && krea auth login`) by default, with Krea MCP (`mcp__krea-public-api__*` tools) as the fallback if the CLI is unavailable. See `../krea-ai/SKILL.md` Bootstrap section for full detection + install flow, and `../krea-ai/references/cli-or-mcp.md` for the parallel operation table. This skill inherits all UX rules from `../krea-ai/SKILL.md`.
 
 ## When to use this skill
 

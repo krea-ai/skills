@@ -1,121 +1,203 @@
-# LoRA Training
+# LoRA Style Training
 
-LoRA (Low-Rank Adaptation) training lets you teach a model a custom **style**, **object**, or **character** from a handful of example images. Once trained, the resulting `style_id` can be plugged into compatible Krea generation calls to produce on-brand or character-consistent output.
+Train a custom style, object, or character from 15–20 reference images, then use the resulting `style_id` in generations to keep output on-brand or character-consistent.
 
-LoRA training is **not** exposed through the MCP today. Use the `scripts/train_style.py` companion script.
+The Krea CLI doesn't currently expose training as a subcommand, and the MCP doesn't either. Training is done by hitting the Krea HTTP API directly. The skill ships **no Python scripts** — the agent writes the training flow in the user's stack via `krea-build` if they want a reusable script, or runs it inline via curl for a one-off.
 
-## Quick start
+## API surface
+
+| Operation | Method | Endpoint |
+|---|---|---|
+| Submit training job | `POST` | `/styles/train` |
+| Poll job status | `GET` | `/jobs/{job_id}` |
+| Use trained style | (per-model) | include `styleId` in `generate_image` input, per the model's schema |
+
+Authentication: `Authorization: Key ${KREA_API_KEY}` header. Get a key at [krea.ai/settings/api-keys](https://www.krea.ai/settings/api-keys).
+
+## Training request shape
+
+```json
+POST /styles/train
+{
+  "model": "flux_dev",
+  "type": "Style",
+  "name": "acmebrand-2026q2",
+  "urls": [
+    "https://your-cdn.com/brand-photo-01.jpg",
+    "https://your-cdn.com/brand-photo-02.jpg",
+    "..."
+  ],
+  "trigger_word": "acmebrand",
+  "learning_rate": 0.0001,
+  "max_train_steps": 1000,
+  "batch_size": 1
+}
+```
+
+### Fields
+
+| Field | Required | Notes |
+|---|---|---|
+| `model` | yes | Base: `flux_dev`, `flux_schnell`, `wan`, `qwen`, `z-image` |
+| `type` | yes | `Style` (aesthetic), `Object` (specific product), `Character` (face/person), or `Default` |
+| `name` | yes | Human-readable identifier |
+| `urls` | yes | 3–2000 hosted image URLs. Validate they're reachable before submitting. |
+| `trigger_word` | no | Token to activate the style in prompts. Pick something unique like `acmestyle`. |
+| `learning_rate` | no | Default 0.0001 |
+| `max_train_steps` | no | Default 1000. Bump to 1500 for harder briefs. |
+| `batch_size` | no | Default 1 |
+
+### Response
+
+```json
+{ "job_id": "<uuid>", "status": "queued", ... }
+```
+
+Poll `GET /jobs/{job_id}` every 30–60s. Terminal status is `completed` or `failed`. On `completed`, the response includes `result.id` (or `result.style_id`) — that's your `style_id`.
+
+Typical training time: 15–45 minutes.
+
+## Worked examples (language-neutral, agent picks the user's stack)
+
+### curl (one-off)
 
 ```bash
-uv run scripts/train_style.py \
-  --name "acme-brand" \
-  --model flux_dev \
-  --type Style \
-  --trigger-word "acmestyle" \
-  --urls-file brand-images.txt \
-  --output-dir output/acme-brand
+KEY="$KREA_API_KEY"
+
+JOB=$(curl -sf -X POST https://api.krea.ai/styles/train \
+  -H "Authorization: Key $KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "flux_dev",
+    "type": "Style",
+    "name": "acmebrand-2026q2",
+    "urls": ["https://cdn/brand-01.jpg", "https://cdn/brand-02.jpg"],
+    "trigger_word": "acmebrand",
+    "max_train_steps": 1000
+  }' | jq -r .job_id)
+
+# Poll
+while :; do
+  STATUS=$(curl -sf "https://api.krea.ai/jobs/$JOB" -H "Authorization: Key $KEY" | jq -r .status)
+  echo "Status: $STATUS"
+  case "$STATUS" in
+    completed) break ;;
+    failed|cancelled) echo "Training failed"; exit 1 ;;
+  esac
+  sleep 60
+done
+
+curl -sf "https://api.krea.ai/jobs/$JOB" -H "Authorization: Key $KEY" | jq -r '.result.id'
 ```
 
-`brand-images.txt` is a text file with one URL per line:
+### Python (if the user's project is Python)
 
+```python
+import os, time, requests
+
+KEY = os.environ["KREA_API_KEY"]
+H = {"Authorization": f"Key {KEY}"}
+
+r = requests.post("https://api.krea.ai/styles/train", headers=H, json={
+    "model": "flux_dev",
+    "type": "Style",
+    "name": "acmebrand-2026q2",
+    "urls": ["https://cdn/brand-01.jpg", "https://cdn/brand-02.jpg"],
+    "trigger_word": "acmebrand",
+    "max_train_steps": 1000,
+})
+r.raise_for_status()
+job_id = r.json()["job_id"]
+
+while True:
+    s = requests.get(f"https://api.krea.ai/jobs/{job_id}", headers=H).json()
+    if s["status"] == "completed":
+        print(s["result"]["id"])
+        break
+    if s["status"] in ("failed", "cancelled"):
+        raise RuntimeError(s.get("error") or s["status"])
+    time.sleep(60)
 ```
-https://your-cdn.com/brand-photo-01.jpg
-https://your-cdn.com/brand-photo-02.jpg
-# ... 15-20 total
+
+### TypeScript (if the user's project is Node)
+
+```typescript
+const KEY = process.env.KREA_API_KEY!;
+const H = { Authorization: `Key ${KEY}`, "Content-Type": "application/json" };
+
+const start = await fetch("https://api.krea.ai/styles/train", {
+  method: "POST",
+  headers: H,
+  body: JSON.stringify({
+    model: "flux_dev",
+    type: "Style",
+    name: "acmebrand-2026q2",
+    urls: ["https://cdn/brand-01.jpg", "https://cdn/brand-02.jpg"],
+    trigger_word: "acmebrand",
+    max_train_steps: 1000,
+  }),
+}).then(r => r.json());
+
+let job;
+while (true) {
+  job = await fetch(`https://api.krea.ai/jobs/${start.job_id}`, { headers: H }).then(r => r.json());
+  if (job.status === "completed") break;
+  if (["failed", "cancelled"].includes(job.status)) throw new Error(job.status);
+  await new Promise(r => setTimeout(r, 60_000));
+}
+console.log(job.result.id);
 ```
 
-The script:
-
-1. Loads the URLs (and/or local files passed via `--urls`).
-2. If any are local file paths, uploads them via Krea's assets API to get hosted URLs.
-3. HEAD-checks every URL to catch 404s before wasting compute.
-4. Submits the training job and polls until done (15–45 minutes typical).
-5. Prints the `style_id` to stdout and saves `training-manifest.json` to `--output-dir`.
-
-## Parameters
-
-| Flag | Description | Default |
-|---|---|---|
-| `--name` | Style name (required) | — |
-| `--model` | Base model: `flux_dev`, `flux_schnell`, `wan`, `wan22`, `qwen`, `z-image` | `flux_dev` |
-| `--type` | LoRA type: `Style`, `Object`, `Character`, `Default` | `Style` |
-| `--urls` | Training image URLs (space-separated) | — |
-| `--urls-file` | Text file with one URL per line | — |
-| `--trigger-word` | Word to activate the LoRA in prompts | — |
-| `--learning-rate` | Learning rate | 0.0001 |
-| `--max-train-steps` | Max training steps | 1000 |
-| `--batch-size` | Training batch size | 1 |
-| `--timeout` | Polling timeout in seconds | 3600 |
-| `--skip-validation` | Skip URL HEAD-check | false |
-| `--output-dir` | Where to save `training-manifest.json` | — |
-| `--api-key` | Krea API token | env `KREA_API_TOKEN` |
+For a production-grade client (retries, validation, error handling), see `../../krea-build/references/api-client.md`.
 
 ## Type selection
 
-- **`Style`** — a visual aesthetic (color palette, lighting style, brand look). 15–20 varied images of that aesthetic across different subjects.
-- **`Object`** — a specific product or item that should appear across new scenes. 10–20 photos of that object from multiple angles.
-- **`Character`** — a specific person or character (face, body, clothing). 15–30 reference photos from varied angles, expressions, and lighting.
-- **`Default`** — the model picks based on the training data. Use only when none of the above clearly applies.
+- **`Style`** — visual aesthetic across varied subjects. 15–20 images.
+- **`Object`** — specific product or item across angles and contexts. 10–20 photos.
+- **`Character`** — specific person or character. 15–30 references with varied expressions / lighting / outfits.
+- **`Default`** — model picks based on training data. Use only when none of the above clearly fits.
 
-## Training image guidance
+## Training-set guidance
 
-- **Count.** 15–20 images is the sweet spot. Fewer than 10 often underfits; more than 30 is rarely worth the extra training time.
-- **Variety.** For `Style`, vary subjects but keep the aesthetic consistent. For `Object`, vary angles and backgrounds. For `Character`, vary expressions, lighting, and outfits while keeping the face consistent.
-- **Quality.** Sharp, high-resolution images (≥1024px on the long side). Blurry or low-res inputs propagate as visual noise into the LoRA.
-- **Backgrounds.** Mix neutral and contextual backgrounds so the LoRA learns what's the subject and what's the scene.
+- **Count**: 15–20 is the sweet spot. <10 underfits. >30 rarely improves.
+- **Variety**: vary subjects for `Style` (keep aesthetic consistent), vary angles for `Object`, vary expressions for `Character`.
+- **Quality**: ≥1024px on the long side. Blurry inputs propagate as visual noise.
+- **Pre-flight**: HEAD-check every URL is reachable (`curl -sfI <url>`) before submitting. The API will fail mid-training on a bad URL.
 
-## Trigger words
+## Using the trained style
 
-The trigger word is a token the model learns to associate with the LoRA. When included in a prompt at generation time, it activates the trained style.
-
-- Pick something **unique and unambiguous** — avoid common English words.
-- Examples: `acmestyle`, `brandxbrand`, `personcharacter`, `productitem01`.
-- The trigger does not need to mean anything in English; the model learns the association.
-
-## Using the trained style at generation time
-
-The `style_id` is printed when training completes. Save it (the manifest does this automatically).
-
-Pass it into compatible image-generation calls. The exact input field depends on the model — check `mcp__krea-public-api__get_model_schema(model=<id>)` to confirm. Common shapes:
+The `style_id` is passed into compatible image-generation calls. Different models accept it under different field names — check `mcp__krea-public-api__get_model_schema(model=<id>)` (or `krea models show <id>`) for the exact shape. Common shapes:
 
 - `styleId: "<id>"` and `styleStrength: 1.0`
-- Or `styles: [{ id: "<id>", strength: 1.0 }]`
+- `styles: [{ id: "<id>", strength: 1.0 }]`
 
-Include the trigger word in the prompt to activate the style:
+Include the trigger word in the prompt to activate the style.
 
-```
-generate_image(
-  model="<style-aware image model>",
-  input={
-    prompt: "acmestyle product on clean white background, studio lighting",
-    styleId: "style_abc123",
-    styleStrength: 1.0,
-  },
-  sync=true,
-)
-```
+### Strength tuning
 
-**Strength tuning:**
-- `0.5` — subtle hint of the style; mostly the base model's behavior
-- `1.0` — balanced (default)
-- `1.5` — strong; the LoRA dominates the look
-- `2.0` — usually overdriven; outputs look uniform
+- `0.5` — subtle hint
+- `0.85` — balanced (good default)
+- `1.0` — strong
+- `≥1.5` — usually overdriven
 
-## Saving the style_id for the project
+If outputs ignore the trigger word, the LoRA underfit — retrain with more or better images, or with `max_train_steps: 1500`. If outputs look uniform regardless of prompt, it overfit — drop strength to 0.5–0.7 at generation time, or retrain with fewer steps.
 
-After a successful training, pin the style ID in `KREA_PREFERENCES.md` so future sessions reuse it:
+## Pinning style IDs in the project
+
+For repeat use, pin the resulting `style_id` in the project's `KREA_PREFERENCES.md` (or `## Krea preferences` section in `CLAUDE.md`) so future sessions automatically apply it:
 
 ```markdown
 ## Krea preferences
 
-- Brand style: `style_abc123` (trigger word: `acmestyle`, trained 2026-05-13)
-- Default image archetype: high-fidelity with the brand style applied
+- Brand style ID: style_abc123 (trigger: acmebrand, trained 2026-05-17)
+- Default style strength: 0.85
 ```
 
-## Troubleshooting
+See `preferences.md` for the override mechanism.
 
-- **`Need at least 3 training images, got X`** — the API requires a minimum. 15+ recommended.
-- **HEAD-check failures** — the script lists every bad URL. Fix the URLs or use `--skip-validation` if you know they're fine (e.g. signed URLs that reject HEAD).
-- **Training timed out** — bump `--timeout`. Large datasets or `flux_dev` with high steps can run 30+ minutes.
-- **Trained style ignores the trigger word** — usually a sign the LoRA underfit. Retrain with more images or `--max-train-steps 1500`.
-- **Trained style overpowers everything** — overfit. Use `style_strength: 0.5–0.7` at generation time, or retrain with fewer steps (`--max-train-steps 600`).
+## When to write training into a script
+
+- **One-off**: curl inline or run a snippet in `python -c` / `node -e`. No script needed.
+- **Repeatable** (re-train per quarter, per brand drop, etc.): the agent writes a training script in the user's stack via `krea-build`. Don't ship a Python script the user has to keep alive.
+
+If/when the Krea CLI adds a `krea styles train` subcommand, this whole reference becomes simpler — but as of v1.0.0, the API surface above is the source of truth.

@@ -6,7 +6,7 @@
 ToolError: mcp__krea-public-api__... is not available
 ```
 
-The Krea MCP server isn't installed. Tell the user to install it and pause. Don't fall back to the API directly — that's what `scripts/` is for, and only for batch pipelines or LoRA training.
+The Krea MCP server isn't installed. The CLI is the default surface, so first check `which krea && krea doctor 2>&1 | head -5`. If the CLI is healthy, use it. If the CLI is unavailable and MCP is missing too, tell the user to install the CLI or connect the MCP. Don't fall back to direct HTTP for normal generation; direct HTTP is only for documented custom workflows like LoRA training or code generated via `krea-build`.
 
 ## Authentication
 

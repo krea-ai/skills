@@ -1,6 +1,6 @@
 {
   "name": "krea-ai-skill",
-  "version": "2.1.0",
+  "version": "0.1.0",
   "description": "Four Agent Skills for Krea.ai: krea-ai (router), krea-archviz (architectural visualization), krea-marketing (commercial creative), krea-build (developer integration). Image, video, enhancement, LoRA training, multi-step pipelines.",
   "keywords": ["agent-skill", "krea", "image-generation", "video-generation", "ai-art", "lora", "mcp", "archviz", "marketing"],
   "author": "Krea AI",

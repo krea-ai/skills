@@ -1,6 +1,6 @@
 # Brand Consistency via LoRA
 
-When a brand needs visual consistency across many generations — same color treatment, same compositional language, same vibe — train a brand LoRA once and apply the resulting `style_id` to every subsequent generation. This is the difference between "looks AI-generated" and "looks on-brand."
+When a brand needs visual consistency across many generations — same palette, same compositional language, same vibe — train a brand LoRA once and apply the resulting `style_id` to every subsequent generation. The difference between "looks AI-generated" and "looks on-brand."
 
 ## When to use this
 
@@ -28,31 +28,41 @@ Quality matters more than quantity. The training set should:
 
 If the brand has fewer than 15 strong images, the LoRA will underfit. Train on what you have but expect 0.6-0.7 style strength to feel right rather than 1.0.
 
-### Step 2: Train
+### Step 2: Train via the Krea API
 
-Use the `train_style.py` script that ships with `krea-ai`. Resolve its absolute path first — agents typically run from the user's working directory, not the skill directory:
+LoRA training is exposed as a direct API call (no CLI subcommand yet, no shipping Python script). The full API surface is documented in `../../krea-ai/references/lora-training.md` with curl, Python, and TypeScript examples.
+
+**One-off**: agent runs curl inline.
 
 ```bash
-# Find the script in the installed skill location
-SKILL_TRAIN=$(find ~/.claude/skills ~/.cursor/plugins ~/.codex/plugins 2>/dev/null \
-  -name 'train_style.py' -path '*krea-ai*' | head -1)
-[ -z "$SKILL_TRAIN" ] && { echo "krea-ai/scripts/train_style.py not found"; exit 1; }
+KEY="$KREA_API_KEY"
+JOB=$(curl -sf -X POST https://api.krea.ai/styles/train \
+  -H "Authorization: Key $KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "flux_dev",
+    "type": "Style",
+    "name": "acmebrand-2026q2",
+    "urls": ["https://cdn/brand-01.jpg", "https://cdn/brand-02.jpg", "..."],
+    "trigger_word": "acmebrand",
+    "max_train_steps": 1000
+  }' | jq -r .job_id)
 
-uv run "$SKILL_TRAIN" \
-  --name "acmebrand-2026q2" \
-  --model flux_dev \
-  --type Style \
-  --trigger-word "acmebrand" \
-  --urls-file acmebrand-references.txt \
-  --max-train-steps 1000 \
-  --output-dir output/acmebrand-2026q2
+# Poll every 60s until terminal
+while :; do
+  STATUS=$(curl -sf "https://api.krea.ai/jobs/$JOB" -H "Authorization: Key $KEY" | jq -r .status)
+  case "$STATUS" in completed) break ;; failed|cancelled) exit 1 ;; esac
+  sleep 60
+done
+
+# Extract style_id
+STYLE_ID=$(curl -sf "https://api.krea.ai/jobs/$JOB" -H "Authorization: Key $KEY" | jq -r '.result.id')
+echo "Style ID: $STYLE_ID"
 ```
 
-`acmebrand-references.txt` is one URL per line, in the user's working directory. Local files work too — the script uploads them automatically.
+**Repeatable**: the agent generates a training script in the user's stack via `krea-build`. If the project is Python → `train.py`. If TypeScript → `train.ts`. If bash-only → `train.sh`. The user owns the script; the skill doesn't ship one.
 
-For training options including `--type Object` (specific product) and `--type Character` (face / person consistency), see `../../krea-ai/references/lora-training.md`.
-
-Training takes 15-45 minutes. The script saves a `training-manifest.json` and prints the `style_id` on stdout.
+Training takes 15-45 minutes.
 
 ### Step 3: Pin the style ID
 
@@ -61,16 +71,15 @@ Add to the project's `KREA_PREFERENCES.md` (or the user-level `~/.claude/CLAUDE.
 ```markdown
 ## Krea preferences
 
-- Brand style ID: style_abc123 (trigger: acmebrand, trained 2026-05-16)
+- Brand style ID: style_abc123 (trigger: acmebrand, trained 2026-05-17)
 - Default style strength: 0.85
-- Skip cost confirmation under 100 CU
 ```
 
 Future agent invocations read this and apply the style automatically.
 
 ### Step 4: Apply in generations
 
-Include the style in every product / marketing generation:
+Include the style in every product / marketing generation. Different models accept the style field with different names — check the schema first via `mcp__krea-public-api__get_model_schema(model=<id>)` (or `krea models show <id>`).
 
 ```
 result = generate_image(
@@ -86,11 +95,17 @@ result = generate_image(
 )
 ```
 
-Notes:
+Or via CLI:
 
-- The trigger word ("acmebrand") in the prompt is what activates the style — include it
-- `styleStrength` is the dial. 0.5 = subtle hint. 0.85 = balanced. 1.0+ = the style dominates
-- Different models accept the style field with different names — check the schema via `get_model_schema`
+```bash
+krea generate image -m <id> \
+  -p "acmebrand premium product hero shot of [PRODUCT]" \
+  -i styleId=style_abc123 \
+  -i styleStrength=0.85 \
+  --aspect 1:1 --wait
+```
+
+The trigger word (`acmebrand`) in the prompt activates the style.
 
 ## Tuning style strength
 
@@ -115,21 +130,14 @@ LoRAs are versioned implicitly by training date. When the brand redesigns:
 
 Don't try to retrain the same `style_id` — train a new one. LoRAs are cheap to spin up.
 
-## Comparison with higgsfield's Soul-ID
-
-Higgsfield offers Soul-ID — a faster face-embedding-based training (5-20 images, ~5 min) for character / face consistency. Krea's LoRA approach is slower but more general:
-
-- Krea LoRA: any visual signature (style, mood, palette, composition). 15-45 min train. Works across models that support style input.
-- Higgsfield Soul-ID: face / character identity specifically. ~5 min train. Locked to higgsfield's Soul models.
-
-For brand-style consistency (palette, composition, mood across products), Krea LoRA is the right tool. For face / character continuity in a campaign (same model across many ads), neither perfectly fits today — Krea LoRA can be trained on a person but it's overkill for face-only.
-
 ## Failure modes
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| Training never completes | Bad training URLs (404) | The script HEAD-checks URLs; fix the bad ones or use `--skip-validation` if you know they're fine |
-| Trained style ignores trigger word | LoRA underfit (too few or too inconsistent training images) | Retrain with more / better images, or with `--max-train-steps 1500` |
-| Style overwhelms every generation | LoRA overfit | Use strength 0.5-0.7 at generation time, or retrain with `--max-train-steps 600` |
+| Training never completes | Bad training URLs (404) | HEAD-check each URL (`curl -sfI <url>`) before submitting |
+| Trained style ignores trigger word | LoRA underfit (too few or too inconsistent training images) | Retrain with more / better images, or `max_train_steps: 1500` |
+| Style overwhelms every generation | LoRA overfit | Use strength 0.5-0.7 at generation time, or retrain with `max_train_steps: 600` |
 | `style_id` not accepted by chosen model | That model doesn't support style input | Check `get_model_schema` for a `styleId` or `styles` field; pick a model that has it |
 | Style applies but product accuracy drops | Style is dominating the image-to-image reference | Decrease style strength, OR include the product reference at higher weight (model-specific) |
+
+For full API field reference and additional language examples (Python, TypeScript), see `../../krea-ai/references/lora-training.md`.

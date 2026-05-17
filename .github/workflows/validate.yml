@@ -28,12 +28,6 @@ jobs:
       - name: Validate frontmatter — krea-marketing
         run: npx skills validate --strict krea-marketing/SKILL.md
 
-      - name: Check Python scripts parse
-        run: |
-          for f in krea-ai/scripts/*.py; do
-            python3 -c "import ast; ast.parse(open('$f').read())" || exit 1
-          done
-
       - name: Validate plugin manifest JSON
         run: |
           for f in .claude-plugin/*.json .codex-plugin/*.json .cursor-plugin/*.json; do

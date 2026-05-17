@@ -145,9 +145,9 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 
 - **Category**: polling
 - **User input**: "Generate one image of a forest"
-- **Expected**: agent calls generate_image with sync=true
-- **Pass regex**: `(?i)sync.*true|generate_image|synchronous|wait for|complete|finish`
-- **Fail regex**: `(?i)generate_image\\(.*sync.*false|sync.*false.*image`
+- **Expected**: agent generates synchronously (image URL returned in-message, no polling chatter)
+- **Pass regex**: `(?i)image generated|krea\.ai|forest|saved|generated.*image|here.s.*image|delivered|[0-9]+x[0-9]+`
+- **Fail regex**: `(?i)submitted.*job|polling|get_job|will check back|waiting.*video`
 
 ### 16. Enhance to 4K — sync
 
@@ -189,9 +189,9 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 
 - **Category**: edge_case
 - **User input**: "Use the last image you generated as the input reference for the next one — what's the approach?"
-- **Expected**: agent reuses the URL directly without re-downloading
-- **Pass regex**: `(?i)reuse|same url|previous.*url|imageUrl|pass.*url|use.*url|reference|input.*previous`
-- **Fail regex**: `(?i)re.upload|upload.*previous.*output|re-download.*previous`
+- **Expected**: agent reuses the URL directly without re-downloading or re-uploading
+- **Pass regex**: `(?i)reuse|previous.*url|image.?url|pass.*url|use.*url|reference|input.*previous|asset url|hosted.*url|accepted directly|no.*re.?upload|no need.*upload`
+- **Fail regex**: `(?i)you (must|should|need).{0,30}re.?upload|always re.?upload|download (and|then) re.?upload|first re.?upload.*previous`
 
 ---
 

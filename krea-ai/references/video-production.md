@@ -339,4 +339,4 @@ for j in jobs:
         sleep 10
 ```
 
-For batch-style pipelines (the user wants a reusable JSON), use `scripts/pipeline.py` with `parallel: true` on fan_out steps. See `pipelines.md`.
+For batch-style pipelines (the user wants a reusable workflow), the agent generates code in your stack via `krea-build`. See `pipelines.md`.

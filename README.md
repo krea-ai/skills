@@ -1,17 +1,39 @@
 # Krea AI Skills
 
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![version](https://img.shields.io/badge/version-0.1.0-green.svg)](VERSION)
+[![skills](https://img.shields.io/badge/skills-4-purple.svg)](#install-the-skills)
+[![discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.com/invite/krea-1002244500581798028)
+
 Four Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get all four.
 
 | Skill | When to use |
 |---|---|
-| **`krea-ai`** | Default router. Image, video, enhancement via the Krea MCP. Routes to a vertical skill automatically when the brief is clearly arch-viz or marketing. Ships standalone power-user Python scripts for multi-step pipelines and LoRA training. |
+| **`krea-ai`** | Default router. Image, video, enhancement via the Krea CLI by default, with MCP as fallback. Routes to a vertical skill automatically when the brief is clearly arch-viz or marketing. |
 | **`krea-archviz`** | Architectural visualization. 3D-screenshot-to-render, materials vocabulary, lighting recipes, multi-image composition. For architects, interior designers, archviz professionals. |
 | **`krea-marketing`** | Commercial creative. Product photography (hero, lifestyle, white-bg, social), video ads (UGC, talking head, demo, before/after), brand-consistent batch generation, click-to-ad from URL. For DTC brands, marketing teams, social media managers. |
-| **`krea-build`** | Patterns for developers writing apps that integrate the Krea API: auth, polling, error handling, validation, frontend snippets for SvelteKit / React / Vue. |
+| **`krea-build`** | Patterns for developers writing apps that integrate the Krea API: auth, polling, error handling, validation, frontend snippets for SvelteKit / React / Vue. Also the place to generate repeatable pipeline scripts in the user's own stack. |
 
 Works with Claude Code, Cursor, Codex, Windsurf, OpenCode, Gemini CLI, OpenClaw, and any agent that picks up `~/.<agent>/skills/<name>/SKILL.md`.
 
-## Install
+## Prerequisites — one of these
+
+The skills use the Krea CLI by default. If the CLI is unavailable but your agent has the Krea MCP connected, MCP works as a fallback.
+
+```bash
+# Default — Krea CLI (universal, works with any agent that runs bash)
+npm install -g @krea-ai/cli
+krea auth login          # OAuth, stores in OS keyring
+# OR: export KREA_API_KEY=...
+
+# Fallback — Krea MCP server
+# Already connected if your agent (Claude Code / Cursor / etc.) supports MCP.
+# Nothing to install.
+```
+
+Verify the default path with `krea doctor`. If you are using the fallback path, check your agent's MCP tool list for `mcp__krea-public-api__*` tools.
+
+## Install the skills
 
 ### npm (works across all agents)
 
@@ -60,7 +82,7 @@ cd skills
 > Upscale this photo to 4K.
 ```
 
-These stay in `krea-ai` and route to the right model via the live MCP catalog.
+These stay in `krea-ai` and route to the right model via the live CLI / MCP catalog.
 
 ```
 > Render this Sketchup screenshot in golden hour, photoreal.
@@ -81,78 +103,10 @@ These trigger `krea-marketing` — product photography, video ads, click-to-ad f
 ```
 > Help me add a Krea image generator to my SvelteKit app.
 > Set up server-side polling for video generation in my Next.js app.
+> Give me a repeatable pipeline script for my product launch workflow.
 ```
 
-These trigger `krea-build` — developer-focused integration patterns.
-
-### Power-user scripts (optional)
-
-For multi-step batch pipelines or LoRA training, the package ships standalone Python scripts:
-
-- `krea-ai/scripts/pipeline.py` — multi-step pipelines (chain, fan-out, parallel, resume)
-- `krea-ai/scripts/train_style.py` — LoRA training for brand styles, products, characters
-
-Both require `KREA_API_TOKEN` set and `uv` installed.
-
-## Repository structure
-
-```
-.
-├── VERSION                        # repo-wide version (source of truth)
-├── krea-ai/                       # router / generic generation
-│   ├── SKILL.md
-│   ├── references/                # loaded on demand
-│   │   ├── model-catalog.md       # intent → archetype, no hardcoded IDs
-│   │   ├── prompt-engineering.md
-│   │   ├── media-inputs.md
-│   │   ├── async-polling.md
-│   │   ├── preferences.md
-│   │   ├── video-production.md
-│   │   ├── pipelines.md
-│   │   ├── lora-training.md
-│   │   ├── cookbook.md
-│   │   └── troubleshooting.md
-│   └── scripts/                   # power-user, bypass MCP
-│       ├── pipeline.py
-│       ├── train_style.py
-│       └── krea_helpers.py
-├── krea-archviz/                  # architectural visualization vertical
-│   ├── SKILL.md
-│   └── references/
-│       ├── screenshot-to-render.md
-│       ├── materials.md
-│       ├── lighting.md
-│       ├── composition.md
-│       └── aspect-ratios.md
-├── krea-marketing/                # commercial creative vertical
-│   ├── SKILL.md
-│   └── references/
-│       ├── product-photography.md
-│       ├── video-ads.md
-│       ├── brand-consistency.md
-│       ├── ad-formats.md
-│       └── marketing-prompts.md
-├── krea-build/                    # developer integration patterns
-│   ├── SKILL.md
-│   └── references/
-│       ├── integration-patterns.md
-│       ├── api-client.md
-│       ├── validation.md
-│       └── frontend-snippets.md
-├── evals/                         # regression tests (20 scenarios)
-│   ├── README.md
-│   ├── scenarios.md
-│   └── run.sh
-├── scripts/
-│   └── update-check.sh            # opt-in version check (run once per session)
-├── .claude-plugin/                # Claude Code marketplace + plugin manifest
-├── .codex-plugin/                 # Codex plugin manifest
-├── .cursor-plugin/                # Cursor plugin manifest
-├── .github/workflows/validate.yml # CI: frontmatter + version sync + path resolution + eval syntax
-├── package.json
-├── LICENSE
-└── README.md
-```
+These trigger `krea-build` — developer-focused integration patterns. The agent generates code in your stack (TypeScript, Python, Bash — whatever fits).
 
 ## Updates
 
@@ -164,11 +118,7 @@ The skill includes an opt-in update notification. Once per session, the agent ru
 
 **To force a fresh check**: `bash scripts/update-check.sh --force`.
 
-Single-source version: `VERSION` file at repo root. CI enforces that `VERSION`, `package.json`, all four `SKILL.md` files, and all four plugin manifests agree.
-
-## API key (only for power-user scripts)
-
-Get your token at [krea.ai/settings/api-tokens](https://krea.ai/settings/api-tokens). Set it as `KREA_API_TOKEN` for `pipeline.py` and `train_style.py`. The MCP-backed skills handle auth on their own.
+Single-source version: `VERSION` file at repo root. CI enforces that all SKILL.md frontmatters, plugin manifests, and `package.json` agree.
 
 ## Evals
 

@@ -74,27 +74,35 @@ Train a LoRA on these brand images: [URLs or local paths]. Call it "acme-brand".
 
 **Pattern.**
 
-LoRA training is **not** exposed through the MCP. Use the `scripts/train_style.py` companion script:
+LoRA training is exposed via the `/styles/train` API (not the MCP, not the CLI). The agent runs this inline:
 
 ```bash
-uv run scripts/train_style.py \
-  --name "acme-brand" \
-  --model flux_dev \
-  --type Style \
-  --trigger-word "acmestyle" \
-  --urls-file brand-images.txt \
-  --max-train-steps 1000 \
-  --output-dir output/acme-brand
+KEY="$KREA_API_KEY"
+JOB=$(curl -sf -X POST https://api.krea.ai/styles/train \
+  -H "Authorization: Key $KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "flux_dev",
+    "type": "Style",
+    "name": "acme-brand",
+    "urls": ["https://your-cdn.com/brand-photo-01.jpg", "https://your-cdn.com/brand-photo-02.jpg", "..."],
+    "trigger_word": "acmestyle",
+    "max_train_steps": 1000
+  }' | jq -r .job_id)
+
+# Poll until terminal
+while :; do
+  STATUS=$(curl -sf "https://api.krea.ai/jobs/$JOB" -H "Authorization: Key $KEY" | jq -r .status)
+  case "$STATUS" in completed) break ;; failed|cancelled) exit 1 ;; esac
+  sleep 60
+done
+
+STYLE_ID=$(curl -sf "https://api.krea.ai/jobs/$JOB" -H "Authorization: Key $KEY" | jq -r '.result.id')
 ```
 
-`brand-images.txt` — one URL per line:
-```
-https://your-cdn.com/brand-photo-01.jpg
-https://your-cdn.com/brand-photo-02.jpg
-...
-```
+For a repeatable training pipeline in the user's stack (Python, TypeScript, etc.), the agent generates it via `krea-build`. See `lora-training.md` for the full API surface and language examples.
 
-Training takes 15–45 minutes. The script saves `training-manifest.json` with the resulting `style_id`.
+Training takes 15–45 minutes.
 
 Then use the style ID with MCP generation:
 
@@ -194,7 +202,7 @@ for url in user_top_4:
 ```
 
 **Tips.**
-- For repeatable batch runs (do this for every new product launch), wrap it as `scripts/pipeline.py` JSON with `fan_out + parallel`. See `pipelines.md`.
+- For repeatable batch runs (do this for every new product launch), the agent can generate a pipeline script in your stack (Python, Node, Bash) via `krea-build`. See `pipelines.md`.
 - Add audio to videos with `generateAudio: true` if the model schema supports it.
 - Validate the first 2 scenes before kicking off all 10 — if the product doesn't carry over well, regenerate with stronger reference language in the prompt.
 
@@ -342,7 +350,7 @@ for w in winners:
 | Goal | Recipe | Best matches in `model-catalog.md` |
 |---|---|---|
 | Launch a campaign fast | #1 Full Ad Campaign | fast draft → high-fidelity → faithful upscale |
-| Keep all content on-brand | #2 LoRA Training | train via `scripts/train_style.py`, then any style-aware archetype |
+| Keep all content on-brand | #2 LoRA Training | train via `/styles/train` API (see `lora-training.md`), then any style-aware archetype |
 | Turn a product photo into lifestyle scenes | #3 Product Pipeline | image-to-image high-fidelity → image-to-video |
 | Produce a narrative video ad | #4 Storyboard | multi-reference high-fidelity → image-to-video with audio |
 | Find what creative works | #5 Iteration | fast draft (volume) → high-fidelity (winners) |

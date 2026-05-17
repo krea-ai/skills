@@ -1,19 +1,41 @@
 ---
-version: 2.1.0
+version: 0.1.0
 name: krea-ai
-description: "Generate images, videos, and enhance/upscale through Krea's full model lineup via the Krea MCP. Routes intent to the right model from a live catalog (Flux, Imagen, GPT Image, Ideogram, Seedream for images; Kling, Veo, Hailuo, Wan for video; Topaz for upscaling) without hardcoding model names. Use when the user wants to generate an image or video, enhance a photo, animate a still, or build a multi-step creative workflow. For LoRA training and batch pipelines, see the scripts/ subfolder."
+description: "Generate images, videos, and enhance/upscale through Krea's full model lineup via the Krea CLI by default, with Krea MCP as a fallback. Routes intent to the right model from a live catalog (Flux, Imagen, GPT Image, Ideogram, Seedream for images; Kling, Veo, Hailuo, Wan for video; Topaz for upscaling) without hardcoding model names. Use when the user wants to generate an image or video, enhance a photo, animate a still, or build a multi-step creative workflow. For LoRA training and repeatable pipelines, see references/lora-training.md and references/pipelines.md."
 license: MIT
 ---
 
 # Krea AI — Image, Video, Enhance
 
-Generate creative output through the **Krea public API MCP server** (`mcp__krea-public-api__*`). The MCP owns auth, validation, and uploads. This skill teaches you how to use it well.
+Generate creative output through the **Krea CLI** (`krea`) by default. If the CLI is unavailable but the **Krea public API MCP server** (`mcp__krea-public-api__*`) is connected, use MCP as the fallback.
 
 For developers building apps that call Krea programmatically (frontend integration, API client patterns, validation), see the sibling `krea-build` skill instead.
 
 ## Bootstrap
 
-This skill requires the Krea MCP server. Tools you should see available:
+This skill works with the **Krea CLI** or the **Krea MCP server**. Both hit the same backend. Prefer the CLI whenever it is installed and authenticated; use MCP only when the CLI is unavailable but MCP tools are connected.
+
+### Preferred: CLI
+
+Check for the Krea CLI first:
+
+```bash
+which krea && krea doctor 2>&1 | head -5
+```
+
+A healthy CLI prints `✓ api auth     list_models call succeeded`. If `krea` isn't on PATH:
+
+```bash
+npm install -g @krea-ai/cli
+krea auth login    # one-time, stores OAuth in OS keyring
+# OR: export KREA_API_KEY=...
+```
+
+Once installed, use CLI commands for Krea operations. See `references/cli-or-mcp.md` for the parallel operation table.
+
+### Fallback: MCP
+
+Tools you should see in the agent's tool list:
 
 - `mcp__krea-public-api__list_models`
 - `mcp__krea-public-api__get_model_schema`
@@ -23,7 +45,11 @@ This skill requires the Krea MCP server. Tools you should see available:
 - `mcp__krea-public-api__get_job`
 - `mcp__krea-public-api__upload_asset`
 
-If they're missing, tell the user to install the Krea MCP and pause until they confirm. Don't fall back to the API directly — that's what `scripts/` is for, and only for batch pipelines and LoRA training.
+If the CLI is unavailable and these tools are present, use MCP. The MCP handles auth and validation.
+
+### Neither available
+
+Stop and tell the user: *"This skill needs the Krea CLI installed (`npm install -g @krea-ai/cli && krea auth login`) or the Krea MCP connected. Which do you want to set up?"* Don't fall back to direct HTTP for normal generation. Direct HTTP is only for documented custom workflows like LoRA training or code the agent writes via `krea-build`.
 
 ### Self-update check (opt-in, ~50ms)
 
@@ -69,11 +95,17 @@ Use `Read` on the local file. This grounds your interpretation of the brief in w
 
 ### 3. Discover available models
 
-```
-list_models()
+**CLI:**
+```bash
+krea models list --json
 ```
 
-Returns `{id, category, name, description}` for every supported model. Always call this first — model lineups change. Never hardcode model IDs from memory.
+**MCP fallback:**
+```
+mcp__krea-public-api__list_models()
+```
+
+Both return `{id, category, name, description}` per model. Always call before generating — model lineups change. Never hardcode IDs from memory.
 
 ### 4. Route intent → candidate model (or hand off to a vertical skill)
 
@@ -89,8 +121,14 @@ Consult `references/model-catalog.md` for archetypes (fast draft, photoreal, cin
 
 ### 5. Inspect the model's accepted inputs
 
+**CLI:**
+```bash
+krea models show <chosen_id> --json
 ```
-get_model_schema(model="<chosen_id>")
+
+**MCP fallback:**
+```
+mcp__krea-public-api__get_model_schema(model="<chosen_id>")
 ```
 
 Returns the full input/output schema. Use this to know which params (`prompt`, `aspectRatio`, `imageUrl`/`imageUrls`, `startImage`, `duration`, `resolution`, etc.) the model accepts. Don't guess.
@@ -99,23 +137,47 @@ Returns the full input/output schema. Use this to know which params (`prompt`, `
 
 For image-to-image, face refs, start frames, or audio refs that live as local files:
 
-```
-upload = upload_asset(filename, mimeType, fileData=<base64>)
+**CLI:**
+```bash
+URL=$(krea upload ./photo.png --json | jq -r .url)
 ```
 
-Pass the returned asset id/url into the next call's `input.imageUrl` / `input.imageUrls` / `input.startImage` per the model's schema.
+The CLI takes the file path directly — no base64 encoding needed. Pass the returned asset URL into the next call's `input.imageUrl` / `input.imageUrls` / `input.startImage` per the model's schema.
+
+**MCP fallback:**
+```
+upload = upload_asset(filename, mimeType, fileData=<base64-encoded-bytes>)
+```
 
 ### 7. Submit
 
-**Images and enhancement** finish fast. Use sync:
+**Images and enhancement** finish fast. Use sync.
 
+**CLI:**
+```bash
+krea generate image -m <id> -p "..." --aspect 16:9 --wait -o ./out.png
+krea generate enhance -m <id> <url> --width 4096 --height 4096 --wait -o ./out-4k.png
+```
+
+The CLI's `-o ./path.png` implies `--wait` and downloads in one step.
+
+**MCP fallback:**
 ```
 result = generate_image(model=<id>, input={prompt, ...}, sync=true, timeoutSeconds=60)
 result = enhance_image(model=<id>, input={imageUrl, width, height, ...}, sync=true, timeoutSeconds=60)
 ```
 
-**Video** routinely runs longer than the MCP's 300s sync cap. Always async + poll:
+**Video** routinely runs longer than the 300s sync cap. Always async + poll.
 
+**CLI:**
+```bash
+JOB=$(krea generate video -m <id> -p "..." --json | jq -r .job_id)
+krea jobs wait $JOB --json   # blocks server-side until terminal
+```
+
+`krea jobs wait` does the polling for you — no loop in your code. See `references/async-polling.md` for status semantics and `references/cli-or-mcp.md` for the full parallel reference.
+
+**MCP fallback:**
 ```
 job = generate_video(model=<id>, input={prompt, ...}, sync=false)
 # loop:
@@ -123,8 +185,6 @@ status = get_job(jobId=job.id)
 # break when status is terminal (`completed`, `failed`, `cancelled`)
 # sleep ~10s between polls
 ```
-
-See `references/async-polling.md` for the exact loop.
 
 ### 8. Deliver
 
@@ -153,6 +213,7 @@ See `references/prompt-engineering.md` for more.
 
 Load on demand:
 
+- `references/cli-or-mcp.md` — operation reference: MCP and CLI commands side-by-side
 - `references/model-catalog.md` — intent → archetype, keyword hints for filtering `list_models` output
 - `references/preferences.md` — per-project overrides (`KREA_PREFERENCES.md`)
 - `references/prompt-engineering.md` — prompt-writing tips per modality
@@ -161,17 +222,8 @@ Load on demand:
 - `references/troubleshooting.md` — error codes and what they mean
 - `references/cookbook.md` — five worked end-to-end recipes
 - `references/video-production.md` — multi-scene shot-list workflow
-- `references/pipelines.md` — running `scripts/pipeline.py` for batch jobs
-- `references/lora-training.md` — running `scripts/train_style.py` to train custom styles
-
-## Scripts (power-user, optional)
-
-`scripts/` contains two standalone Python tools that bypass MCP and hit the Krea API directly. They're for use cases the MCP doesn't cover yet:
-
-- `scripts/pipeline.py` — multi-step generation pipelines (chain, fan-out, template vars, parallel, resume). See `references/pipelines.md`.
-- `scripts/train_style.py` — train LoRA styles. See `references/lora-training.md`.
-
-Both need `KREA_API_TOKEN` set and run via `uv`. For day-to-day work, prefer the MCP.
+- `references/pipelines.md` — multi-step orchestration patterns (agent-driven and via `krea-build` for repeatable scripts in the user's stack)
+- `references/lora-training.md` — LoRA training API surface and language-neutral examples
 
 ## Vertical skills
 
