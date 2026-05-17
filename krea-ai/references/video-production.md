@@ -1,8 +1,21 @@
-# Video Production — Multi-Scene Storytelling
+# Video Production — Multi-Scene Storytelling (longer narrative work)
 
-Create multi-scene videos with AI-generated visuals using the Krea MCP for generation and `ffmpeg` for post-production. Works for short films, product launches, team intros, promo reels, music videos, explainers, event recaps.
+Create multi-scene videos with AI-generated visuals using the Krea CLI (or MCP) for generation and `ffmpeg` for post-production. Works for short films, product launches, team intros, promo reels, music videos, explainers, event recaps.
 
-> Requires: the Krea MCP (`mcp__krea-public-api__*`), `ffmpeg`.
+> Requires: the Krea CLI or the Krea MCP (`mcp__krea-public-api__*`), plus `ffmpeg`.
+
+## When to use this doc vs `storyboard-method.md`
+
+For **≤15s vertical or square social shorts** (GRWM, ad creative, "day in the life", quick explainers) — a single continuous video with one character / one world — use the **storyboard-sheet method** in `storyboard-method.md`. One editorial storyboard sheet + one `seedance-2` timeline job produces a coherent "single shoot" feel. Generating panels separately and `ffmpeg`-concatenating them produces a stitched-snippets feel that does not work for that format.
+
+Use **this doc** when:
+
+- Output is longer than ~15s.
+- The piece has intentional hard cuts across distinct subjects, locations, or scenes.
+- You want a montage / multi-scene reel rather than a single continuous shot.
+- Different scenes need different models (e.g. text-heavy title card + photoreal keynote + product macro).
+
+If the brief is ambiguous, ask the user which feel they want.
 
 ## The golden rule
 
@@ -299,6 +312,8 @@ When the user wants to replace a single scene in an already-assembled video:
 | Faces don't appear in image | Used a single-reference model when you needed multi-reference | Switch to a model whose schema declares `imageUrls` (array) |
 | Concat produces glitches | Mixed resolutions/codecs/framerates | Normalize ALL clips to identical specs before concat |
 | Title cards too long | Default video duration is 5s | Trim to 1.5–2s with `ffmpeg -t` |
+| Output is unintentionally slow-motion | Prompt contained "slow", "gentle", "soft", "slow motion" — some video models interpret these literally | Use "smooth", "steady", "fluid" instead |
+| Output aspect doesn't match the requested `--aspect` | A landscape `startImage` / `--start-image` forces the output aspect to match the source | Drop the start-image and use reference images only, OR generate the start frame at the target aspect |
 | `bc: command not found` | bc not installed | Use `python3 -c "print(...)"` for float math |
 
 ---
