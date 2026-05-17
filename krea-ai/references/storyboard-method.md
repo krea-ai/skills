@@ -150,9 +150,13 @@ krea generate video -m bytedance/seedance-2 \
   --json
 ```
 
-**Critical**: do NOT pass `--start-image` if you want the output aspect to follow `--aspect`. A `startImage` forces the output aspect to match the source image dimensions — pass a landscape storyboard cell as start image and the output comes out landscape even with `--aspect 9:16`. (This caused multiple horizontal outputs today when the user asked for vertical.)
+**Critical** — aspect override behavior in seedance-2 is sticky:
 
-For 9:16 vertical, leave `--start-image` empty and let `referenceImages` carry the visual reference.
+1. **`--start-image`** dominates aspect. A landscape startImage forces landscape output even with `--aspect 9:16`. **Don't pass `--start-image` for vertical output.** Drop it and let `referenceImages` carry the visual reference.
+2. **`referenceImages[0]`** also biases aspect. Even with `--start-image` empty, if the first item in `referenceImages` is a landscape image, seedance-2 still tends to output 16:9 — verified twice in the 2026-05-17 production session, both with `--aspect 9:16` and with `-i aspectRatio="9:16"` explicitly set.
+3. **Workaround**: either (a) pad the landscape storyboard sheet to portrait aspect with `ffmpeg ... pad=1024:1824:...:color=0x...` before uploading, OR (b) drop the storyboard from `referenceImages` entirely and rely on face refs + a detailed timeline prompt (storyboard mainly transfers aesthetic/character/world; the timeline prompt does the choreographic work, so this is viable).
+
+Tracked as issue #11 in `krea-ai/skills`. Until fixed, treat the storyboard sheet aspect as the de-facto output aspect for seedance-2.
 
 ### 8. Poll and download
 
@@ -184,7 +188,8 @@ Sample 4–6 frames with `ffmpeg -vf "select='not(mod(n\,60))'" -vsync vfr frame
 
 | Problem                                            | Cause                                                | Fix |
 |---|---|---|
-| Output is horizontal despite `--aspect 9:16`       | Passed a landscape `--start-image`                   | Drop start-image, rely on `referenceImages` only |
+| Output is horizontal despite `--aspect 9:16`       | Landscape `--start-image` OR landscape image as `referenceImages[0]` (issue #11) | Drop start-image; pad the storyboard sheet to portrait before uploading, OR drop the storyboard from `referenceImages` and rely on face refs + timeline prompt |
+| Output is horizontal even with `-i aspectRatio="9:16"` explicit | Same as above (issue #11) — the explicit input field doesn't override the reference image aspect bias | Pad source storyboard to portrait, or center-crop the horizontal output to vertical 1080×1920 as a fallback (`ffmpeg -vf "crop=405:720:(iw-405)/2:0,scale=1080:1920"`) |
 | Output is slow motion                              | Prompt contained "slow", "gentle", "soft"            | Strip those words, rewrite with "smooth", "steady", "fluid" |
 | Video feels like jump-cut snippets stitched        | Generated panels separately and ffmpeg-concatenated  | Generate ONE storyboard sheet, ONE seedance job with timeline prompt |
 | Storyboard has technical fiches confusing the model | Used "01 ARRIVAL / 1.5s / icon" annotations         | Strip to: tiny panel num + short action label + category icon |
