@@ -67,7 +67,7 @@ When generating a series (storyboard, character sheet, brand pack):
 
 - Reuse the same `seed` across images for similar prompt structure.
 - Reuse the same model — switching mid-series changes the look.
-- Use a Krea LoRA `styleId` if you've trained one for the project (see `lora-training.md`).
+- Use a Krea LoRA `styleId` if you've trained one for the project (see `../workflows/lora-train-and-use.md`).
 - Use multi-image reference (`imageUrls`) on supporting models to lock the subject across compositions.
 
 ## Safety

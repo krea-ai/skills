@@ -54,7 +54,7 @@ Don't fall back to direct HTTP calls — then it's a bug or a custom workflow th
 
 The skill's workflow examples default to CLI syntax. If you're operating in MCP mode, mentally substitute via the table above.
 
-For repeatable pipelines or LoRA training in your own stack, the agent generates code via `krea-build`. See `pipelines.md` and `lora-training.md` for orchestration patterns and the LoRA training API surface.
+For repeatable pipelines or LoRA training in your own stack, the agent generates code via `krea-build`. See `../workflows/full-ad-campaign.md` for orchestration patterns and `../workflows/lora-train-and-use.md` for the LoRA training API surface.
 
 ## Cost transparency
 
