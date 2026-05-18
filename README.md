@@ -1,17 +1,15 @@
 # Krea AI Skills
 
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![version](https://img.shields.io/badge/version-0.1.0-green.svg)](VERSION)
-[![skills](https://img.shields.io/badge/skills-4-purple.svg)](#install-the-skills)
+[![version](https://img.shields.io/badge/version-0.2.0-green.svg)](VERSION)
+[![skills](https://img.shields.io/badge/skills-2-purple.svg)](#install-the-skills)
 [![discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.com/invite/krea-1002244500581798028)
 
-Four Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get all four.
+Two Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get both.
 
 | Skill | When to use |
 |---|---|
-| **`krea-ai`** | Default router. Image, video, enhancement via the Krea CLI by default, with MCP as fallback. Routes to a vertical skill automatically when the brief is clearly arch-viz or marketing. |
-| **`krea-archviz`** | Architectural visualization. 3D-screenshot-to-render, materials vocabulary, lighting recipes, multi-image composition. For architects, interior designers, archviz professionals. |
-| **`krea-marketing`** | Commercial creative. Product photography (hero, lifestyle, white-bg, social), video ads (UGC, talking head, demo, before/after), brand-consistent batch generation, click-to-ad from URL. For DTC brands, marketing teams, social media managers. |
+| **`krea-ai`** | Canonical intent-first router. Image, video, enhancement, LoRA, product photography, archviz, and campaign workflows via the Krea CLI by default, with MCP as fallback. |
 | **`krea-build`** | Patterns for developers writing apps that integrate the Krea API: auth, polling, error handling, validation, frontend snippets for SvelteKit / React / Vue. Also the place to generate repeatable pipeline scripts in the user's own stack. |
 
 Works with Claude Code, Cursor, Codex, Windsurf, OpenCode, Gemini CLI, OpenClaw, and any agent that picks up `~/.<agent>/skills/<name>/SKILL.md`.
@@ -41,7 +39,7 @@ Verify the default path with `krea doctor`. If you are using the fallback path, 
 npx skills add krea-ai/skills
 ```
 
-Installs all four skills.
+Installs both skills.
 
 ### Claude Code marketplace
 
@@ -50,7 +48,7 @@ Installs all four skills.
 /plugin install krea@krea
 ```
 
-Registers each skill as `/krea:ai`, `/krea:archviz`, `/krea:marketing`, `/krea:build`.
+Registers each skill as `/krea:ai` and `/krea:build`.
 
 ### Codex CLI
 
@@ -74,7 +72,7 @@ cd skills
 
 ## Use
 
-### Default — `krea-ai` and the vertical skills auto-route
+### Default - `krea-ai` routes by intent
 
 ```
 > Generate an image of a cyberpunk cat in neon rain.
@@ -90,7 +88,7 @@ These stay in `krea-ai` and route to the right model via the live CLI / MCP cata
 > Take this chair, put it in this room, in this style.
 ```
 
-These trigger `krea-archviz` — vertical-specific archviz workflows, materials vocabulary, lighting recipes.
+These route through `krea-ai/workflows/archviz-3d-to-render.md` for structural-reference archviz rendering.
 
 ```
 > Make a hero product shot of my new perfume bottle.
@@ -98,7 +96,7 @@ These trigger `krea-archviz` — vertical-specific archviz workflows, materials 
 > Take this product URL and give me a hero + 4 social variants.
 ```
 
-These trigger `krea-marketing` — product photography, video ads, click-to-ad from URL, brand-consistent batch generation.
+These route through `krea-ai/workflows/` recipes for product photography, social video, campaigns, and LoRA-backed consistency.
 
 ```
 > Help me add a Krea image generator to my SvelteKit app.
@@ -106,7 +104,7 @@ These trigger `krea-marketing` — product photography, video ads, click-to-ad f
 > Give me a repeatable pipeline script for my product launch workflow.
 ```
 
-These trigger `krea-build` — developer-focused integration patterns. The agent generates code in your stack (TypeScript, Python, Bash — whatever fits).
+These trigger `krea-build` - developer-focused integration patterns. The agent generates code in your stack (TypeScript, Python, Bash - whatever fits).
 
 ## Updates
 

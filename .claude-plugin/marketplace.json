@@ -8,23 +8,13 @@
     {
       "name": "krea",
       "source": "./",
-      "description": "Image/video generation, architectural visualization, marketing creative, and developer integration patterns via the Krea CLI by default with MCP fallback.",
-      "version": "0.1.0",
+      "description": "Two Krea skills: intent-first generation workflows plus developer integration patterns.",
+      "version": "0.2.0",
       "skills": [
         {
           "name": "ai",
           "path": "krea-ai",
           "invoke": "/krea:ai"
-        },
-        {
-          "name": "archviz",
-          "path": "krea-archviz",
-          "invoke": "/krea:archviz"
-        },
-        {
-          "name": "marketing",
-          "path": "krea-marketing",
-          "invoke": "/krea:marketing"
         },
         {
           "name": "build",
