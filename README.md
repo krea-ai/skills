@@ -14,6 +14,14 @@ Two Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get 
 
 Works with Claude Code, Cursor, Codex, Windsurf, OpenCode, Gemini CLI, OpenClaw, and any agent that picks up `~/.<agent>/skills/<name>/SKILL.md`.
 
+## Install the skills
+
+```bash
+npx skills add krea-ai/skills
+```
+
+Installs both skills. This is the supported install path across agents that use skill packages.
+
 ## Prerequisites — one of these
 
 The skills use the Krea CLI by default. If the CLI is unavailable but your agent has the Krea MCP connected, MCP works as a fallback.
@@ -21,54 +29,14 @@ The skills use the Krea CLI by default. If the CLI is unavailable but your agent
 ```bash
 # Default — Krea CLI (universal, works with any agent that runs bash)
 npm install -g @krea-ai/cli
-krea auth login          # OAuth, stores in OS keyring
+krea auth login          # prompts for a Krea API key and stores it locally
 # OR: export KREA_API_KEY=...
 
 # Fallback — Krea MCP server
-# Already connected if your agent (Claude Code / Cursor / etc.) supports MCP.
-# Nothing to install.
+# If your agent has Krea MCP connected, this skill can use it as fallback.
 ```
 
 Verify the default path with `krea doctor`. If you are using the fallback path, check your agent's MCP tool list for `mcp__krea-public-api__*` tools.
-
-## Install the skills
-
-### npm (works across all agents)
-
-```bash
-npx skills add krea-ai/skills
-```
-
-Installs both skills.
-
-### Claude Code marketplace
-
-```
-/plugin marketplace add krea-ai/skills
-/plugin install krea@krea
-```
-
-Registers each skill as `/krea:ai` and `/krea:build`.
-
-### Codex CLI
-
-```bash
-codex skill install krea-ai/skills
-```
-
-### Cursor
-
-```bash
-cursor extension install krea-ai/skills
-```
-
-### Manual (universal fallback)
-
-```bash
-git clone https://github.com/krea-ai/skills.git
-cd skills
-# Symlink each skill into your agent's expected directory.
-```
 
 ## Use
 

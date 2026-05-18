@@ -46,7 +46,7 @@ Don't fall back to direct HTTP calls — then it's a bug or a custom workflow th
 
 ## Notable MCP conveniences over CLI
 
-- **Zero install for Claude users** — MCP is connected via OAuth.
+- **No local CLI install** when the agent already has Krea MCP connected.
 - **Schema-validated inputs** at tool-call time — fewer typos make it to the API.
 - **No subprocess overhead** — agent calls the tool directly.
 
@@ -62,5 +62,5 @@ Both surfaces show CU cost the same way: model descriptions include CU pricing i
 
 ## What to do on auth failure
 
-- **CLI auth failure**: `krea auth login` to refresh the OAuth flow, or set `KREA_API_KEY` in the environment. The CLI keyring-backs credentials per machine.
-- **MCP auth failure**: the MCP server config in the agent platform is broken. Re-add the MCP via your agent's config UI. Don't try to set env vars from the skill.
+- **CLI auth failure**: run `krea auth login` to refresh the stored API key, or set `KREA_API_KEY` in the environment. The CLI stores credentials per machine.
+- **MCP auth failure**: the MCP server config in the agent platform needs attention. Re-add the MCP via your agent's config UI. Don't try to set env vars from the skill.
