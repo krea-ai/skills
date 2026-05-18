@@ -3,7 +3,7 @@
   "name": "krea",
   "displayName": "Krea AI",
   "version": "0.2.0",
-  "description": "Intent-first Krea workflows for image/video generation, architectural visualization, marketing creative, enhancement, LoRA training, and developer integration patterns.",
+  "description": "Two Krea skills: intent-first generation workflows plus developer integration patterns.",
   "author": {
     "name": "Krea AI"
   },

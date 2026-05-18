@@ -20,13 +20,13 @@ If the user gave a tight, complete brief, skip Clarify entirely and proceed to R
 
 Hard prescription. Follow in order.
 
-1. **Cost-preflight** (mandatory - see `references/cost-preflight.md`). Estimate number of still frames, number of video clips, and total wall-clock.
+1. **Cost-preflight** (mandatory - see `../references/cost-preflight.md`). Estimate number of still frames, number of video clips, and total wall-clock.
 2. Plan a shot list before generation. Include title cards, scene order, aspect, duration, and refs per scene.
 3. Resolve live archetypes: `high-fidelity image` or `image-to-image / face reference` for frames, `text in image` for titles, and `image-to-video / start frame anchored` for clips.
 4. Generate still frames one scene at a time. Show each frame and wait for approval. Cheap still approval comes before expensive animation.
 5. Regenerate weak frames until all scenes are approved.
 6. Submit approved image-to-video jobs async, preferably in parallel after approval.
-7. Poll with `references/progress-reporting.md`; report aggregate status for multiple jobs.
+7. Poll with `../references/progress-reporting.md`; report aggregate status for multiple jobs.
 8. Download clips and normalize every clip to the same resolution, FPS, codec, SAR, and no audio.
 9. Concatenate with ffmpeg. Add one cohesive audio track at the end if requested.
 10. Sample frames across the final edit and read with vision before delivery.

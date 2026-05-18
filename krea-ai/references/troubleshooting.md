@@ -79,8 +79,8 @@ These were uncovered during a production session that burned ~5,000 CU before pr
 | Model | Symptom | Workaround |
 |---|---|---|
 | Seedance-style video models | Output is in slow motion | Strip `slow`, `gentle`, `soft`, and `slow motion`; use `smooth`, `steady`, `fluid`, or `natural realtime` |
-| Seedance-style video models | 15s clips with many sequential actions fail or collapse | Compress to 5-8 visible beats, or use `social-video-short.md` storyboard + timestamped timeline |
-| Seedance-style video models | Subject identity drifts across cuts | Pass 2-3 varied face refs; for brand-critical likeness use `workflows/lora-train-and-use.md` |
+| Seedance-style video models | 15s clips with many sequential actions fail or collapse | Compress to 5-8 visible beats, or use `../workflows/social-video-short.md` storyboard + timestamped timeline |
+| Seedance-style video models | Subject identity drifts across cuts | Pass 2-3 varied face refs; for brand-critical likeness use `../workflows/lora-train-and-use.md` |
 | Text-friendly image models | Storyboards with large technical fiches produce weak videos | Keep annotations editorial: tiny panel numbers, short action labels, side icons, header/footer |
 | OpenAI-style image models | Portrait dimensions rejected | Use dimensions accepted by schema, often multiples of 16 such as `1024x1824` for 9:16 |
 

@@ -26,7 +26,7 @@ Hard prescription. Follow in order.
 5. Upload local still to Krea; use hosted URL.
 6. Write a motion-only prompt. The still already defines the scene; prompt the movement.
 7. Submit one async video job.
-8. Poll with `references/progress-reporting.md`.
+8. Poll with `../references/progress-reporting.md`.
 9. Download, sample frames, and check that the anchor subject did not drift.
 10. **Deliver** with a one-line summary and QA notes.
 

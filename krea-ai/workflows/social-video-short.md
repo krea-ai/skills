@@ -20,7 +20,7 @@ If the user gave a tight, complete brief, skip Clarify entirely and proceed to R
 
 Hard prescription. Follow in order.
 
-1. **Cost-preflight** (mandatory before video - see `references/cost-preflight.md`). Default estimate for 15s Seedance-2 720p is ~1564 CU and 10-15 minutes. Show estimate, get yes.
+1. **Cost-preflight** (mandatory before video - see `../references/cost-preflight.md`). Default estimate for 15s Seedance-2 720p is ~1564 CU and 10-15 minutes. Show estimate, get yes.
 2. Resolve a `text-friendly image model` for storyboard generation and a `cinematic video` model for animation from live `list_models`; defaults can be `openai/gpt-image-2` and `bytedance/seedance-2` only if live discovery confirms them.
 3. Build one editorial storyboard sheet, not separate panels. Use 4-8 cells for 5-10s; 16-32 cells for dense 15s micro-beats. Use tiny panel numbers and short action labels; no technical fiches.
 4. Generate 1 storyboard sheet, or 2-3 variations if the brief is loose. Include face/product refs in the image call when identity matters.
@@ -29,7 +29,7 @@ Hard prescription. Follow in order.
 7. Avoid the seedance aspect trap (issue #11): do not pass `--start-image` for vertical output. If the storyboard sheet is landscape and final output must be 9:16, pad the sheet to portrait before upload or drop the sheet from `referenceImages` and rely on face refs plus a detailed timeline prompt.
 8. Compose a timestamped timeline prompt. Use `TIMELINE`, `STYLE`, `CAMERA`, `TRANSITIONS`, and `OUTPUT` sections. Strip the words `slow`, `gentle`, `soft`, and `slow motion`; use `smooth`, `steady`, `fluid`, or `natural realtime` instead.
 9. Submit one video job async. Use `referenceImages` for storyboard/refs, not per-panel concatenation.
-10. Poll with `references/progress-reporting.md`: ping on status changes and every 25-35 seconds while unchanged.
+10. Poll with `../references/progress-reporting.md`: ping on status changes and every 25-35 seconds while unchanged.
 11. Download, normalize to the requested delivery frame with ffmpeg, sample 4-6 frames, and vision-check continuity/identity before delivering.
 12. **Deliver** with a one-line summary and QA notes.
 
@@ -96,4 +96,4 @@ get_job(jobId=<id>)  # poll with progress pings
 | Job times out | CLI timeout cap issue #9 | Manual `krea jobs show` loop |
 | External URL rejected | Kontext/Seedream URL issue #7 | Upload local assets to Krea first |
 | Identity drifts | Face refs weak, issue #16 | Use 2-3 varied refs or route to `lora-train-and-use.md` |
-| User lost trust during wait | Silent polling, issue #17 | Follow `progress-reporting.md` every 25-35 seconds |
+| User lost trust during wait | Silent polling, issue #17 | Follow `../references/progress-reporting.md` every 25-35 seconds |

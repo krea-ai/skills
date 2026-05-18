@@ -19,12 +19,12 @@ If the user gave a tight, complete brief, skip Clarify entirely and proceed to R
 
 Hard prescription. Follow in order.
 
-1. **Cost-preflight** (mandatory - see `references/cost-preflight.md`). Training can take 15-45 minutes.
+1. **Cost-preflight** (mandatory - see `../references/cost-preflight.md`). Training can take 15-45 minutes.
 2. Read a sample of training images with vision; reject blurry, tiny, duplicated, or off-style inputs.
 3. If local, upload or ensure each training image has a reachable HTTPS URL.
 4. Validate URL reachability with `curl -sfI` where possible.
 5. Submit training through the Krea HTTP API; CLI/MCP may not expose training.
-6. Poll every 30-60 seconds using `references/progress-reporting.md`.
+6. Poll every 30-60 seconds using `../references/progress-reporting.md`.
 7. On completion, capture `style_id` and trigger word.
 8. Resolve a style-aware image model from live `list_models` and inspect schema for `styleId` or `styles`.
 9. Generate 3-5 samples using the new style at strength ~0.85.

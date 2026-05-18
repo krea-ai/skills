@@ -86,14 +86,14 @@ Load only what the active workflow needs:
 - `references/cost-preflight.md` - mandatory approval before >100 CU or video/training jobs.
 - `references/progress-reporting.md` - mandatory pings during long async polling.
 
-## Vertical skills
+## Related skill
 
-`krea-build/` remains a separate developer-integration skill for API clients, frontend snippets, validation, and repeatable app code.
+Use `krea-build/` for developer integration work: API clients, frontend snippets, validation, and repeatable app code.
 
-`krea-marketing/` and `krea-archviz/` are redirect stubs as of v0.2.0. Their generation recipes now live in `krea-ai/workflows/`:
+Marketing, product, campaign, and architectural visualization requests stay in this skill and route to `krea-ai/workflows/`:
 
-- Marketing/product work: `product-photo-hero.md`, `product-photo-lifestyle.md`, `social-video-short.md`, `full-ad-campaign.md`.
-- Architectural visualization: `archviz-3d-to-render.md`.
+- Marketing/product work: `workflows/product-photo-hero.md`, `workflows/product-photo-lifestyle.md`, `workflows/social-video-short.md`, `workflows/full-ad-campaign.md`.
+- Architectural visualization: `workflows/archviz-3d-to-render.md`.
 
 ## Filename pattern
 

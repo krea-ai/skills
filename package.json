@@ -1,7 +1,7 @@
 {
   "name": "krea-ai-skill",
   "version": "0.2.0",
-  "description": "Agent Skills for Krea.ai with intent-first workflow prefabs for image generation, video, enhancement, LoRA training, product photography, archviz, and campaign orchestration.",
+  "description": "Two Agent Skills for Krea.ai: intent-first generation workflows and developer integration patterns.",
   "keywords": ["agent-skill", "krea", "image-generation", "video-generation", "ai-art", "lora", "mcp", "archviz", "marketing"],
   "author": "Krea AI",
   "license": "MIT",
@@ -11,8 +11,6 @@
   },
   "files": [
     "krea-ai/",
-    "krea-archviz/",
-    "krea-marketing/",
     "krea-build/",
     "evals/",
     "scripts/",

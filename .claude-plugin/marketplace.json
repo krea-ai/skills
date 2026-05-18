@@ -8,23 +8,13 @@
     {
       "name": "krea",
       "source": "./",
-      "description": "Intent-first Krea workflows for image/video generation, architectural visualization, marketing creative, enhancement, LoRA training, and developer integration patterns.",
+      "description": "Two Krea skills: intent-first generation workflows plus developer integration patterns.",
       "version": "0.2.0",
       "skills": [
         {
           "name": "ai",
           "path": "krea-ai",
           "invoke": "/krea:ai"
-        },
-        {
-          "name": "archviz",
-          "path": "krea-archviz",
-          "invoke": "/krea:archviz"
-        },
-        {
-          "name": "marketing",
-          "path": "krea-marketing",
-          "invoke": "/krea:marketing"
         },
         {
           "name": "build",

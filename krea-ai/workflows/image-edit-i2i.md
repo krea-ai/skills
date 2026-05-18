@@ -22,7 +22,7 @@ Hard prescription. Follow in order.
 1. Read the source image with vision and state the edit target internally.
 2. Resolve the `image-to-image / face reference` archetype from live `list_models`.
 3. Inspect schema for `imageUrl` versus `imageUrls`, edit strength, mask, or preservation fields.
-4. Upload local input to Krea; if CLI returns empty URL, resolve via the asset endpoint as described in `references/troubleshooting.md`.
+4. Upload local input to Krea; if CLI returns empty URL, resolve via the asset endpoint as described in `../references/troubleshooting.md`.
 5. Prompt the change, not a full re-description of the source: "change X to Y, preserve A/B/C".
 6. Generate one edited candidate.
 7. Read output with vision and compare against the source.

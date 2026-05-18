@@ -25,7 +25,7 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 
 - **Category**: routing
 - **User input**: "Make me a hero shot of my new perfume bottle for the homepage"
-- **Expected**: agent runs the marketing product-photography workflow
+- **Expected**: agent runs the product photography workflow
 - **Pass regex**: `(?i)hero shot|product photography|product shot|perfume|aspect.*1:1|aspect.*16:9|premium|brand`
 - **Fail regex**: `(?i)sketchup|revit|archviz|architectural|facade`
 
@@ -49,7 +49,7 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 
 - **Category**: routing
 - **User input**: "Make a 9:16 TikTok ad video for my new sneakers"
-- **Expected**: marketing skill, 9:16 aspect, async + poll for video
+- **Expected**: social video workflow, 9:16 aspect, async + poll for video
 - **Pass regex**: `(?i)9:16|tiktok|vertical|sync.*false|async|poll|get_job|video ad|sneaker`
 - **Fail regex**: `(?i)architectural|sketchup|facade|sync.*true.*video`
 

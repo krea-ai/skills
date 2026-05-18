@@ -20,7 +20,7 @@ If the user gave a tight, complete brief, skip Clarify entirely and proceed to R
 Hard prescription. Follow in order.
 
 1. Read all attached/generated references with vision.
-2. If the run is >100 CU or 4K premium, run cost-preflight via `references/cost-preflight.md`.
+2. If the run is >100 CU or 4K premium, run cost-preflight via `../references/cost-preflight.md`.
 3. Resolve a `high-fidelity image` or `image-to-image / face reference` archetype from live `list_models`.
 4. Inspect schema for exact fields: `imageUrl`, `imageUrls`, `aspectRatio`, `resolution`, `quality`, `styleId`.
 5. Upload local references to Krea first; use Krea-hosted URLs for generation.

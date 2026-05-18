@@ -19,7 +19,7 @@ If the user gave a tight, complete brief, skip Clarify entirely and proceed to R
 
 Hard prescription. Follow in order.
 
-1. **Cost-preflight** (mandatory - see `references/cost-preflight.md`). Campaigns are batches.
+1. **Cost-preflight** (mandatory - see `../references/cost-preflight.md`). Campaigns are batches.
 2. Extract product facts from the URL or user brief. Do not invent claims.
 3. Read product images with vision and identify product shape, materials, label, and brand palette.
 4. Confirm the extracted brief in one line before generating if a URL was used.

@@ -19,7 +19,7 @@ If the user gave a tight, complete brief, skip Clarify entirely and proceed to R
 Hard prescription. Follow in order.
 
 1. Read any attached image with vision before routing.
-2. Load `references/model-catalog.md` and resolve the `fast image draft` archetype from live `list_models`.
+2. Load `../references/model-catalog.md` and resolve the `fast image draft` archetype from live `list_models`.
 3. Call `get_model_schema` or `krea models show` for the chosen model; confirm accepted aspect and prompt fields.
 4. Submit one draft first. Do not ask cost-preflight unless the estimated total is >100 CU.
 5. If the user asked for options, generate 2-4 cheap variations, not a premium batch.

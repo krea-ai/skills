@@ -2,16 +2,14 @@
 
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![version](https://img.shields.io/badge/version-0.2.0-green.svg)](VERSION)
-[![skills](https://img.shields.io/badge/skills-4-purple.svg)](#install-the-skills)
+[![skills](https://img.shields.io/badge/skills-2-purple.svg)](#install-the-skills)
 [![discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.com/invite/krea-1002244500581798028)
 
-Four Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get all four.
+Two Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get both.
 
 | Skill | When to use |
 |---|---|
 | **`krea-ai`** | Canonical intent-first router. Image, video, enhancement, LoRA, product photography, archviz, and campaign workflows via the Krea CLI by default, with MCP as fallback. |
-| **`krea-archviz`** | Redirect stub for backward compatibility. Canonical architectural visualization recipes now live in `krea-ai/workflows/`. |
-| **`krea-marketing`** | Redirect stub for backward compatibility. Canonical product, social video, and campaign recipes now live in `krea-ai/workflows/`. |
 | **`krea-build`** | Patterns for developers writing apps that integrate the Krea API: auth, polling, error handling, validation, frontend snippets for SvelteKit / React / Vue. Also the place to generate repeatable pipeline scripts in the user's own stack. |
 
 Works with Claude Code, Cursor, Codex, Windsurf, OpenCode, Gemini CLI, OpenClaw, and any agent that picks up `~/.<agent>/skills/<name>/SKILL.md`.
@@ -41,7 +39,7 @@ Verify the default path with `krea doctor`. If you are using the fallback path, 
 npx skills add krea-ai/skills
 ```
 
-Installs all four skills.
+Installs both skills.
 
 ### Claude Code marketplace
 
@@ -50,7 +48,7 @@ Installs all four skills.
 /plugin install krea@krea
 ```
 
-Registers each skill as `/krea:ai`, `/krea:archviz`, `/krea:marketing`, `/krea:build`.
+Registers each skill as `/krea:ai` and `/krea:build`.
 
 ### Codex CLI
 

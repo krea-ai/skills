@@ -1,12 +1,12 @@
 # Krea Skills — Evals
 
-Lightweight regression test suite for the four Krea skills. Catches drift when skill content changes, model lineups shift, or routing rules get edited.
+Lightweight regression test suite for the Krea skills. Catches drift when skill content changes, model lineups shift, or routing rules get edited.
 
 ## What this tests
 
 20 scenarios across 6 categories:
 
-- **Routing accuracy (5)** — does the agent load the right SKILL.md for a given brief?
+- **Routing accuracy (5)** — does the agent route to the right skill or workflow for a given brief?
 - **Refusal / safety (3)** — does the agent decline or rephrase when the brief hits safety boundaries?
 - **Cost awareness (3)** — does the agent pick cheap models for exploratory work and confirm cost on expensive ops?
 - **Vision verification (3)** — does the agent `Read` outputs and catch when results don't match the brief?
