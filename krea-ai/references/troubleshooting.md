@@ -26,8 +26,13 @@ When polling `get_job(jobId=...)`:
   - Content moderation (`nsfw`, `ip_detected`) - rephrase
   - Internal model error - retry once; if it fails again, switch model
   - Bad reference image (corrupted, unreadable) - re-upload
+- **`status: "failed"` with `result: {}` and no error** - silent model failure. Retry once with a simpler prompt or fewer sequential actions; if it fails again, switch model or ask whether to swap the concept.
 - **`status: "cancelled"`** - user or system aborted. Don't auto-retry.
 - **`status: "queued"` for >5 minutes** - system capacity issue. Don't resubmit silently; ask the user whether to wait or cancel.
+
+## Direct REST guesses
+
+Do not inspect normal generation jobs by guessing raw REST paths such as `https://api.krea.ai/v1/jobs/<id>`. Unsupported API paths can return an HTML 404 page, not a JSON error, which breaks parsers and wastes time. Use `krea jobs show <id> --json` or MCP `get_job`.
 
 ## Cost / quota
 
@@ -92,3 +97,21 @@ These were uncovered during a production session that burned ~5,000 CU before pr
 - Do not silently poll for long-running jobs. Follow `progress-reporting.md`.
 - Do not include slow-motion trigger words anywhere in Seedance-style prompts.
 - Do not spend >100 CU without `cost-preflight.md`, unless the user has explicitly set a per-session override.
+
+## Known issues / lessons captured 2026-05-19
+
+These came from a campaign session where ambiguous "storyboard" vocabulary and skipped creative gates caused unnecessary campaign spend.
+
+### Routing and creative gates
+
+- **Ambiguous storyboard request**: in CPG/FMCG/agency contexts, "storyboard" may mean a campaign key-visual sheet, not film pre-vis. Ask for a layout reference and route to `../workflows/key-visual-sheet.md`.
+- **Boring output after fidelity success**: changing only the scene/content often misses the note. Identify whether the user wants format, content, palette, voice, or fidelity changed before regenerating.
+- **"Surprise me"**: permission to take taste risks, not permission to skip storyboard/key-visual approval gates.
+
+### Model behavior
+
+| Model | Symptom | Workaround |
+|---|---|---|
+| Seedance-2 style video models | Macro prompts with tiny flying subjects such as butterflies, bees, or hummingbirds can fail repeatedly with empty result payloads | Retry once; if it fails again, swap to non-animal motion such as petals, leaves, bubbles, condensation, or light rays, or switch model |
+| Seedance-2 style video models | Hand placing product into frame can fail or look awkward | Start with the product already placed; animate environment, light, condensation, or camera motion |
+| GPT-image style models | Large simultaneous image batches can hit account concurrency limits, especially after orphaned timeout jobs | Submit campaign sheets or drafts in waves of 8 or fewer and retry 429s with 20s backoff |

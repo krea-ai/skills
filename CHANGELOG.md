@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.1
+
+- Added campaign brief intake, reference-first disambiguation, taste gates, and no-default-anchoring rules for campaign work.
+- Added key-visual sheet routing/workflow and visual artifact taxonomy to prevent CPG storyboard requests from routing to film pre-vis or premature video generation.
+- Added marketing creative anatomy guidance for decomposing ads into mode, product, brand, format, hook, setting, talent, reference path, and CTA.
+- Added UGC/social storyboard variation guidance so loose briefs default to cheap A/B/C directions before animation.
+- Documented CLI media-reference upload patterns, silent empty-result video failures, and raw REST job-inspection pitfalls.
+- Embedded `VERSION` and `scripts/update-check.sh` inside `krea-ai/` so skill-directory installs keep the passive update checker.
+- Tightened cost gates and troubleshooting around expensive campaign batches, "boring" feedback, and Seedance-style failure modes.
+- Added an eval regression for CPG storyboard/key-visual routing.
+
 ## 0.2.0
 
 - Restructured `krea-ai` around flat, intent-first workflow prefabs in `krea-ai/workflows/`.

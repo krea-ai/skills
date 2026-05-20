@@ -12,6 +12,7 @@ Ask the user once, in a single batched message. Skip whichever the user already 
 - **Duration**: 5, 10, or 15 seconds.
 - **Concept and beats**: one-line concept plus 4-6 actions that must happen.
 - **Identity refs**: face, product, brand, outfit, mascot, or none.
+- **Ad anatomy**: for ads/UGC, mode, hook, setting, talent/identity, product proof, CTA, and reference path.
 - **Style**: palette, setting, mood, reference videos, text overlays.
 
 If the user gave a tight, complete brief, skip Clarify entirely and proceed to Recipe.
@@ -21,17 +22,18 @@ If the user gave a tight, complete brief, skip Clarify entirely and proceed to R
 Hard prescription. Follow in order.
 
 1. **Cost-preflight** (mandatory before video - see `../references/cost-preflight.md`). Default estimate for 15s Seedance-2 720p is ~1564 CU and 10-15 minutes. Show estimate, get yes.
-2. Resolve a `text-friendly image model` for storyboard generation and a `cinematic video` model for animation from live `list_models`; defaults can be `openai/gpt-image-2` and `bytedance/seedance-2` only if live discovery confirms them.
-3. Build one editorial storyboard sheet, not separate panels. Use 4-8 cells for 5-10s; 16-32 cells for dense 15s micro-beats. Use tiny panel numbers and short action labels; no technical fiches.
-4. Generate 1 storyboard sheet, or 2-3 variations if the brief is loose. Include face/product refs in the image call when identity matters.
-5. Show the storyboard(s) and wait for approval. Iterate cheaply here before burning video credits.
-6. Upload the chosen storyboard to Krea. If `krea upload --json` returns an empty URL (issue #6), resolve `image_url` via `GET https://api.krea.ai/assets/<id>`.
-7. Avoid the seedance aspect trap (issue #11): do not pass `--start-image` for vertical output. If the storyboard sheet is landscape and final output must be 9:16, pad the sheet to portrait before upload or drop the sheet from `referenceImages` and rely on face refs plus a detailed timeline prompt.
-8. Compose a timestamped timeline prompt. Use `TIMELINE`, `STYLE`, `CAMERA`, `TRANSITIONS`, and `OUTPUT` sections. Strip the words `slow`, `gentle`, `soft`, and `slow motion`; use `smooth`, `steady`, `fluid`, or `natural realtime` instead.
-9. Submit one video job async. Use `referenceImages` for storyboard/refs, not per-panel concatenation.
-10. Poll with `../references/progress-reporting.md`: ping on status changes and every 25-35 seconds while unchanged.
-11. Download, normalize to the requested delivery frame with ffmpeg, sample 4-6 frames, and vision-check continuity/identity before delivering.
-12. **Deliver** with a one-line summary and QA notes.
+2. For ad/UGC work, load `../references/marketing-creative-anatomy.md` and lock the tuple before storyboarding. For UGC, also load `../references/ugc-social-video.md`.
+3. Resolve a `text-friendly image model` for storyboard generation and a `cinematic video` model for animation from live `list_models`; defaults can be `openai/gpt-image-2` and `bytedance/seedance-2` only if live discovery confirms them.
+4. Build one editorial storyboard sheet, not separate panels. Use 4-8 cells for 5-10s; 16-32 cells for dense 15s micro-beats. Use tiny panel numbers and short action labels; no technical fiches. For UGC, use the six-panel UGC template from `../references/ugc-social-video.md`.
+5. Decide whether the brief is locked or loose. If locked, generate one storyboard. If loose, load `../references/storyboard-variations.md` and default to 3 parallel storyboard variants that vary on at least two axes.
+6. Show storyboard variants together with `A/B/C` labels and one-line captions. Wait for an explicit user pick or merge request before animating. Iterate cheaply here before burning video credits.
+7. Upload the chosen storyboard to Krea. If `krea upload --json` returns an empty URL (issue #6), resolve `image_url` via `GET https://api.krea.ai/assets/<id>`.
+8. Avoid the seedance aspect trap (issue #11): do not pass `--start-image` for vertical output. If the storyboard sheet is landscape and final output must be 9:16, pad the sheet to portrait before upload or drop the sheet from `referenceImages` and rely on face refs plus a detailed timeline prompt.
+9. Compose a timestamped timeline prompt. Use `TIMELINE`, `STYLE`, `CAMERA`, `TRANSITIONS`, and `OUTPUT` sections. Strip the words `slow`, `gentle`, `soft`, and `slow motion`; use `smooth`, `steady`, `fluid`, or `natural realtime` instead.
+10. Submit one video job async. Use `referenceImages` for storyboard/refs, not per-panel concatenation.
+11. Poll with `../references/progress-reporting.md`: ping on status changes and every 25-35 seconds while unchanged.
+12. Download, normalize to the requested delivery frame with ffmpeg, sample 4-6 frames, and vision-check continuity/identity before delivering.
+13. **Deliver** with a one-line summary and QA notes.
 
 ### CLI
 
@@ -70,7 +72,7 @@ get_job(jobId=<id>)  # poll with progress pings
 
 ## Banned
 
-- Do not submit video before storyboard approval - this is the #11 fix and the 2026-05-17 lesson.
+- Do not submit video before storyboard approval - this is the #11 fix and the 2026-05-17 lesson. The storyboard gate is a creative gate and is not skipped by a session-level cost-preflight override.
 - Do not generate panels separately and ffmpeg-concatenate - it creates stitched snippets, not a coherent social video.
 - Do not pass landscape `--start-image` into Seedance for vertical output - issue #11.
 - Do not put a landscape storyboard first in `referenceImages` for 9:16 unless padded to portrait - issue #11.
@@ -78,6 +80,7 @@ get_job(jobId=<id>)  # poll with progress pings
 - Do not rely on `krea jobs wait --timeout 600` if the CLI caps at 300s - issue #9; use manual polling.
 - Do not use non-Krea-hosted refs for models that reject them - issue #7.
 - Do not silently poll - issue #17; progress pings are mandatory.
+- For UGC, do not use commercial-polish words or camera moves banned in `../references/ugc-social-video.md`.
 
 ## Cost & time
 
@@ -97,3 +100,4 @@ get_job(jobId=<id>)  # poll with progress pings
 | External URL rejected | Kontext/Seedream URL issue #7 | Upload local assets to Krea first |
 | Identity drifts | Face refs weak, issue #16 | Use 2-3 varied refs or route to `lora-train-and-use.md` |
 | User lost trust during wait | Silent polling, issue #17 | Follow `../references/progress-reporting.md` every 25-35 seconds |
+| UGC looks like a brand commercial | Storyboard lacks creator-native realism cues | Load `../references/ugc-social-video.md`, rebuild the storyboard, and QA adversarially before animating |
