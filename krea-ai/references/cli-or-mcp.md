@@ -21,6 +21,12 @@ If neither is available, tell the user one of:
 
 Don't fall back to direct HTTP calls — then it's a bug or a custom workflow the agent should write code for (see krea-build).
 
+## CLI stdout contract
+
+Bare CLI generation is async. `krea generate image -p "..."` prints a `job_id` on stdout, not a result URL. Use `--wait` when a shell script needs `URL=$(krea generate image -p "..." --wait)`, or capture the job id and call `krea jobs wait <id>`.
+
+The default CLI image model is `krea/krea-2/large`. Krea 2 dimensions use `--aspect` in the CLI, or raw `aspect_ratio` + `resolution` fields when passing `--input`/MCP payloads. Pin another model with `-m` for old `--width`, `--height`, `--quality`, `--steps`, or `--image` workflows.
+
 ## Operation reference — MCP vs CLI
 
 | Operation | MCP | CLI |

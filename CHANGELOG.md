@@ -7,6 +7,7 @@
 - Added marketing creative anatomy guidance for decomposing ads into mode, product, brand, format, hook, setting, talent, reference path, and CTA.
 - Added UGC/social storyboard variation guidance so loose briefs default to cheap A/B/C directions before animation.
 - Documented CLI media-reference upload patterns, silent empty-result video failures, and raw REST job-inspection pitfalls.
+- Documented the Krea 2 Large CLI default, async `job_id` stdout contract, and Krea 2 public input shape (`aspect_ratio`/`resolution`, `image_style_references`).
 - Embedded `VERSION` and `scripts/update-check.sh` inside `krea-ai/` so skill-directory installs keep the passive update checker.
 - Tightened cost gates and troubleshooting around expensive campaign batches, "boring" feedback, and Seedance-style failure modes.
 - Added an eval regression for CPG storyboard/key-visual routing.
