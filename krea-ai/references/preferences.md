@@ -21,7 +21,8 @@ Free-form markdown with bullet points. The skill reads it as guidance, not as a 
 ```markdown
 ## Krea preferences
 
-- Default to `flux-1-dev` for fast image drafts
+- Default to `krea/krea-2/large` for flagship image generation
+- Use `bfl/flux-1-dev` only when the brief asks for cheap or fast drafts
 - For final image work, prefer `nano-banana-pro` over `gpt-image`
 - Use `seedance-2.0` for any cinematic / multi-shot video
 - For face animation, prefer Kling over Veo (Kling handles faces better in our tests)

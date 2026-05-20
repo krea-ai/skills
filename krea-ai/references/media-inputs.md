@@ -88,9 +88,18 @@ krea generate video -m "<model-id>" \
   -i startImage="$REF_URL" \
   -p "<motion prompt>" \
   --json
+
+# Krea 2 style reference, when schema supports image_style_references:
+krea generate image -m krea/krea-2/large \
+  --aspect 1:1 \
+  -i image_style_references='[{"url":"'"$REF_URL"'","strength":0.5}]' \
+  -p "<prompt>" \
+  --wait -o ./out.png
 ```
 
 Do not guess field names. Always inspect the live model schema first; different models use different reference fields.
+
+Krea 2 image endpoints use `aspect_ratio` + `resolution` in the public API. The CLI maps `--aspect` for the default Krea 2 flow and supplies the default `resolution=1K`; raw MCP or `--input` calls should use those public names directly. Krea 2 style references use `image_style_references` items shaped as `{ "url": "...", "strength": 0.5 }`.
 
 ## Single image vs multiple images
 
