@@ -1,6 +1,6 @@
 {
   "name": "krea-ai-skill",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Two Agent Skills for Krea.ai: intent-first generation workflows and developer integration patterns.",
   "keywords": ["agent-skill", "krea", "image-generation", "video-generation", "ai-art", "lora", "mcp", "archviz", "marketing"],
   "author": "Krea AI",
