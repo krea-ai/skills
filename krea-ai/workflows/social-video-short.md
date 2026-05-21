@@ -23,7 +23,7 @@ Hard prescription. Follow in order.
 
 1. **Cost-preflight** (mandatory before video - see `../references/cost-preflight.md`). Default estimate for 15s Seedance-2 720p is ~1564 CU and 10-15 minutes. Show estimate, get yes.
 2. For ad/UGC work, load `../references/marketing-creative-anatomy.md` and lock the tuple before storyboarding. For UGC, also load `../references/ugc-social-video.md`.
-3. Resolve a `text-friendly image model` for storyboard generation and a `cinematic video` model for animation from live `list_models`; defaults can be `openai/gpt-image-2` and `bytedance/seedance-2` only if live discovery confirms them.
+3. Resolve a `text-friendly image model` for storyboard generation and a `cinematic video` model for animation from live `list_models`; defaults can be `openai/gpt-image-2` and `bytedance/seedance-2` only if live discovery confirms them. If the resolved video model is a `seedance-2` variant, load `../references/models/seedance-2.md` for engine-specific prompt structure, archetypes, cut rules, and banned phrases.
 4. Build one editorial storyboard sheet, not separate panels. Use 4-8 cells for 5-10s; 16-32 cells for dense 15s micro-beats. Use tiny panel numbers and short action labels; no technical fiches. For UGC, use the six-panel UGC template from `../references/ugc-social-video.md`.
 5. Decide whether the brief is locked or loose. If locked, generate one storyboard. If loose, load `../references/storyboard-variations.md` and default to 3 parallel storyboard variants that vary on at least two axes.
 6. Show storyboard variants together with `A/B/C` labels and one-line captions. Wait for an explicit user pick or merge request before animating. Iterate cheaply here before burning video credits.

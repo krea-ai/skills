@@ -42,7 +42,7 @@ It never blocks generation. Surface `UPGRADE_AVAILABLE` or `JUST_UPGRADED` once;
 1. Concise output. Send result path/URL plus one useful sentence. No raw IDs or JSON dumps.
 2. Detect the user's language from their first message and reply in it. Technical params stay English.
 3. Vision-first. Read attached images before generating, and read generated outputs before delivery.
-4. No premature questions for cheap ops. For cheap images/enhance, pick sane defaults. For expensive ops, do not answer prematurely: run campaign brief intake when it applies, clarify once, and run `references/cost-preflight.md`.
+4. No premature questions for cheap ops. For cheap images/enhance, pick sane defaults. For expensive ops, do not answer prematurely: run campaign brief intake when it applies, clarify once, run `references/cost-preflight.md` for upcoming spend, and maintain `references/budget-tracking.md` for the session's running total so 402 Payment Required is never the first signal that credits ran out.
 5. Progress reporting is mandatory for async polling over 30 seconds. Use `references/progress-reporting.md`.
 6. Always call `list_models` before choosing a model. Use `references/model-catalog.md` to resolve archetypes to live IDs.
 7. Always inspect the model schema before submitting. Do not guess field names such as `imageUrl`, `imageUrls`, `startImage`, `duration`, or `resolution`.
@@ -107,6 +107,7 @@ Load only what the active workflow needs:
 - `references/preferences.md` - project-level overrides.
 - `references/cost-preflight.md` - mandatory approval before >100 CU or video/training jobs.
 - `references/progress-reporting.md` - mandatory pings during long async polling.
+- `references/models/` - per-model prompting playbooks (engine quirks, archetypes, banned phrases). Load only when the active workflow has resolved that model. Today: `seedance-2.md`.
 
 ## Related skill
 

@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- Added `krea-ai/references/models/` as the home for per-model prompting playbooks loaded after model resolution. First entry: `seedance-2.md` covering engine constraints (named-technique action beats, exit-frame implicit cut, no reflections), the action/general/dialogue archetype router, double-contrast cut rules, the age-blind character rule, image-reference legend, bilingual EN+ZH output, and the antislop/pacing banned-phrase lists.
+- Wired the new reference into `social-video-short.md`, `narrative-video-long.md`, and `image-to-video-animate.md` so it loads only when the resolved video model is a `seedance-2` variant.
+- **narrative-video-long.md: added mandatory asset-sheet pre-production step** (character turnaround + prop sheet + location plate, parallel batch) before scene composition. Closes #30. The 3-track anime test on this branch confirmed identity drift across every track when the asset sheet is skipped.
+- **narrative-video-long.md: replaced "batch-animate after still approval" with a scene-by-scene chain** using `endImage` as the continuity hook (scene N's `endImage` = scene N+1's `startImage`). One decision point per scene, lower total CU on failure, no "random concat" boundaries. Closes #34.
+- **narrative-video-long.md: added "Concept shotgun" step** for thin briefs — propose 3 distinct concept variants up front instead of asking the user to author the creative subject matter. Closes #27.
+- **seedance-2.md: added positional-travel rule for combat motion** — direction + distance + duration must be named, or the engine renders the attack *state* not the *trajectory*. Worked Gear-3 example. Closes #36.
+- **seedance-2.md + cli-or-mcp.md: lead with `-i` raw-input pattern** for video. Named CLI flags cover ~4 of 12+ Seedance 2.0 schema fields and silently drop `endImage`, `referenceImages`, `generateAudio`, `resolution`, `seed`. Workflows now show the `-i` syntax for arrays, booleans, and numbers as primary. Closes #33.
+- **Added `references/budget-tracking.md`** — session CU tracker protocol covering the gap between cost-preflight (gates a single upcoming op) and 402 Payment Required (catches accumulated spend too late). Surfaces running total at logical breakpoints and gives the user a clear top-up / profile-switch path on first 402. Wired into `SKILL.md` UX rule 4. Closes #32.
+
 ## 0.2.1
 
 - Added campaign brief intake, reference-first disambiguation, taste gates, and no-default-anchoring rules for campaign work.
