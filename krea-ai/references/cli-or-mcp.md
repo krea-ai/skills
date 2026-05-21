@@ -42,6 +42,46 @@ The default CLI image model is `krea/krea-2/large`. Krea 2 dimensions use `--asp
 | **Wait for terminal status** | poll `get_job` every 10s until terminal | `krea jobs wait <id>` (server-side poll, blocks until done) |
 | **Save result to disk** | response URL → curl/Bash download | `-o ./out.png` (implies `--wait`, handles download) |
 
+## When named flags aren't enough — use `-i`
+
+The CLI's named flags (`--start-image`, `--duration`, `--aspect`, `--prompt`, `--width`, `--height`, etc.) cover the common cases. For everything else in the model schema, use `-i field=value`. This is the primary path for any model whose schema is wider than the named flags — notably `bytedance/seedance-2`, which exposes `endImage`, `referenceImages` (up to 9), `referenceVideos`, `referenceAudios`, `generateAudio`, `resolution`, `seed`, and `effects[]` beyond the four fields the named flags cover.
+
+Always run `krea models show <id>` first to see the live schema; field names there are exactly what `-i` accepts.
+
+### Syntax
+
+```bash
+# Scalar (string, number)
+-i resolution=720p
+-i duration=10
+-i seed=42
+
+# Boolean
+-i generateAudio=true
+
+# Array of strings — JSON-encoded
+-i "referenceImages=[\"https://ref1.png\",\"https://ref2.png\"]"
+
+# Object (nested) — JSON-encoded
+-i 'effects={"name":"smear","intensity":0.7}'
+```
+
+### Worked example — Seedance 2.0 with chain + refs + audio
+
+```bash
+krea generate video -m bytedance/seedance-2 \
+  --start-image "$START" --duration 10 --aspect 16:9 \
+  -i endImage="$END" \
+  -i "referenceImages=[\"$HERO\",\"$PROP\"]" \
+  -i generateAudio=true \
+  -i resolution=720p \
+  -i seed=42 \
+  -p "<prompt>" \
+  --json
+```
+
+Without the `-i` block this command would silently drop `endImage` (scene chaining broken), `referenceImages` (character identity drifts), `generateAudio` (silent output), `resolution` (defaults applied), and `seed` (no reproducibility). The CLI does not warn when schema fields are dropped — the only signal is degraded output, so always lead with `-i` for models with wide schemas.
+
 ## Notable CLI conveniences over MCP
 
 - **`krea upload <path>`** takes a file path directly — no base64 encoding required.
