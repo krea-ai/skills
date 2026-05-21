@@ -74,12 +74,24 @@ The labeled Audio block still applies to ambient SFX and score. Inline dialogue 
 - `seed` — reproducibility for re-rolls.
 - `effects[]` — preset effect router.
 
-Pass these via `-i field=value` (or `-i "field=[\"a\",\"b\"]"` for arrays). Example:
+Pass these via `-i field=value` (or `-i "field=[\"a\",\"b\"]"` for arrays).
+
+**Hard constraint (live as of 2026-05-21): `endImage` and `referenceImages` are mutually exclusive.** Submitting both together returns HTTP 422: *"Seedance 2 does not support mixing end frames with reference images, videos, or audio."* Pick one per call:
 
 ```bash
+# Chained scene — endImage chain for continuity (no referenceImages)
 krea generate video -m bytedance/seedance-2 \
   --start-image "$START" --duration 10 --aspect 16:9 \
   -i endImage="$END" \
+  -i generateAudio=true \
+  -i resolution=720p \
+  -i seed=42 \
+  -p "<prompt>" \
+  --json
+
+# Terminal scene — referenceImages for fine-detail anchor (no endImage)
+krea generate video -m bytedance/seedance-2 \
+  --start-image "$START" --duration 10 --aspect 16:9 \
   -i "referenceImages=[\"$HERO\",\"$PROP\"]" \
   -i generateAudio=true \
   -i resolution=720p \
@@ -87,6 +99,8 @@ krea generate video -m bytedance/seedance-2 \
   -p "<prompt>" \
   --json
 ```
+
+Rule of thumb: identity locks at the still-compose step (image-to-image with refs on the still model), so chained clips don't need `referenceImages` — the next clip's `startImage` already carries identity. Save `referenceImages` for the terminal clip where there's no next-scene anchor.
 
 See `../cli-or-mcp.md` for the full `-i` syntax with arrays, booleans, and numbers.
 

@@ -66,12 +66,24 @@ Always run `krea models show <id>` first to see the live schema; field names the
 -i 'effects={"name":"smear","intensity":0.7}'
 ```
 
-### Worked example — Seedance 2.0 with chain + refs + audio
+### Worked example — Seedance 2.0 chained vs terminal
+
+Seedance 2 rejects `endImage` and `referenceImages` together (HTTP 422). Pick one per call:
 
 ```bash
+# Chained scene — endImage hook, identity rides via startImage
 krea generate video -m bytedance/seedance-2 \
   --start-image "$START" --duration 10 --aspect 16:9 \
   -i endImage="$END" \
+  -i generateAudio=true \
+  -i resolution=720p \
+  -i seed=42 \
+  -p "<prompt>" \
+  --json
+
+# Terminal scene — referenceImages for fine-detail identity anchor
+krea generate video -m bytedance/seedance-2 \
+  --start-image "$START" --duration 10 --aspect 16:9 \
   -i "referenceImages=[\"$HERO\",\"$PROP\"]" \
   -i generateAudio=true \
   -i resolution=720p \
@@ -80,7 +92,20 @@ krea generate video -m bytedance/seedance-2 \
   --json
 ```
 
-Without the `-i` block this command would silently drop `endImage` (scene chaining broken), `referenceImages` (character identity drifts), `generateAudio` (silent output), `resolution` (defaults applied), and `seed` (no reproducibility). The CLI does not warn when schema fields are dropped — the only signal is degraded output, so always lead with `-i` for models with wide schemas.
+Without `-i` these commands would silently drop most schema fields (the CLI does not warn). Lead with `-i` for any wide-schema model.
+
+### Per-model field-name variance
+
+Reference-image fields are not standardized across the model catalog:
+
+| Model | Reference field |
+|---|---|
+| `bytedance/seedance-2` | `referenceImages` (array, up to 9) |
+| `google/nano-banana-pro` | `imageUrls` (array) |
+| `google/imagen-4-ultra` | no reference field — image-to-image not supported |
+| `bfl/flux-1-kontext-dev` | `imageUrl` (single string) |
+
+Always run `krea models show <id> --json` and read the schema's `inputs` block before guessing. The CLI's `-i` does not validate field names against the schema until the API rejects the call.
 
 ## Notable CLI conveniences over MCP
 
