@@ -27,38 +27,71 @@ If the user gave a tight, complete brief, skip Clarify entirely and proceed to R
 Hard prescription. Follow in order.
 
 1. **Cost-preflight** (mandatory - see `../references/cost-preflight.md`). Estimate number of still frames, number of video clips, and total wall-clock. Initialize the session CU tracker — see `../references/budget-tracking.md`.
-2. **Concept + storyboard (mandatory before any image generation).** Write two short docs in the project directory and get explicit user approval on both before composing a single frame:
-   - **`CONCEPT.md`** — one-paragraph logline; arc-curve summary (set-up → conflict → escalation → climax → resolution); tone reference; visual palette; story motif (the recurring object / gesture / image the fight is *actually* about — e.g. a hat, a watch, a name); reference touchstones.
-   - **`STORYBOARD.md`** — beat-by-beat doc, one section per scene. Each section names: (a) **function in the arc** (one sentence — what this scene does for the story), (b) **beats** with local timecodes (`[0–3s]` etc.) describing on-screen action, (c) **dialogue** (verbatim, in original language — keep it sparse, 0–2 lines per scene), (d) **camera** behavior (push-in, orbit, smash-cut etc.), (e) **lighting** changes within the scene, (f) **sound** intent (silence beats matter as much as cues), and (g) one-line **why this works** rationale tying it back to the arc curve. Close with a production-notes section: asset map per scene, model assignment, continuity primitives, approval gates.
+2. **Concept + storyboard (mandatory before any image generation).** Write three short docs in the project directory and get explicit user approval **at each gate** before composing a single frame:
+   - **`CONCEPT.md`** — one-paragraph logline; **`## Story spine`** section with the six fields from `../references/story-spine.md` (PROTAGONIST, WANT, OBSTACLE, STAKES, TURN, NEW NORMAL); a `## Dialogue posture` line (lines per scene, language, or explicit justification if silent); a `## Final-5-seconds feeling` line (one concrete sentence on what the audience feels at fade-out); arc-curve summary; tone reference; visual palette; story motif; reference touchstones.
 
-   Surface both docs in chat and **wait for the user to approve** before moving on. This is the cheapest course-correction point in the whole pipeline — once a frame is composed against a vague brief, every later iteration just renders the same incoherence at higher resolution. The skill author's 2026-05-21 live session burned six failed scene-2 video re-rolls because the underlying brief was "Gear-3 vs Boro-Breath collision" instead of "the beat after Luffy says his line." Don't repeat that.
+     **Approval gate 1 — story spine.** Surface CONCEPT.md and wait. Push once: "Can you say back the protagonist's want in your own words?" — if the user can articulate it, proceed; if not, the brief is not yet a story.
 
-   A scene is a *story beat*, not a *time slot*. If you can't write one sentence on what this scene does for the arc, the scene shouldn't exist.
+   - **`STORYBOARD.md`** — beat-by-beat doc, one section per scene. Each section names: (a) **function in the arc** (one sentence tying back to the story spine — which spine field does this scene advance?), (b) **beats** with local timecodes (`[0–3s]` etc.) describing on-screen action, (c) **dialogue** (verbatim, in original language — write the actual lines now; "TBD" is not acceptable; if silent, justify in CONCEPT.md), (d) **camera** behavior, (e) **lighting**, (f) **sound** intent, (g) **why this works** tying back to spine + arc.
+
+   - **`SHOTLIST.md`** (mandatory; this is the file the previous workflow was missing). Explode every scene into **3–6 individual shots of 2–3s each** per `../references/shot-grammar.md`. A 60s narrative is 20–30 shots, not 6. For each shot write: `id`, `duration`, `frame` (WS/MS/CU/ECU/OTS/POV/INSERT/MACRO/LOW/HIGH/DUTCH/TWO-SHOT/RACK), `action` (one sentence with camera move), `subject`, `startImage` (keyframe file), `endImage` (next keyframe or "none"), `dialogue` (verbatim line if any), `sfx/foley`, `continuity hook` (match cut / hard cut / J-cut / L-cut). Plan at least 2–3 explicit match cuts across the 60s — name them in the continuity-hook field.
+
+     **Approval gate 2 — shot list.** Surface STORYBOARD.md + SHOTLIST.md and wait. Until the user OKs the shot count and the dialogue lines verbatim, no keyframe generation.
+
+   The 2026-05-21 Inkfall delivery shipped with one 10s clip per scene, no dialogue, and no match cuts — the user verdict was "transitions suck, story makes no sense, people don't speak." That outcome traces directly back to skipping the SHOTLIST.md and spine gates. Do not repeat it.
+
+   A scene is a *story beat*, not a *time slot*. A shot is one camera setup. Most scenes are 3–6 shots.
 
 3. **Asset sheet (mandatory for narrative).** Before any scene composition, generate in one parallel batch:
    - **Character turnaround** per protagonist — front / three-quarter / action pose. One sheet or three separate refs.
    - **Prop sheet** for any recurring hero items (weapons, devices, signature accessories) on a neutral studio backdrop.
    - **Location plate** per distinct scene location, no characters.
 
-   Show the sheet, wait for approval, regenerate any drifting elements before composing scenes. Asset-sheet stills are cheap (~17-35 CU each on `krea/krea-2/large` or `google/imagen-4-ultra`); the parallel batch finishes in ~30-60s. Skipping this step is the single biggest cause of character drift across a long video — every scene re-rolls the hero from text alone, and the spirit-creature / mask / hair-color drifts that look catastrophic on the assembled cut originate here.
-4. Plan a shot list. Include title cards, scene order, aspect, duration, and per-scene refs (which turnaround / prop / location plate each scene consumes). The shot list is the table that maps STORYBOARD.md beats to concrete model calls; it should not introduce new beats not in the storyboard.
-5. Resolve live archetypes: `high-fidelity image` or `image-to-image / face reference` for frames, `text in image` for titles, and `image-to-video / start frame anchored` for clips. If the resolved video model is a `seedance-2` variant, load `../references/models/seedance-2.md` for engine-specific prompt structure, archetypes, cut rules, the positional-travel rule for combat, and banned phrases.
-6. **Scene-by-scene chain** (this is the cohesion gate; do not batch). For each scene N from 1 to M:
-   a. Compose scene N still — 1-2 variations, image-to-image with the relevant character turnaround + location plate + prop sheet as references. The prompt for this still is the STORYBOARD.md beat for scene N, not a freshly imagined description. Show, wait for approval.
-   b. Plan scene N's **end frame** as the visual anchor for scene N+1's start. Either generate it as a separate still and approve, or note "same as scene N+1 start" if the cut is a hard match.
-   c. Submit the image-to-video job. **Seedance 2 rejects `endImage` and `referenceImages` in the same call (HTTP 422)** — pick one path:
-      - **Chained scenes (have a next scene)**: `startImage=<approved still>`, `endImage=<scene N+1 still>`, `generateAudio=true`, `resolution=720p`, `aspectRatio=<target>`. **Omit `referenceImages`.** Identity rides forward because scene N+1's `startImage` is the still you composed with the asset-sheet refs at step 6a — the identity lock happens at still-compose time, not at video time.
-      - **Terminal scene (last in the chain)**: `startImage=<approved still>`, `referenceImages=[<character turnaround + prop>]`, `generateAudio=true`, `resolution=720p`, `aspectRatio=<target>`. **Omit `endImage`.** Reference images reinforce fine character details (signature mask elements, costume hardware) that the still-compose pass may have softened.
+   When each still lands, **Read every file individually and run a critical vision pass per `../references/vision-qa.md`** — one observation per still, grade each (✓ / ✗), regenerate the weak ones before showing the user. Do not summarize a batch as "all four look great"; that is the failure mode that produces broken endImages and Seedance refusals downstream. Asset-sheet stills are cheap (~17-35 CU each on `google/imagen-4-ultra` or `google/nano-banana-pro` for the CLI/MCP path; `krea/krea-2/large` exists only via direct HTTP — see `../references/models/`); the parallel batch finishes in ~30-60s. Skipping this step is the single biggest cause of character drift across a long video — every scene re-rolls the hero from text alone, and the spirit-creature / mask / hair-color drifts that look catastrophic on the assembled cut originate here.
+4. Resolve live archetypes: `high-fidelity image` or `image-to-image / face reference` for frames, `text in image` for titles, and `image-to-video / start frame anchored` for clips. If the resolved video model is a `seedance-2` variant, load `../references/models/seedance-2.md` for engine-specific prompt structure, archetypes, cut rules, the positional-travel rule for combat, and banned phrases.
 
-      Use `-i field=value` raw input — named CLI flags drop most of these fields silently (see `../references/cli-or-mcp.md`).
-   d. Show the resulting clip. Approve or re-roll with adjusted motion prompt.
-   e. Use scene N's `endImage` (or extract the last frame of the resulting clip) as scene N+1's `startImage`. This is the continuity hook that makes the assembled cut read as one piece rather than random concat.
+5. **Compose one keyframe per shot, not per scene.** From SHOTLIST.md, each shot has a `startImage`. Generate every distinct keyframe (a shot whose startImage is "extracted from previous shot's last frame" does not need its own generation). Use image-to-image with the character turnaround + location plate + prop sheet as references. Run keyframe generation in parallel batches of 4–6.
 
-   Surface the running CU spend after each clip; warn early if approaching the session budget.
-7. After the final scene clip is approved, normalize every clip to identical resolution, FPS, codec, SAR, and strip per-clip audio.
-8. Concatenate with ffmpeg. Add one cohesive audio track at the end if requested.
-9. Sample frames across the final edit and read with vision before delivery.
-10. **Deliver** with final file path/URL, scene count, runtime, asset-sheet references, and QA notes.
+   **Read every keyframe individually** per `../references/vision-qa.md` — grade each shot's keyframe ✓/✗ with one critique line, regenerate any ✗ before video generation. The cost of regenerating a still is seconds; the cost of a bad startImage propagating into a video clip is minutes plus the CU.
+
+6. **Shot-by-shot video generation** (chain primitive operates at shot level, not scene level). For each shot `S{n}.{m}` in SHOTLIST.md:
+   a. Submit the image-to-video job. **Seedance 2 rejects `endImage` and `referenceImages` in the same call (HTTP 422)** — pick one path:
+      - **Chained shot (has a next shot, continuity hook is match / J-cut / L-cut)**: `startImage=<this shot's keyframe>`, `endImage=<next shot's keyframe>`, `generateAudio=true`, `resolution=720p`, `aspectRatio=<target>`. **Omit `referenceImages`.**
+      - **Terminal shot (hard cut to next, or last in cut)**: `startImage=<this shot's keyframe>`, `referenceImages=[<turnaround + prop>]`, `generateAudio=true`, `resolution=720p`, `aspectRatio=<target>`. **Omit `endImage`.**
+      - **For Seedance: native audio is the default audio path.** Include each shot's dialogue and SFX/foley directly in the prompt's `Audio:` block (per `../references/models/seedance-2.md` prompt structure). Seedance renders lip-synced dialogue + ambient + score per-clip natively. Do NOT default to external TTS + ffmpeg mux — that's the fallback for video models without native audio (Kling, etc.). The external mux pattern in step 7-8 below applies only when the chosen video model returns silent video.
+      - **Duration**: Seedance-2 minimum is **4 seconds** (per `../references/models/seedance-2.md`). Shot-grammar shots are typically 2-3s. **Always submit `duration=4` and trim down in ffmpeg at step 8.** Do not pass duration<4 — the job fails with a schema error.
+
+      Use `-i field=value` raw input — named CLI flags drop most fields silently (see `../references/cli-or-mcp.md`).
+   b. **Chain-from-last-frame for in-scene continuity** (per `../references/models/seedance-2.md` "Chain-from-last-frame"). Within a scene, shots are SERIAL: submit shot N+1 only after shot N has completed, then extract shot N's actual last frame with `ffmpeg -sseof -0.1 -i shot-N-raw.mp4 -frames:v 1` and use that as shot N+1's `startImage` (overriding the pre-planned keyframe). This carries motion, lighting, costume, and expression smoothly into the next shot. Across scenes (hard scene boundaries), keep the pre-planned keyframe and fire in parallel. Net effect: serial within ~3-5 shots of a scene, parallel between scenes, **respecting the 12-concurrent-job cap** on Seedance-2 videoV2 (HTTP 429 `CONCURRENCY_LIMIT_REACHED` on the 13th).
+
+   If you skip the chain-from-last-frame step, every clip will start cold from a freshly-rendered still and the assembled cut will feel like a slideshow of independent clips. This is the single biggest difference between a 1/10 narrative and a 7/10 narrative.
+
+   **Shadow-fail detection (mandatory)**: a Seedance-2 job can return `status:"completed"` with `result:{}` empty — that is a silent content-filter refusal, not a successful render. Treat any completed job with no `result.urls[]` as a refusal. Retry once with a sanitized prompt (drop proper nouns and role descriptors per `../references/models/seedance-2.md` "Content-filter shadow-fail"); if still empty, drop `endImage` and retry with `startImage` only; if still empty, mark the shot and continue.
+   c. As each clip lands, sample its mid and end frame with ffmpeg, Read both, write a ✓/✗ critique. Re-roll weak shots immediately — do not assemble around a known-bad shot hoping the cut will hide it. It won't.
+
+   Surface running CU spend after each batch.
+
+7. **Audio strategy — branch by model.**
+   - **If using Seedance-2 (native audio)**: nothing extra to do in this step. Per shot in step 6, you already included dialogue + SFX/foley in the prompt's `Audio:` block; Seedance renders it natively (lip-sync, ambient, score). Keep Seedance's per-clip audio when normalizing in step 8 — do NOT strip. Optionally add a thin continuous music bed under the whole assembly to bridge cuts (see `../references/dialogue-and-audio.md` "thin overlay bed pattern"), but the per-clip native audio is the primary track.
+   - **If using a silent-video model (Kling, etc.)**: run the external-mux pipeline per `../references/dialogue-and-audio.md`:
+     a. Generate the continuous music/ambient bed via the chosen audio model (`list_models` for audio/voice; prefer Krea if available, else ElevenLabs, else stock).
+     b. Generate one TTS file per dialogue line in SHOTLIST.md.
+     c. Listen to every file before assembly; re-generate any that sounds wrong.
+
+8. **Assemble.** **Trim each raw clip to its SHOTLIST.md duration first** (Seedance was submitted at duration=4 per the 4s minimum — your 2.5s shot needs `ffmpeg -i raw.mp4 -t 2.5 -c:v libx264 -c:a aac -b:a 192k trim.mp4`). Then normalize every trimmed clip to identical resolution, FPS, codec, SAR.
+   - **Seedance path (native audio)**: KEEP per-clip audio through trim and normalize. Concatenate with `ffmpeg -f concat -safe 0 -i list.txt -c copy out.mp4` so both video and audio carry through. Optionally overlay a thin continuous music bed underneath (see "thin overlay bed pattern" in `../references/dialogue-and-audio.md`).
+   - **Silent-video-model path**: strip per-clip audio (`-an`), concat video-only, then mux the external bed + TTS lines per `../references/dialogue-and-audio.md` in a single ffmpeg invocation:
+   - Input 0: video-only concat
+   - Input 1: ambient bed (full duration, `volume=0.35`)
+   - Inputs 2..N: dialogue TTS lines, each positioned with `adelay=<ms>|<ms>` at its shot's start timestamp
+   - Filter graph: `amix=inputs=N:duration=longest:normalize=0`
+   - `-c:v copy -c:a aac -b:a 192k -ar 48000 -ac 2`
+
+   If subtitles are needed for non-English dialogue, burn them in with `subtitles=subs.srt` at the configured style.
+
+9. **Final QA**. Sample frames across the assembled cut (every ~2s) and Read each per `../references/vision-qa.md` "Video frame sampling". Sample audio at each dialogue timestamp (`ffmpeg -ss <t> -t 2 -vn`) and listen — confirm dialogue sits above bed, no clipping, no late landing. Catch identity drift, unplanned hard cuts, color-temperature jumps, dialogue-audio mismatch.
+
+10. **Deliver** with final file path/URL, shot count (not scene count), runtime, total CU spent, asset-sheet references, and QA notes including which match cuts landed and which didn't.
 
 ### CLI
 
@@ -66,10 +99,10 @@ Lead with the `-i` raw-input pattern for video — the named flags cover only `-
 
 ```bash
 # Asset sheet — parallel batch
-krea generate image -m "krea/krea-2/large" --aspect 1:1 \
+krea generate image -m "google/imagen-4-ultra" --aspect 1:1 \
   -p "character turnaround sheet, hero front / three-quarter / action pose, single sheet, neutral studio gray, cel shaded anime style" \
   --wait -o ./asset-hero-turnaround.png &
-krea generate image -m "krea/krea-2/large" --aspect 16:9 \
+krea generate image -m "google/imagen-4-ultra" --aspect 16:9 \
   -p "location plate, neon ruined street at night, no characters, anime BG plate" \
   --wait -o ./asset-loc-01.png &
 wait
@@ -124,25 +157,28 @@ get_job(jobId=<id>)  # poll all jobs with progress pings
 
 ## Banned
 
-- Do not skip `CONCEPT.md` + `STORYBOARD.md`. Composing keyframes against a vague verbal brief produces incoherent scenes that the user can't articulate fixes for, which forces expensive re-rolls at the video step. The 60-second skill author session on 2026-05-21 burned six failed scene-2 video re-rolls because of this exact omission.
-- Do not skip the asset sheet for narrative video. Without locked turnarounds, character / creature / prop drift across scenes is guaranteed.
-- Do not batch all scene videos in parallel after still approval. Chain scene-by-scene with `endImage` so the user can steer continuity at the cheapest decision point.
-- Do not animate unapproved frames.
-- Do not submit all scenes before the user has seen the first frame.
+- Do not skip `CONCEPT.md` + `STORYBOARD.md` + `SHOTLIST.md`. The three approval gates (story spine → storyboard → shot list) are the cheapest course-correction points in the pipeline. Skipping any of them produces footage the user has to articulate fixes for in pixels — at orders of magnitude more cost than re-writing a sentence.
+- Do not plan one continuous 10s clip per scene. A scene is 3–6 shots of 2–3s each. The 2026-05-21 Inkfall delivery shipped 6 one-shot scenes; the user verdict was "transitions suck, story makes no sense." Cinema cuts inside scenes. See `../references/shot-grammar.md`.
+- Do not generate a narrative >15s with dialogue listed in SHOTLIST.md but no dialogue in the final cut. Either render the dialogue via TTS and mux it (see `../references/dialogue-and-audio.md`) or rewrite the storyboard to be deliberately silent with `## Dialogue posture` documented in CONCEPT.md.
+- Do not ship without at least 2–3 explicit match cuts named in SHOTLIST.md continuity-hook fields. Random hard cuts read as "footage stapled together."
+- Do not skip the asset sheet. Without locked turnarounds, character / creature / prop drift across shots is guaranteed.
+- Do not animate unapproved keyframes.
 - Do not concatenate clips without normalization.
-- Do not keep random AI clip audio when assembling; strip and add one track.
+- Do not keep random AI per-clip audio when assembling; strip and replace with the bed + dialogue mux.
 - Do not rely on named CLI flags for Seedance 2.0; use `-i` for `endImage`, `referenceImages`, `generateAudio`, `resolution`, `seed`.
-- Do not pass `endImage` and `referenceImages` in the same Seedance 2 call — the API returns HTTP 422. Pick one per scene (chained → endImage; terminal → referenceImages).
+- Do not pass `endImage` and `referenceImages` in the same Seedance 2 call — the API returns HTTP 422. Pick one per shot (chained → endImage; terminal/hard-cut → referenceImages).
 - Do not call this workflow for a <=15s single social clip; use `social-video-short.md`.
 
 ## Cost & time
 
+A 60s narrative under this workflow is **20–30 shots of 2–3s each**, not 6 × 10s. Cost scales accordingly — surface this honestly in cost-preflight.
+
 - Asset sheet: 3-6 stills × ~17-35 CU each, parallel batch, ~30-60s wall-clock.
-- Scene stills: ~60 CU each on `google/nano-banana-pro` 1K with reference images.
-- Per scene clip: Seedance 2.0 at 720p / 10s without video refs is **~1,738 CU per clip** (live billing, 2026-05-21). With video refs the rate is lower (~830 CU) but most chain workflows can't use video refs simultaneously with endImage. Wall-clock 5-15 min per clip; queue varies.
-- Typical full workflow: asset sheet (~150 CU) + 6-8 chained scene stills (~400 CU) + 6-8 chained scene clips (~10-14k CU). Budget **~11-15k CU end-to-end for a 60-80s narrative video** at 720p with audio. 40-100 minutes wall-clock depending on approvals and queue.
-- Sequential scene-by-scene chain is **not slower in wall-clock** for a 60s short — user decision time was already the bottleneck — and total CU is lower because failed scenes are caught immediately, not after all 6 have been rendered.
-- Hard caps the user should know about: long stories are many short clips assembled with `endImage` continuity, not one huge continuous clip.
+- Per-shot keyframes: 20–30 × ~60 CU on `google/nano-banana-pro` 1K with reference images = **~1.2–1.8k CU**. Parallel in batches of 4–6.
+- Per-shot video: Seedance 2.0 at 720p / 2–3s. **Per-shot CU is lower than per-scene** because duration is shorter, but the count is higher. Estimate **~600–900 CU per 2–3s clip** (verify with `get_model_schema` cost endpoint; rates change). 20–30 shots = **~12–27k CU**. Wall-clock 5–15 min per shot; jobs are independent so the bottleneck is parallel-batch size, not chain order.
+- Audio: 1 ambient bed (~500 CU on Krea audio, or external) + 4–8 TTS dialogue lines (~50 CU each on Krea voice, or ElevenLabs cost). ~1k CU total.
+- **Typical full workflow**: asset sheet (~150 CU) + 20–30 keyframes (~1.5k CU) + 20–30 video shots (~15–25k CU) + audio (~1k CU) = **~17–28k CU end-to-end for a 60s narrative video** with dialogue at 720p. 60–120 minutes wall-clock depending on approvals and queue.
+- The cost honesty conversation: this is 2–3× the old 6-scene budget. The old plan produced a slideshow. The right comparison is "this costs more *and* produces actual cinema" vs. "the old plan was cheap *and* unwatchable." Surface this at cost-preflight and let the user choose.
 
 ## On failure
 
