@@ -1,6 +1,6 @@
 # Media Inputs
 
-How to pass reference images, start frames, and audio files to Krea models through the MCP.
+How to pass reference images, start frames, and audio files to Krea models through the CLI or MCP.
 
 ## Two paths: URL or upload
 
@@ -52,6 +52,54 @@ generate_image(
 | Krea uses the image as a generation reference | `upload_asset` → pass the returned URL into the model's input |
 
 Often you do both: `Read` the file first to know the brief better, then `upload_asset` to actually pass it to the model.
+
+## CLI reference pattern
+
+The CLI is the default surface. For local files, upload once, resolve the Krea-hosted URL, then pass that URL using the field accepted by the selected model schema.
+
+```bash
+UPLOAD_JSON=$(krea upload ./reference.png --json)
+REF_URL=$(printf '%s' "$UPLOAD_JSON" | jq -r '.url // empty')
+
+# Older CLI versions can return an empty url with a valid id.
+if [ -z "$REF_URL" ]; then
+  ID=$(printf '%s' "$UPLOAD_JSON" | jq -r .id)
+  REF_URL=$(curl -sS -H "Authorization: Bearer $KREA_API_KEY" \
+    "https://api.krea.ai/assets/$ID" | jq -r .image_url)
+fi
+
+krea models show "<model-id>" --json
+
+# Singular reference field, when schema supports imageUrl/image:
+krea generate image -m "<model-id>" \
+  -i imageUrl="$REF_URL" \
+  -p "<prompt>" \
+  --wait -o ./out.png
+
+# Multi-reference field, when schema supports imageUrls/imageUrls-like arrays:
+krea generate image -m "<model-id>" \
+  -i imageUrls="[\"$REF_URL\"]" \
+  -p "<prompt>" \
+  --wait -o ./out.png
+
+# Start-frame video, when schema supports startImage/start-image:
+krea generate video -m "<model-id>" \
+  --aspect 9:16 \
+  -i startImage="$REF_URL" \
+  -p "<motion prompt>" \
+  --json
+
+# Krea 2 style reference, when schema supports image_style_references:
+krea generate image -m krea/krea-2/large \
+  --aspect 1:1 \
+  -i image_style_references='[{"url":"'"$REF_URL"'","strength":0.5}]' \
+  -p "<prompt>" \
+  --wait -o ./out.png
+```
+
+Do not guess field names. Always inspect the live model schema first; different models use different reference fields.
+
+Krea 2 image endpoints use `aspect_ratio` + `resolution` in the public API. The CLI maps `--aspect` for the default Krea 2 flow and supplies the default `resolution=1K`; raw MCP or `--input` calls should use those public names directly. Krea 2 style references use `image_style_references` items shaped as `{ "url": "...", "strength": 0.5 }`.
 
 ## Single image vs multiple images
 
