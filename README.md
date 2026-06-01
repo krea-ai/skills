@@ -1,7 +1,7 @@
 # Krea AI Skills
 
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![version](https://img.shields.io/badge/version-0.2.0-green.svg)](VERSION)
+[![version](https://img.shields.io/badge/version-0.2.1-green.svg)](VERSION)
 [![skills](https://img.shields.io/badge/skills-2-purple.svg)](#install-the-skills)
 [![discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.com/invite/krea-1002244500581798028)
 
@@ -76,19 +76,19 @@ These trigger `krea-build` - developer-focused integration patterns. The agent g
 
 ## Updates
 
-The skill includes an opt-in update notification. Once per session, the agent runs `scripts/update-check.sh` which checks `https://raw.githubusercontent.com/krea-ai/skills/main/VERSION` against the local `VERSION` file. If a newer version exists, it prints `UPGRADE_AVAILABLE <local> <remote>` to stdout — the agent surfaces this once, then continues. Snoozes 24h → 48h → 7d to avoid nagging.
+The `krea-ai` skill includes an opt-in update notification. Once per session, the agent may run `krea-ai/scripts/update-check.sh`, which checks `https://raw.githubusercontent.com/krea-ai/skills/main/VERSION` against the installed `krea-ai/VERSION` file. If a newer version exists, it prints `UPGRADE_AVAILABLE <local> <remote>` to stdout — the agent surfaces this once, then continues. Snoozes 24h → 48h → 7d to avoid nagging.
 
 **To upgrade**, re-run your install command (`npx skills add krea-ai/skills`, etc.).
 
 **To disable the check**: `touch ~/.krea-skills/update-check-disabled`.
 
-**To force a fresh check**: `bash scripts/update-check.sh --force`.
+**To force a fresh check**: `bash krea-ai/scripts/update-check.sh --force`.
 
-Single-source version: `VERSION` file at repo root. CI enforces that all SKILL.md frontmatters, plugin manifests, and `package.json` agree.
+Single-source version: `VERSION` file at repo root. CI enforces that `krea-ai/VERSION`, all SKILL.md frontmatters, plugin manifests, and `package.json` agree.
 
 ## Evals
 
-`evals/run.sh` runs 20 regression scenarios through `claude -p` in headless mode and grades responses with regex (PASS / FAIL / MANUAL_REVIEW). See `evals/README.md` for methodology.
+`evals/run.sh` runs 22 regression scenarios through `claude -p` in headless mode and grades responses with regex (PASS / FAIL / MANUAL_REVIEW). See `evals/README.md` for methodology.
 
 ```bash
 bash evals/run.sh                 # v1 — regex + manual review

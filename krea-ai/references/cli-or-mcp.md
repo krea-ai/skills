@@ -21,6 +21,12 @@ If neither is available, tell the user one of:
 
 Don't fall back to direct HTTP calls — then it's a bug or a custom workflow the agent should write code for (see krea-build).
 
+## CLI stdout contract
+
+Bare CLI generation is async. `krea generate image -p "..."` prints a `job_id` on stdout, not a result URL. Use `--wait` when a shell script needs `URL=$(krea generate image -p "..." --wait)`, or capture the job id and call `krea jobs wait <id>`.
+
+The default CLI image model is `krea/krea-2/large`. Krea 2 dimensions use `--aspect` in the CLI, or raw `aspect_ratio` + `resolution` fields when passing `--input`/MCP payloads. Pin another model with `-m` for old `--width`, `--height`, `--quality`, `--steps`, or `--image` workflows.
+
 ## Operation reference — MCP vs CLI
 
 | Operation | MCP | CLI |
@@ -35,6 +41,71 @@ Don't fall back to direct HTTP calls — then it's a bug or a custom workflow th
 | **Get job status** | `get_job(jobId="<id>")` | `krea jobs show <id> --json` |
 | **Wait for terminal status** | poll `get_job` every 10s until terminal | `krea jobs wait <id>` (server-side poll, blocks until done) |
 | **Save result to disk** | response URL → curl/Bash download | `-o ./out.png` (implies `--wait`, handles download) |
+
+## When named flags aren't enough — use `-i`
+
+The CLI's named flags (`--start-image`, `--duration`, `--aspect`, `--prompt`, `--width`, `--height`, etc.) cover the common cases. For everything else in the model schema, use `-i field=value`. This is the primary path for any model whose schema is wider than the named flags — notably `bytedance/seedance-2`, which exposes `endImage`, `referenceImages` (up to 9), `referenceVideos`, `referenceAudios`, `generateAudio`, `resolution`, `seed`, and `effects[]` beyond the four fields the named flags cover.
+
+Always run `krea models show <id>` first to see the live schema; field names there are exactly what `-i` accepts.
+
+### Syntax
+
+```bash
+# Scalar (string, number)
+-i resolution=720p
+-i duration=10
+-i seed=42
+
+# Boolean
+-i generateAudio=true
+
+# Array of strings — JSON-encoded
+-i "referenceImages=[\"https://ref1.png\",\"https://ref2.png\"]"
+
+# Object (nested) — JSON-encoded
+-i 'effects={"name":"smear","intensity":0.7}'
+```
+
+### Worked example — Seedance 2.0 chained vs terminal
+
+Seedance 2 rejects `endImage` and `referenceImages` together (HTTP 422). Pick one per call:
+
+```bash
+# Chained scene — endImage hook, identity rides via startImage
+krea generate video -m bytedance/seedance-2 \
+  --start-image "$START" --duration 10 --aspect 16:9 \
+  -i endImage="$END" \
+  -i generateAudio=true \
+  -i resolution=720p \
+  -i seed=42 \
+  -p "<prompt>" \
+  --json
+
+# Terminal scene — referenceImages for fine-detail identity anchor
+krea generate video -m bytedance/seedance-2 \
+  --start-image "$START" --duration 10 --aspect 16:9 \
+  -i "referenceImages=[\"$HERO\",\"$PROP\"]" \
+  -i generateAudio=true \
+  -i resolution=720p \
+  -i seed=42 \
+  -p "<prompt>" \
+  --json
+```
+
+Without `-i` these commands would silently drop most schema fields (the CLI does not warn). Lead with `-i` for any wide-schema model.
+
+### Per-model field-name variance
+
+Reference-image fields are not standardized across the model catalog:
+
+| Model | Reference field |
+|---|---|
+| `bytedance/seedance-2` | `referenceImages` (array, up to 9) |
+| `google/nano-banana-pro` | `imageUrls` (array) |
+| `google/imagen-4-ultra` | no reference field — image-to-image not supported |
+| `bfl/flux-1-kontext-dev` | `imageUrl` (single string) |
+
+Always run `krea models show <id> --json` and read the schema's `inputs` block before guessing. The CLI's `-i` does not validate field names against the schema until the API rejects the call.
 
 ## Notable CLI conveniences over MCP
 

@@ -1,6 +1,6 @@
 # Eval Scenarios
 
-20 scenarios. Format per scenario:
+22 scenarios. Format per scenario:
 
 - **Category**: routing | refusal | cost | vision | polling | edge_case
 - **User input**: exact brief
@@ -192,6 +192,26 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 - **Expected**: agent reuses the URL directly without re-downloading or re-uploading
 - **Pass regex**: `(?i)reuse|previous.*url|image.?url|pass.*url|use.*url|reference|input.*previous|asset url|hosted.*url|accepted directly|no.*re.?upload|no need.*upload`
 - **Fail regex**: `(?i)you (must|should|need).{0,30}re.?upload|always re.?upload|download (and|then) re.?upload|first re.?upload.*previous`
+
+---
+
+## Campaign regression (2)
+
+### 21. CPG storyboard means key visual
+
+- **Category**: routing
+- **User input**: "Make 10 storyboards for this LaCroix-style cherry lime can campaign. I want to see the ad directions before videos."
+- **Expected**: agent disambiguates storyboard, asks for/refers to layout references, and routes to a key-visual or campaign sheet gate before video
+- **Pass regex**: `(?i)key.?visual|campaign sheet|layout reference|style reference|brief intake|disambiguat|storyboard.*mean|before.*video`
+- **Fail regex**: `(?i)generate.*10.*final|seedance|generate_video|submit.*video|4.*panels.*t=0`
+
+### 22. Loose UGC brief gets storyboard variants
+
+- **Category**: routing
+- **User input**: "Make a UGC TikTok ad for this sparkling water can. Surprise me, but show me storyboards before video."
+- **Expected**: agent offers multiple storyboard directions/variants and waits for a pick before animation
+- **Pass regex**: `(?i)ugc|storyboard|variant|A/B/C|three|3|pick|choose|before.*video|wait.*approval`
+- **Fail regex**: `(?i)generate_video|seedance|submit.*video|one storyboard|single direction|already animating`
 
 ---
 

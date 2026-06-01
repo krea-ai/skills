@@ -47,6 +47,36 @@ Non-terminal states are progress signals — the agent doesn't need to interpret
 
 For very long jobs (4K renders, long durations), bump to 20s. For short Hailuo-style budget videos, 5s is fine.
 
+## CLI gotchas (`krea jobs wait` shell capture)
+
+`krea jobs wait <id> --json` writes BOTH a progress spinner and the final JSON to stdout. Naive capture like `RESULT=$(krea jobs wait $JOB --json)` produces a string shaped like `"processing... processing... {actual JSON}"` and breaks downstream `jq` parsing.
+
+Two reliable workarounds:
+
+```bash
+# Workaround A — grep the JSON line out of the noisy stream
+RESULT=$(krea jobs wait "$JOB" --json 2>/dev/null | grep -E '^\{')
+
+# Workaround B — separate progress from JSON
+krea jobs wait "$JOB" --json 2>/dev/null | tail -n 1 > /tmp/result.json
+URL=$(jq -r '.result.urls[0]' /tmp/result.json)
+```
+
+## Result URL — handle both response shapes
+
+Video job completion payloads return URLs at one of two paths depending on model + completion timing:
+
+- Most models (Seedance-2, Kling, Veo) terminal payload: `.result.urls[0]`
+- Some intermediate or older models: `.urls[0]` at top level
+
+Always use the defensive jq path:
+
+```bash
+URL=$(echo "$JSON" | jq -r '.result.urls[0] // .urls[0]')
+```
+
+If both return null, the job is either still processing OR shadow-failed (per `models/seedance-2.md` "Content-filter shadow-fail" — empty `result:{}` with `status:"completed"`). Distinguish by checking `.status` and `.result` separately.
+
 ## What goes in chat output
 
 Don't narrate every poll. The user doesn't need to see `queued... queued... running... running...`. Acceptable progress signals:

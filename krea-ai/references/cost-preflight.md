@@ -46,6 +46,13 @@ Krea cost-preflight override active for this session: user approved skipping rep
 
 Do not persist the override to project files unless the user explicitly asks.
 
+## Hard Gates
+
+- No `quality=high` on more than 3 outputs without prior contact-sheet, storyboard, or key-visual-sheet approval.
+- No video generation without an approved storyboard, key-visual sheet, or equivalent user-approved motion brief.
+- No regeneration of finals after "boring", "meh", or "not what I wanted" feedback without first identifying which lever should change: format, content, palette, voice, or fidelity.
+- No expensive campaign batch when the deliverable vocabulary is ambiguous. Disambiguate with `artifact-taxonomy.md` and a reference image first.
+
 ## Bad patterns
 
 - Do not hide cost because the user has unlimited credits.

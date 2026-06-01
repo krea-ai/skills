@@ -13,6 +13,8 @@ Krea's model lineup changes faster than this skill ships. So this document does 
 
 When in doubt, prefer the model whose `description` most closely echoes the user's brief.
 
+**Current flagship note.** As of the 0.2.1 skill release, `krea/krea-2/large` is the CLI's default image model and `krea/krea-2/medium` is its faster sibling. Treat them as current flagship examples when they appear in live `list_models()` output, but still inspect the live schema before submitting.
+
 ---
 
 ## Image archetypes
@@ -33,9 +35,11 @@ When in doubt, prefer the model whose `description` most closely echoes the user
 
 **Intent.** Polished result. Production. The user has already iterated and wants the best output Krea offers, or the brief is unambiguously high-stakes.
 
-**Keywords.** Scan `name` for `nano-banana-pro`, `gpt-image`, `imagen`, `seedream`, `pro`, `ultra`, `flagship`. Scan `description` for "photoreal", "high-fidelity", "premium", "production-quality".
+**Keywords.** Scan `name` for `krea-2`, `nano-banana-pro`, `gpt-image`, `imagen`, `seedream`, `pro`, `ultra`, `flagship`. Scan `description` for "photoreal", "high-fidelity", "premium", "production-quality".
 
 **Schema hints.** Often supports `resolution` (e.g. `1K`/`2K`/`4K`), `quality` (`high`/`auto`), and `aspectRatio`.
+
+**Krea 2 public shape.** `krea/krea-2/*` image endpoints use `aspect_ratio` + `resolution` (for example `1:1` + `1K`) instead of `width`/`height`. Do not pass `quality` or `steps` to Krea 2 unless the live schema explicitly adds them.
 
 **Don't use this archetype when** the user is just exploring or hasn't committed to a direction.
 
