@@ -1,7 +1,11 @@
 # Changelog
 
-## Unreleased
+## 0.3.0
 
+- Added `krea-animation`, a professional animation and anime production skill for asset bibles, model sheets, storyboards, shot lists, Krea video jobs, edit assembly, QA, and retakes.
+- Added file-based animation project scaffolding, validation, manifest generation, Krea video job submission/polling, ffmpeg assembly, and QA frame sampling scripts.
+- Updated `krea-ai` routing so studio animation, anime series, storyboard-to-video, and shotlist-to-sequence requests hand off to `krea-animation`.
+- Updated package/plugin metadata, README, CI validation, package-content checks, and eval scenarios for the new third skill.
 - Follow-up fixes after the 0.2.1 campaign workflow merge: added the missing `references/dialogue-and-audio.md`, filled in the Krea-specific Seedance-2 operating rules that workflows referenced, reconciled Seedance native-audio assembly, clarified `endImage` duration/trim behavior, and made narrative cost estimates consistent.
 - Added `krea-ai/references/models/` as the home for per-model prompting playbooks loaded after model resolution. First entry: `seedance-2.md` covering multimodal reference roles, time-segmented prompt structure, Krea-specific Seedance media-path exclusions, `endImage` destination behavior, chain-from-last-frame continuity, positional-travel prompting, shadow-fail recovery, concurrency caps, and pacing guardrails.
 - Wired the new reference into `social-video-short.md`, `narrative-video-long.md`, and `image-to-video-animate.md` so it loads only when the resolved video model is a `seedance-2` variant.
