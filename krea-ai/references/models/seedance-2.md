@@ -71,6 +71,101 @@ and action choreography, BGM references @Audio1, scene references @Image2
 
 ---
 
+## Krea Operating Rules
+
+These are Krea workflow rules for `bytedance/seedance-2`. Always confirm the live schema with `krea models show <id> --json` before submitting.
+
+### Mutually exclusive media paths
+
+Do not mix first/last-frame image-to-video controls with multimodal references in the same call. In Krea terms, `endImage` and `referenceImages` are mutually exclusive for Seedance-2:
+
+- **Chained / destination shot**: use `startImage` + `endImage`, omit `referenceImages`.
+- **Terminal / detail-anchored shot**: use `startImage` + `referenceImages`, omit `endImage`.
+- **Prompt-only or reference-only social clip**: use `referenceImages`, `referenceVideos`, or `referenceAudios` only when they are the intended creative references.
+
+If you need a reference to act as the first or last frame while also using other references, say so in the prompt. If the exact first or last frame must be guaranteed, use the first/last-frame path and drop multimodal references for that call.
+
+### Prompt reference names vs Krea fields
+
+The `@Image1` / `@Video1` / `@Audio1` language is prompt text. Krea still needs the matching schema field:
+
+| Prompt intent | Krea field |
+|---|---|
+| `@Image1 as the first frame` | `startImage` |
+| `@Image2 as the last frame` | `endImage` |
+| `@Image1 as character/product/style reference` | `referenceImages` |
+| `@Video1 for camera/action/rhythm reference` | `referenceVideos` |
+| `@Audio1 for BGM/rhythm reference` | `referenceAudios` |
+
+Do not rely on prompt text alone to attach assets. Upload the files, pass the URLs through the schema field, then describe each asset's role in the prompt.
+
+### endImage = visual destination
+
+`endImage` is not a loose style reference. It is the visual destination the model tries to reach by the end of the generated duration. Keep it within plausible story-time from the start image:
+
+- Good: hand closes around the cup, eyes open, character turns toward the door, smoke fills the room.
+- Risky: day becomes night, costume changes, character jumps locations, two unrelated compositions.
+
+When `endImage` is too far from `startImage`, jobs can hard-fail with little or no error detail. Drop `endImage` and retry start-image-only if the transition is too large.
+
+### Duration and trimming
+
+Seedance-2 has a 4 second minimum duration. For short editorial cuts:
+
+- For `startImage`-only or `referenceImages` shots, generate 4s and trim to the planned 2-3s cut if the useful motion lands early.
+- For `endImage` shots, do not trim before the destination frame is reached. Either plan that shot as a 4s beat, or avoid `endImage` and chain from the extracted last frame instead.
+- If a dialogue line needs more time than the shot allows, lengthen the shot before generation rather than compressing the line.
+
+### Chain-from-last-frame
+
+For in-scene continuity, submit the next shot only after the previous shot lands. Extract the actual last frame and use it as the next `startImage`:
+
+```bash
+ffmpeg -sseof -1 -i shot-raw.mp4 -update 1 -frames:v 1 -q:v 2 shot-last.png
+```
+
+Use planned keyframes across hard scene boundaries. Use extracted frames inside a scene where lighting, pose, costume, and expression need to carry forward.
+
+### Positional-travel rule
+
+For combat, dance, product movement, or any action that must travel, describe the trajectory, not just the pose:
+
+```text
+Action: the hero lunges two meters left-to-right across the wet floor over 1.5 seconds, blade tip drawing a bright arc from low left to high right, coat snapping backward from the force.
+Camera: locked low wide shot, subject crosses from frame-left foreground to frame-right midground.
+```
+
+Weak prompt: `the hero attacks with a sword`.
+
+Strong prompt: name direction, distance, duration, start pose, end pose, and camera framing.
+
+### Content-filter shadow-fail
+
+Seedance-2 can complete with an empty `result` payload. Treat `status:"completed"` with no `result.urls[]` as refusal, not success.
+
+Retry once with a sanitized prompt:
+
+- Remove proper nouns and IP-like phrases.
+- Replace role labels that can trip policy filters (`salaryman`, `schoolgirl`, `celebrity`) with neutral descriptors when possible.
+- Drop specific signage or logo text unless it is essential.
+- Keep `startImage` if the image carries identity.
+- If it still fails, drop `endImage` and retry start-image-only.
+
+### Concurrency cap
+
+Seedance-2 videoV2 has a practical cap of 12 concurrent jobs per workspace. Submit in waves of 12 or fewer, poll until in-flight count drops, then submit the next wave. A 13th parallel job can return `CONCURRENCY_LIMIT_REACHED`.
+
+### Pacing and banned phrasing
+
+For social and narrative work where realtime motion matters, avoid words that the model often turns into slow-motion footage:
+
+- Avoid: `slow`, `gentle`, `soft`, `slow motion`, `dreamy float`.
+- Prefer: `smooth`, `steady`, `fluid`, `natural realtime`, `controlled`, `precise`.
+
+This is a Krea workflow guardrail, not a universal language rule. If the user explicitly wants slow motion, ask for that as a deliberate style choice and budget the shot around it.
+
+---
+
 ## Prompt Structure Blueprint
 
 ### Formula

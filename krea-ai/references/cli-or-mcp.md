@@ -53,7 +53,7 @@ Always run `krea models show <id>` first to see the live schema; field names the
 ```bash
 # Scalar (string, number)
 -i resolution=720p
--i duration=10
+-i duration=4
 -i seed=42
 
 # Boolean
@@ -71,9 +71,10 @@ Always run `krea models show <id>` first to see the live schema; field names the
 Seedance 2 rejects `endImage` and `referenceImages` together (HTTP 422). Pick one per call:
 
 ```bash
-# Chained scene — endImage hook, identity rides via startImage
+# Chained shot — endImage hook, identity rides via startImage.
+# Use 4s for shot-grammar clips; use a longer accepted duration only for deliberate long beats.
 krea generate video -m bytedance/seedance-2 \
-  --start-image "$START" --duration 10 --aspect 16:9 \
+  --start-image "$START" --duration "${DURATION:-4}" --aspect 16:9 \
   -i endImage="$END" \
   -i generateAudio=true \
   -i resolution=720p \
@@ -81,9 +82,9 @@ krea generate video -m bytedance/seedance-2 \
   -p "<prompt>" \
   --json
 
-# Terminal scene — referenceImages for fine-detail identity anchor
+# Terminal shot — referenceImages for fine-detail identity anchor.
 krea generate video -m bytedance/seedance-2 \
-  --start-image "$START" --duration 10 --aspect 16:9 \
+  --start-image "$START" --duration "${DURATION:-4}" --aspect 16:9 \
   -i "referenceImages=[\"$HERO\",\"$PROP\"]" \
   -i generateAudio=true \
   -i resolution=720p \
