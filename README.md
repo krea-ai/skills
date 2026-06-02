@@ -1,15 +1,16 @@
 # Krea AI Skills
 
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![version](https://img.shields.io/badge/version-0.2.1-green.svg)](VERSION)
-[![skills](https://img.shields.io/badge/skills-2-purple.svg)](#install-the-skills)
+[![version](https://img.shields.io/badge/version-0.3.0-green.svg)](VERSION)
+[![skills](https://img.shields.io/badge/skills-3-purple.svg)](#install-the-skills)
 [![discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.com/invite/krea-1002244500581798028)
 
-Two Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get both.
+Three Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get all three.
 
 | Skill | When to use |
 |---|---|
 | **`krea-ai`** | Canonical intent-first router. Image, video, enhancement, LoRA, product photography, archviz, and campaign workflows via the Krea CLI by default, with MCP as fallback. |
+| **`krea-animation`** | Professional animation and anime production workflow: asset bibles, model sheets, storyboards, shot lists, Krea video jobs, edit assembly, QA, and retakes. |
 | **`krea-build`** | Patterns for developers writing apps that integrate the Krea API: auth, polling, error handling, validation, frontend snippets for SvelteKit / React / Vue. Also the place to generate repeatable pipeline scripts in the user's own stack. |
 
 Works with Claude Code, Cursor, Codex, Windsurf, OpenCode, Gemini CLI, OpenClaw, and any agent that picks up `~/.<agent>/skills/<name>/SKILL.md`.
@@ -20,7 +21,7 @@ Works with Claude Code, Cursor, Codex, Windsurf, OpenCode, Gemini CLI, OpenClaw,
 npx skills add krea-ai/skills
 ```
 
-Installs both skills. This is the supported install path across agents that use skill packages.
+Installs all three skills. This is the supported install path across agents that use skill packages.
 
 ## Prerequisites — one of these
 
@@ -67,6 +68,14 @@ These route through `krea-ai/workflows/archviz-3d-to-render.md` for structural-r
 These route through `krea-ai/workflows/` recipes for product photography, social video, campaigns, and LoRA-backed consistency.
 
 ```
+> Help me make an anime pilot from scratch with AI.
+> Turn this approved storyboard into a shotlist and Krea video sequence.
+> Set up an asset bible, character model sheets, retake log, and final edit for a 60s animated short.
+```
+
+These trigger `krea-animation` - the studio-style animation pipeline. It enforces asset sheets, storyboards, shot approval, generated clips, edit assembly, QA frames, and retakes before final delivery.
+
+```
 > Help me add a Krea image generator to my SvelteKit app.
 > Set up server-side polling for video generation in my Next.js app.
 > Give me a repeatable pipeline script for my product launch workflow.
@@ -88,7 +97,7 @@ Single-source version: `VERSION` file at repo root. CI enforces that `krea-ai/VE
 
 ## Evals
 
-`evals/run.sh` runs 22 regression scenarios through `claude -p` in headless mode and grades responses with regex (PASS / FAIL / MANUAL_REVIEW). See `evals/README.md` for methodology.
+`evals/run.sh` runs 31 regression scenarios through `claude -p` in headless mode and grades responses with regex (PASS / FAIL / MANUAL_REVIEW). See `evals/README.md` for methodology.
 
 ```bash
 bash evals/run.sh                 # v1 — regex + manual review

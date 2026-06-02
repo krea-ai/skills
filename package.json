@@ -1,8 +1,8 @@
 {
   "name": "krea-ai-skill",
-  "version": "0.2.1",
-  "description": "Two Agent Skills for Krea.ai: intent-first generation workflows and developer integration patterns.",
-  "keywords": ["agent-skill", "krea", "image-generation", "video-generation", "ai-art", "lora", "mcp", "archviz", "marketing"],
+  "version": "0.3.0",
+  "description": "Three Agent Skills for Krea.ai: intent-first generation workflows, professional animation production, and developer integration patterns.",
+  "keywords": ["agent-skill", "krea", "image-generation", "video-generation", "ai-art", "lora", "mcp", "archviz", "marketing", "animation", "anime", "storyboard"],
   "author": "Krea AI",
   "license": "MIT",
   "repository": {
@@ -11,6 +11,7 @@
   },
   "files": [
     "krea-ai/",
+    "krea-animation/",
     "krea-build/",
     "evals/",
     "scripts/",
@@ -19,6 +20,14 @@
     ".cursor-plugin/",
     "VERSION",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "!**/__pycache__/**",
+    "!**/*.pyc",
+    "!**/*.pdf",
+    "!**/*.mp4",
+    "!**/*.mov",
+    "!**/*.wav",
+    "!**/*.aiff",
+    "!**/*.psd"
   ]
 }
