@@ -94,7 +94,7 @@ Plan at least 2–3 match cuts per 60s narrative. They are what makes the assemb
 
 ## Shot count budget
 
-If a 60s narrative is 20–30 shots and each Seedance clip is ~1.7–2.0k CU, the video-only cost is **~34–60k CU**. Surface this in cost-preflight; do not hide the order-of-magnitude jump from the old 6-clip plan. The right comparison is not "this costs more than before"; it's "the old plan produced a slideshow."
+If a 60s narrative is 20–30 shots, estimate Seedance video spend from the live catalog before submission. The last observed 10s 720p clip was ~1,738 CU (2026-05-21); short 4s shot-grammar clips should still be quoted conservatively at ~700-1,000 CU each until live pricing says otherwise. That puts video-only cost around **~14–30k CU** for 20–30 shots. Surface this in cost-preflight; do not hide the order-of-magnitude jump from the old 6-clip plan. The right comparison is not "this costs more than before"; it's "the old plan produced a slideshow."
 
 ## What this is NOT
 

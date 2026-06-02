@@ -110,7 +110,7 @@ Load only what the active workflow needs:
 - `references/preferences.md` - project-level overrides.
 - `references/cost-preflight.md` - mandatory approval before >100 CU or video/training jobs.
 - `references/progress-reporting.md` - mandatory pings during long async polling.
-- `references/models/` - per-model prompting playbooks (engine quirks, archetypes, banned phrases). Load only when the active workflow has resolved that model. Today: `seedance-2.md`.
+- `references/models/` - per-model prompting playbooks (prompt structure, media-path rules, engine quirks, failure recovery, pacing guardrails). Load only when the active workflow has resolved that model. Today: `seedance-2.md`.
 
 ## Related skill
 

@@ -21,7 +21,7 @@ Hard prescription. Follow in order.
 
 1. Read the still image with vision; identify what must remain stable.
 2. **Cost-preflight** if estimated >100 CU or any premium video model is used.
-3. Resolve `image-to-video / start frame anchored` from live `list_models`. If the resolved video model is a `seedance-2` variant, load `../references/models/seedance-2.md` for engine-specific prompt structure, archetypes, cut rules, and banned phrases.
+3. Resolve `image-to-video / start frame anchored` from live `list_models`. If the resolved video model is a `seedance-2` variant, load `../references/models/seedance-2.md` for prompt structure, media-path rules, `endImage` destination behavior, shadow-fail recovery, and pacing guardrails.
 4. Inspect schema for `startImage`, `endImage`, duration, aspect, audio, and resolution fields.
 5. Upload local still to Krea; use hosted URL.
 6. Write a motion-only prompt. The still already defines the scene; prompt the movement.

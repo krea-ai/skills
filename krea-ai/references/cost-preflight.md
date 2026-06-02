@@ -34,6 +34,8 @@ If model details do not expose CU, say so and use the workflow's documented appr
 I cannot read live CU pricing from the CLI for this model, so I am using the workflow estimate: ~1564 CU per 15s video, ~10-15 minutes per run. Proceed?
 ```
 
+That fallback is for a single short social-style video job. Do not reuse it for shot-grammar narrative workflows. For `narrative-video-long.md`, estimate per-shot video cost from that workflow's Seedance section and multiply by the approved shot count.
+
 ## Session Override
 
 If the user says "skip the preflight", "just go", "do not ask again", or equivalent, record a per-session override and do not ask again in that session. Still keep the workflow's internal approval gates when they are creative gates, such as storyboard approval before social video animation.
