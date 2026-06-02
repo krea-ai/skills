@@ -17,10 +17,10 @@ jobs:
           node-version: 20
 
       - name: Validate frontmatter — krea-ai
-        run: npx skills validate --strict krea-ai/SKILL.md
+        run: bash scripts/validate-skill-frontmatter.sh krea-ai/SKILL.md
 
       - name: Validate frontmatter — krea-build
-        run: npx skills validate --strict krea-build/SKILL.md
+        run: bash scripts/validate-skill-frontmatter.sh krea-build/SKILL.md
 
       - name: Validate plugin manifest JSON
         run: |
@@ -28,6 +28,9 @@ jobs:
             jq -e . "$f" >/dev/null || { echo "::error::Invalid JSON: $f"; exit 1; }
             echo "OK $f"
           done
+
+      - name: Check Krea doc references
+        run: bash scripts/check-krea-doc-refs.sh
 
       - name: Smoke-test eval runner syntax
         run: |
