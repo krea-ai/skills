@@ -8,7 +8,7 @@ User asks for a product hero shot, ecommerce hero, PDP lead image, white-backgro
 
 Ask the user once, in a single batched message. Skip whichever the user already volunteered.
 
-- **Product reference**: upload, URL, or existing asset.
+- **Product reference**: local file, external URL to download/upload, or existing Krea asset.
 - **Use and aspect**: PDP, ad hero, web banner, marketplace, print.
 - **Background**: white, gradient, plinth, fabric, marble, contextual.
 - **Accuracy constraints**: label, color, shape, material, logo.
@@ -23,7 +23,7 @@ Hard prescription. Follow in order.
 2. Resolve `high-fidelity image` with image-to-image support from live `list_models`.
 3. Inspect schema for reference fields and resolution.
 4. Run cost-preflight if generating a batch, 4K, or >100 CU.
-5. Upload product refs to Krea if local.
+5. Upload product refs to Krea if local or external/non-Krea.
 6. Prompt as a hero product photograph: product, surface, lighting, lens, contact shadow/reflection, accuracy constraints.
 7. Generate one hero candidate first. Offer variants only after the product reads correctly.
 8. Read output with vision; verify product identity, proportions, label, and color.

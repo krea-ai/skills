@@ -122,7 +122,7 @@ When in doubt, prefer the model whose `description` most closely echoes the user
 
 **Schema hints.** The schema will name the start-frame param — typically `startImage`. Some models also accept `endImage` for a transition. Check `get_model_schema` for the exact field name and whether multiple references are allowed.
 
-**Workflow.** First call `upload_asset` to register the local frame, then pass the returned id into `input.startImage` of the video model.
+**Workflow.** First call `krea upload` or MCP `upload_asset` to register the local/non-Krea frame, then pass the returned Krea-hosted URL into `input.startImage` of the video model.
 
 ---
 

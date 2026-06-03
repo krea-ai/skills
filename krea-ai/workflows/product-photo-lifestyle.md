@@ -8,7 +8,7 @@ User asks for lifestyle product shots, product in context, model wearing or usin
 
 Ask the user once, in a single batched message. Skip whichever the user already volunteered.
 
-- **Product reference**: uploaded image or URL.
+- **Product reference**: local file, external URL to download/upload, or existing Krea asset.
 - **Context**: where the product appears and who uses it.
 - **Platform/aspect**: TikTok cover, IG feed, Pinterest, PDP secondary.
 - **Audience and mood**: premium, playful, wellness, technical, everyday.
@@ -23,7 +23,7 @@ Hard prescription. Follow in order.
 2. Resolve a `high-fidelity image` or `image-to-image / face reference` archetype with multi-reference support if people or rooms are involved.
 3. Inspect schema for `imageUrl`/`imageUrls`, aspect, and resolution.
 4. Cost-preflight for batches, 4K, or >100 CU.
-5. Upload local refs to Krea.
+5. Upload local or external/non-Krea refs to Krea.
 6. Prompt product placement, environment, lighting, audience cue, and product preservation.
 7. Generate 1-2 candidates in the primary platform aspect.
 8. Vision-check that the product is recognizable and plausibly placed.

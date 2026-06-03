@@ -23,7 +23,7 @@ Hard prescription. Follow in order.
 
 1. **Cost-preflight** (see `../references/cost-preflight.md`). A key-visual sheet is cheap compared with video, but it is still an approval gate for campaign work.
 2. Load `../references/marketing-creative-anatomy.md` if the user has not already locked the static format family.
-3. Upload product and style/layout references to Krea.
+3. Upload product and style/layout references to Krea. If a reference is an external URL, download it first and upload the downloaded file.
 4. Resolve a `text-friendly image model` from live `list_models`; prefer `openai/gpt-image-2` only if live discovery confirms it and schema supports the needed refs, aspect, and quality.
 5. Generate one sheet first, or 2-3 variants if the brief is loose. Do not generate downstream finals or videos yet.
 6. Prompt with mandatory sections:
@@ -43,10 +43,13 @@ Hard prescription. Follow in order.
 ### CLI
 
 ```bash
+PRODUCT_REF=$(krea upload ./product.png --json | jq -r .url)
+LAYOUT_REF=$(krea upload ./layout-reference.png --json | jq -r .url)
+
 krea generate image -m "<text-friendly-image-model>" \
   --aspect 9:16 \
   -i quality=high \
-  -i imageUrls='["<product-ref-url>","<layout-ref-url>"]' \
+  -i "imageUrls=[\"$PRODUCT_REF\",\"$LAYOUT_REF\"]" \
   -p "<key-visual sheet prompt with LAYOUT, HEADLINE, PANELS, BRAND GRAPHICS, FOOTER, FIDELITY>" \
   --wait -o ./key-visual-sheet.png
 ```

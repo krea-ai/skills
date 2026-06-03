@@ -46,7 +46,7 @@ It never blocks generation. Surface `UPGRADE_AVAILABLE` or `JUST_UPGRADED` once;
 5. Progress reporting is mandatory for async polling over 30 seconds. Use `references/progress-reporting.md`.
 6. Always call `krea models list --json` or MCP `list_models` before choosing a model. Use `references/model-catalog.md` to resolve archetypes to live IDs.
 7. Always inspect the model schema before submitting. Do not guess field names such as `imageUrl`, `imageUrls`, `startImage`, `duration`, or `resolution`.
-8. Upload local references to Krea before generation. Some models reject non-Krea-hosted URLs.
+8. Normalize generation references to Krea-hosted assets before generation. Local files and arbitrary external image/video/audio URLs must be uploaded to Krea first; only pass already-Krea/approved asset URLs directly. Product/page URLs used for research are not generation references.
 9. Honor `KREA_PREFERENCES.md` or a `## Krea preferences` section in project docs when present.
 10. Do not pretend bad outputs are fine. Name the mismatch and offer a concrete retry path.
 11. Reference before prose. If the user uses a term with multiple legitimate visual meanings (`storyboard`, `mood board`, `key visual`, `hero shot`, `mockup`, `tearsheet`, `look book`), ask for a reference image before interpreting it in your own visual language.
