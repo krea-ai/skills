@@ -27,7 +27,7 @@ Hard prescription. Follow in order.
 4. Build one editorial storyboard sheet, not separate panels. Use 4-8 cells for 5-10s; 16-32 cells for dense 15s micro-beats. Use tiny panel numbers and short action labels; no technical fiches. For UGC, use the six-panel UGC template from `../references/ugc-social-video.md`.
 5. Decide whether the brief is locked or loose. If locked, generate one storyboard. If loose, load `../references/storyboard-variations.md` and default to 3 parallel storyboard variants that vary on at least two axes.
 6. Show storyboard variants together with `A/B/C` labels and one-line captions. Wait for an explicit user pick or merge request before animating. Iterate cheaply here before burning video credits.
-7. Upload the chosen storyboard to Krea. If `krea upload --json` returns an empty URL (issue #6), resolve `image_url` via `GET https://api.krea.ai/assets/<id>`.
+7. Upload the chosen storyboard and any local/non-Krea refs to Krea. Use the returned Krea-hosted URLs in generation inputs.
 8. Avoid the seedance aspect trap (issue #11): do not pass `--start-image` for vertical output. If the storyboard sheet is landscape and final output must be 9:16, pad the sheet to portrait before upload or drop the sheet from `referenceImages` and rely on face refs plus a detailed timeline prompt.
 9. Compose a timestamped timeline prompt. Use `TIMELINE`, `STYLE`, `CAMERA`, `TRANSITIONS`, and `OUTPUT` sections. Strip the words `slow`, `gentle`, `soft`, and `slow motion`; use `smooth`, `steady`, `fluid`, or `natural realtime` instead.
 10. Submit one video job async. Use `referenceImages` for storyboard/refs, not per-panel concatenation.
@@ -41,13 +41,11 @@ Hard prescription. Follow in order.
 krea generate image -m "<text-friendly-image-model>" \
   --aspect 16:9 \
   -i quality=high \
-  -i imageUrls='["<face-or-product-ref-url>"]' \
+  -i "imageUrls=[\"$KREA_FACE_OR_PRODUCT_REF\"]" \
   -p "<editorial storyboard sheet prompt>" \
   --wait -o ./storyboard.png
 
-ID=$(krea upload ./storyboard.png --json | jq -r .id)
-SHEET=$(curl -sS -H "Authorization: Bearer $KREA_API_KEY" \
-  "https://api.krea.ai/assets/$ID" | jq -r .image_url)
+SHEET=$(krea upload ./storyboard.png --json | jq -r .url)
 
 krea generate video -m "<cinematic-video-model>" \
   --aspect 9:16 \
@@ -78,7 +76,7 @@ get_job(jobId=<id>)  # poll with progress pings
 - Do not put a landscape storyboard first in `referenceImages` for 9:16 unless padded to portrait - issue #11.
 - Do not use `slow`, `gentle`, `soft`, or `slow motion` in prompts - Seedance often literalizes them.
 - Do not rely on `krea jobs wait --timeout 600` if the CLI caps at 300s - issue #9; use manual polling.
-- Do not use non-Krea-hosted refs for models that reject them - issue #7.
+- Do not use non-Krea-hosted refs as generation inputs - issue #7.
 - Do not silently poll - issue #17; progress pings are mandatory.
 - For UGC, do not use commercial-polish words or camera moves banned in `../references/ugc-social-video.md`.
 
@@ -95,9 +93,9 @@ get_job(jobId=<id>)  # poll with progress pings
 | Output horizontal despite `--aspect 9:16` | Landscape `--start-image` or `referenceImages[0]` bias, issue #11 | Drop start image; pad sheet to portrait; or use face refs plus timeline only |
 | Output is slow motion | Prompt contained banned pacing words, issue #14 | Rewrite with natural realtime, smooth, steady, fluid |
 | Video feels stitched | Per-panel generation was used, issue #15 | Use one storyboard sheet and one timeline-driven video job |
-| Upload URL empty | CLI upload issue #6 | Resolve asset by ID through the assets endpoint |
+| Upload URL empty | Old CLI upload issue #6 | Upgrade CLI; if blocked on an old install, resolve asset by ID through the assets endpoint |
 | Job times out | CLI timeout cap issue #9 | Manual `krea jobs show` loop |
-| External URL rejected | Kontext/Seedream URL issue #7 | Upload local assets to Krea first |
+| External URL rejected | Public API asset validation, issue #7 | Download the asset if needed, upload it to Krea, then use the returned Krea URL |
 | Identity drifts | Face refs weak, issue #16 | Use 2-3 varied refs or route to `lora-train-and-use.md` |
 | User lost trust during wait | Silent polling, issue #17 | Follow `../references/progress-reporting.md` every 25-35 seconds |
 | UGC looks like a brand commercial | Storyboard lacks creator-native realism cues | Load `../references/ugc-social-video.md`, rebuild the storyboard, and QA adversarially before animating |

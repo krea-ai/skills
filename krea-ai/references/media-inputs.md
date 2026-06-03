@@ -2,30 +2,33 @@
 
 How to pass reference images, start frames, and audio files to Krea models through the CLI or MCP.
 
-## Two paths: URL or upload
+## Asset rule: upload before generation
 
-Krea generation tools accept media references as **URLs**. A local file becomes a URL via `upload_asset`.
+Krea generation tools accept media references as **URLs**, but model input validators intentionally restrict which asset hosts can be used. Treat local files and arbitrary external URLs as source material, not as final model inputs. Before passing a media URL into fields such as `imageUrl`, `image_url`, `imageUrls`, `image_urls`, `referenceImages`, `reference_images`, `startImage`, `start_image`, `endImage`, `end_image`, `styleImages[].url`, `style_images[].url`, `image_style_references[].url`, or audio/video reference fields, first make sure it is a Krea-hosted or explicitly approved asset URL.
 
-### URL (when the user gave a hosted image)
+If the URL is not already a Krea asset URL, download it to a local temp file, upload it with `krea upload` or MCP `upload_asset`, then pass the returned Krea URL to the generation model. This is the skill-level fix for `Invalid asset URL` failures.
 
-If the user pasted a URL, pass it straight into the model's input:
+### Hosted URL from the user
 
+When the user pasted an image/video/audio URL, do not pass it straight into generation unless it is already a Krea/approved asset host. Rehost it through Krea first:
+
+```bash
+curl -L "https://example.com/photo.jpg" -o /tmp/krea-reference.jpg
+REF_URL=$(krea upload /tmp/krea-reference.jpg --json | jq -r .url)
+
+krea generate image -m "<image-to-image-model>" \
+  -i imageUrl="$REF_URL" \
+  -p "transform to watercolor" \
+  --wait -o ./out.png
 ```
-generate_image(
-    model="<id>",
-    input={
-        prompt: "transform to watercolor",
-        imageUrl: "https://example.com/photo.jpg",
-    },
-    sync=true,
-)
-```
 
-### Local file (use `upload_asset`)
+Use the field name accepted by the selected model schema. For example, Kontext uses a singular `imageUrl`, Seedance-style video models may use `referenceImages`, Seedream-style references may use `styleImages[].url` or `style_images[].url`, and Krea 2 style references use `image_style_references[].url`.
+
+### Local file (use upload)
 
 When the user has a file on their machine:
 
-```
+```python
 import base64
 with open("/path/to/photo.png", "rb") as f:
     data = base64.b64encode(f.read()).decode()
@@ -49,24 +52,16 @@ generate_image(
 | What you need | How |
 |---|---|
 | The agent understands what's in the user's image | `Read` the local file (the agent's vision) |
-| Krea uses the image as a generation reference | `upload_asset` â†’ pass the returned URL into the model's input |
+| Krea uses the image as a generation reference | `krea upload` or `upload_asset` -> pass the returned Krea URL into the model's input |
 
 Often you do both: `Read` the file first to know the brief better, then `upload_asset` to actually pass it to the model.
 
 ## CLI reference pattern
 
-The CLI is the default surface. For local files, upload once, resolve the Krea-hosted URL, then pass that URL using the field accepted by the selected model schema.
+The CLI is the default surface. For local files or downloaded external URLs, upload once, resolve the Krea-hosted URL, then pass that URL using the field accepted by the selected model schema.
 
 ```bash
-UPLOAD_JSON=$(krea upload ./reference.png --json)
-REF_URL=$(printf '%s' "$UPLOAD_JSON" | jq -r '.url // empty')
-
-# Older CLI versions can return an empty url with a valid id.
-if [ -z "$REF_URL" ]; then
-  ID=$(printf '%s' "$UPLOAD_JSON" | jq -r .id)
-  REF_URL=$(curl -sS -H "Authorization: Bearer $KREA_API_KEY" \
-    "https://api.krea.ai/assets/$ID" | jq -r .image_url)
-fi
+REF_URL=$(krea upload ./reference.png --json | jq -r .url)
 
 krea models show "<model-id>" --json
 
@@ -100,6 +95,22 @@ krea generate image -m krea/krea-2/large \
 Do not guess field names. Always inspect the live model schema first; different models use different reference fields.
 
 Krea 2 image endpoints use `aspect_ratio` + `resolution` in the public API. The CLI maps `--aspect` for the default Krea 2 flow and supplies the default `resolution=1K`; raw MCP or `--input` calls should use those public names directly. Krea 2 style references use `image_style_references` items shaped as `{ "url": "...", "strength": 0.5 }`.
+
+## Field-name crosswalk
+
+The hosting rule applies regardless of naming convention. Always inspect the live schema, then put Krea-hosted URLs into whichever field it declares:
+
+| Field family | Common shapes |
+|---|---|
+| Single image reference | `imageUrl`, `image_url` |
+| Multiple image references | `imageUrls`, `image_urls`, `referenceImages`, `reference_images` |
+| Video frame anchors | `startImage`, `start_image`, `endImage`, `end_image` |
+| Style/reference objects | `styleImages[].url`, `style_images[].url`, `image_style_references[].url` |
+| Audio/video references | Schema-specific URL fields such as `referenceAudios`, `referenceVideos`, or snake_case equivalents |
+
+## Which URLs can be passed directly?
+
+Pass direct URLs only when they are already Krea-hosted or an explicitly approved Krea asset host. Otherwise, use the upload step above. Product pages, CDN images, GitHub raw images, S3 links you do not control, and ordinary `https://example.com/photo.jpg` references are not safe to pass directly into generation inputs; many models return HTTP 422 `Invalid asset URL`.
 
 ## Single image vs multiple images
 
@@ -192,6 +203,7 @@ Don't pass `generateAudio: true` to a model that takes a reference audio file â€
 
 - **Wrong mimeType.** `image/jpg` is invalid; use `image/jpeg`. For video, use `video/mp4`. For audio, `audio/mpeg` for mp3 and `audio/wav` for wav.
 - **Passing a local path directly into `input.imageUrl`.** Krea doesn't fetch from the user's machine. Upload first, then use the returned URL.
+- **Passing an arbitrary external URL directly into generation.** Download it, upload it to Krea, then use the Krea-hosted URL.
 - **Forgetting `Read` on the user's attached file.** If you upload without looking at the content, you might miss what the user actually wants done.
 
 ## File size and format

@@ -22,7 +22,7 @@ Hard prescription. Follow in order.
 1. Read the source image with vision and state the edit target internally.
 2. Resolve the `image-to-image / face reference` archetype from live `list_models`.
 3. Inspect schema for `imageUrl` versus `imageUrls`, edit strength, mask, or preservation fields.
-4. Upload local input to Krea; if CLI returns empty URL, resolve via the asset endpoint as described in `../references/troubleshooting.md`.
+4. Upload local input to Krea. If the source is an external URL, download it first, then `krea upload` the downloaded file so the generation input uses a Krea-hosted URL.
 5. Prompt the change, not a full re-description of the source: "change X to Y, preserve A/B/C".
 6. Generate one edited candidate.
 7. Read output with vision and compare against the source.
@@ -32,9 +32,7 @@ Hard prescription. Follow in order.
 ### CLI
 
 ```bash
-ID=$(krea upload ./source.png --json | jq -r .id)
-SRC=$(curl -sS -H "Authorization: Bearer $KREA_API_KEY" \
-  "https://api.krea.ai/assets/$ID" | jq -r .image_url)
+SRC=$(krea upload ./source.png --json | jq -r .url)
 krea generate image -m "<image-to-image-model>" \
   -i imageUrl="$SRC" \
   -p "Change <edit> while preserving <must-keep details>" \
@@ -54,7 +52,7 @@ generate_image(model="<image-to-image-model>", input={prompt, imageUrl}, sync=tr
 
 - Do not describe everything already in the image as if generating from scratch.
 - Do not ignore face/product preservation when the user says "this".
-- Do not use external URLs for models known to require Krea-hosted assets; upload first.
+- Do not use external URLs as generation references; download and upload them to Krea first.
 - Do not call a video model for an edit request.
 
 ## Cost & time
