@@ -37,7 +37,7 @@ The default CLI image model is `krea/krea-2/large`. Krea 2 dimensions use `--asp
 | **Image — async** | `generate_image(..., sync=false)` → returns `{job_id}` | `krea generate image -m <id> -p "..." --json` (no `--wait` ⇒ async) |
 | **Video — async + poll** | `generate_video(..., sync=false)` → `get_job(jobId)` in loop | `JOB=$(krea generate video -m <id> -p "..." --json \| jq -r .job_id) && krea jobs wait $JOB --json` |
 | **Enhance — sync** | `enhance_image(model=<id>, input={imageUrl, width, height, ...}, sync=true)` | `krea generate enhance -m <id> <url> --width 4096 --height 4096 --wait` |
-| **Upload local file** | `upload_asset(filename, mimeType, fileData=base64(...))` → returns asset URL | `krea upload ./photo.png --json \| jq -r .url` (takes file path directly) |
+| **Upload local/downloaded file** | `upload_asset(filename, mimeType, fileData=base64(...))` -> returns Krea asset URL | `krea upload ./photo.png --json \| jq -r .url` (takes file path directly) |
 | **Get job status** | `get_job(jobId="<id>")` | `krea jobs show <id> --json` |
 | **Wait for terminal status** | poll `get_job` every 10s until terminal | `krea jobs wait <id>` (server-side poll, blocks until done) |
 | **Save result to disk** | response URL → curl/Bash download | `-o ./out.png` (implies `--wait`, handles download) |
@@ -60,7 +60,7 @@ Always run `krea models show <id>` first to see the live schema; field names the
 -i generateAudio=true
 
 # Array of strings — JSON-encoded
--i "referenceImages=[\"https://ref1.png\",\"https://ref2.png\"]"
+-i "referenceImages=[\"$KREA_REF_1\",\"$KREA_REF_2\"]"
 
 # Object (nested) — JSON-encoded
 -i 'effects={"name":"smear","intensity":0.7}'
@@ -107,6 +107,10 @@ Reference-image fields are not standardized across the model catalog:
 | `bfl/flux-1-kontext-dev` | `imageUrl` (single string) |
 
 Always run `krea models show <id> --json` and read the schema's `inputs` block before guessing. The CLI's `-i` does not validate field names against the schema until the API rejects the call.
+
+### Asset URL validation
+
+Generation inputs that point at media must use Krea-hosted or explicitly approved asset URLs. If the user gives an ordinary external URL, first download it to a temp file and run `krea upload <file> --json`; then pass the returned `.url` through the schema field. This applies to `imageUrl`/`image_url`, `imageUrls`/`image_urls`, `referenceImages`/`reference_images`, `startImage`/`start_image`, `endImage`/`end_image`, `styleImages[].url`/`style_images[].url`, `image_style_references[].url`, and audio/video reference fields. A 422 `Invalid asset URL` is usually fixed by rehosting the asset with `krea upload`, not by changing the model.
 
 ## Notable CLI conveniences over MCP
 

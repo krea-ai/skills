@@ -1,7 +1,7 @@
 {
   "name": "krea",
-  "version": "0.2.1",
-  "description": "Krea AI skills: intent-first generation workflows and developer integration patterns.",
+  "version": "0.3.0",
+  "description": "Krea AI skills: generation workflows, professional animation production, and developer integration patterns.",
   "author": {
     "name": "Krea AI",
     "url": "https://krea.ai"
@@ -13,6 +13,9 @@
     "krea",
     "image-generation",
     "video-generation",
+    "animation",
+    "anime",
+    "storyboard",
     "mcp",
     "archviz",
     "marketing",

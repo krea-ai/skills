@@ -4,7 +4,7 @@ Lightweight regression test suite for the Krea skills. Catches drift when skill 
 
 ## What this tests
 
-22 scenarios across 6 categories, plus campaign regressions:
+31 scenarios across 8 categories:
 
 - **Routing accuracy (5)** — does the agent route to the right skill or workflow for a given brief?
 - **Refusal / safety (3)** — does the agent decline or rephrase when the brief hits safety boundaries?
@@ -13,6 +13,7 @@ Lightweight regression test suite for the Krea skills. Catches drift when skill 
 - **Polling discipline (3)** — image / enhance use sync, video uses async + poll?
 - **Edge cases (3)** — missing prompt, unknown model, prior-output reuse
 - **Campaign regression (2)** — catches the CPG storyboard/key-visual routing failure and loose UGC variation behavior
+- **Animation production (9)** — routes studio animation work through `krea-animation` and preserves approvals, cost, async polling, QA, retakes, and app-routing boundaries
 
 Full scenario list with expected behavior and fail criteria: `scenarios.md`.
 
@@ -34,7 +35,7 @@ Requires `claude` CLI installed and authenticated. Output is one of `PASS`, `FAI
 - After any significant change to a SKILL.md's routing / UX rules
 - After a known change to the Krea MCP server's model lineup or schema shape
 
-Treat results as **regression signal**, not a gating quality bar. The 22 scenarios cover the most common paths; novel use cases will still need human review.
+Treat results as **regression signal**, not a gating quality bar. The 31 scenarios cover the most common paths; novel use cases will still need human review.
 
 ## How the runner works
 

@@ -45,7 +45,7 @@ krea generate image -m "<fast-image-draft>" \
 
 krea generate image -m "<high-fidelity-image>" \
   --aspect 16:9 \
-  -i imageUrl="<product-ref-url>" \
+  -i imageUrl="$KREA_PRODUCT_REF_URL" \
   -p "<approved hero angle final prompt>" \
   --wait -o ./hero-final.png
 ```
