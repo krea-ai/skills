@@ -25,7 +25,7 @@ By the time the user sees the live preview, you've spent ~3 minutes of compute o
 
 ## The pattern: explore → confirm → build
 
-### 1. Explore (use the `krea-ai` MCP skill)
+### 1. Explore (use the `krea-generate` MCP skill)
 
 Generate 2–3 sample images interactively. Show them in chat. Iterate on prompts, models, and aspect ratios until the user nods.
 
@@ -141,7 +141,7 @@ Use dynamic data only when:
 - The content needs to change per request (user-specific output, time-of-day, A/B test)
 - The dataset is too large to hardcode (a content calendar with 100s of items)
 
-When iterating, regenerate with `krea-ai` and update the hardcoded data. Don't rebuild the runtime path just because the asset changed.
+When iterating, regenerate with `krea-generate` and update the hardcoded data. Don't rebuild the runtime path just because the asset changed.
 
 ## User uploads
 
@@ -163,7 +163,7 @@ When users attach images:
 
 Common debugging order:
 
-1. **Did you generate in chat first?** If they say "I just wrote the app code", that's the bug. Validate the prompt with `krea-ai` and update the hardcoded data.
+1. **Did you generate in chat first?** If they say "I just wrote the app code", that's the bug. Validate the prompt with `krea-generate` and update the hardcoded data.
 2. **Is the API key set server-side?** Check the env. Confirm it's not leaked to client.
 3. **Are you polling?** Krea returns `job_id` synchronously; the result comes from a separate poll.
 4. **Are you handling job failures?** A failed job returns `status: "failed"` — surface this, don't pretend success.

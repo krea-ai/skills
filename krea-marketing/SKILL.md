@@ -1,0 +1,66 @@
+---
+version: 0.4.0
+name: krea-marketing
+description: "Marketing and paid-social creative workflows with Krea. Use for product photoshoots, marketplace cards, campaign key visuals, UGC/social ads, product URL to creative, ad storyboards, social packs, product launches, Meta Ads performance-informed creative planning, and gated Meta Ads activation. For generic media generation use krea-generate; for professional animation use krea-animation; for app/API integration use krea-build."
+license: MIT
+---
+
+# Krea Marketing - Performance-Informed Creative
+
+Use this skill when the user wants marketing creative, not just media generation. Treat Krea as the creative engine and optional Meta Ads CLI/MCP as the performance and activation layer.
+
+This skill must work without Meta Ads. Meta context improves decisions, but it is never required for product photos, campaign sheets, UGC storyboards, marketplace cards, or Krea generation.
+
+## Entry Intake
+
+For product, campaign, ad, UGC, paid-social, marketplace, product-launch, or more-than-3-deliverable requests, ask once in a compact message:
+
+1. Missing product/brand basics: product reference, URL, goal, platform, output count, required claims/copy, and visual reference.
+2. Whether the user wants to connect Meta Ads CLI/MCP for account-specific performance context before creative planning.
+
+If the user connects Meta, read performance context first. If they decline or cannot connect it, proceed Krea-only.
+
+## Meta Ads Rules
+
+1. Meta Ads CLI/MCP is optional and must be verified live before use. See `references/meta-ads-cli.md`.
+2. Use Meta reads before creative when available: winning/weak formats, hooks, placements, fatigue, product/catalog performance, CTA signals, and audience context.
+3. Do not require Meta for generation. Continue with product refs, brand refs, and user goals.
+4. Writes are paused/draft by default.
+5. Live launch, budget changes, status changes, publishing, or catalog mutations require explicit approval naming account, entity, action, budget/status, and live-vs-paused state.
+6. Never invent performance data. If Meta is unavailable, label recommendations as creative hypotheses.
+
+## Routing
+
+| Intent | Workflow |
+|---|---|
+| product photo / studio shot / hero product / PDP lead image | `workflows/product-photo-hero.md` |
+| lifestyle product / model using product / Pinterest / carousel / ad creative pack / virtual try-on / conceptual product / restyle | `workflows/product-photo-lifestyle.md` plus `references/product-photoshoot.md` |
+| marketplace listing images / secondary product images / A+ modules / full marketplace set | `workflows/marketplace-cards.md` |
+| ad storyboard / key visual / campaign sheet / agency-style product layout | `workflows/key-visual-sheet.md` |
+| UGC / TikTok ad / Reels ad / social video / product demo / unboxing / creator ad | `workflows/social-video-short.md` |
+| product URL -> campaign, ad set, launch assets, social variants | `workflows/full-ad-campaign.md` |
+| Meta account analysis, creative performance readout, campaign draft/activation | `workflows/meta-ads-performance.md` |
+
+If the user asks for a non-marketing image/video, use `../krea-generate/SKILL.md`. If they ask for anime, long-form animation, shotlists, or retakes, use `../krea-animation/SKILL.md`. If they ask to build a marketing app/tool, use `../krea-build/SKILL.md` and this skill as the creative workflow contract.
+
+## References
+
+- `references/marketing-creative-anatomy.md` - campaign/ad tuple, hook families, static format families.
+- `references/product-photoshoot.md` - Krea-native product photoshoot mode taxonomy adapted from Higgsfield research.
+- `references/marketplace-cards.md` - marketplace image scopes and compliance guardrails.
+- `references/meta-ads-cli.md` - optional Meta Ads CLI/MCP discovery, reads, and write gates.
+- `references/storyboard-variations.md` - A/B/C social storyboard directions.
+- `references/ugc-social-video.md` - UGC realism and adversarial QA.
+- `references/artifact-taxonomy.md` - disambiguate storyboard, key visual, hero shot, mockup, look book.
+
+Shared Krea references live in `../krea-generate/references/`: `cli-or-mcp.md`, `model-catalog.md`, `media-inputs.md`, `cost-preflight.md`, `progress-reporting.md`, `vision-qa.md`, `troubleshooting.md`, and `models/`.
+
+## Delivery Discipline
+
+Before delivering campaign-tier output, answer privately and fix failures:
+
+1. Is the artifact the shape the user asked for in their industry vocabulary?
+2. If a Meta performance read was used, did it actually change the creative brief?
+3. Are brand assets, product details, copy, and claims correct?
+4. Is the result specific to this product, or could any competitor use it?
+5. Is the next step clear: approve, pick a variant, request a retake, or activate as paused/draft?

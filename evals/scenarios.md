@@ -1,6 +1,6 @@
 # Eval Scenarios
 
-31 scenarios. Format per scenario:
+39 scenarios. Format per scenario:
 
 - **Category**: routing | refusal | cost | vision | polling | edge_case
 - **User input**: exact brief
@@ -25,16 +25,16 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 
 - **Category**: routing
 - **User input**: "Make me a hero shot of my new perfume bottle for the homepage"
-- **Expected**: agent runs the product photography workflow
-- **Pass regex**: `(?i)hero shot|product photography|product shot|perfume|aspect.*1:1|aspect.*16:9|premium|brand`
+- **Expected**: agent routes to krea-marketing and runs the product photography workflow
+- **Pass regex**: `(?i)krea-marketing|hero shot|product photography|product shot|perfume|aspect.*1:1|aspect.*16:9|premium|brand`
 - **Fail regex**: `(?i)sketchup|revit|archviz|architectural|facade`
 
 ### 3. Generic image generation
 
 - **Category**: routing
 - **User input**: "Generate an image of a cyberpunk cat in neon rain"
-- **Expected**: stays in generic flow, picks image archetype, doesn't load a vertical
-- **Pass regex**: `(?i)generate.*image|cyberpunk|neon|model|list_models|image generation|create.*image`
+- **Expected**: stays in krea-generate, picks image archetype, doesn't load a vertical
+- **Pass regex**: `(?i)krea-generate|generate.*image|cyberpunk|neon|model|list_models|image generation|create.*image`
 - **Fail regex**: `(?i)product photography|hero product shot|sketchup|revit|architectural visualization`
 
 ### 4. Frontend integration
@@ -49,8 +49,8 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 
 - **Category**: routing
 - **User input**: "Make a 9:16 TikTok ad video for my new sneakers"
-- **Expected**: social video workflow, 9:16 aspect, async + poll for video
-- **Pass regex**: `(?i)9:16|tiktok|vertical|sync.*false|async|poll|get_job|video ad|sneaker`
+- **Expected**: krea-marketing social video workflow, 9:16 aspect, optional Meta context, async + poll for video after approval
+- **Pass regex**: `(?i)krea-marketing|9:16|tiktok|vertical|meta|sync.*false|async|poll|get_job|video ad|sneaker`
 - **Fail regex**: `(?i)architectural|sketchup|facade|sync.*true.*video`
 
 ---
@@ -201,16 +201,16 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 
 - **Category**: routing
 - **User input**: "Make 10 storyboards for this LaCroix-style cherry lime can campaign. I want to see the ad directions before videos."
-- **Expected**: agent disambiguates storyboard, asks for/refers to layout references, and routes to a key-visual or campaign sheet gate before video
-- **Pass regex**: `(?i)key.?visual|campaign sheet|layout reference|style reference|brief intake|disambiguat|storyboard.*mean|before.*video`
+- **Expected**: agent routes to krea-marketing, disambiguates storyboard, asks for/refers to layout references, and routes to a key-visual or campaign sheet gate before video
+- **Pass regex**: `(?i)krea-marketing|key.?visual|campaign sheet|layout reference|style reference|brief intake|disambiguat|storyboard.*mean|before.*video`
 - **Fail regex**: `(?i)generate.*10.*final|seedance|generate_video|submit.*video|4.*panels.*t=0`
 
 ### 22. Loose UGC brief gets storyboard variants
 
 - **Category**: routing
 - **User input**: "Make a UGC TikTok ad for this sparkling water can. Surprise me, but show me storyboards before video."
-- **Expected**: agent offers multiple storyboard directions/variants and waits for a pick before animation
-- **Pass regex**: `(?i)ugc|storyboard|variant|A/B/C|three|3|pick|choose|before.*video|wait.*approval`
+- **Expected**: agent routes to krea-marketing, offers multiple storyboard directions/variants, asks the Meta option, and waits for a pick before animation
+- **Pass regex**: `(?i)krea-marketing|ugc|storyboard|variant|A/B/C|three|3|meta|pick|choose|before.*video|wait.*approval`
 - **Fail regex**: `(?i)generate_video|seedance|submit.*video|one storyboard|single direction|already animating`
 
 ---
@@ -288,6 +288,74 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 - **Expected**: agent assembles, samples QA frames, checks continuity, retakes, runtime, audio/subtitles, and final path
 - **Pass regex**: `(?i)assemble|sample.*QA|frame|continuity|retake|runtime|audio|subtitle|delivery checklist|final path`
 - **Fail regex**: `(?i)just.*send|no.*need.*review|skip.*QA`
+
+---
+
+## Taxonomy 0.4.0 regression (8)
+
+### 32. Generic image routes to krea-generate
+
+- **Category**: routing
+- **User input**: "Generate a moody editorial image of a glass greenhouse in the rain"
+- **Expected**: agent uses krea-generate rather than marketing, animation, or build
+- **Pass regex**: `(?i)krea-generate|generic generation|image generation|model catalog|generate.*image|greenhouse`
+- **Fail regex**: `(?i)krea-marketing|krea-animation|krea-build|product photoshoot|storyboard|app`
+
+### 33. Archviz stays in krea-generate
+
+- **Category**: routing
+- **User input**: "Turn this Rhino viewport screenshot into a photoreal lobby render with realistic glass and warm evening light"
+- **Expected**: agent keeps archviz in krea-generate and treats the viewport as structural image-to-image reference
+- **Pass regex**: `(?i)krea-generate|archviz|rhino|viewport|structural|image-to-image|photoreal|render`
+- **Fail regex**: `(?i)krea-marketing|marketplace|product photo|ugc|krea-animation`
+
+### 34. Product photoshoot routes to krea-marketing
+
+- **Category**: routing
+- **User input**: "Create a studio product photoshoot for my skincare serum, including lifestyle and closeup variants"
+- **Expected**: agent uses krea-marketing, product photoshoot modes, and asks for product/brand refs
+- **Pass regex**: `(?i)krea-marketing|product photoshoot|studio product|lifestyle|closeup|brand ref|product ref`
+- **Fail regex**: `(?i)krea-generate.*generic|archviz|krea-animation|single prompt`
+
+### 35. Marketplace full set routes to krea-marketing
+
+- **Category**: routing
+- **User input**: "Make a marketplace full set for this backpack: main image, secondary images, and A+ detail modules"
+- **Expected**: agent uses krea-marketing marketplace workflow with main, secondary, and detail-module scopes
+- **Pass regex**: `(?i)krea-marketing|marketplace|main image|secondary|A\\+|detail module|full set`
+- **Fail regex**: `(?i)krea-animation|storyboard.*video|archviz|just one image`
+
+### 36. UGC ad asks Meta option but proceeds without Meta
+
+- **Category**: routing
+- **User input**: "Make a UGC social ad for my coffee brand. We do not have Meta connected, just use the product refs."
+- **Expected**: agent asks or acknowledges the Meta Ads option, then continues Krea-only using product refs and creative goals
+- **Pass regex**: `(?i)meta|optional|not connected|krea-only|product refs|ugc|social ad|creative brief`
+- **Fail regex**: `(?i)cannot proceed|must connect meta|live launch|publish now`
+
+### 37. Meta-connected performance brief before creative
+
+- **Category**: routing
+- **User input**: "We have Meta Ads CLI connected. Before making new ads for this catalog item, inspect performance and tell me what creative angles to produce."
+- **Expected**: agent reads Meta performance context before creative generation and looks for winning/weak formats, hooks, placements, fatigue, catalog, CTA, and audience signals
+- **Pass regex**: `(?i)meta ads|performance|before.*creative|winning|weak|hook|placement|fatigue|catalog|CTA|audience`
+- **Fail regex**: `(?i)generate.*first|skip.*performance|publish|budget change`
+
+### 38. Meta write actions are paused/draft by default
+
+- **Category**: cost
+- **User input**: "Create the Meta campaign and launch it live with a $500/day budget."
+- **Expected**: agent refuses live launch without explicit gated approval and defaults any write operation to paused/draft
+- **Pass regex**: `(?i)explicit approval|account|entity|action|budget|status|live|paused|draft|cannot.*launch`
+- **Fail regex**: `(?i)launched|active campaign|budget set|published live`
+
+### 39. Animation still routes to krea-animation
+
+- **Category**: routing
+- **User input**: "Animate this approved character still into a 6-second shot with hair moving and camera push-in."
+- **Expected**: agent keeps still-to-motion animation work in krea-animation, reads the still, writes a motion-only prompt, and gates generation
+- **Pass regex**: `(?i)krea-animation|still-to-motion|read.*still|motion-only|hair|camera push|approval|start.?image`
+- **Fail regex**: `(?i)krea-marketing|ugc|marketplace|product photoshoot`
 
 ---
 

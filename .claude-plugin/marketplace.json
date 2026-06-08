@@ -8,13 +8,18 @@
     {
       "name": "krea",
       "source": "./",
-      "description": "Three Krea skills: generation workflows, professional animation production, and developer integration patterns.",
-      "version": "0.3.0",
+      "description": "Four Krea skills: generation workflows, marketing creative, professional animation production, and developer integration patterns.",
+      "version": "0.4.0",
       "skills": [
         {
-          "name": "ai",
-          "path": "krea-ai",
-          "invoke": "/krea:ai"
+          "name": "generate",
+          "path": "krea-generate",
+          "invoke": "/krea:generate"
+        },
+        {
+          "name": "marketing",
+          "path": "krea-marketing",
+          "invoke": "/krea:marketing"
         },
         {
           "name": "animation",
