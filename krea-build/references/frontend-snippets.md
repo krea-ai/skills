@@ -11,7 +11,7 @@ import { json } from "@sveltejs/kit";
 import { generateImage, pollJob } from "$lib/krea";
 
 export async function POST({ request }) {
-  const { prompt, model = "bfl/flux-1-dev", aspectRatio = "16:9" } = await request.json();
+  const { prompt, model = "bfl/flux-1-dev", aspect_ratio = "16:9" } = await request.json();
 
   // Validate
   if (typeof prompt !== "string" || prompt.trim().length === 0 || prompt.length > 2000) {
@@ -22,7 +22,7 @@ export async function POST({ request }) {
     const { job_id } = await generateImage({
       model,
       prompt: prompt.trim(),
-      aspectRatio,
+      aspect_ratio,
     });
     const job = await pollJob(job_id, { interval: 5_000, timeout: 120_000 });
     return json({ urls: job.result?.urls ?? [] });
@@ -40,7 +40,7 @@ import { NextResponse } from "next/server";
 import { generateImage, pollJob } from "@/lib/krea";
 
 export async function POST(req: Request) {
-  const { prompt, model = "bfl/flux-1-dev", aspectRatio = "16:9" } = await req.json();
+  const { prompt, model = "bfl/flux-1-dev", aspect_ratio = "16:9" } = await req.json();
 
   if (typeof prompt !== "string" || prompt.trim().length === 0 || prompt.length > 2000) {
     return NextResponse.json({ error: "Invalid prompt" }, { status: 400 });
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
     const { job_id } = await generateImage({
       model,
       prompt: prompt.trim(),
-      aspectRatio,
+      aspect_ratio,
     });
     const job = await pollJob(job_id, { interval: 5_000, timeout: 120_000 });
     return NextResponse.json({ urls: job.result?.urls ?? [] });
@@ -358,7 +358,7 @@ async function uploadToKrea(localPath: string, mimeType: string) {
 
   const res = await fetch("https://api.krea.ai/assets", {
     method: "POST",
-    headers: { Authorization: `Key ${key}` },
+    headers: { Authorization: `Bearer ${key}` },
     body: form,
   });
   if (!res.ok) throw new Error(`Krea upload failed: ${res.status}`);
@@ -379,12 +379,14 @@ function inputHash(body: Record<string, unknown>): string {
 }
 
 export async function generateImageCached(body: Record<string, unknown>) {
-  const key = inputHash(body);
+  const { model, ...input } = body;
+  if (typeof model !== "string") throw new Error("model must be a string");
+  const key = inputHash({ model, ...input });
   const now = Date.now();
   const hit = cache.get(key);
   if (hit && hit.expires > now) return hit.urls;
 
-  const { job_id } = await apiPost(`/generate/image/${body.model}`, body);
+  const { job_id } = await apiPost(`/generate/image/${model}`, input);
   const job = await pollJob(job_id);
   const urls = job.result?.urls ?? [];
   cache.set(key, { urls, expires: now + 24 * 3600 * 1000 });

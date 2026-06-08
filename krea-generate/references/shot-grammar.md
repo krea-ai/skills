@@ -2,7 +2,7 @@
 
 A 10-second scene in a movie or anime is **not** one continuous shot. It's typically 3–6 cuts: an establishing wide, a close-up on the character's face for emotional read, an insert on a hand/object, a reaction, then a final beat. One continuous 10-second take is music-video grammar; it reads as "pretty footage," not "story."
 
-The previous version of `narrative-video-long.md` planned 6 × 10s scenes and submitted **6 video jobs** — one continuous clip per scene. The result felt like 6 slow camera moves over tableaux, with no coverage and no rhythm. That is the failure mode this reference exists to prevent.
+The previous long-form video workflow planned 6 x 10s scenes and submitted **6 video jobs** - one continuous clip per scene. The result felt like 6 slow camera moves over tableaux, with no coverage and no rhythm. That is the failure mode this reference exists to prevent.
 
 ## The rule
 

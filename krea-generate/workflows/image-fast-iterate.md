@@ -40,11 +40,7 @@ krea generate image -m "<fast-image-draft>" \
 
 ### MCP fallback
 
-```
-list_models()
-get_model_schema(model="<fast-image-draft>")
-generate_image(model="<fast-image-draft>", input={prompt, aspectRatio}, sync=true, timeoutSeconds=60)
-```
+Use MCP only if the CLI is unavailable. Run `list_models()`, inspect `get_model_schema(...)`, then call `generate_image` with schema-verified prompt, aspect, size, and quality fields.
 
 ## Banned
 

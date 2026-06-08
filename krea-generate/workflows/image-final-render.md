@@ -45,12 +45,7 @@ krea generate image -m "<high-fidelity-image>" \
 
 ### MCP fallback
 
-```
-upload_asset(filename, mimeType, fileData)
-list_models()
-get_model_schema(model="<high-fidelity-image>")
-generate_image(model="<high-fidelity-image>", input={prompt, imageUrls, aspectRatio, quality}, sync=true, timeoutSeconds=120)
-```
+Use MCP only if the CLI is unavailable. Upload local references with `upload_asset`, run `list_models()`, inspect `get_model_schema(...)`, then call `generate_image` with schema-verified prompt, reference, aspect, quality, and resolution fields.
 
 ## Banned
 

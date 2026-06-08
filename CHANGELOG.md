@@ -10,6 +10,8 @@
 - Moved long-form/narrative/studio animation, storyboards, shotlists, still-to-motion, retakes, and edit assembly material into `krea-animation`.
 - Kept generic generation, enhancement, edit, LoRA, portrait, text-poster, archviz, and non-marketing/non-animation video primitives in `krea-generate`.
 - Updated high-impact CLI examples to follow live `krea models show --json` `inputSchema` field names such as `image_urls`, `reference_images`, `end_image`, and `generate_audio`.
+- Removed legacy `narrative-video-long.md` and `image-to-video-animate.md` entrypoints from `krea-animation`; their useful rules now live in the canonical series, still-to-motion, and shotlist-to-sequence workflows.
+- Cleaned stale CLI/MCP and direct API guidance: `krea-build` now uses public API Bearer auth and snake_case fields, workflow-level MCP fallbacks defer to live schema inspection, and Meta Ads intake is limited to paid-social/performance/activation work.
 - Updated README, plugin manifests, package contents, CI validation, cross-skill references, and eval scenarios for the four-skill taxonomy.
 
 ## 0.3.0

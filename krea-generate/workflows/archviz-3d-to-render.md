@@ -42,12 +42,7 @@ krea generate image -m "<structural-image-to-image-model>" \
 
 ### MCP fallback
 
-```
-upload_asset(...)
-list_models()
-get_model_schema(model="<structural-image-to-image-model>")
-generate_image(model="<structural-image-to-image-model>", input={prompt, imageUrl, aspectRatio}, sync=true)
-```
+Use MCP only if the CLI is unavailable. Upload local references with `upload_asset`, run `list_models()`, inspect `get_model_schema(...)`, then call `generate_image` with schema-verified reference and aspect fields. Do not copy field names from memory.
 
 ## Banned
 

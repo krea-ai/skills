@@ -44,7 +44,7 @@ The default CLI image model is `krea/krea-2/large`. Krea 2 dimensions use `--asp
 
 ## When named flags aren't enough — use `-i`
 
-The CLI's named flags (`--start-image`, `--duration`, `--aspect`, `--prompt`, `--width`, `--height`, etc.) cover the common cases. For everything else in the model schema, use `-i field=value`. This is the primary path for any model whose schema is wider than the named flags - notably `bytedance/seedance-2`, which currently exposes `end_image`, `reference_images` (up to 9), `reference_videos`, `reference_audios`, `generate_audio`, `resolution`, `seed`, and `effects[]` beyond the named flags.
+The CLI's named flags (`--start-image`, `--duration`, `--aspect`, `--prompt`, `--width`, `--height`, `--quality`, `--resolution`, `--seed`, etc.) cover the common cases. For everything else in the model schema, use `-i field=value`. This is the primary path for any model whose schema is wider than the named flags - notably `bytedance/seedance-2`, which currently exposes `end_image`, `reference_images` (up to 9), `reference_videos`, `reference_audios`, `generate_audio`, and `effects[]` beyond the named flags.
 
 Always run `krea models show <id> --json` first and inspect `inputSchema.properties`; field names there are exactly what CLI `-i` accepts. MCP tool payloads may use translated camelCase names, so verify the MCP schema separately when using MCP.
 

@@ -58,9 +58,9 @@ The client triggers a generation by hitting your server, which hits Krea, polls 
 
 All three live in `references/api-client.md` with reusable TypeScript and Python snippets. The key shapes:
 
-- **Auth:** `Authorization: Key ${KREA_API_KEY}` header.
-- **Submit:** `POST /generate/image/<provider>/<model>` with `{ prompt, ... }` → returns `{ job_id }`.
-- **Poll:** `GET /jobs/<job_id>` every 3–10s until `status` is `completed` or `failed`.
+- **Auth:** `Authorization: Bearer ${KREA_API_KEY}` header.
+- **Submit:** `POST /generate/image/<model-id>` with `{ prompt, ... }` -> returns `{ job_id }`.
+- **Poll:** `GET /jobs/<job_id>` every 3-10s until `status` is terminal.
 - **Errors:** see `references/validation.md` for the full table.
 
 ## Frontend integration

@@ -38,15 +38,15 @@ The biggest risk: someone passes `file:///etc/passwd` or a local network URL. Fi
 
 ```typescript
 function validateImageUrl(url: unknown): string {
-  if (typeof url !== "string") throw new Error("imageUrl must be a string");
+  if (typeof url !== "string") throw new Error("image_url must be a string");
   let u: URL;
   try {
     u = new URL(url);
   } catch {
-    throw new Error("imageUrl must be a valid URL");
+    throw new Error("image_url must be a valid URL");
   }
   if (u.protocol !== "https:" && u.protocol !== "http:") {
-    throw new Error("imageUrl must use http(s)");
+    throw new Error("image_url must use http(s)");
   }
   // Block local network / metadata services
   const hostname = u.hostname.toLowerCase();
@@ -60,7 +60,7 @@ function validateImageUrl(url: unknown): string {
     hostname === "[::1]" ||
     hostname === "metadata.google.internal"
   ) {
-    throw new Error("imageUrl cannot point to internal addresses");
+    throw new Error("image_url cannot point to internal addresses");
   }
   return url;
 }
@@ -79,16 +79,16 @@ When the user attaches files:
 
 ### Parameter enums
 
-Models declare allowed values for params like `aspectRatio` and `resolution`. Fetch the schema once and validate:
+Models declare allowed values for params like `aspect_ratio` and `resolution`. Fetch the schema once and validate:
 
 ```typescript
 // Cached on server startup
 const ALLOWED_ASPECT_RATIOS = ["1:1", "16:9", "9:16", "4:3", "3:4", "21:9"];
 
 function validateAspectRatio(value: unknown): string {
-  if (typeof value !== "string") throw new Error("aspectRatio must be a string");
+  if (typeof value !== "string") throw new Error("aspect_ratio must be a string");
   if (!ALLOWED_ASPECT_RATIOS.includes(value)) {
-    throw new Error(`aspectRatio must be one of: ${ALLOWED_ASPECT_RATIOS.join(", ")}`);
+    throw new Error(`aspect_ratio must be one of: ${ALLOWED_ASPECT_RATIOS.join(", ")}`);
   }
   return value;
 }

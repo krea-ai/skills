@@ -74,10 +74,10 @@ These were uncovered during a production session that burned ~5,000 CU before pr
 |---|---|---|---|
 | #6 | Older `krea upload --json` returned `{"url":"", "id":"<asset-id>"}` | Current CLI returns `.url`; stale installs may still show the old shape | Upgrade the CLI. If blocked on an old install, resolve the asset by ID as a fallback |
 | #7 | Kontext / Seedream-4 reject generation inputs containing external URLs (`image_url`, `style_images.0.url`, etc.) | Public API asset validation intentionally expects Krea-hosted/approved assets | Download external URLs when needed, `krea upload` every local/non-Krea file first, then use the returned Krea-hosted URL |
-| #9 | `krea jobs wait --timeout 600` exits at 300s | Older CLI versions silently cap sync wait | Use manual `krea jobs show <id> --json` polling with 15-25s sleep |
+| #9 | `krea generate video --wait --timeout 600` exits at 300s | Sync generation waits cap at 300s | Submit async, then use `krea jobs wait <id> --timeout 1800` or manual `krea jobs show <id> --json` polling |
 | #11 | Video output is horizontal despite `--aspect 9:16` or `-i aspect_ratio="9:16"` | A landscape `--start-image` or landscape `reference_images[0]` can override aspect in Seedance-style models | Do not pass `--start-image` for vertical social video; pad the storyboard to portrait or drop the landscape storyboard ref; see `../../krea-marketing/workflows/social-video-short.md` |
 | - | `krea generate image --image-url <url>` fails as unknown flag | The flag is `--image`, or multi-ref models expect `-i image_urls='[...]'` | Check `krea generate image --help` and model schema |
-| - | `krea generate image --quality high` fails as unknown flag | `quality` is a schema input, not a top-level CLI flag | Use `-i quality=high` when the schema supports it |
+| - | `krea generate image --quality high` is ignored or rejected by a specific model | The selected model may not support `quality` even though the CLI has a named flag | Check `krea models show <id> --json`; use only fields present in the schema |
 | - | `krea jobs get <id>` prints help | The subcommand is `jobs show` | Use `krea jobs show <id> --json` |
 
 ### Model behavior
@@ -121,7 +121,7 @@ These came from a campaign session where ambiguous "storyboard" vocabulary and s
 | Seedance-2 / videoV2 | Schema error on `duration` < 4 | Seedance-2 minimum duration is 4s. For shot-grammar runs (2-3s cuts), submit at 4s and ffmpeg-trim to spec at the assembly step. |
 | ffmpeg | `subtitles=` filter not found / `No such filter` | Stock Homebrew ffmpeg 8.x ships without libass. Use the PNG-overlay fallback in `dialogue-and-audio.md` instead of trying to rebuild ffmpeg. Working reference at `runs/anime-v2/logs/make_subs.py`. |
 | ffmpeg | `ffmpeg -sseof -0.1 -i shot.mp4 -frames:v 1 last.png` returns "Output file is empty" | Use the working pattern: `ffmpeg -sseof -1 -i shot.mp4 -update 1 -frames:v 1 -q:v 2 last.png`. The `-update 1` flag is required for single-frame extraction. |
-| krea CLI | `krea jobs wait <id> --json` output captured into a shell var breaks jq parsing | Spinner progress + JSON share stdout. Use `... 2>/dev/null \| grep -E '^\{'` or `... 2>/dev/null \| tail -n 1` to extract just the JSON line. See `async-polling.md` "CLI gotchas". |
+| krea CLI | `krea jobs wait <id> --json` output captured into a shell var breaks jq parsing on older/noisy installs | Spinner progress + JSON can share stdout. Use `... 2>/dev/null \| grep -E '^\{'` or `... 2>/dev/null \| tail -n 1` to extract just the JSON line. See `async-polling.md` "CLI gotchas". |
 | krea CLI | Image model returns 1024×1024 square despite `--aspect 16:9` | `google/imagen-4-ultra` and `google/nano-banana-pro` silently ignore `--aspect`. Pass `--width 1280 --height 720` (or `-i width=1280 -i height=720`) explicitly. See `cli-or-mcp.md` "`--aspect` not universally honored". |
 | GPT-image style models | Large simultaneous image batches can hit account concurrency limits, especially after orphaned timeout jobs | Submit campaign sheets or drafts in waves of 8 or fewer and retry 429s with 20s backoff |
 
@@ -130,16 +130,16 @@ These came from a campaign session where ambiguous "storyboard" vocabulary and s
 ### Kling 3.0 — model id and required fields
 
 - The user-facing name `kling-video-v3.0-pro` resolves to model id `kling/kling-3.0` with `-i mode=pro`. There is no separate `-pro` model id in the catalog. Always run `krea models list --json | jq '.[] | select(.id | test("kling"))'` to confirm.
-- Required fields per schema: `prompt`, `aspect_ratio` (enum `16:9` or `9:16`), `duration` (3-15), `generate_audio` (bool), `mode` (`std` / `pro` / `4k`). Named CLI flags cover `--start-image`, `--aspect`, `--duration`, `--prompt`; use `-i end_image=`, `-i generate_audio=true`, `-i mode=pro` for the rest.
+- Required fields per schema: `prompt`, `aspect_ratio` (enum `16:9` or `9:16`), `duration` (3-15), `generate_audio` (bool), `mode` (`std` / `pro` / `4k`). Named CLI flags cover common fields such as `--start-image`, `--aspect`, `--duration`, `--prompt`, `--resolution`, and `--seed`; use `-i end_image=`, `-i generate_audio=true`, and `-i mode=pro` for schema fields without named flags.
 - Schema has no `reference_images` field. Identity continuity for chained narrative work rides entirely on the still-compose pass and the `end_image` hook.
 
 ### Krea 2 (`krea/krea-2/*`) direct-HTTP cheatsheet
 
-For agents writing direct HTTP against the public Krea 2 endpoint (only justified for K2 which is not exposed via the CLI's named flags / not in the public model menu yet), the on-wire shape differs from MCP camelCase:
+For agents writing direct HTTP against the public Krea 2 endpoint in a custom integration, the on-wire shape differs from MCP camelCase:
 
 - Auth header: `Authorization: Bearer $KREA_API_KEY` (the same key used by the CLI; do not invent an `x-api-key` header — that is not the public-API convention).
-- Body field names use snake_case: `aspect_ratio` (not `aspect_ratio`), `resolution` (e.g. `"1K"`), `prompt`, `image_style_references[]`.
-- Response uses `job_id` (not `id`). Poll with `GET https://api.krea.ai/v1/jobs/<job_id>` using the same Bearer header, or `krea jobs show <job_id> --json` if the CLI is available.
+- Body field names use snake_case: `aspect_ratio` (not `aspectRatio`), `resolution` (e.g. `"1K"`), `prompt`, `image_style_references[]`.
+- Response uses `job_id` (not `id`). Prefer `krea jobs show <job_id> --json` for ad hoc agent work; in app code, use the documented job polling endpoint from the current API docs rather than guessing REST paths.
 - MCP `generate_image(model="krea/krea-2/*", input={aspect_ratio, ...})` still uses camelCase — the MCP server translates. Only the raw HTTP body needs snake_case.
 
 This is consistent with `media-inputs.md` ("Krea 2 image endpoints use `aspect_ratio` + `resolution` in the public API") but was not previously consolidated for the auth header and `job_id` response shape.

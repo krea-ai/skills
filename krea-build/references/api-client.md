@@ -3,7 +3,7 @@
 The Krea public API surface for building apps:
 
 - **Base URL:** `https://api.krea.ai`
-- **Auth:** `Authorization: Key ${KREA_API_KEY}` header
+- **Auth:** `Authorization: Bearer ${KREA_API_KEY}` header
 - **OpenAPI:** `https://api.krea.ai/openapi.json` — source of truth for endpoints and schemas
 
 ## TypeScript client
@@ -17,7 +17,7 @@ function getHeaders() {
   const key = process.env.KREA_API_KEY;
   if (!key) throw new Error("KREA_API_KEY is not set");
   return {
-    Authorization: `Key ${key}`,
+    Authorization: `Bearer ${key}`,
     "Content-Type": "application/json",
   };
 }
@@ -45,13 +45,25 @@ async function apiGet(path: string) {
 }
 
 export type Job = {
-  id: string;
-  status: "queued" | "running" | "completed" | "failed" | "cancelled";
+  job_id: string;
+  status:
+    | "backlogged"
+    | "queued"
+    | "scheduled"
+    | "processing"
+    | "sampling"
+    | "intermediate-complete"
+    | "completed"
+    | "failed"
+    | "cancelled";
   result?: {
     urls?: string[];
-    video_url?: string;
+    style_id?: string;
+  } | null;
+  error?: {
+    code?: string;
+    message?: string;
   };
-  error?: string;
 };
 
 export async function getJob(jobId: string): Promise<Job> {
@@ -70,7 +82,8 @@ export async function pollJob(
     const job = await getJob(jobId);
     if (job.status === "completed") return job;
     if (job.status === "failed" || job.status === "cancelled") {
-      throw new Error(`Job ${jobId} ${job.status}: ${job.error ?? "no detail"}`);
+      const detail = job.error?.message ?? job.error?.code ?? "no detail";
+      throw new Error(`Job ${jobId} ${job.status}: ${detail}`);
     }
     await new Promise((r) => setTimeout(r, interval));
   }
@@ -82,38 +95,42 @@ export async function generateImage(input: {
   prompt: string;
   width?: number;
   height?: number;
-  aspectRatio?: string;
-  batchSize?: number;
-  imageUrl?: string;
-  imageUrls?: string[];
-  styleId?: string;
-  styleStrength?: number;
+  aspect_ratio?: string;
+  image_url?: string;
+  image_urls?: string[];
+  quality?: "low" | "medium" | "high" | "auto";
+  resolution?: "1K" | "2K" | "4K";
+  style_images?: Array<{ url: string; strength?: number }>;
 }): Promise<{ job_id: string }> {
-  const path = `/generate/image/${input.model}`;
-  return apiPost(path, input);
+  const { model, ...body } = input;
+  return apiPost(`/generate/image/${model}`, body);
 }
 
 export async function generateVideo(input: {
   model: string;        // e.g. "google/veo-3.1"
   prompt: string;
   duration?: number;
-  aspectRatio?: string;
-  startImage?: string;
-  generateAudio?: boolean;
+  aspect_ratio?: string;
+  start_image?: string;
+  end_image?: string;
+  reference_images?: string[];
+  generate_audio?: boolean;
+  resolution?: string;
 }): Promise<{ job_id: string }> {
-  const path = `/generate/video/${input.model}`;
-  return apiPost(path, input);
+  const { model, ...body } = input;
+  return apiPost(`/generate/video/${model}`, body);
 }
 
 export async function enhanceImage(input: {
   enhancer: string;     // e.g. "topaz-standard-enhance"
-  imageUrl: string;
+  image_url: string;
   width: number;
   height: number;
   creativity?: number;
-  faceEnhancement?: boolean;
+  face_enhancement?: boolean;
 }): Promise<{ job_id: string }> {
-  return apiPost(`/generate/enhance/${input.enhancer}`, input);
+  const { enhancer, ...body } = input;
+  return apiPost(`/generate/enhance/${enhancer}`, body);
 }
 ```
 
@@ -213,7 +230,7 @@ BASE_URL = "https://api.krea.ai"
 
 def _headers():
     key = os.environ["KREA_API_KEY"]
-    return {"Authorization": f"Key {key}", "Content-Type": "application/json"}
+    return {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
 
 
 def api_post(path, body, retries=3):
@@ -241,7 +258,9 @@ def poll_job(job_id, interval=5, timeout=600):
         if job["status"] == "completed":
             return job
         if job["status"] in ("failed", "cancelled"):
-            raise RuntimeError(f"Job {job_id} {job['status']}: {job.get('error', '')}")
+            error = job.get("error") or {}
+            detail = error.get("message") or error.get("code") or "no detail"
+            raise RuntimeError(f"Job {job_id} {job['status']}: {detail}")
         time.sleep(interval)
     raise RuntimeError(f"Job {job_id} timed out")
 
@@ -290,4 +309,4 @@ Don't hardcode model IDs from memory. Get the current list at build time or runt
 curl https://api.krea.ai/openapi.json | jq '.paths | keys | map(select(startswith("/generate/")))'
 ```
 
-This gives every available generation endpoint. The path tail after `/generate/<category>/<provider>/` is the model ID you pass to the helpers above.
+This gives every available generation endpoint. The path tail after `/generate/<category>/` is the model ID you pass to the helpers above.

@@ -34,7 +34,7 @@ If model details do not expose CU, say so and use the workflow's documented appr
 I cannot read live CU pricing from the CLI for this model, so I am using the workflow estimate: ~1564 CU per 15s video, ~10-15 minutes per run. Proceed?
 ```
 
-That fallback is for a single short social-style video job. Do not reuse it for shot-grammar narrative workflows. For `narrative-video-long.md`, estimate per-shot video cost from that workflow's Seedance section and multiply by the approved shot count.
+That fallback is for a single short social-style video job. Do not reuse it for shot-grammar animation workflows. For `../../krea-animation/workflows/shotlist-to-sequence.md`, estimate per-shot video cost from the approved shot count and live model details.
 
 ## Session Override
 

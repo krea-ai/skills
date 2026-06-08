@@ -41,12 +41,7 @@ krea generate image -m "<image-to-image-model>" \
 
 ### MCP fallback
 
-```
-upload_asset(filename, mimeType, fileData)
-list_models()
-get_model_schema(model="<image-to-image-model>")
-generate_image(model="<image-to-image-model>", input={prompt, imageUrl}, sync=true, timeoutSeconds=90)
-```
+Use MCP only if the CLI is unavailable. Upload local inputs with `upload_asset`, run `list_models()`, inspect `get_model_schema(...)`, then call `generate_image` with schema-verified prompt and reference fields.
 
 ## Banned
 
