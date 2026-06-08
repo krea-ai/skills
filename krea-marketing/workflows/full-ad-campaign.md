@@ -53,13 +53,7 @@ krea generate image -m "<high-fidelity-image>" \
 
 ### MCP fallback
 
-```
-list_models()
-get_model_schema(model="<fast-image-draft>")
-generate_image(...drafts..., sync=true)
-get_model_schema(model="<high-fidelity-image>")
-generate_image(...finals..., sync=true)
-```
+Use MCP only if the CLI is unavailable. Run `list_models()`, inspect `get_model_schema(...)` for draft and final image models, then call `generate_image` with schema-verified campaign prompt, reference, aspect, quality, and resolution fields.
 
 ## Banned
 

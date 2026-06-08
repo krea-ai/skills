@@ -43,32 +43,33 @@ def command_for(row: dict[str, str], model: str, quality: str) -> list[str]:
     aspect = row.get("aspect") or "16:9"
     duration = row.get("duration") or "5"
     resolution = "1080p" if quality == "final" else "720p"
+    selected_model = row.get("model") or model
     cmd = [
         "krea",
         "generate",
         "video",
         "-m",
-        row.get("model") or model,
+        selected_model,
         "--aspect",
         aspect,
-        "--start-image",
-        row.get("start_image", ""),
-        "-i",
-        f"duration={duration}",
+        "--duration",
+        duration,
+        "--resolution",
+        resolution,
         "-i",
         f"generate_audio=false",
-        "-i",
-        f"resolution={resolution}",
         "-p",
         row.get("prompt", ""),
     ]
+    if row.get("start_image"):
+        cmd.extend(["--start-image", row["start_image"]])
     if row.get("end_image"):
         cmd.extend(["-i", f"end_image={row['end_image']}"])
     refs = [part.strip() for part in row.get("reference_images", "").split(",") if part.strip()]
-    if refs:
+    if refs and not ("seedance" in selected_model.lower() and row.get("end_image")):
         cmd.extend(["-i", "reference_images=" + json.dumps(refs)])
     cmd.append("--json")
-    return [part for part in cmd if part != ""]
+    return cmd
 
 
 def submit(row: dict[str, str], cmd: list[str], cwd: Path) -> dict[str, str]:

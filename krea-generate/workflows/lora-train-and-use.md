@@ -26,17 +26,19 @@ Hard prescription. Follow in order.
 5. Submit training through the Krea HTTP API; CLI/MCP may not expose training.
 6. Poll every 30-60 seconds using `../references/progress-reporting.md`.
 7. On completion, capture `style_id` and trigger word.
-8. Resolve a style-aware image model from live `list_models` and inspect schema for `styleId` or `styles`.
+8. Resolve a style-aware image model from live `list_models` and inspect schema for the exact style field, such as `style_id`, MCP `styleId`, or `styles`.
 9. Generate 3-5 samples using the new style at strength ~0.85.
 10. Suggest pinning the style ID in `KREA_PREFERENCES.md` if the user will reuse it.
 11. **Deliver** style ID, trigger word, sample outputs, and QA notes.
 
-### CLI
+### Direct API training
+
+Verify the current training endpoint, auth header, and payload shape before use. This path is direct HTTP because Krea CLI/MCP may not expose LoRA training yet; it is not the normal generation path.
 
 ```bash
 KEY="$KREA_API_KEY"
 JOB=$(curl -sf -X POST https://api.krea.ai/styles/train \
-  -H "Authorization: Key $KEY" \
+  -H "Authorization: Bearer $KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "flux_dev",
@@ -48,27 +50,26 @@ JOB=$(curl -sf -X POST https://api.krea.ai/styles/train \
   }' | jq -r .job_id)
 
 while :; do
-  STATUS=$(curl -sf "https://api.krea.ai/jobs/$JOB" -H "Authorization: Key $KEY" | jq -r .status)
+  STATUS=$(curl -sf "https://api.krea.ai/jobs/$JOB" -H "Authorization: Bearer $KEY" | jq -r .status)
   case "$STATUS" in completed|failed|cancelled) break ;; esac
   sleep 60
 done
 ```
 
-### MCP fallback
+### Generate samples after training
 
 ```
-# Training is direct HTTP when CLI/MCP do not expose it.
-# Use MCP/CLI after completion for style-aware image generation:
+# Use CLI or MCP after completion for style-aware image generation:
 list_models()
 get_model_schema(model="<style-aware-image-model>")
-generate_image(model="<style-aware-image-model>", input={prompt, styleId, styleStrength}, sync=true)
+generate_image(model="<style-aware-image-model>", input={prompt, <schema-style-field>, <schema-strength-field>}, sync=true)
 ```
 
 ## Banned
 
 - Do not train on fewer than 10 weak images unless the user accepts poor results.
 - Do not skip cost-preflight or long-running progress pings.
-- Do not assume the schema field is always `styleId`; inspect the model.
+- Do not assume the schema field is always `styleId` or `style_id`; inspect the model.
 - Do not persist style IDs into project files without explicit user approval.
 
 ## Cost & time

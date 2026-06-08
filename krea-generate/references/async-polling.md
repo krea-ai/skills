@@ -19,11 +19,11 @@ job = generate_video(
     input={prompt: "...", aspect_ratio: "16:9", duration: 5},
     sync=false,
 )
-# job has shape: { id: "uuid-...", status: "queued", ... }
+# job has shape: { job_id: "uuid-...", status: "queued", ... }
 
 # 2. Poll every 10 seconds
 loop:
-    status = get_job(jobId=job.id)
+    status = get_job(jobId=job.job_id)
     # status.status is one of:
     #   "backlogged" | "queued" | "scheduled" | "processing" | "sampling" |
     #   "intermediate-complete" | "completed" | "failed" | "cancelled"

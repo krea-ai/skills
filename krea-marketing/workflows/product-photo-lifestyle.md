@@ -43,12 +43,7 @@ krea generate image -m "<multi-reference-image-model>" \
 
 ### MCP fallback
 
-```
-upload_asset(...)
-list_models()
-get_model_schema(model="<multi-reference-image-model>")
-generate_image(model="<multi-reference-image-model>", input={prompt, imageUrls, aspectRatio}, sync=true)
-```
+Use MCP only if the CLI is unavailable. Upload product, model, and brand references with `upload_asset`, run `list_models()`, inspect `get_model_schema(...)`, then call `generate_image` with schema-verified multi-reference, prompt, and aspect fields.
 
 ## Banned
 

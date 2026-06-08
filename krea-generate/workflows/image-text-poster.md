@@ -43,11 +43,7 @@ krea generate image -m "<text-friendly-image-model>" \
 
 ### MCP fallback
 
-```
-list_models()
-get_model_schema(model="<text-friendly-image-model>")
-generate_image(model="<text-friendly-image-model>", input={prompt, aspectRatio, quality}, sync=true, timeoutSeconds=120)
-```
+Use MCP only if the CLI is unavailable. Run `list_models()`, inspect `get_model_schema(...)`, then call `generate_image` with schema-verified prompt, aspect, text, quality, and resolution fields.
 
 ## Banned
 

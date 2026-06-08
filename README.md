@@ -67,7 +67,7 @@ These route through `krea-generate/workflows/archviz-3d-to-render.md` for struct
 > Use Meta Ads performance context before making new ad creative.
 ```
 
-These trigger `krea-marketing`. The agent starts with a compact creative intake, asks whether to connect Meta Ads CLI/MCP for better performance context, and proceeds Krea-only if Meta is not connected. Any live launch, budget, status, catalog, or publishing change stays gated and paused/draft by default unless explicitly approved.
+These trigger `krea-marketing`. The agent starts with a compact creative intake. For paid-social, performance, campaign-analysis, catalog-performance, or activation work, it asks whether to connect Meta Ads CLI/MCP for better performance context; otherwise it proceeds Krea-only from product refs, brand refs, and goals. Any live launch, budget, status, catalog, or publishing change stays gated and paused/draft by default unless explicitly approved.
 
 ```
 > Help me make an anime pilot from scratch with AI.

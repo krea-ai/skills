@@ -42,12 +42,7 @@ krea generate enhance -m "<creative-enhance-model>" "$IMG" \
 
 ### MCP fallback
 
-```
-upload_asset(...)
-list_models()
-get_model_schema(model="<creative-enhance-model>")
-enhance_image(model="<creative-enhance-model>", input={imageUrl, width, height, creativity, prompt}, sync=true)
-```
+Use MCP only if the CLI is unavailable. Upload local inputs with `upload_asset`, run `list_models()`, inspect `get_model_schema(...)`, then call `enhance_image` with schema-verified image, size, creativity, and prompt fields.
 
 ## Banned
 

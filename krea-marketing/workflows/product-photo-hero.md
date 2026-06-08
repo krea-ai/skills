@@ -44,12 +44,7 @@ krea generate image -m "<high-fidelity-image-to-image>" \
 
 ### MCP fallback
 
-```
-upload_asset(...)
-list_models()
-get_model_schema(model="<high-fidelity-image-to-image>")
-generate_image(model="<high-fidelity-image-to-image>", input={prompt, imageUrl, aspectRatio, quality}, sync=true)
-```
+Use MCP only if the CLI is unavailable. Upload product references with `upload_asset`, run `list_models()`, inspect `get_model_schema(...)`, then call `generate_image` with schema-verified product reference, prompt, aspect, and quality fields.
 
 ## Banned
 

@@ -39,12 +39,7 @@ krea generate enhance -m "<faithful-upscale-model>" "$IMG" \
 
 ### MCP fallback
 
-```
-upload_asset(...)
-list_models()
-get_model_schema(model="<faithful-upscale-model>")
-enhance_image(model="<faithful-upscale-model>", input={imageUrl, width, height}, sync=true, timeoutSeconds=180)
-```
+Use MCP only if the CLI is unavailable. Upload local inputs with `upload_asset`, run `list_models()`, inspect `get_model_schema(...)`, then call `enhance_image` with schema-verified image and size fields.
 
 ## Banned
 

@@ -16,7 +16,7 @@ This skill must work without Meta Ads. Meta context improves decisions, but it i
 For product, campaign, ad, UGC, paid-social, marketplace, product-launch, or more-than-3-deliverable requests, ask once in a compact message:
 
 1. Missing product/brand basics: product reference, URL, goal, platform, output count, required claims/copy, and visual reference.
-2. Whether the user wants to connect Meta Ads CLI/MCP for account-specific performance context before creative planning.
+2. For paid-social, performance, campaign-analysis, catalog-performance, or activation requests only: whether the user wants to connect Meta Ads CLI/MCP for account-specific performance context before creative planning.
 
 If the user connects Meta, read performance context first. If they decline or cannot connect it, proceed Krea-only.
 

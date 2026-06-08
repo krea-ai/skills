@@ -2,7 +2,7 @@
 
 ## Trigger
 
-User says "make a short video", "TikTok", "Reels", "Shorts", "GRWM", "UGC", "Ori-style video", "social ad", or asks for a vertical/square clip of 15 seconds or less. When in doubt between this workflow and `../../krea-animation/workflows/narrative-video-long.md`, pick this if the target is one continuous social-native piece rather than many hard cuts.
+User says "make a short video", "TikTok", "Reels", "Shorts", "GRWM", "UGC", "Ori-style video", "social ad", or asks for a vertical/square clip of 15 seconds or less. When in doubt between this workflow and `../../krea-animation/SKILL.md`, pick this if the target is one continuous social-native piece rather than many hard cuts.
 
 ## Clarify
 
@@ -58,15 +58,7 @@ krea generate video -m "<cinematic-video-model>" \
 
 ### MCP fallback
 
-```
-list_models()
-get_model_schema(model="<text-friendly-image-model>")
-generate_image(model="<text-friendly-image-model>", input={prompt, imageUrls, aspectRatio, quality}, sync=true)
-upload_asset(filename="storyboard.png", mimeType="image/png", fileData=<base64>)
-get_model_schema(model="<cinematic-video-model>")
-generate_video(model="<cinematic-video-model>", input={prompt, referenceImages, aspectRatio, duration, resolution}, sync=false)
-get_job(jobId=<id>)  # poll with progress pings
-```
+Use MCP only if the CLI is unavailable. Run `list_models()`, inspect `get_model_schema(...)` for both storyboard and video models, upload the approved storyboard with `upload_asset`, then call `generate_video` with schema-verified prompt, reference, aspect, duration, and resolution fields. Poll with `get_job` and progress pings.
 
 ## Banned
 
@@ -75,7 +67,7 @@ get_job(jobId=<id>)  # poll with progress pings
 - Do not pass landscape `--start-image` into Seedance for vertical output - issue #11.
 - Do not put a landscape storyboard first in `reference_images` for 9:16 unless padded to portrait - issue #11.
 - Do not use `slow`, `gentle`, `soft`, or `slow motion` in prompts - Seedance often literalizes them.
-- Do not rely on `krea jobs wait --timeout 600` if the CLI caps at 300s - issue #9; use manual polling.
+- Do not rely on `krea generate video --wait --timeout 600`; sync generation waits cap at 300s. Submit async, then use `krea jobs wait <id> --timeout 1800` or manual polling.
 - Do not use non-Krea-hosted refs as generation inputs - issue #7.
 - Do not silently poll - issue #17; progress pings are mandatory.
 - For UGC, do not use commercial-polish words or camera moves banned in `../references/ugc-social-video.md`.
@@ -94,7 +86,7 @@ get_job(jobId=<id>)  # poll with progress pings
 | Output is slow motion | Prompt contained banned pacing words, issue #14 | Rewrite with natural realtime, smooth, steady, fluid |
 | Video feels stitched | Per-panel generation was used, issue #15 | Use one storyboard sheet and one timeline-driven video job |
 | Upload URL empty | Old CLI upload issue #6 | Upgrade CLI; if blocked on an old install, resolve asset by ID through the assets endpoint |
-| Job times out | CLI timeout cap issue #9 | Manual `krea jobs show` loop |
+| Job times out | Sync generation wait cap | Submit async, then use `krea jobs wait <id> --timeout 1800` or a manual `krea jobs show` loop |
 | External URL rejected | Public API asset validation, issue #7 | Download the asset if needed, upload it to Krea, then use the returned Krea URL |
 | Identity drifts | Face refs weak, issue #16 | Use 2-3 varied refs or route to `../../krea-generate/workflows/lora-train-and-use.md` |
 | User lost trust during wait | Silent polling, issue #17 | Follow `../../krea-generate/references/progress-reporting.md` every 25-35 seconds |

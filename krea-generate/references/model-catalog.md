@@ -4,7 +4,7 @@ Krea's model lineup changes faster than this skill ships. So this document does 
 
 ## How to use this file
 
-1. Call `mcp__krea-public-api__list_models()`. You get back an array of `{id, category, name, description}` per model.
+1. Call `krea models list --json` by default, or MCP `list_models()` when the CLI is unavailable. You get back an array of `{id, category, name, description}` per model.
 2. Identify the intent (the user's brief or your interpretation of it).
 3. Match the intent to an **archetype** below.
 4. Scan the `name` and `description` fields of the `list_models` result for the **keyword hints** under that archetype.

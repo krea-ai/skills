@@ -173,7 +173,7 @@ job = generate_video(
     },
     sync=false,
 )
-# then poll get_job(jobId=job.id) — see async-polling.md
+# then poll get_job(jobId=job.job_id) — see async-polling.md
 ```
 
 ## Audio reference
