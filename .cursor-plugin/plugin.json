@@ -2,8 +2,8 @@
   "$schema": "https://cursor.com/schemas/cursor-plugin/plugin.json",
   "name": "krea",
   "displayName": "Krea AI",
-  "version": "0.3.0",
-  "description": "Three Krea skills: generation workflows, professional animation production, and developer integration patterns.",
+  "version": "0.4.0",
+  "description": "Four Krea skills: generation workflows, marketing creative, professional animation production, and developer integration patterns.",
   "author": {
     "name": "Krea AI"
   },
@@ -22,6 +22,8 @@
     "mcp",
     "archviz",
     "marketing",
+    "meta-ads",
+    "marketplace",
     "product-photography"
   ]
 }
