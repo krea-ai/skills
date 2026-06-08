@@ -8,13 +8,18 @@
     {
       "name": "krea",
       "source": "./",
-      "description": "Two Krea skills: intent-first generation workflows plus developer integration patterns.",
-      "version": "0.2.1",
+      "description": "Three Krea skills: generation workflows, professional animation production, and developer integration patterns.",
+      "version": "0.3.0",
       "skills": [
         {
           "name": "ai",
           "path": "krea-ai",
           "invoke": "/krea:ai"
+        },
+        {
+          "name": "animation",
+          "path": "krea-animation",
+          "invoke": "/krea:animation"
         },
         {
           "name": "build",

@@ -80,6 +80,10 @@ echo ""
 
 # ─── Parse scenarios ────────────────────────────────────────
 awk '
+  /^## Format spec/ {
+    if (in_scenario) { printf "---\n" }
+    exit
+  }
   /^### [0-9]+\./ {
     if (in_scenario) { printf "---\n" }
     in_scenario = 1

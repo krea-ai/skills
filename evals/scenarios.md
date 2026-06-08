@@ -1,6 +1,6 @@
 # Eval Scenarios
 
-22 scenarios. Format per scenario:
+31 scenarios. Format per scenario:
 
 - **Category**: routing | refusal | cost | vision | polling | edge_case
 - **User input**: exact brief
@@ -212,6 +212,82 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 - **Expected**: agent offers multiple storyboard directions/variants and waits for a pick before animation
 - **Pass regex**: `(?i)ugc|storyboard|variant|A/B/C|three|3|pick|choose|before.*video|wait.*approval`
 - **Fail regex**: `(?i)generate_video|seedance|submit.*video|one storyboard|single direction|already animating`
+
+---
+
+## Animation production (9)
+
+### 23. Novice anime series workflow
+
+- **Category**: routing
+- **User input**: "I have an idea for an anime series but no assets. Help me make the first 60-second pilot with Krea."
+- **Expected**: agent routes to the animation production workflow and starts with scaffold, brief, bible, storyboard, shotlist, and approvals before video
+- **Pass regex**: `(?i)krea-animation|animation.*pipeline|asset bible|storyboard|shot.?list|scaffold|approval|model sheet`
+- **Fail regex**: `(?i)generate.*60.*second.*video now|single prompt|submit.*video.*immediately`
+
+### 24. Studio shot production ingest
+
+- **Category**: routing
+- **User input**: "We already have boards, character sheets, background plates, and a shot spreadsheet. Use Krea to produce the shots."
+- **Expected**: agent preserves existing studio materials and maps them into the animation production structure
+- **Pass regex**: `(?i)studio|ingest|boards|character sheets|background plates|shot spreadsheet|preserve|map.*project|approved`
+- **Fail regex**: `(?i)rewrite.*from scratch|discard.*boards|single.*video prompt`
+
+### 25. Still image to motion
+
+- **Category**: routing
+- **User input**: "Animate this approved keyframe of my character blinking and steam moving in the background."
+- **Expected**: agent uses still-to-motion, reads the image first, writes a motion-only prompt, and checks for drift
+- **Pass regex**: `(?i)still.to.motion|image.to.video|read.*image|motion-only|blink|steam|drift|start.?image`
+- **Fail regex**: `(?i)different scene|full storyboard|skip.*image`
+
+### 26. Storyboard approval gate
+
+- **Category**: cost
+- **User input**: "Here is a rough story idea. Generate all the animation clips now."
+- **Expected**: agent refuses to skip storyboard/asset/keyframe approval before expensive video jobs
+- **Pass regex**: `(?i)storyboard|asset|keyframe|approval|before.*video|cannot.*skip|first.*shot.?list`
+- **Fail regex**: `(?i)submitting.*all|generate.*all.*clips now|video jobs.*started`
+
+### 27. Shotlist to sequence dry run
+
+- **Category**: polling
+- **User input**: "My storyboard and shot list are approved. What is the workflow to generate the sequence without spending credits first?"
+- **Expected**: agent validates the project, builds manifests, and uses submit_video_jobs dry-run before real jobs
+- **Pass regex**: `(?i)validate_project|build_manifests|submit_video_jobs.*--dry-run|video_jobs\.csv|manifest`
+- **Fail regex**: `(?i)run.*real.*jobs|spend.*credits|submit.*without.*dry`
+
+### 28. Animation cost preflight
+
+- **Category**: cost
+- **User input**: "Make 24 Seedance shots for my 2-minute anime short."
+- **Expected**: agent performs a cost/time preflight and asks for approval before video submission
+- **Pass regex**: `(?i)cost|preflight|24 shots|2-minute|approval|before.*submit|retry budget|wall.?clock`
+- **Fail regex**: `(?i)submitted|started.*24|all.*jobs.*queued`
+
+### 29. Retake workflow
+
+- **Category**: vision
+- **User input**: "Shot SC001_SH020 looks good except the jacket changes color and a background person appears. What now?"
+- **Expected**: agent logs a retake tied to the shot and fixes the smallest unit, not the entire sequence
+- **Pass regex**: `(?i)retake|SC001_SH020|jacket|background person|smallest|prompt|keyframe|log`
+- **Fail regex**: `(?i)regenerate.*entire|ignore|acceptable`
+
+### 30. Animation app stays in krea-build
+
+- **Category**: routing
+- **User input**: "Build a React app for producers to manage animation shot lists and submit Krea jobs."
+- **Expected**: agent routes implementation to krea-build while using krea-animation as the workflow contract
+- **Pass regex**: `(?i)krea-build|react|app|producer|shot lists|workflow contract|krea-animation`
+- **Fail regex**: `(?i)only.*krea-animation|generate.*video.*instead|no.*app`
+
+### 31. Delivery QA
+
+- **Category**: vision
+- **User input**: "The clips are generated. How do we know the final animation is ready to deliver?"
+- **Expected**: agent assembles, samples QA frames, checks continuity, retakes, runtime, audio/subtitles, and final path
+- **Pass regex**: `(?i)assemble|sample.*QA|frame|continuity|retake|runtime|audio|subtitle|delivery checklist|final path`
+- **Fail regex**: `(?i)just.*send|no.*need.*review|skip.*QA`
 
 ---
 

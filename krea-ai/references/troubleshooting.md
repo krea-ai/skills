@@ -16,6 +16,7 @@ The MCP handles auth on the Krea side. If you see an explicit auth error from a 
 
 - **`Missing required params: prompt`** - the model needs a prompt; ask the user.
 - **`Invalid values: aspectRatio=...`** - call `get_model_schema(model=<id>)` to see allowed values; pick one.
+- **`Invalid asset URL`** - the input points at a non-Krea/non-approved host. This commonly appears on fields like `imageUrl` or `styleImages.0.url`. Download the asset if needed, upload it with `krea upload <file> --json` or MCP `upload_asset`, then replace the field with the returned Krea-hosted URL.
 - **`Unknown params: <name>`** - the schema doesn't accept that field. Don't guess what the right name is; run `get_model_schema` first.
 
 ## Job lifecycle errors
@@ -71,8 +72,8 @@ These were uncovered during a production session that burned ~5,000 CU before pr
 
 | # | Symptom | Reality | Workaround |
 |---|---|---|---|
-| #6 | `krea upload --json` returns `{"url":"", "id":"<asset-id>"}` | The CLI does not always resolve the hosted URL on upload | `curl -H "Authorization: Bearer $KREA_API_KEY" "https://api.krea.ai/assets/<id>"` and read `.image_url` |
-| #7 | Kontext / Seedream-4 reject `imageUrls` containing non-`app-uploads.krea.ai` URLs | These models only accept Krea-hosted assets | Always `krea upload` local files first; use the Krea-hosted URL |
+| #6 | Older `krea upload --json` returned `{"url":"", "id":"<asset-id>"}` | Current CLI returns `.url`; stale installs may still show the old shape | Upgrade the CLI. If blocked on an old install, resolve the asset by ID as a fallback |
+| #7 | Kontext / Seedream-4 reject generation inputs containing external URLs (`imageUrl`, `styleImages.0.url`, etc.) | Public API asset validation intentionally expects Krea-hosted/approved assets | Download external URLs when needed, `krea upload` every local/non-Krea file first, then use the returned Krea-hosted URL |
 | #9 | `krea jobs wait --timeout 600` exits at 300s | Older CLI versions silently cap sync wait | Use manual `krea jobs show <id> --json` polling with 15-25s sleep |
 | #11 | Video output is horizontal despite `--aspect 9:16` or `-i aspectRatio="9:16"` | A landscape `--start-image` or landscape `referenceImages[0]` can override aspect in Seedance-style models | Do not pass `--start-image` for vertical social video; pad the storyboard to portrait or drop the landscape storyboard ref; see `../workflows/social-video-short.md` |
 | - | `krea generate image --image-url <url>` fails as unknown flag | The flag is `--image`, or multi-ref models expect `-i imageUrls='[...]'` | Check `krea generate image --help` and model schema |

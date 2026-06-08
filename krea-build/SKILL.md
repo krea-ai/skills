@@ -1,5 +1,5 @@
 ---
-version: 0.2.1
+version: 0.3.0
 name: krea-build
 description: "Patterns for building applications that integrate the Krea API. Auth, polling discipline, error handling, validation, frontend integration (SvelteKit/React/Vue), and the 'prototype in chat, productize in app' workflow. Use when the user is writing code that calls the Krea API directly — building a generator UI, a content pipeline, a creative tool — not when they just want to generate one image. For interactive generation use the sibling krea-ai skill instead."
 license: MIT
@@ -29,6 +29,7 @@ Once per session, if sibling `../krea-ai/scripts/update-check.sh` exists, run it
 | "Write a TypeScript helper to call Krea" | `krea-build` |
 | "Run a one-off pipeline now" | `krea-ai` |
 | "Add Krea generation to my React form" | `krea-build` |
+| "Build an animation production UI around shot lists and Krea video jobs" | `krea-build`, with `krea-animation` as the creative workflow contract |
 
 ## Critical workflow rule: prototype in chat, productize in the app
 

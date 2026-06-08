@@ -1,11 +1,11 @@
 ---
-version: 0.2.1
+version: 0.3.0
 name: krea-ai
-description: "Generate images, videos, enhance/upscale, train LoRAs, and run campaign workflows through Krea. Intent-first workflow prefabs route common asks to hard recipes for social video, key visuals, image generation, product photography, archviz, enhancement, LoRA training, and ad campaigns."
+description: "Generate images, short videos, enhance/upscale, train LoRAs, and run campaign workflows through Krea. Intent-first workflow prefabs route common asks to hard recipes for social video, key visuals, image generation, product photography, archviz, enhancement, LoRA training, and ad campaigns. For professional animation, anime series, storyboard-to-video, asset bibles, or shotlist-to-sequence production, use the sibling krea-animation skill."
 license: MIT
 ---
 
-# Krea AI - Generation, animation, enhancement
+# Krea AI - Generation and enhancement
 
 Use Krea through the CLI by default, with the Krea MCP server as fallback. This skill is organized around intent-first workflow prefabs: classify the user's verb + modality + flavor, load the matching `workflows/*.md`, and follow that recipe instead of improvising from a model menu.
 
@@ -44,9 +44,9 @@ It never blocks generation. Surface `UPGRADE_AVAILABLE` or `JUST_UPGRADED` once;
 3. Vision-first. Read attached images before generating, and read every generated still/frame with the Read tool before approving it, showing the user, or feeding it to a downstream model. Critique each output on its own line per `references/vision-qa.md` — composition, named action present, identifying details, lighting, continuity hook for the next clip. Never approve a batch with a one-line "all of them look great"; that is the rubber-stamp failure mode that produces broken endImages and Seedance refusals downstream.
 4. No premature questions for cheap ops. For cheap images/enhance, pick sane defaults. For expensive ops, do not answer prematurely: run campaign brief intake when it applies, clarify once, run `references/cost-preflight.md` for upcoming spend, and maintain `references/budget-tracking.md` for the session's running total so 402 Payment Required is never the first signal that credits ran out.
 5. Progress reporting is mandatory for async polling over 30 seconds. Use `references/progress-reporting.md`.
-6. Always call `list_models` before choosing a model. Use `references/model-catalog.md` to resolve archetypes to live IDs.
+6. Always call `krea models list --json` or MCP `list_models` before choosing a model. Use `references/model-catalog.md` to resolve archetypes to live IDs.
 7. Always inspect the model schema before submitting. Do not guess field names such as `imageUrl`, `imageUrls`, `startImage`, `duration`, or `resolution`.
-8. Upload local references to Krea before generation. Some models reject non-Krea-hosted URLs.
+8. Normalize generation references to Krea-hosted assets before generation. Local files and arbitrary external image/video/audio URLs must be uploaded to Krea first; only pass already-Krea/approved asset URLs directly. Product/page URLs used for research are not generation references.
 9. Honor `KREA_PREFERENCES.md` or a `## Krea preferences` section in project docs when present.
 10. Do not pretend bad outputs are fine. Name the mismatch and offer a concrete retry path.
 11. Reference before prose. If the user uses a term with multiple legitimate visual meanings (`storyboard`, `mood board`, `key visual`, `hero shot`, `mockup`, `tearsheet`, `look book`), ask for a reference image before interpreting it in your own visual language.
@@ -75,6 +75,7 @@ Output a 5-line confirmed brief, then route.
 | ad storyboard / key visual / campaign sheet / social pack / agency-style product layout | `workflows/key-visual-sheet.md` |
 | make a longer narrative video with hard cuts, >15s | `workflows/narrative-video-long.md` |
 | animate a still / image-to-video / make this picture move | `workflows/image-to-video-animate.md` |
+| professional animation / anime series / storyboard-to-video / asset bible / shotlist-to-sequence / studio retakes | use sibling `../krea-animation/SKILL.md` |
 | make me an image (no quality bar stated, exploring) | `workflows/image-fast-iterate.md` |
 | production-quality image / for delivery / hero asset | `workflows/image-final-render.md` |
 | transform / edit / restyle this image | `workflows/image-edit-i2i.md` |
@@ -113,6 +114,8 @@ Load only what the active workflow needs:
 - `references/models/` - per-model prompting playbooks (prompt structure, media-path rules, engine quirks, failure recovery, pacing guardrails). Load only when the active workflow has resolved that model. Today: `seedance-2.md`.
 
 ## Related skill
+
+Use `krea-animation/` for professional animation production: anime series, asset bibles, character model sheets, storyboards, shot lists, AI video jobs, edit assembly, QA, and retakes.
 
 Use `krea-build/` for developer integration work: API clients, frontend snippets, validation, and repeatable app code.
 
