@@ -20,6 +20,13 @@ DENY_SUFFIXES = {
 }
 
 DENY_PARTS = {"__pycache__", "runs", "research", "node_modules"}
+REQUIRED_SKILL_DIRS = {
+    "krea-generate",
+    "krea-marketing",
+    "krea-animation",
+    "krea-build",
+}
+FORBIDDEN_PREFIXES = {"krea-ai/"}
 
 
 def main() -> int:
@@ -29,6 +36,8 @@ def main() -> int:
         return proc.returncode
     packs = json.loads(proc.stdout)
     bad: list[str] = []
+    included_dirs: set[str] = set()
+    forbidden: list[str] = []
     for pack in packs:
         for file_info in pack.get("files", []):
             path = file_info.get("path", "")
@@ -36,10 +45,26 @@ def main() -> int:
             suffix = Path(path).suffix.lower()
             if suffix in DENY_SUFFIXES or parts.intersection(DENY_PARTS):
                 bad.append(path)
+            first = Path(path).parts[0] if Path(path).parts else ""
+            if first in REQUIRED_SKILL_DIRS:
+                included_dirs.add(first)
+            if any(path.startswith(prefix) for prefix in FORBIDDEN_PREFIXES):
+                forbidden.append(path)
     if bad:
         print("Package contains forbidden artifacts:", file=sys.stderr)
         for path in bad:
             print(f"  {path}", file=sys.stderr)
+        return 1
+    if forbidden:
+        print("Package contains removed skill paths:", file=sys.stderr)
+        for path in forbidden:
+            print(f"  {path}", file=sys.stderr)
+        return 1
+    missing = sorted(REQUIRED_SKILL_DIRS - included_dirs)
+    if missing:
+        print("Package is missing required skill directories:", file=sys.stderr)
+        for name in missing:
+            print(f"  {name}/", file=sys.stderr)
         return 1
     print("OK package contents")
     return 0

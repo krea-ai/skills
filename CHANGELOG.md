@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.5.0
+
+- Added a DTC static ad-format library to `krea-marketing`: `references/dtc-ad-formats.md` — 16 brand-agnostic, original ad-format templates (headline, offer, bundle, testimonial, press, UGC two-panel, spec callouts, benefits, comparison diptych, before/after, magazine, behind-the-product, manifesto, what's-in-the-box, organic, lifestyle-in-use), each with its required structural device, an art-direction treatment, and a placeholder prompt template organized by the existing static format families.
+- Added `workflows/dtc-ad-templates.md`: turn one product reference photo into N on-brand static ad stills, with cost-preflight, model-aware generation (gpt-image-2 async + multiples-of-16; nano-banana-pro aspect_ratio), and per-format structural-device vision QA. Images-only delivery; no bundled scripts.
+- Hardened sibling docs: `key-visual-sheet` now flags the gpt-image-2 async requirement, `full-ad-campaign` routes one-photo static ad sets to the new workflow, and the shared troubleshooting table documents the 524-on-sync and multiples-of-16 gotchas for slow image models.
+- Moved the animation-domain references `story-spine.md`, `shot-grammar.md`, and `dialogue-and-audio.md` from `krea-generate` to `krea-animation` (their only consumers) and updated the cross-skill links, so `krea-generate` stays a pure generation-primitives skill.
+- Bumped synced package, plugin, marketplace, codex/cursor manifest, and skill versions to `0.5.0`; added a DTC routing eval scenario.
+
+## 0.4.0
+
+- Breaking: renamed the canonical generation skill from `krea-ai` to `krea-generate` and removed the `/krea:ai` marketplace invocation. The new invocation is `/krea:generate`.
+- Renamed the package metadata from `krea-ai-skill` to `krea-skills` and bumped synced package, plugin, skill, and CI versions to `0.4.0`.
+- Added `krea-marketing`, a dedicated marketing creative skill for product photoshoots, marketplace image sets, key visuals, UGC/social ads, product URL creative, social storyboards, ad packs, and campaign workflows.
+- Added Krea-native product photoshoot and marketplace-card workflows inspired by researched creative production patterns, without depending on Higgsfield tooling.
+- Added optional Meta Ads CLI/MCP performance context for marketing work, including read-first creative intelligence and paused/draft defaults for any gated write operations.
+- Moved long-form/narrative/studio animation, storyboards, shotlists, still-to-motion, retakes, and edit assembly material into `krea-animation`.
+- Kept generic generation, enhancement, edit, LoRA, portrait, text-poster, archviz, and non-marketing/non-animation video primitives in `krea-generate`.
+- Updated high-impact CLI examples to follow live `krea models show --json` `inputSchema` field names such as `image_urls`, `reference_images`, `end_image`, and `generate_audio`.
+- Removed legacy `narrative-video-long.md` and `image-to-video-animate.md` entrypoints from `krea-animation`; their useful rules now live in the canonical series, still-to-motion, and shotlist-to-sequence workflows.
+- Cleaned stale CLI/MCP and direct API guidance: `krea-build` now uses public API Bearer auth and snake_case fields, workflow-level MCP fallbacks defer to live schema inspection, and Meta Ads intake is limited to paid-social/performance/activation work.
+- Updated README, plugin manifests, package contents, CI validation, cross-skill references, and eval scenarios for the four-skill taxonomy.
+
 ## 0.3.0
 
 - Added `krea-animation`, a professional animation and anime production skill for asset bibles, model sheets, storyboards, shot lists, Krea video jobs, edit assembly, QA, and retakes.

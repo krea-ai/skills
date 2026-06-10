@@ -1,0 +1,122 @@
+# DTC Ad Templates
+
+## Trigger
+
+User wants a set of on-brand **static ad stills** from one product photo: "DTC ad
+templates", "ad format library", "give me N on-brand ad layouts", "a static ad set from
+this product", "one product photo into many ads". This produces N separate finished stills,
+one per format. If the user wants a single composed sheet/grid, use `key-visual-sheet.md`
+instead; if they want a multi-format campaign across video + static, start at
+`full-ad-campaign.md` and route here for the static set.
+
+## Clarify
+
+Ask once, in a single batched message. Skip whatever the user already gave.
+
+- **Product reference image** (required) — a clean photo of the product to keep faithful.
+- **Brand**: brand name + how the wordmark should read.
+- **Product**: one-line descriptor + category (and size/variant if relevant).
+- **Proof you can stand behind**: 3–5 supported claims/benefits, and — only if real — a
+  customer quote, a press/outlet name, a rating, or an offer/code.
+- **Brand look**: palette, one accent, preferred staging surface.
+- **Aspect**: default `4:5`; offer `1:1`, `3:4`, `9:16`.
+- **Scope**: the core set (default) or a named subset of format ids from
+  `../references/dtc-ad-formats.md`.
+- **Output folder**: default `./dtc-ads/` in the user's project.
+
+If the brief is already tight, skip Clarify and proceed.
+
+## Recipe
+
+Hard prescription. Follow in order.
+
+1. **Cost-preflight** (mandatory — `../../krea-generate/references/cost-preflight.md`). This
+   is a batch (one image per selected format). Restate the brief in one line (brand,
+   product, aspect, format count), show `N formats × per-image ≈ total CU` and a rough
+   wall-clock, and wait for go.
+2. Verify the CLI (`../../krea-generate/references/cli-or-mcp.md`). Resolve a text-capable
+   image model **live** from `list_models` (see `../../krea-generate/references/model-catalog.md`).
+   Prefer `openai/gpt-image-2` when confirmed available (strong in-image text); otherwise
+   `google/nano-banana-pro`.
+3. Read the product reference with vision: shape, materials, label, colour, proportions —
+   so you can judge fidelity later.
+4. **Upload the reference once**: `krea upload <image> --json` → capture the asset URL;
+   reuse it for every format via `-i image_urls=["<url>"]`.
+5. Load `../references/dtc-ad-formats.md`. Select formats (core set, or the user's subset).
+   **Drop** any format whose `required` fields the brief can't honestly supply — do not
+   invent quotes, press names, ratings, certifications, or pricing.
+6. Fill each chosen template's `{{placeholders}}` from the brief, append the universal tail,
+   and resolve `{{aspect_px}}` and `{{orientation}}` from the aspect map (use the
+   gpt-image-2 ÷16 column when that model is selected).
+7. **Generate one image per format** — submit every selected format's job first (async),
+   then poll them all, so the batch's wall-clock is roughly one job's time rather than N×.
+   Model-aware hard requirements (see `../../krea-generate/references/troubleshooting.md`):
+   - `openai/gpt-image-2`: pass explicit `--width/--height` in **multiples of 16**, and run
+     **async** — submit with `--json`, capture `job_id`, `krea jobs wait <job_id> --json`,
+     download `result.urls[0]`. Synchronous `--wait` on this model hits a Cloudflare **524**.
+   - `google/nano-banana-pro` (and similar): pass `-i aspect_ratio={{aspect}}`; `--wait -o`
+     is fine.
+   - Retry transient `502`/`524`/empty-job-id with backoff. Skip a format whose file already
+     exists (resumable).
+8. **Vision-QA each output against its structural device** (`../../krea-generate/references/vision-qa.md`).
+   One line per image: does the device hold? `comparison-diptych` = exactly one hairline
+   rule, no VS badge; `spec-leader-lines` = leader lines to small-caps labels; `ugc-two-panel`
+   = two visibly separate panels (photo + card); `before-after` = distinct BEFORE/AFTER; hero
+   = single light + near-black falloff + no props. Also check product identity and that text
+   is legible and correctly spelled. Regenerate failures (move one lever); leave the passes.
+9. **Deliver images only**, named by format id into the output folder (e.g.
+   `./dtc-ads/comparison-diptych.png`), with a short QA note per image and any unsupported
+   copy removed. Offer one-lever variants on request.
+
+### CLI
+
+```bash
+# 1) upload the product reference once
+REF=$(krea upload ./product.png --json | jq -r '.url // .image_url // .assetUrl')
+
+# 2a) gpt-image-2 — multiples of 16 + async (avoids Cloudflare 524)
+JID=$(krea generate image -m openai/gpt-image-2 \
+  -i image_urls="[\"$REF\"]" --width 1024 --height 1280 \
+  -p "<filled comparison-diptych prompt + tail>" --json | jq -r '.job_id')
+URL=$(krea jobs wait "$JID" --json --timeout 600 | jq -r '.result.urls[0]')
+curl -fsSL "$URL" -o ./comparison-diptych.png
+
+# 2b) nano-banana-pro — aspect_ratio, synchronous is fine
+krea generate image -m google/nano-banana-pro \
+  -i image_urls="[\"$REF\"]" -i aspect_ratio=4:5 \
+  -p "<filled headline-hero prompt + tail>" --wait -o ./headline-hero.png
+```
+
+### MCP fallback
+
+Use MCP only if the CLI is unavailable. `list_models()`, `get_model_schema(<model>)` to
+confirm the image-input field and size/aspect params, then `generate_image(...)` with the
+schema-verified prompt, reference, and dimensions; poll with `get_job(...)` for slow models.
+
+## Banned
+
+- Do not invent claims, quotes, press names, ratings, certifications, or pricing. Drop the
+  format instead.
+- Do not skip the structural-device QA — a pretty image that isn't the format is a miss.
+- Do not run `openai/gpt-image-2` synchronously (Cloudflare 524) or with non-÷16 dimensions.
+- Do not pad to the whole library when the brief only supports a few formats.
+- Do not write generated images into the skill's own directory; deliver them into the
+  user's project output folder.
+
+## Cost & time
+
+- One image per selected format; core set ≈ 16 images. Per-image CU is model-dependent
+  (`model-catalog.md`); submitting all jobs async and then polling keeps the batch's
+  wall-clock near a single job's time (minutes), even for the full set.
+- Regenerations from QA add a few images. No video, no upscale here.
+
+## On failure
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| Empty job_id / 502 / 524 on submit | transient origin/proxy error | Retry with backoff; keep async for slow models |
+| `gpt-image-2` dimension error | width/height not multiples of 16 | Use the ÷16 column of the aspect map |
+| Image is pretty but off-type | structural device didn't render | Regenerate that format; restate the device literally, move one lever |
+| Product identity wrong | weak or partial reference, or model drift | Re-upload a cleaner reference; restate "true to the reference" |
+| Garbled or misspelled text | model text limits | Prefer `openai/gpt-image-2`; shorten copy; regenerate |
+| A format looks empty/generic | brief lacked its `required` field | Drop it, or supply the missing quote/press/offer and re-run |

@@ -1,7 +1,7 @@
 ---
-version: 0.3.0
+version: 0.5.0
 name: krea-animation
-description: "Professional AI animation and anime production workflows with Krea. Use for long-form animation, anime series, storyboard-to-video, shotlist-to-sequence, asset bibles, model sheets, keyframes, animatics, AI video clips, edit assembly, QA, retakes, and studio productivity workflows. For one-off generic image/video generation use krea-ai; for app/API integration use krea-build."
+description: "Professional AI animation and anime production workflows with Krea. Use for long-form animation, anime series, storyboard-to-video, shotlist-to-sequence, asset bibles, model sheets, keyframes, animatics, AI video clips, edit assembly, QA, retakes, and studio productivity workflows. For one-off generic image/video generation use krea-generate; for product/campaign/UGC marketing use krea-marketing; for app/API integration use krea-build."
 license: MIT
 ---
 
@@ -15,11 +15,11 @@ This skill is anime-first by default, but applies to any character, narrative, p
 
 1. Do not jump from idea to long video. First create or inspect the project bible, storyboard, and shot list.
 2. Do not animate unapproved characters, locations, keyframes, or shot prompts.
-3. Run cost preflight before any video, LoRA training, or large batch. Use `../krea-ai/references/cost-preflight.md`.
+3. Run cost preflight before any video, LoRA training, or large batch. Use `../krea-generate/references/cost-preflight.md`.
 4. Use the Krea CLI first. Run `krea doctor`, then `krea models list --json`, then `krea models show <model> --json` before relying on a model schema.
 5. Prefer live model archetypes over memory. Current defaults can prefer GPT Image 2 or Krea 2 for model sheets/keyframes and Seedance 2 for approved animation, but the live catalog is authoritative.
 6. Upload local references before generation. Keep Krea asset URLs in manifests.
-7. Video jobs are async. Poll and report progress using `../krea-ai/references/progress-reporting.md`.
+7. Video jobs are async. Poll and report progress using `../krea-generate/references/progress-reporting.md`.
 8. Normalize clips before assembly. Strip random per-clip audio unless the workflow explicitly asks to keep it.
 9. Sample frames and review continuity before delivery. If a shot fails, log a retake instead of pretending it is acceptable.
 10. Do not commit copyrighted references or generated run media into this skills repo.
@@ -70,14 +70,17 @@ Load only what the active workflow needs:
 - `references/krea-model-strategy.md` - live Krea model selection and schema checking.
 - `references/motion-prompting.md` - start/end frames, reference images, motion-only prompts, drift control.
 - `references/edit-qa-retakes.md` - normalization, assembly, QA frame sampling, retake logs.
+- `references/story-spine.md` - want/obstacle/turn beat-sheet fields gated before any storyboard.
+- `references/shot-grammar.md` - scene-to-shot decomposition: 3-6 cuts per scene, durations, rhythm.
+- `references/dialogue-and-audio.md` - dialogue, subtitles, music beds, and silent-model audio fallbacks.
 
 Reuse sibling Krea references instead of duplicating them:
 
-- `../krea-ai/references/cli-or-mcp.md`
-- `../krea-ai/references/media-inputs.md`
-- `../krea-ai/references/async-polling.md`
-- `../krea-ai/references/progress-reporting.md`
-- `../krea-ai/references/troubleshooting.md`
+- `../krea-generate/references/cli-or-mcp.md`
+- `../krea-generate/references/media-inputs.md`
+- `../krea-generate/references/async-polling.md`
+- `../krea-generate/references/progress-reporting.md`
+- `../krea-generate/references/troubleshooting.md`
 
 ## Scripts
 
