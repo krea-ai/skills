@@ -35,7 +35,7 @@ Use when a storyboard and shot list are approved and the user wants to generate 
 
 ## Shot Generation Rules
 
-- A scene is not one clip. Use shot grammar from `../../krea-generate/references/shot-grammar.md`: most scenes become 3-6 shots of 2-4 seconds each.
+- A scene is not one clip. Use shot grammar from `../references/shot-grammar.md`: most scenes become 3-6 shots of 2-4 seconds each.
 - Use approved keyframes only. If the shot starts from the previous shot's extracted last frame, generate the predecessor first and update the manifest before submitting the dependent shot.
 - For Seedance-style models, `end_image` and `reference_images` are mutually exclusive. Chained shots use `start_image` + `end_image`; terminal or hard-cut shots use `start_image` + `reference_images`.
 - Use current CLI named flags when they exist (`--duration`, `--aspect`, `--resolution`, `--seed`, `--start-image`) and raw `-i key=value` only for schema fields without named flags such as `end_image`, `reference_images`, and `generate_audio`.

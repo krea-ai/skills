@@ -70,6 +70,9 @@ Load only what the active workflow needs:
 - `references/krea-model-strategy.md` - live Krea model selection and schema checking.
 - `references/motion-prompting.md` - start/end frames, reference images, motion-only prompts, drift control.
 - `references/edit-qa-retakes.md` - normalization, assembly, QA frame sampling, retake logs.
+- `references/story-spine.md` - want/obstacle/turn beat-sheet fields gated before any storyboard.
+- `references/shot-grammar.md` - scene-to-shot decomposition: 3-6 cuts per scene, durations, rhythm.
+- `references/dialogue-and-audio.md` - dialogue, subtitles, music beds, and silent-model audio fallbacks.
 
 Reuse sibling Krea references instead of duplicating them:
 

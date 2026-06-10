@@ -26,7 +26,7 @@ Let the user pick or remix one concept, then proceed to the production package.
 2. If the premise is creatively thin, run the concept development step above and wait for a chosen direction.
 3. Scaffold a project with `scripts/scaffold_project.py`.
 4. Write `00_brief/brief.md`: logline, audience, runtime, tone, constraints, approval owner.
-5. Write `02_story/beat-sheet.md` with story spine fields from `../../krea-generate/references/story-spine.md`: protagonist, want, obstacle, stakes, turn, new normal, dialogue posture, and final feeling.
+5. Write `02_story/beat-sheet.md` with story spine fields from `../references/story-spine.md`: protagonist, want, obstacle, stakes, turn, new normal, dialogue posture, and final feeling.
 6. Stop for story-spine approval before storyboard or keyframe generation.
 7. Write `01_bible/style/style-guide.md`: line quality, palette, lighting, camera, animation density, banned looks.
 8. Plan required assets before image generation: characters, expressions, hands, props, environments, FX, signage, typography.
