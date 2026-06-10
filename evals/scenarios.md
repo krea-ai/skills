@@ -359,6 +359,18 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 
 ---
 
+## DTC ad templates 0.5.0 (1)
+
+### 40. One product photo to a static ad set routes to DTC templates
+
+- **Category**: routing
+- **User input**: "Here's one photo of my water bottle — turn it into a set of on-brand static ad layouts: hero, comparison, testimonial, the works."
+- **Expected**: agent routes to the krea-marketing dtc-ad-templates workflow, loads the format registry, asks for the brand/proof brief, and plans per-format generation with structural-device QA — without inventing quotes or press names
+- **Pass regex**: `(?i)dtc-ad-templates|dtc|format library|ad format|structural device|registry|headline-hero|comparison-diptych|proof|brief`
+- **Fail regex**: `(?i)generate_video|krea-animation|archviz|invent.*quote|made.?up.*review`
+
+---
+
 ## Format spec for the runner
 
 The runner expects each scenario to be parseable as a YAML-ish block. Pattern:

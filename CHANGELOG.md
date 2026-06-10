@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.0
+
+- Added a DTC static ad-format library to `krea-marketing`: `references/dtc-ad-formats.md` — 16 brand-agnostic, original ad-format templates (headline, offer, bundle, testimonial, press, UGC two-panel, spec callouts, benefits, comparison diptych, before/after, magazine, behind-the-product, manifesto, what's-in-the-box, organic, lifestyle-in-use), each with its required structural device, an art-direction treatment, and a placeholder prompt template organized by the existing static format families.
+- Added `workflows/dtc-ad-templates.md`: turn one product reference photo into N on-brand static ad stills, with cost-preflight, model-aware generation (gpt-image-2 async + multiples-of-16; nano-banana-pro aspect_ratio), and per-format structural-device vision QA. Images-only delivery; no bundled scripts.
+- Hardened sibling docs: `key-visual-sheet` now flags the gpt-image-2 async requirement, `full-ad-campaign` routes one-photo static ad sets to the new workflow, and the shared troubleshooting table documents the 524-on-sync and multiples-of-16 gotchas for slow image models.
+- Bumped synced package, plugin, marketplace, codex/cursor manifest, and skill versions to `0.5.0`; added a DTC routing eval scenario.
+
 ## 0.4.0
 
 - Breaking: renamed the canonical generation skill from `krea-ai` to `krea-generate` and removed the `/krea:ai` marketplace invocation. The new invocation is `/krea:generate`.

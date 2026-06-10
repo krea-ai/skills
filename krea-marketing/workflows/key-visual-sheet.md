@@ -24,7 +24,7 @@ Hard prescription. Follow in order.
 1. **Cost-preflight** (see `../../krea-generate/references/cost-preflight.md`). A key-visual sheet is cheap compared with video, but it is still an approval gate for campaign work.
 2. Load `../references/marketing-creative-anatomy.md` if the user has not already locked the static format family.
 3. Upload product and style/layout references to Krea. If a reference is an external URL, download it first and upload the downloaded file.
-4. Resolve a `text-friendly image model` from live `list_models`; prefer `openai/gpt-image-2` only if live discovery confirms it and schema supports the needed refs, aspect, and quality.
+4. Resolve a `text-friendly image model` from live `list_models`; prefer `openai/gpt-image-2` only if live discovery confirms it and schema supports the needed refs, aspect, and quality. Slow models like `openai/gpt-image-2` must be submitted async (`--json`, then `krea jobs wait <id>`) rather than with `--wait`, which can hit a gateway 524 timeout and lose the job id.
 5. Generate one sheet first, or 2-3 variants if the brief is loose. Do not generate downstream finals or videos yet.
 6. Prompt with mandatory sections:
    - **LAYOUT**: grid shape, gutters, headline placement, footer placement, and aspect.

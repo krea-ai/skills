@@ -21,7 +21,7 @@ If the user gave a tight, complete brief, skip Clarify entirely and proceed to R
 
 Hard prescription. Follow in order.
 
-1. **Identify first deliverable shape**. For CPG/FMCG/agency-style campaign asks, route to `key-visual-sheet.md` first. For digital static ad sets, start with cheap image drafts. For UGC/social video sets, route to `social-video-short.md`.
+1. **Identify first deliverable shape**. For CPG/FMCG/agency-style campaign asks, route to `key-visual-sheet.md` first. For a static ad set built around one product photo, route to `dtc-ad-templates.md`. For other digital static sets, start with cheap image drafts. For UGC/social video sets, route to `social-video-short.md`.
 2. If the user chose Meta Ads context, run `meta-ads-performance.md` first and incorporate the performance read into the creative brief.
 3. Load `../references/marketing-creative-anatomy.md` and decompose the campaign into mode, product/facts, brand system, format, hook, setting, talent/identity, reference path, and CTA.
 4. **Cost-preflight** (mandatory - see `../../krea-generate/references/cost-preflight.md`). Campaigns are batches.
@@ -32,7 +32,7 @@ Hard prescription. Follow in order.
 9. Generate cheap drafts by angle and format first, unless step 1 routed to a key-visual sheet or social storyboard gate.
 10. Read drafts with vision and reject outputs where product identity or claims are wrong.
 11. Show a contact sheet or labeled list; let the user pick winners for final render/upscale.
-12. Generate final winners through `product-photo-hero.md`, `product-photo-lifestyle.md`, `../../krea-generate/workflows/image-text-poster.md`, `key-visual-sheet.md`, or `social-video-short.md` as needed.
+12. Generate final winners through `product-photo-hero.md`, `product-photo-lifestyle.md`, `dtc-ad-templates.md`, `../../krea-generate/workflows/image-text-poster.md`, `key-visual-sheet.md`, or `social-video-short.md` as needed.
 13. **Deliver** organized outputs by platform, with QA notes and any unsupported claims removed.
 
 ### CLI
@@ -44,6 +44,7 @@ krea generate image -m "<fast-image-draft>" \
   -p "<product> TikTok draft, <angle>, preserving factual claims only" \
   --wait -o ./draft-tiktok.png
 
+# reference field name (image_url vs image_urls) comes from `krea models show <id>`
 krea generate image -m "<high-fidelity-image>" \
   --aspect 16:9 \
   -i image_url="$KREA_PRODUCT_REF_URL" \
