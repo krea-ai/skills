@@ -1,5 +1,5 @@
 ---
-version: 0.4.0
+version: 0.5.0
 name: krea-animation
 description: "Professional AI animation and anime production workflows with Krea. Use for long-form animation, anime series, storyboard-to-video, shotlist-to-sequence, asset bibles, model sheets, keyframes, animatics, AI video clips, edit assembly, QA, retakes, and studio productivity workflows. For one-off generic image/video generation use krea-generate; for product/campaign/UGC marketing use krea-marketing; for app/API integration use krea-build."
 license: MIT

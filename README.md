@@ -10,7 +10,7 @@ Four Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get
 | Skill | When to use |
 |---|---|
 | **`krea-generate`** | Canonical generic-generation router. Image, video primitives, enhancement, edits, LoRA, portraits, text/poster work, and archviz via the Krea CLI by default, with MCP as fallback. |
-| **`krea-marketing`** | Marketing creative workflow: product photoshoots, marketplace image sets, key visuals, UGC/social ads, campaign packs, and optional Meta Ads CLI/MCP performance context. |
+| **`krea-marketing`** | Marketing creative workflow: product photoshoots, marketplace image sets, DTC static ad templates (one product photo → a library of on-brand ad formats), key visuals, UGC/social ads, campaign packs, and optional Meta Ads CLI/MCP performance context. |
 | **`krea-animation`** | Professional animation and anime production workflow: asset bibles, model sheets, storyboards, shot lists, Krea video jobs, edit assembly, QA, and retakes. |
 | **`krea-build`** | Patterns for developers writing apps that integrate the Krea API: auth, polling, error handling, validation, frontend snippets for SvelteKit / React / Vue. Also the place to generate repeatable pipeline scripts in the user's own stack. |
 
@@ -63,6 +63,7 @@ These route through `krea-generate/workflows/archviz-3d-to-render.md` for struct
 ```
 > Make a hero product shot of my new perfume bottle.
 > Generate a TikTok ad for my sneakers.
+> Turn this one product photo into a set of on-brand static ad formats.
 > Take this product URL and give me a marketplace full set plus social variants.
 > Use Meta Ads performance context before making new ad creative.
 ```

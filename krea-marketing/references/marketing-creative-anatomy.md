@@ -44,6 +44,8 @@ Use these as options for key-visual sheets, ad stills, posters, or campaign cont
 
 Move one format lever at a time when creating variants.
 
+For concrete, generatable templates of these families — each with its structural device, treatment, and a brand-agnostic prompt template — see `dtc-ad-formats.md` (driven by `../workflows/dtc-ad-templates.md`).
+
 ## Video Hook Families
 
 Use these as storyboard directions, not as final prompts to copy verbatim:

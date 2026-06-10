@@ -79,6 +79,8 @@ These were uncovered during a production session that burned ~5,000 CU before pr
 | - | `krea generate image --image-url <url>` fails as unknown flag | The flag is `--image`, or multi-ref models expect `-i image_urls='[...]'` | Check `krea generate image --help` and model schema |
 | - | `krea generate image --quality high` is ignored or rejected by a specific model | The selected model may not support `quality` even though the CLI has a named flag | Check `krea models show <id> --json`; use only fields present in the schema |
 | - | `krea jobs get <id>` prints help | The subcommand is `jobs show` | Use `krea jobs show <id> --json` |
+| - | `krea generate image -m openai/gpt-image-2 ... --wait` (or `-o`) fails with HTTP 524 | Slow image models exceed the ~120s synchronous gateway window; the 524 response carries no `job_id`, so the running job is orphaned and still billed | Submit async (`--json`, capture `job_id`), then `krea jobs wait <id> --timeout 600`; retry transient 502/524 with backoff |
+| - | `gpt-image-2` rejects dimensions such as 1080x1350, or `aspect_ratio` alone | The model requires explicit `--width`/`--height` in multiples of 16 | Use ÷16 sizes: 1024x1280 (4:5), 1024x1024 (1:1), 1024x1360 (3:4), 1024x1824 (9:16) |
 
 ### Model behavior
 

@@ -1,5 +1,5 @@
 ---
-version: 0.4.0
+version: 0.5.0
 name: krea-generate
 description: "Generate and transform media through Krea. Use for generic image generation, generic short video, image editing, enhancement/upscale, LoRA training, portraits, text-heavy images, and architectural visualization from 3D/CAD screenshots. For product, campaign, UGC, marketplace, or paid-social creative use krea-marketing. For professional animation, anime, storyboards, shotlists, and retakes use krea-animation. For app/API integration use krea-build."
 license: MIT

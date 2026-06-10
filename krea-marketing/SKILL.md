@@ -1,7 +1,7 @@
 ---
-version: 0.4.0
+version: 0.5.0
 name: krea-marketing
-description: "Marketing and paid-social creative workflows with Krea. Use for product photoshoots, marketplace cards, campaign key visuals, UGC/social ads, product URL to creative, ad storyboards, social packs, product launches, Meta Ads performance-informed creative planning, and gated Meta Ads activation. For generic media generation use krea-generate; for professional animation use krea-animation; for app/API integration use krea-build."
+description: "Marketing and paid-social creative workflows with Krea. Use for product photoshoots, marketplace cards, DTC static ad templates, campaign key visuals, UGC/social ads, product URL to creative, ad storyboards, social packs, product launches, Meta Ads performance-informed creative planning, and gated Meta Ads activation. For generic media generation use krea-generate; for professional animation use krea-animation; for app/API integration use krea-build."
 license: MIT
 ---
 
@@ -39,6 +39,7 @@ If the user connects Meta, read performance context first. If they decline or ca
 | ad storyboard / key visual / campaign sheet / agency-style product layout | `workflows/key-visual-sheet.md` |
 | UGC / TikTok ad / Reels ad / social video / product demo / unboxing / creator ad | `workflows/social-video-short.md` |
 | product URL -> campaign, ad set, launch assets, social variants | `workflows/full-ad-campaign.md` |
+| DTC static ad templates / ad format library / N on-brand static ads from one product photo | `workflows/dtc-ad-templates.md` |
 | Meta account analysis, creative performance readout, campaign draft/activation | `workflows/meta-ads-performance.md` |
 
 If the user asks for a non-marketing image/video, use `../krea-generate/SKILL.md`. If they ask for anime, long-form animation, shotlists, or retakes, use `../krea-animation/SKILL.md`. If they ask to build a marketing app/tool, use `../krea-build/SKILL.md` and this skill as the creative workflow contract.
@@ -47,6 +48,7 @@ If the user asks for a non-marketing image/video, use `../krea-generate/SKILL.md
 
 - `references/marketing-creative-anatomy.md` - campaign/ad tuple, hook families, static format families.
 - `references/product-photoshoot.md` - Krea-native product photoshoot mode taxonomy adapted from Higgsfield research.
+- `references/dtc-ad-formats.md` - DTC static ad format library: per-format structural device, treatment, and brand-agnostic prompt template, organized by the static format families.
 - `references/marketplace-cards.md` - marketplace image scopes and compliance guardrails.
 - `references/meta-ads-cli.md` - optional Meta Ads CLI/MCP discovery, reads, and write gates.
 - `references/storyboard-variations.md` - A/B/C social storyboard directions.
