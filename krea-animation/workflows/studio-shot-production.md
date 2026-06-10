@@ -12,7 +12,7 @@ Ingest existing production materials without flattening them into a generic prom
 
 1. Inspect provided files first. Identify script, boards, style guides, model sheets, palettes, backgrounds, shot lists, audio, and edit references.
 2. Scaffold a project only if no production folder exists. Otherwise adapt the existing folder without renaming user assets.
-3. Map studio inputs to the canonical structure in `references/project-structure.md`.
+3. Map studio inputs to the canonical structure in `../references/project-structure.md`.
 4. Build or update `assets.csv`, `keyframes.csv`, and per-shot `shot.md` files.
 5. Mark every imported shot as one of: `draft`, `needs_assets`, `needs_keyframes`, `approved_for_video`, `submitted`, `complete`, `retake`, `approved_final`.
 6. Create a gap report before generation:

@@ -1,7 +1,7 @@
 {
   "name": "krea",
-  "version": "0.3.0",
-  "description": "Three Krea skills: generation workflows, professional animation production, and developer integration patterns.",
+  "version": "0.5.0",
+  "description": "Four Krea skills: generation workflows, marketing creative, professional animation production, and developer integration patterns.",
   "author": {
     "name": "Krea AI",
     "url": "https://krea.ai"
@@ -19,13 +19,15 @@
     "mcp",
     "archviz",
     "marketing",
+    "meta-ads",
+    "marketplace",
     "product-photography"
   ],
   "skills": "./",
   "interface": {
     "displayName": "Krea AI",
-    "shortDescription": "Generate, animate, and build with Krea workflow skills.",
-    "longDescription": "Krea AI Skills turn your agent into a Krea-native creative collaborator. krea-ai is the canonical intent-first router for image, video, enhancement, LoRA, product, campaign, and architectural visualization workflows. krea-animation adds studio-style animation production with asset bibles, storyboards, shot lists, generated clips, edit assembly, QA, and retakes. krea-build helps developers integrate Krea into their own applications.",
+    "shortDescription": "Generate, market, animate, and build with Krea workflow skills.",
+    "longDescription": "Krea AI Skills turn your agent into a Krea-native creative collaborator. krea-generate is the canonical router for generic image, video, edit, enhancement, LoRA, portrait, text-poster, and archviz workflows. krea-marketing handles product photography, marketplace image sets, key visuals, UGC/social ads, campaign packs, and optional Meta Ads CLI/MCP performance context. krea-animation adds studio-style animation production with asset bibles, storyboards, shot lists, generated clips, edit assembly, QA, and retakes. krea-build helps developers integrate Krea into their own applications.",
     "developerName": "Krea AI",
     "category": "Design",
     "capabilities": [
@@ -36,8 +38,8 @@
     "defaultPrompt": [
       "Generate an image of a cyberpunk cat at golden hour",
       "Render this Sketchup screenshot in photoreal evening light",
+      "Create a marketplace image set and Meta-informed ad variants for this product",
       "Create an anime pilot workflow from this story idea",
-      "Create a hero product shot of my new perfume bottle for the homepage",
       "Help me integrate Krea image generation into my SvelteKit app"
     ]
   }

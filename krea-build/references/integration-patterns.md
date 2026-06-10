@@ -25,14 +25,14 @@ By the time the user sees the live preview, you've spent ~3 minutes of compute o
 
 ## The pattern: explore → confirm → build
 
-### 1. Explore (use the `krea-ai` MCP skill)
+### 1. Explore (use `krea-generate`)
 
 Generate 2–3 sample images interactively. Show them in chat. Iterate on prompts, models, and aspect ratios until the user nods.
 
 ```
 User: "build me a moodboard of sci-fi cityscapes"
 Agent: "Let me generate 3 sample frames first so we can pick a direction."
-       → calls mcp__krea-public-api__generate_image 3 times with varied prompts
+       -> uses krea-generate to run 3 CLI-first sample generations with varied prompts
        → shows results to user
 User: "love the second one — go heavier on rain and night"
 Agent: → regenerates with refined prompts
@@ -141,14 +141,14 @@ Use dynamic data only when:
 - The content needs to change per request (user-specific output, time-of-day, A/B test)
 - The dataset is too large to hardcode (a content calendar with 100s of items)
 
-When iterating, regenerate with `krea-ai` and update the hardcoded data. Don't rebuild the runtime path just because the asset changed.
+When iterating, regenerate with `krea-generate` and update the hardcoded data. Don't rebuild the runtime path just because the asset changed.
 
 ## User uploads
 
 When users attach images:
 
 - Save uploads to a known directory (`static/uploads/` in SvelteKit, `public/uploads/` in Next.js, etc.).
-- To use as a Krea reference: pass the **absolute local path** to your server, which uploads it to Krea (via `/assets` or via `upload_asset` MCP) and uses the returned URL.
+- To use as a Krea reference: pass the **absolute local path** to your server, which uploads it to Krea through the server-side Krea API client and uses the returned URL.
 - To display in your app: serve from the public uploads directory (`/uploads/filename.png`).
 
 ## Anti-patterns (don't do these)
@@ -163,8 +163,8 @@ When users attach images:
 
 Common debugging order:
 
-1. **Did you generate in chat first?** If they say "I just wrote the app code", that's the bug. Validate the prompt with `krea-ai` and update the hardcoded data.
+1. **Did you generate in chat first?** If they say "I just wrote the app code", that's the bug. Validate the prompt with `krea-generate` and update the hardcoded data.
 2. **Is the API key set server-side?** Check the env. Confirm it's not leaked to client.
 3. **Are you polling?** Krea returns `job_id` synchronously; the result comes from a separate poll.
 4. **Are you handling job failures?** A failed job returns `status: "failed"` — surface this, don't pretend success.
-5. **Is the model still active?** Krea retires models; check the OpenAPI spec or the MCP `list_models` for current IDs.
+5. **Is the model still active?** Krea retires models; check live model discovery before hardcoding IDs.

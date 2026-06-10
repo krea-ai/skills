@@ -1,15 +1,16 @@
 # Krea AI Skills
 
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![version](https://img.shields.io/badge/version-0.3.0-green.svg)](VERSION)
-[![skills](https://img.shields.io/badge/skills-3-purple.svg)](#install-the-skills)
+[![version](https://img.shields.io/badge/version-0.4.0-green.svg)](VERSION)
+[![skills](https://img.shields.io/badge/skills-4-purple.svg)](#install-the-skills)
 [![discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.com/invite/krea-1002244500581798028)
 
-Three Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get all three.
+Four Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get the full Krea skill suite.
 
 | Skill | When to use |
 |---|---|
-| **`krea-ai`** | Canonical intent-first router. Image, video, enhancement, LoRA, product photography, archviz, and campaign workflows via the Krea CLI by default, with MCP as fallback. |
+| **`krea-generate`** | Canonical generic-generation router. Image, video primitives, enhancement, edits, LoRA, portraits, text/poster work, and archviz via the Krea CLI by default, with MCP as fallback. |
+| **`krea-marketing`** | Marketing creative workflow: product photoshoots, marketplace image sets, DTC static ad templates (one product photo → a library of on-brand ad formats), key visuals, UGC/social ads, campaign packs, and optional Meta Ads CLI/MCP performance context. |
 | **`krea-animation`** | Professional animation and anime production workflow: asset bibles, model sheets, storyboards, shot lists, Krea video jobs, edit assembly, QA, and retakes. |
 | **`krea-build`** | Patterns for developers writing apps that integrate the Krea API: auth, polling, error handling, validation, frontend snippets for SvelteKit / React / Vue. Also the place to generate repeatable pipeline scripts in the user's own stack. |
 
@@ -21,7 +22,7 @@ Works with Claude Code, Cursor, Codex, Windsurf, OpenCode, Gemini CLI, OpenClaw,
 npx skills add krea-ai/skills
 ```
 
-Installs all three skills. This is the supported install path across agents that use skill packages.
+Installs all four skills. This is the supported install path across agents that use skill packages.
 
 ## Prerequisites — one of these
 
@@ -41,7 +42,7 @@ Verify the default path with `krea doctor`. If you are using the fallback path, 
 
 ## Use
 
-### Default - `krea-ai` routes by intent
+### Default - `krea-generate` routes generic generation
 
 ```
 > Generate an image of a cyberpunk cat in neon rain.
@@ -49,7 +50,7 @@ Verify the default path with `krea doctor`. If you are using the fallback path, 
 > Upscale this photo to 4K.
 ```
 
-These stay in `krea-ai` and route to the right model via the live CLI / MCP catalog.
+These stay in `krea-generate` and route to the right model via the live CLI / MCP catalog.
 
 ```
 > Render this Sketchup screenshot in golden hour, photoreal.
@@ -57,15 +58,17 @@ These stay in `krea-ai` and route to the right model via the live CLI / MCP cata
 > Take this chair, put it in this room, in this style.
 ```
 
-These route through `krea-ai/workflows/archviz-3d-to-render.md` for structural-reference archviz rendering.
+These route through `krea-generate/workflows/archviz-3d-to-render.md` for structural-reference archviz rendering.
 
 ```
 > Make a hero product shot of my new perfume bottle.
 > Generate a TikTok ad for my sneakers.
-> Take this product URL and give me a hero + 4 social variants.
+> Turn this one product photo into a set of on-brand static ad formats.
+> Take this product URL and give me a marketplace full set plus social variants.
+> Use Meta Ads performance context before making new ad creative.
 ```
 
-These route through `krea-ai/workflows/` recipes for product photography, social video, campaigns, and LoRA-backed consistency.
+These trigger `krea-marketing`. The agent starts with a compact creative intake. For paid-social, performance, campaign-analysis, catalog-performance, or activation work, it asks whether to connect Meta Ads CLI/MCP for better performance context; otherwise it proceeds Krea-only from product refs, brand refs, and goals. Any live launch, budget, status, catalog, or publishing change stays gated and paused/draft by default unless explicitly approved.
 
 ```
 > Help me make an anime pilot from scratch with AI.
@@ -85,19 +88,19 @@ These trigger `krea-build` - developer-focused integration patterns. The agent g
 
 ## Updates
 
-The `krea-ai` skill includes an opt-in update notification. Once per session, the agent may run `krea-ai/scripts/update-check.sh`, which checks `https://raw.githubusercontent.com/krea-ai/skills/main/VERSION` against the installed `krea-ai/VERSION` file. If a newer version exists, it prints `UPGRADE_AVAILABLE <local> <remote>` to stdout — the agent surfaces this once, then continues. Snoozes 24h → 48h → 7d to avoid nagging.
+The `krea-generate` skill includes an opt-in update notification. Once per session, the agent may run `krea-generate/scripts/update-check.sh`, which checks `https://raw.githubusercontent.com/krea-ai/skills/main/VERSION` against the installed `krea-generate/VERSION` file. If a newer version exists, it prints `UPGRADE_AVAILABLE <local> <remote>` to stdout - the agent surfaces this once, then continues. Snoozes 24h -> 48h -> 7d to avoid nagging.
 
 **To upgrade**, re-run your install command (`npx skills add krea-ai/skills`, etc.).
 
 **To disable the check**: `touch ~/.krea-skills/update-check-disabled`.
 
-**To force a fresh check**: `bash krea-ai/scripts/update-check.sh --force`.
+**To force a fresh check**: `bash krea-generate/scripts/update-check.sh --force`.
 
-Single-source version: `VERSION` file at repo root. CI enforces that `krea-ai/VERSION`, all SKILL.md frontmatters, plugin manifests, and `package.json` agree.
+Single-source version: `VERSION` file at repo root. CI enforces that `krea-generate/VERSION`, all SKILL.md frontmatters, plugin manifests, and `package.json` agree.
 
 ## Evals
 
-`evals/run.sh` runs 31 regression scenarios through `claude -p` in headless mode and grades responses with regex (PASS / FAIL / MANUAL_REVIEW). See `evals/README.md` for methodology.
+`evals/run.sh` runs 39 regression scenarios through `claude -p` in headless mode and grades responses with regex (PASS / FAIL / MANUAL_REVIEW). See `evals/README.md` for methodology.
 
 ```bash
 bash evals/run.sh                 # v1 — regex + manual review

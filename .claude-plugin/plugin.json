@@ -1,7 +1,7 @@
 {
   "name": "krea",
-  "version": "0.3.0",
-  "description": "Krea AI skills: generation workflows, professional animation production, and developer integration patterns.",
+  "version": "0.5.0",
+  "description": "Krea AI skills: generation workflows, marketing creative, professional animation production, and developer integration patterns.",
   "author": {
     "name": "Krea AI",
     "url": "https://krea.ai"
@@ -19,6 +19,8 @@
     "mcp",
     "archviz",
     "marketing",
+    "meta-ads",
+    "marketplace",
     "product-photography",
     "ai-art",
     "lora"

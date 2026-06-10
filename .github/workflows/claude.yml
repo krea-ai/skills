@@ -29,10 +29,10 @@ jobs:
             This repo ships skill packages consumed by Claude Code, Codex, and Cursor as plugins.
 
             Repository conventions to keep in mind:
-            - The public skill surface is `krea-ai` for generation workflows and `krea-build` for developer integration. Each ships a `SKILL.md` whose frontmatter must be valid and version-synced with `VERSION`, `package.json`, and the plugin manifests under `.claude-plugin/`, `.codex-plugin/`, and `.cursor-plugin/`.
+            - The public skill surface is `krea-generate` for generic generation workflows, `krea-marketing` for product/campaign/paid-social workflows, `krea-animation` for studio animation workflows, and `krea-build` for developer integration. Each ships a `SKILL.md` whose frontmatter must be valid and version-synced with `VERSION`, `package.json`, and the plugin manifests under `.claude-plugin/`, `.codex-plugin/`, and `.cursor-plugin/`.
             - `validate.yml` already enforces frontmatter, JSON validity, version sync, and the `update-check.sh` smoke test. Flag any change that would break those checks.
             - Skill prose is the product. Treat instructions, examples, and triggers as code: ambiguity, contradictions, or stale model/tool names are real bugs.
-            - Relative references between skills (e.g. `../krea-ai/...`) must resolve. Call out broken links, missing referenced files, or examples that point at non-existent paths.
+            - Relative references between skills (e.g. `../krea-generate/...`) must resolve. Call out broken links, missing referenced files, or examples that point at non-existent paths.
             - Shell scripts under `scripts/` and `evals/` should stay POSIX-friendly and pass `bash -n`. Flag obvious portability or quoting issues.
             - Plugin manifests must stay valid JSON and keep versions aligned with the `VERSION` file.
 

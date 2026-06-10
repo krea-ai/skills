@@ -1,13 +1,13 @@
 ---
-version: 0.3.0
+version: 0.5.0
 name: krea-build
-description: "Patterns for building applications that integrate the Krea API. Auth, polling discipline, error handling, validation, frontend integration (SvelteKit/React/Vue), and the 'prototype in chat, productize in app' workflow. Use when the user is writing code that calls the Krea API directly — building a generator UI, a content pipeline, a creative tool — not when they just want to generate one image. For interactive generation use the sibling krea-ai skill instead."
+description: "Patterns for building applications that integrate the Krea API. Auth, polling discipline, error handling, validation, frontend integration (SvelteKit/React/Vue), and the 'prototype in chat, productize in app' workflow. Use when the user is writing code that calls the Krea API directly — building a generator UI, a content pipeline, a creative tool — not when they just want to generate one image. For interactive generation use krea-generate; for marketing workflow contracts use krea-marketing."
 license: MIT
 ---
 
 # Krea Build — Integration Patterns for Developers
 
-This skill is for **building apps that integrate Krea**. Not for one-off generations — that's the sibling `krea-ai` skill, which uses the Krea CLI by default and MCP as fallback.
+This skill is for **building apps that integrate Krea**. Not for one-off generations — that's the sibling `krea-generate` skill, which uses the Krea CLI by default and MCP as fallback.
 
 Use this skill when the user is:
 
@@ -18,24 +18,25 @@ Use this skill when the user is:
 
 ## Self-update check (opt-in)
 
-Once per session, if sibling `../krea-ai/scripts/update-check.sh` exists, run it. Prints `UPGRADE_AVAILABLE <local> <remote>` if a newer version is out. Surface that to the user once, then continue. Snoozes 24h→48h→7d. Disable with `touch ~/.krea-skills/update-check-disabled`.
+Once per session, if sibling `../krea-generate/scripts/update-check.sh` exists, run it. Prints `UPGRADE_AVAILABLE <local> <remote>` if a newer version is out. Surface that to the user once, then continue. Snoozes 24h→48h→7d. Disable with `touch ~/.krea-skills/update-check-disabled`.
 
-## When to use this skill vs. `krea-ai`
+## When to use this skill vs. sibling skills
 
 | Situation | Use |
 |---|---|
-| "Generate me an image of X" | `krea-ai` (CLI-first generation) |
+| "Generate me an image of X" | `krea-generate` (CLI-first generation) |
 | "Build me a moodboard app that uses Krea" | `krea-build` (this) |
 | "Write a TypeScript helper to call Krea" | `krea-build` |
-| "Run a one-off pipeline now" | `krea-ai` |
+| "Run a one-off pipeline now" | `krea-generate` |
 | "Add Krea generation to my React form" | `krea-build` |
 | "Build an animation production UI around shot lists and Krea video jobs" | `krea-build`, with `krea-animation` as the creative workflow contract |
+| "Build a producer dashboard for product ads and Meta activation" | `krea-build`, with `krea-marketing` as the workflow contract |
 
 ## Critical workflow rule: prototype in chat, productize in the app
 
 The single most expensive mistake when building Krea apps is writing app code around unproven generation output. Always:
 
-1. **Prototype** — run the generation manually with `krea-ai` (CLI by default, MCP fallback) to see what the actual output looks like.
+1. **Prototype** — run the generation manually with `krea-generate` or `krea-marketing` (CLI by default, MCP fallback) to see what the actual output looks like.
 2. **Confirm** — show the user the result. Iterate on prompt, model, parameters until it's right.
 3. **Productize** — once the output is approved, hardcode the URLs and parameters into the app.
 
@@ -57,9 +58,9 @@ The client triggers a generation by hitting your server, which hits Krea, polls 
 
 All three live in `references/api-client.md` with reusable TypeScript and Python snippets. The key shapes:
 
-- **Auth:** `Authorization: Key ${KREA_API_KEY}` header.
-- **Submit:** `POST /generate/image/<provider>/<model>` with `{ prompt, ... }` → returns `{ job_id }`.
-- **Poll:** `GET /jobs/<job_id>` every 3–10s until `status` is `completed` or `failed`.
+- **Auth:** `Authorization: Bearer ${KREA_API_KEY}` header.
+- **Submit:** `POST /generate/image/<model-id>` with `{ prompt, ... }` -> returns `{ job_id }`.
+- **Poll:** `GET /jobs/<job_id>` every 3-10s until `status` is terminal.
 - **Errors:** see `references/validation.md` for the full table.
 
 ## Frontend integration
@@ -91,4 +92,4 @@ If the user is starting a brand new app and asks "how do I integrate Krea":
 2. Drop the TypeScript helper from `references/frontend-snippets.md` into `src/lib/krea/index.ts` (or wherever fits the project).
 3. Build a server route that calls the helper.
 4. Build a client component that hits the server route.
-5. For each user-facing generation, **prototype the prompt in chat with `krea-ai` first**, then hardcode the approved version.
+5. For each user-facing generation, **prototype the prompt in chat with `krea-generate` or `krea-marketing` first**, then hardcode the approved version.
