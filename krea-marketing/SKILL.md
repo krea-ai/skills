@@ -52,11 +52,12 @@ This policy is for image generation. Resolve video models separately from live `
 | marketplace listing images / secondary product images / A+ modules / full marketplace set | `workflows/marketplace-cards.md` |
 | ad storyboard / key visual / campaign sheet / agency-style product layout | `workflows/key-visual-sheet.md` |
 | UGC / TikTok ad / Reels ad / social video / product demo / unboxing / creator ad | `workflows/social-video-short.md` |
+| launch video / brand film / teaser / product reveal / kinetic type video | `workflows/launch-teaser.md` |
 | product URL -> campaign, ad set, launch assets, social variants | `workflows/full-ad-campaign.md` |
 | DTC static ad templates / ad format library / N on-brand static ads from one product photo | `workflows/dtc-ad-templates.md` |
 | Meta account analysis, creative performance readout, campaign draft/activation | `workflows/meta-ads-performance.md` |
 
-If the user asks for a non-marketing image/video, use `../krea-generate/SKILL.md`. If they ask for anime, long-form animation, shotlists, or retakes, use `../krea-animation/SKILL.md`. If they ask to build a marketing app/tool, use `../krea-build/SKILL.md` and this skill as the creative workflow contract.
+If the user asks for a non-marketing image/video, use `../krea-generate/SKILL.md`. If they ask for anime, long-form animation, shotlists, or retakes, use `../krea-animation/SKILL.md`; designed motion-graphics composition inside launch work (typography, beat-synced cuts, overlays) routes through the `hyperframes` skill, which `workflows/launch-teaser.md` references the same way multi-shot narrative references krea-animation. If they ask to build a marketing app/tool, use `../krea-build/SKILL.md` and this skill as the creative workflow contract.
 
 ## References
 
