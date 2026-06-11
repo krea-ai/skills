@@ -1,6 +1,6 @@
 {
   "name": "krea-skills",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Four Agent Skills for Krea.ai: generation, marketing creative, professional animation production, and developer integration patterns.",
   "keywords": ["agent-skill", "krea", "image-generation", "video-generation", "ai-art", "lora", "mcp", "archviz", "marketing", "meta-ads", "marketplace", "product-photography", "animation", "anime", "storyboard"],
   "author": "Krea AI",

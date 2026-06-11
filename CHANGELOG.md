@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.2
+
+- Documented public moodboard discovery in `krea-generate/references/models/krea-2.md`: the preset moodboard gallery at `GET https://www.krea.ai/api/preset-moodboards` answers unauthenticated (verified live 2026-06-11, ~3549 boards) and supports `limit`, `seed` (stable shuffle order), `search` (keyword filter the agent can query directly), and `cursor` pagination. Recorded the observed response shape (`items[].id` as the K2 moodboard UUID, `styleName`, `styleDescription`, `styleKeywords`, `isStaffPick`, Krea-hosted `previewImages`/`images`), a preset discovery recipe (search → shortlist → vision-check previews → pass the UUID into `moodboards: [{id, strength}]`), and kept the authenticated `/api/moodboards` rules for personal boards. The `image_style_references` fallback now names preset preview URLs as valid Krea-hosted style references.
+- `krea-generate/SKILL.md`: the `references/models/` pointer now routes all moodboard work - discovery, preset-gallery search, and moodboard-driven generation - to `references/models/krea-2.md`.
+- Added `krea-marketing/workflows/launch-teaser.md`: premium launch teasers, brand films, and kinetic-type product videos built by separating AI footage from designed motion - video models generate raw textless cinematic shots (i2i stills from the product reference, start_image clips, one steady camera move each); all typography, beat-synced cuts, flashes, HUD overlays, and the end card are composed deterministically through the external `hyperframes` skill. The recipe locks the beat grid first, generates ElevenLabs music against explicit cut timestamps (with the free-tier `/v1/sound-generation` fallback documented), and gates delivery on lint/validate/inspect/render plus frame-level vision QA.
+- `krea-marketing/SKILL.md` routes launch video / brand film / teaser / product reveal / kinetic type video to the new workflow and notes the `hyperframes` handoff for designed motion-graphics composition; `workflows/social-video-short.md` disambiguates designed launch films from UGC in its trigger.
+- Bumped synced package, plugin, marketplace, codex/cursor manifest, and skill versions to `0.5.2`.
+
 ## 0.5.1
 
 - Added a Marketing Image Model Policy to `krea-marketing/SKILL.md`: the marketing image set is `openai/gpt-image-2` (default), live Nano Banana 2, and live Nano Banana Pro. `gpt-image-2` always comes first for text-heavy work (ad templates, key visuals, posters, exact copy, storyboard sheets); for product hero, lifestyle, marketplace, and final stills the agent names `gpt-image-2` as the default alongside the live Nano Banana option and lets the user choose. All marketing workflows now resolve image models through this policy.
