@@ -37,7 +37,35 @@ Use only fields present in the live schema. If a field is absent, do not approxi
 
 ## Moodboard Discovery
 
-Krea's web app exposes moodboards at:
+### Preset gallery (public)
+
+Krea exposes the preset moodboard gallery at:
+
+```text
+GET https://www.krea.ai/api/preset-moodboards?limit=72&seed=<uuid>&search=<query>&cursor=<nextCursor>
+```
+
+Verified live on 2026-06-11: this endpoint answered without authentication and reported `total: 3549` preset boards. This is the default discovery path; the agent can search it directly.
+
+| Param | Meaning |
+|---|---|
+| `limit` | Page size; `72` mirrors the web gallery. |
+| `seed` | Any UUID. Stabilizes the shuffled gallery order; keep the same seed across pages of one browse session. |
+| `search` | Keyword filter over the gallery, for example `search=neo`. Search by aesthetic keywords instead of paging blindly. |
+| `cursor` | Pagination cursor; pass the previous response's `nextCursor`. |
+
+Observed response shape: `{datasetName, items, nextCursor, total}`. Each item exposed `id` (the moodboard UUID used for generation), `name`/`styleName`, `styleDescription`, `styleKeywords`, `imageCount`/`totalImages`, `isStaffPick`, and `previewImages`/`images` as `{id, url, width, height}` with Krea-hosted asset URLs. Inspect the live response before relying on field names.
+
+Preset discovery recipe:
+
+1. Search the gallery with 1-3 aesthetic keywords from the user's brief.
+2. Shortlist by `styleName`, `styleDescription`, and `styleKeywords`; prefer `isStaffPick` boards on ties.
+3. Vision-check one or two `previewImages` per candidate. If the brief is loose, show the user 2-3 labeled candidates with one-line captions before generating.
+4. Use the chosen item's `id` as the K2 moodboard UUID.
+
+### Personal moodboards (authenticated)
+
+The user's own boards live at:
 
 ```text
 GET https://www.krea.ai/api/moodboards
@@ -51,7 +79,7 @@ This endpoint is authenticated web-app state. In an unauthenticated request on 2
 
 Treat this as separate from CLI/public-API key auth unless the current Krea tooling explicitly documents otherwise. The CLI can generate with a moodboard ID once the K2 schema exposes `moodboards`, but it does not by itself prove that `www.krea.ai/api/moodboards` is accessible without a logged-in web session.
 
-Safe discovery rules:
+Safe discovery rules for personal boards:
 
 - Use the authenticated browser/UI or a user-provided JSON sample to find moodboard IDs.
 - Do not scrape local browser cookie stores or print private account payloads.
@@ -69,7 +97,7 @@ Generation path:
 
 1. Resolve the Krea 2 model with live `list_models`.
 2. Inspect the selected model schema.
-3. Resolve the moodboard UUID from the authenticated moodboard endpoint, the Krea UI, or the user.
+3. Resolve the moodboard UUID: search the public preset gallery first; use the authenticated moodboard endpoint, the Krea UI, or the user for personal boards.
 4. Submit `moodboards: [{ "id": "<uuid>", "strength": <0-1> }]` only when the live schema exposes that shape.
 5. Keep `prompt` focused on subject, composition, scene, camera, lighting, and deliverable constraints. Let the moodboard carry style, taste, color, texture, and concept direction.
 
@@ -79,7 +107,7 @@ Strength guidance, unless the user says otherwise:
 - `0.3` to `0.6`: visible moodboard influence for art direction.
 - `0.6` to `1.0`: strong moodboard pull; use carefully because it can override subject and composition.
 
-If the live schema exposes only `image_style_references`, not `moodboards`, use Krea-hosted image URLs from the moodboard as style references only when the authenticated response provides usable asset URLs. Do not pass arbitrary external image URLs; normalize them through `../media-inputs.md`.
+If the live schema exposes only `image_style_references`, not `moodboards`, use Krea-hosted image URLs from the moodboard as style references: the preset gallery's `previewImages`/`images` URLs qualify, as do authenticated-response assets. Do not pass arbitrary external image URLs; normalize them through `../media-inputs.md`.
 
 If no moodboard or style-reference field exists in the live schema, do not fake the moodboard in the prompt. Either proceed prompt-only after telling the user the current schema lacks moodboard input, or ask the user to choose a Krea 2 surface that supports moodboards.
 

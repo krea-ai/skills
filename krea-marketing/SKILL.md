@@ -1,5 +1,5 @@
 ---
-version: 0.5.1
+version: 0.5.2
 name: krea-marketing
 description: "Marketing and paid-social creative workflows with Krea. Use for product photoshoots, marketplace cards, DTC static ad templates, campaign key visuals, UGC/social ads, product URL to creative, ad storyboards, social packs, product launches, Meta Ads performance-informed creative planning, and gated Meta Ads activation. For generic media generation use krea-generate; for professional animation use krea-animation; for app/API integration use krea-build."
 license: MIT
