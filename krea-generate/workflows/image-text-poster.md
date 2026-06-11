@@ -29,21 +29,13 @@ Hard prescription. Follow in order.
 8. If text is wrong, retry with shorter text blocks or split into design-first image plus external typography recommendation.
 9. Deliver with spelling QA notes.
 
-### CLI
+### CLI path
 
-```bash
-krea models list --json
-krea models show "<text-friendly-image-model>" --json
-krea generate image -m "<text-friendly-image-model>" \
-  --aspect 4:5 \
-  -i quality=high \
-  -p "Poster layout with exact headline '<HEADLINE>', subhead '<SUBHEAD>', CTA '<CTA>'; <visual style>" \
-  --wait -o ./poster.png
-```
+When using CLI, verify the surface with `../references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
 
-### MCP fallback
+### MCP path
 
-Use MCP only if the CLI is unavailable. Run `list_models()`, inspect `get_model_schema(...)`, then call `generate_image` with schema-verified prompt, aspect, text, quality, and resolution fields.
+When using MCP, use the available Krea tools to list models, inspect the selected model schema, then call image generation with schema-verified prompt, aspect, text, quality, and resolution fields.
 
 ## Banned
 

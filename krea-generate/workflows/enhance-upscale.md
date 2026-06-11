@@ -28,18 +28,13 @@ Hard prescription. Follow in order.
 8. If artifacts appear, retry with lower creativity or fewer enhancement extras.
 9. **Deliver** with dimensions and QA notes.
 
-### CLI
+### CLI path
 
-```bash
-IMG=$(krea upload ./input.png --json | jq -r .url)
-krea generate enhance -m "<faithful-upscale-model>" "$IMG" \
-  --width 4096 --height 4096 \
-  --wait -o ./upscaled.png
-```
+When using CLI, verify the surface with `../references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
 
-### MCP fallback
+### MCP path
 
-Use MCP only if the CLI is unavailable. Upload local inputs with `upload_asset`, run `list_models()`, inspect `get_model_schema(...)`, then call `enhance_image` with schema-verified image and size fields.
+When using MCP, use the available Krea tools to upload local inputs, list models, inspect the selected model schema, then call enhancement with schema-verified image and size fields.
 
 ## Banned
 

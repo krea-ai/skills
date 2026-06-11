@@ -29,16 +29,9 @@ Ask once only when missing:
 7. Poll with `../references/progress-reporting.md`.
 8. Download or surface the result URL. Sample frames when local media is available and check the visible action matches the brief.
 
-### CLI
+### CLI path
 
-```bash
-krea generate video -m "<video-model>" \
-  --aspect 16:9 \
-  --duration 6 \
-  -i resolution=720p \
-  -p "Ocean waves crash against black rocks at sunset, camera holds low near the waterline, spray catches warm light, natural realtime motion" \
-  --json
-```
+When using CLI, verify the surface with `../references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
 
 ## Banned
 

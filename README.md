@@ -1,7 +1,7 @@
 # Krea AI Skills
 
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![version](https://img.shields.io/badge/version-0.4.0-green.svg)](VERSION)
+[![version](https://img.shields.io/badge/version-0.5.1-green.svg)](VERSION)
 [![skills](https://img.shields.io/badge/skills-4-purple.svg)](#install-the-skills)
 [![discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.com/invite/krea-1002244500581798028)
 
@@ -9,7 +9,7 @@ Four Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get
 
 | Skill | When to use |
 |---|---|
-| **`krea-generate`** | Canonical generic-generation router. Image, video primitives, enhancement, edits, LoRA, portraits, text/poster work, and archviz via the Krea CLI by default, with MCP as fallback. |
+| **`krea-generate`** | Canonical generic-generation router. Image, video primitives, enhancement, edits, LoRA, portraits, text/poster work, and archviz through whichever Krea surface is available: authenticated CLI or connected MCP. |
 | **`krea-marketing`** | Marketing creative workflow: product photoshoots, marketplace image sets, DTC static ad templates (one product photo → a library of on-brand ad formats), key visuals, UGC/social ads, campaign packs, and optional Meta Ads CLI/MCP performance context. |
 | **`krea-animation`** | Professional animation and anime production workflow: asset bibles, model sheets, storyboards, shot lists, Krea video jobs, edit assembly, QA, and retakes. |
 | **`krea-build`** | Patterns for developers writing apps that integrate the Krea API: auth, polling, error handling, validation, frontend snippets for SvelteKit / React / Vue. Also the place to generate repeatable pipeline scripts in the user's own stack. |
@@ -26,19 +26,19 @@ Installs all four skills. This is the supported install path across agents that 
 
 ## Prerequisites — one of these
 
-The skills use the Krea CLI by default. If the CLI is unavailable but your agent has the Krea MCP connected, MCP works as a fallback.
+The skills work through whichever Krea surface is available: an authenticated Krea CLI or a connected Krea MCP server.
 
 ```bash
-# Default — Krea CLI (universal, works with any agent that runs bash)
+# Option A — Krea CLI (universal, works with any agent that runs bash)
 npm install -g @krea-ai/cli
 krea auth login          # prompts for a Krea API key and stores it locally
 # OR: export KREA_API_KEY=...
 
-# Fallback — Krea MCP server
-# If your agent has Krea MCP connected, this skill can use it as fallback.
+# Option B — Krea MCP server
+# If your agent has Krea MCP connected, the skills can use it directly.
 ```
 
-Verify the default path with `krea doctor`. If you are using the fallback path, check your agent's MCP tool list for `mcp__krea-public-api__*` tools.
+Verify the CLI path with `krea doctor`. For the MCP path, check your agent's MCP tool list for `mcp__krea-public-api__*` tools.
 
 ## Use
 

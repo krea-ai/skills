@@ -1,193 +1,192 @@
-# Model Catalog — Intent → Archetype
+# Model Catalog — Live Discovery
 
-Krea's model lineup changes faster than this skill ships. So this document does not list specific model IDs. Instead, it describes **archetypes** — the kinds of jobs Krea supports — and tells you what to scan for in the live `list_models()` output to find a current match.
+Krea's model lineup changes faster than this skill ships. This document intentionally avoids recommending specific model IDs. Use it to map an intent to the kind of capability to look for in live `list_models()` output.
 
-## How to use this file
+## How To Use This File
 
-1. Call `krea models list --json` by default, or MCP `list_models()` when the CLI is unavailable. You get back an array of `{id, category, name, description}` per model.
-2. Identify the intent (the user's brief or your interpretation of it).
-3. Match the intent to an **archetype** below.
-4. Scan the `name` and `description` fields of the `list_models` result for the **keyword hints** under that archetype.
-5. Call `krea models show <id> --json` or `get_model_schema(model=<id>)` for the candidate to confirm it accepts the inputs you have.
-6. Submit.
+1. List live models through the available Krea surface: authenticated CLI or connected MCP.
+2. Identify the user's intent.
+3. Match that intent to an archetype below.
+4. Read the live model `category`, `name`, and `description` for candidates that describe the needed capability.
+5. Inspect the schema for each candidate through the same surface.
+6. Choose the candidate whose live description and schema best match the request.
 
-When in doubt, prefer the model whose `description` most closely echoes the user's brief.
-
-**Current flagship note.** As of the 0.2.1 skill release, `krea/krea-2/large` is the CLI's default image model and `krea/krea-2/medium` is its faster sibling. Treat them as current flagship examples when they appear in live `list_models()` output, but still inspect the live schema before submitting.
+Do not choose from memory, local preferences, stale examples, or model IDs in old transcripts. The live catalog and live schema are the source of truth.
 
 ---
 
-## Image archetypes
+## Image Archetypes
 
-### Fast image draft (cheap, iterative)
+### Fast Image Draft
 
-**Intent.** The user is iterating quickly. They will refine the prompt several times. They have not asked for "high quality" or "final".
+**Intent.** The user is exploring, asking for quick concepts, or expects several iterations.
 
-**Keywords in `list_models`.** Scan `name` for `flux`, `dev`, `z-image`, `fast`, `mini`. Scan `description` for "fast", "draft", "cheap", "iterate", "quick".
+**Live catalog signals.** Look for descriptions that emphasize speed, low cost, drafts, exploration, quick iteration, or lightweight generation.
 
-**Schema hints (via `get_model_schema`).** Most accept `prompt`, `width`/`height`, `seed`. Some accept `steps` and `guidance` for finer control.
+**Schema hints.** Confirm prompt, aspect or size controls, and optional seed/variation controls.
 
-**Don't use this archetype when** the user explicitly says "final", "production", "for delivery", or the brief is detailed and specific (>50 words, clear vision).
-
----
-
-### High-fidelity image (photoreal, hero shots)
-
-**Intent.** Polished result. Production. The user has already iterated and wants the best output Krea offers, or the brief is unambiguously high-stakes.
-
-**Keywords.** Scan `name` for `krea-2`, `nano-banana-pro`, `gpt-image`, `imagen`, `seedream`, `pro`, `ultra`, `flagship`. Scan `description` for "photoreal", "high-fidelity", "premium", "production-quality".
-
-**Schema hints.** Often supports `resolution` (e.g. `1K`/`2K`/`4K`), `quality` (`high`/`auto`), and `aspect_ratio` or MCP `aspectRatio`.
-
-**Krea 2 public shape.** `krea/krea-2/*` image endpoints use `aspect_ratio` + `resolution` (for example `1:1` + `1K`) instead of `width`/`height`. Do not pass `quality` or `steps` to Krea 2 unless the live schema explicitly adds them.
-
-**Don't use this archetype when** the user is just exploring or hasn't committed to a direction.
+**Avoid when** the user says final, production, client-ready, delivery, or gives a detailed high-stakes brief.
 
 ---
 
-### Text in image / typography
+### High-Fidelity Image
 
-**Intent.** The image needs readable text — a poster, a brand banner, packaging mockup, UI screenshot, signage.
+**Intent.** The user wants a polished final, hero asset, photoreal render, production image, or high-quality still.
 
-**Keywords.** Scan `name` for `ideogram`, `gpt-image`. Scan `description` for "text", "typography", "letters", "signage".
+**Live catalog signals.** Look for descriptions that emphasize photorealism, high fidelity, premium quality, production quality, flagship capability, or high resolution.
 
-**Schema hints.** Worth checking whether the model accepts a `text` parameter explicitly or expects text inside the prompt.
+**Schema hints.** Confirm resolution, quality, aspect ratio or width/height, and reference-image support when references matter.
 
-**Don't use this archetype** for general images that happen to have a tiny bit of text — the cost premium isn't worth it. Most flagship general models render some text passably.
-
----
-
-### Stylized / illustrated / character
-
-**Intent.** Anime, cartoon, painted look, character design, expressive illustration. Not photoreal.
-
-**Keywords.** Scan `name` for `nano-banana`, `flux-kontext`, `grok-imagine`. Scan `description` for "stylized", "character", "anime", "illustration", "expressive".
-
-**Schema hints.** Some support LoRA styles (`styleId`) — useful when the user has a trained Krea style they want to apply.
+**Avoid when** the user is still brainstorming or explicitly asks for cheap drafts.
 
 ---
 
-### Image-to-image / face reference
+### Text In Image / Typography
 
-**Intent.** The user provided an existing image and wants it transformed (style swap, edit), or wants their face/subject referenced.
+**Intent.** The image must contain readable words, labels, signage, poster copy, UI text, or packaging text.
 
-**Keywords.** Scan `description` for "image prompt", "reference", "face", "edit".
+**Live catalog signals.** Look for descriptions that emphasize text rendering, typography, lettering, signage, copy fidelity, or design/layout strength.
 
-**Schema hints.** Check whether the schema uses `image_url`/MCP `imageUrl` (singular) or `image_urls`/MCP `imageUrls` (array). Multi-reference models use the array form for face injection from several photos.
+**Schema hints.** Check whether the model has explicit text/copy fields or expects all text in the prompt. Use only fields present in the live schema.
+
+**Avoid when** the image only contains incidental tiny text; a general high-fidelity model may be enough if live schema and examples suggest it.
+
+---
+
+### Stylized / Illustrated / Character
+
+**Intent.** The user wants illustration, cartoon, anime, painterly style, expressive character design, or a non-photoreal look.
+
+**Live catalog signals.** Look for descriptions that emphasize illustration, stylization, character work, expressive style, art direction, or style transfer.
+
+**Schema hints.** Confirm style fields, reference support, and any style-strength controls.
+
+**Model-specific references.** If live discovery resolves a `krea/krea-2/*` model, or the user asks for K2 moodboards/style references, load `models/krea-2.md` after selecting the model.
+
+---
+
+### Image-To-Image / Subject Reference
+
+**Intent.** The user provides an existing image to edit, transform, restyle, or preserve as a subject/face/product reference.
+
+**Live catalog signals.** Look for descriptions that mention image prompts, references, editing, subject preservation, face reference, style reference, or character reference.
+
+**Schema hints.** Confirm the exact reference fields. Some models accept a single image URL; others accept arrays or structured reference objects.
+
+**Model-specific references.** If live discovery resolves a `krea/krea-2/*` model with `moodboards` or `image_style_references`, load `models/krea-2.md` for moodboard and style-reference rules.
 
 **Pattern.**
-- One reference, simple edit → most image models work
-- Multiple face references → look for models accepting `image_urls` or MCP `imageUrls` as an array
-- Faithful subject preservation across edits → look for models with "character ref" or similar in description
+
+- One reference, simple edit: any live candidate with a matching image-reference field may work.
+- Several references: require an array or structured multi-reference field.
+- Strong identity preservation: prefer live candidates whose description explicitly says they preserve subjects, faces, or characters.
 
 ---
 
-### Vector illustrations
+### Vector-Like Illustration
 
-**Intent.** Logos, icons, flat illustrations with clean geometric shapes — output meant to be vectorized or already vector-like.
+**Intent.** The user wants logo-like, icon-like, flat, geometric, or vector-ready artwork.
 
-**Keywords.** Scan `name`/`description` for `vector`, `seedream`, `flat`.
-
----
-
-## Video archetypes
-
-### Fast video draft
-
-**Intent.** Quick motion test. The user is exploring how a still might animate.
-
-**Keywords.** Scan `name` for `hailuo`, `fast`, `lite`, `mini`. Scan `description` for "fast", "draft", "budget".
-
-**Schema hints.** Most support `prompt`, `duration` (4-8s typical), and `aspect_ratio` or MCP `aspectRatio`.
+**Live catalog signals.** Look for descriptions that emphasize vector-like output, flat illustration, clean geometry, logos, icons, or editable-looking shapes.
 
 ---
 
-### Cinematic video (high-fidelity)
+## Video Archetypes
 
-**Intent.** Production-grade clip, multi-shot, consistent identity, motion-heavy. The user is making something polished.
+### Fast Video Draft
 
-**Keywords.** Scan `name` for `veo`, `seedance`, `kling-pro`. Scan `description` for "cinematic", "high-fidelity", "multi-shot", "consistent".
+**Intent.** Quick motion tests, simple generated clips, rough exploration, or short ambient motion.
 
-**Schema hints.** Check for `resolution` (`720p`/`1080p`), `mode` (`std`/`pro`), and `generate_audio` or MCP `generateAudio`.
+**Live catalog signals.** Look for descriptions that emphasize speed, draft quality, budget, lightweight video, or fast text-to-video.
 
-**Don't use this archetype** for quick tests — these models are slow and expensive.
-
----
-
-### Image-to-video / start frame anchored
-
-**Intent.** Animate a still. The first frame is given.
-
-**Keywords.** Scan `description` for "start frame", "image to video", "anchor", "first frame".
-
-**Schema hints.** The schema will name the start-frame param - current CLI schemas commonly use `start_image`; MCP may expose `startImage`. Some models also accept `end_image` / MCP `endImage` for a transition. Check the live schema for the exact field name and whether multiple references are allowed.
-
-**Workflow.** First call `krea upload` or MCP `upload_asset` to register the local/non-Krea frame, then pass the returned Krea-hosted URL into the video model's start-frame field.
+**Schema hints.** Confirm duration, aspect ratio, resolution, prompt, and any reference/start-frame fields.
 
 ---
 
-### Video with audio
+### Cinematic Video
 
-**Intent.** Final clip needs synced audio (ambient, music, or speech).
+**Intent.** Polished clip, coherent camera movement, production feel, multi-action motion, or identity-sensitive video.
 
-**Keywords.** Scan `description` for "audio", "sound", "with audio", "lip sync".
+**Live catalog signals.** Look for descriptions that emphasize cinematic quality, high fidelity, multi-shot or long motion handling, realistic motion, subject consistency, or production video.
 
-**Schema hints.** Some models expose `generate_audio` or MCP `generateAudio` as a boolean. Others accept a reference audio file via an `audio` media input.
+**Schema hints.** Confirm accepted durations, resolution, aspect ratio, audio controls, start/end frame support, and reference media support.
 
----
-
-## Image enhancement archetypes
-
-### Faithful upscale
-
-**Intent.** Make the existing image larger without changing what's in it.
-
-**Keywords.** Scan `name` for `topaz-standard`, `topaz`. Scan `description` for "faithful", "upscale", "preserve".
-
-**Schema hints.** `width` and `height` are required. Some accept `sharpen`/`denoise` fine-tuning.
+**Avoid when** the user only needs a quick motion test.
 
 ---
 
-### Creative enhance
+### Image-To-Video / Start Frame Anchored
 
-**Intent.** Upscale and let the model add detail / refinement (more aggressive than faithful).
+**Intent.** The user wants to animate a still image or preserve the first frame.
 
-**Keywords.** Scan `name` for `topaz-generative`, `creative`. Scan `description` for "creative", "generative", "add detail".
+**Live catalog signals.** Look for descriptions that mention start frames, image-to-video, first-frame anchoring, transitions, or end frames.
 
-**Schema hints.** Often accepts `creativity` (1–6 typical), `face_enhancement`.
-
----
-
-### Bloom / creative detail injection
-
-**Intent.** Heavy creative pass — invent texture, depth, embellishment.
-
-**Keywords.** Scan `name` for `bloom`. Scan `description` for "bloom", "embellish", "invent detail".
+**Schema hints.** Confirm the exact field names for start image, end image, and reference media. Upload local or external references to Krea before passing them to the model.
 
 ---
 
-## Picking flow — intent first, model second
+### Video With Audio
 
-When the user says something, classify into one of these intent buckets first:
+**Intent.** The final clip needs generated sound, ambient audio, music, speech, or lip sync.
 
-1. **"Make me a quick image of X"** → fast image draft
-2. **"Final image for production"** → high-fidelity image
-3. **"Poster / banner / packaging with text"** → text-in-image
-4. **"Illustration / anime / cartoon of X"** → stylized
-5. **"Edit this photo into Y"** → image-to-image
-6. **"Make a video of X"** → fast video draft (default) OR cinematic if the brief is detailed
-7. **"Animate this still"** → image-to-video
-8. **"Add sound"** → video-with-audio
-9. **"Upscale this"** → faithful upscale (default)
-10. **"Enhance this"** (ambiguous) → ask one quick question: faithful or creative?
+**Live catalog signals.** Look for descriptions that mention audio, sound, voice, speech, music, or lip sync.
 
-Then resolve the archetype → candidate model via `list_models` keywords. Then `get_model_schema` to check inputs. Then submit.
+**Schema hints.** Confirm whether audio is generated by a boolean flag, a mode, or an audio-reference input.
 
-## Things to keep in mind
+---
 
-- **Never hardcode a model ID** based on what you remember. Always pull from `list_models`. Names change, models retire.
-- **`get_model_schema` is the source of truth for inputs.** Don't guess parameter names; ask.
-- **If the user names a specific model** (e.g. "use nano-banana-pro"), use it — skip the archetype routing.
-- **`KREA_PREFERENCES.md` overrides the defaults.** If a project pins specific models for specific intents, honor that.
-- **When two archetypes could apply**, prefer the one matching the user's stated word ("fast" → fast draft; "cinematic" → cinematic video).
-- **Model name keywords are hints, not guarantees.** Always confirm the choice by reading the model's `description` from `list_models`.
+## Image Enhancement Archetypes
+
+### Faithful Upscale
+
+**Intent.** Increase resolution, sharpen, denoise, or clean up an existing image while preserving content.
+
+**Live catalog signals.** Look for descriptions that emphasize faithful upscale, preservation, sharpening, denoise, restoration, or non-generative enhancement.
+
+**Schema hints.** Confirm target width/height or scale, denoise/sharpen controls, and whether face enhancement is optional.
+
+---
+
+### Creative Enhance
+
+**Intent.** Improve an image while allowing the model to invent extra detail, lighting, texture, or polish.
+
+**Live catalog signals.** Look for descriptions that emphasize creative enhancement, generative detail, relighting, refinement, or detail injection.
+
+**Schema hints.** Confirm creativity/detail controls, prompt fields, face enhancement, and target size fields.
+
+---
+
+### Heavy Creative Detail Injection
+
+**Intent.** A strong creative pass that may add texture, depth, embellishment, or visible design changes.
+
+**Live catalog signals.** Look for descriptions that emphasize heavy creative detail, embellishment, generative refinement, or maximal enhancement.
+
+---
+
+## Picking Flow
+
+Classify the request before choosing a model:
+
+1. Quick image concept -> fast image draft.
+2. Final still -> high-fidelity image.
+3. Poster, banner, UI, packaging, or signage with readable copy -> text in image / typography.
+4. Illustration, anime, cartoon, or painted look -> stylized / illustrated / character.
+5. Edit or preserve a provided image -> image-to-image / subject reference.
+6. Simple generated clip -> fast video draft.
+7. Polished or identity-sensitive clip -> cinematic video.
+8. Animate a still -> image-to-video / start frame anchored.
+9. Add or generate sound -> video with audio.
+10. Upscale without changing content -> faithful upscale.
+11. Enhance with creative changes -> creative enhance.
+
+Then resolve the archetype through live `list_models`, inspect schema, and submit.
+
+## Boundaries
+
+- Never hardcode a model ID based on memory.
+- Do not use generic preference files to override live discovery.
+- If the user names a specific model for this request, verify it exists in live `list_models`; use it only if the live schema supports the job.
+- Domain-specific skills may add model preferences for their domain. For marketing image preferences, route to `../krea-marketing/SKILL.md`.
+- Model name and description are hints, not guarantees. The live schema determines what inputs are valid.

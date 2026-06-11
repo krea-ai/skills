@@ -21,7 +21,7 @@ Hard prescription. Follow in order.
 
 1. Load `../references/product-photoshoot.md` and classify the request; hero/catalog work maps to `studio_product` or `hero_banner`.
 2. Read the product reference with vision; note shape, label, material, and colors.
-3. Resolve `high-fidelity image` with image-to-image support from live `list_models`.
+3. Resolve a final still model from the marketing image set in `../SKILL.md`: default `openai/gpt-image-2`, offering live Nano Banana 2 / Nano Banana Pro as alternatives the user can pick; require image-to-image support from the live schema.
 4. Inspect schema for reference fields and resolution.
 5. Run cost-preflight if generating a batch, 4K, or >100 CU.
 6. Upload product refs to Krea if local or external/non-Krea.
@@ -30,21 +30,13 @@ Hard prescription. Follow in order.
 9. Read output with vision; verify product identity, proportions, label, and color.
 10. **Deliver** with a one-line summary and QA notes.
 
-### CLI
+### CLI path
 
-```bash
-PRODUCT=$(krea upload ./product.png --json | jq -r .url)
-krea generate image -m "<high-fidelity-image-to-image>" \
-  --aspect 16:9 \
-  -i image_url="$PRODUCT" \
-  -i quality=high \
-  -p "Photoreal hero product shot of the referenced product, preserving exact shape, label, color, and material; <background, lighting, camera>" \
-  --wait -o ./product-hero.png
-```
+When using CLI, verify the surface with `../../krea-generate/references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
 
-### MCP fallback
+### MCP path
 
-Use MCP only if the CLI is unavailable. Upload product references with `upload_asset`, run `list_models()`, inspect `get_model_schema(...)`, then call `generate_image` with schema-verified product reference, prompt, aspect, and quality fields.
+When using MCP, use the available Krea tools to upload product references, list models, inspect the selected model schema, then call image generation with schema-verified product reference, prompt, aspect, and quality fields.
 
 ## Banned
 

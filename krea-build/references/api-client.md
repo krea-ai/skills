@@ -107,7 +107,7 @@ export async function generateImage(input: {
 }
 
 export async function generateVideo(input: {
-  model: string;        // e.g. "google/veo-3.1"
+  model: string;
   prompt: string;
   duration?: number;
   aspect_ratio?: string;

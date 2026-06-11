@@ -29,20 +29,13 @@ Hard prescription. Follow in order.
 8. Read output with vision and compare against preservation list.
 9. **Deliver** with QA notes and mention if anything drifted.
 
-### CLI
+### CLI path
 
-```bash
-IMG=$(krea upload ./input.png --json | jq -r .url)
-krea generate enhance -m "<creative-enhance-model>" "$IMG" \
-  --width 2048 --height 2048 \
-  -i creativity=3 \
-  -p "<creative direction while preserving subject/composition>" \
-  --wait -o ./creative-enhance.png
-```
+When using CLI, verify the surface with `../references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
 
-### MCP fallback
+### MCP path
 
-Use MCP only if the CLI is unavailable. Upload local inputs with `upload_asset`, run `list_models()`, inspect `get_model_schema(...)`, then call `enhance_image` with schema-verified image, size, creativity, and prompt fields.
+When using MCP, use the available Krea tools to upload local inputs, list models, inspect the selected model schema, then call enhancement with schema-verified image, size, creativity, and prompt fields.
 
 ## Banned
 

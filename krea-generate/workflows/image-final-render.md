@@ -29,23 +29,13 @@ Hard prescription. Follow in order.
 8. Download and read the output with vision; verify against non-negotiables.
 9. Deliver with one-line summary and any QA notes.
 
-### CLI
+### CLI path
 
-```bash
-REF=$(krea upload ./reference.png --json | jq -r '.url // empty')
-krea models list --json
-krea models show "<high-fidelity-image>" --json
-krea generate image -m "<high-fidelity-image>" \
-  --aspect 16:9 \
-  -i quality=high \
-  -i image_urls="[\"$REF\"]" \
-  -p "<final render prompt>" \
-  --wait -o ./final-render.png
-```
+When using CLI, verify the surface with `../references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
 
-### MCP fallback
+### MCP path
 
-Use MCP only if the CLI is unavailable. Upload local references with `upload_asset`, run `list_models()`, inspect `get_model_schema(...)`, then call `generate_image` with schema-verified prompt, reference, aspect, quality, and resolution fields.
+When using MCP, use the available Krea tools to upload local references, list models, inspect the selected model schema, then call image generation with schema-verified prompt, reference, aspect, quality, and resolution fields.
 
 ## Banned
 

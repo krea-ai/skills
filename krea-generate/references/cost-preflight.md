@@ -23,7 +23,7 @@ For Pro or unlimited-credit users, still show the estimate. They may not care ab
 ## What to estimate
 
 1. Resolve the workflow and model archetypes.
-2. Call `krea models show <id> --json` or the MCP schema/model details when available.
+2. Inspect live schema/model details through the available Krea surface.
 3. Estimate per-job CU from live model details or the workflow's documented default.
 4. Multiply by the planned number of jobs.
 5. Add expected wall-clock time from the workflow doc.

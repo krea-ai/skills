@@ -29,20 +29,13 @@ Hard prescription. Follow in order.
 8. Read output with vision; verify massing, openings, materials, and camera.
 9. **Deliver** with one-line summary and suggested next variant only if useful.
 
-### CLI
+### CLI path
 
-```bash
-SCREEN=$(krea upload ./sketchup-view.png --json | jq -r .url)
-krea generate image -m "<structural-image-to-image-model>" \
-  --aspect 16:9 \
-  -i image_url="$SCREEN" \
-  -p "Photoreal architectural render preserving the exact massing and camera angle; <time of day, lighting, materials, atmosphere>" \
-  --wait -o ./archviz-render.png
-```
+When using CLI, verify the surface with `../references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
 
-### MCP fallback
+### MCP path
 
-Use MCP only if the CLI is unavailable. Upload local references with `upload_asset`, run `list_models()`, inspect `get_model_schema(...)`, then call `generate_image` with schema-verified reference and aspect fields. Do not copy field names from memory.
+When using MCP, use the available Krea tools to upload local references, list models, inspect the selected model schema, then call image generation with schema-verified reference and aspect fields. Do not copy field names from memory.
 
 ## Banned
 

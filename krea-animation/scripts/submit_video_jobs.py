@@ -12,31 +12,42 @@ from pathlib import Path
 from _common import command_exists, read_csv, run_json, shell_join, project_root
 
 
-DRAFT_MODELS = ["bytedance/seedance-2-fast", "minimax/hailuo-2.3-fast", "alibaba/wan-2.5"]
-FINAL_MODELS = ["bytedance/seedance-2", "google/veo-3.1", "kling/kling-3.0", "runway/gen-4.5"]
-
-
-def available_models() -> set[str]:
+def available_models() -> list[dict[str, str]]:
     if not command_exists("krea"):
-        return set()
+        return []
     try:
         data = run_json(["krea", "models", "list", "--json"])
     except Exception:
-        return set()
+        return []
     if not isinstance(data, list):
-        return set()
-    return {item.get("id", "") for item in data if isinstance(item, dict)}
+        return []
+    return [item for item in data if isinstance(item, dict) and item.get("id")]
 
 
 def resolve_model(requested: str, quality: str) -> str:
     if requested != "auto":
         return requested
-    candidates = FINAL_MODELS if quality == "final" else DRAFT_MODELS
     live = available_models()
-    for candidate in candidates:
-        if candidate in live:
-            return candidate
-    return candidates[0]
+    if not live:
+        raise SystemExit("No live Krea models found. Pass --model explicitly after verifying the catalog.")
+
+    if quality == "final":
+        required = ("video",)
+        preferred = ("cinematic", "high fidelity", "production", "consistent", "multi-shot")
+    else:
+        required = ("video",)
+        preferred = ("fast", "draft", "quick", "lite", "preview")
+
+    def score(item: dict[str, str]) -> int:
+        text = " ".join(str(item.get(key, "")) for key in ("id", "name", "category", "description")).lower()
+        if not all(word in text for word in required):
+            return -1
+        return sum(1 for word in preferred if word in text)
+
+    ranked = sorted(((score(item), item) for item in live), key=lambda pair: pair[0], reverse=True)
+    if ranked and ranked[0][0] >= 0:
+        return ranked[0][1]["id"]
+    raise SystemExit("Could not resolve a video model from live catalog. Pass --model explicitly.")
 
 
 def command_for(row: dict[str, str], model: str, quality: str) -> list[str]:

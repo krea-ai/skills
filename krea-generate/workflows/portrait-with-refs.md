@@ -29,21 +29,13 @@ Hard prescription. Follow in order.
 8. Read output with vision; compare likeness, age, hair, and key features.
 9. Deliver with QA notes or route to LoRA if identity is insufficient.
 
-### CLI
+### CLI path
 
-```bash
-REF1=$(krea upload ./face-front.jpg --json | jq -r .url)
-REF2=$(krea upload ./face-angle.jpg --json | jq -r .url)
-krea generate image -m "<multi-reference-portrait-model>" \
-  --aspect 4:5 \
-  -i image_urls="[\"$REF1\",\"$REF2\"]" \
-  -p "Editorial portrait of the referenced person, preserving facial identity, <style and lighting>" \
-  --wait -o ./portrait.png
-```
+When using CLI, verify the surface with `../references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
 
-### MCP fallback
+### MCP path
 
-Use MCP only if the CLI is unavailable. Upload local face references with `upload_asset`, run `list_models()`, inspect `get_model_schema(...)`, then call `generate_image` with schema-verified multi-reference, prompt, and aspect fields.
+When using MCP, use the available Krea tools to upload local face references, list models, inspect the selected model schema, then call image generation with schema-verified multi-reference, prompt, and aspect fields.
 
 ## Banned
 

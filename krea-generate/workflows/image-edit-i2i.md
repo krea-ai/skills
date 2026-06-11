@@ -29,19 +29,13 @@ Hard prescription. Follow in order.
 8. If preservation failed, retry once with stronger preservation language or a lower edit strength.
 9. Deliver with a one-line summary and QA notes.
 
-### CLI
+### CLI path
 
-```bash
-SRC=$(krea upload ./source.png --json | jq -r .url)
-krea generate image -m "<image-to-image-model>" \
-  -i image_url="$SRC" \
-  -p "Change <edit> while preserving <must-keep details>" \
-  --wait -o ./edited.png
-```
+When using CLI, verify the surface with `../references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
 
-### MCP fallback
+### MCP path
 
-Use MCP only if the CLI is unavailable. Upload local inputs with `upload_asset`, run `list_models()`, inspect `get_model_schema(...)`, then call `generate_image` with schema-verified prompt and reference fields.
+When using MCP, use the available Krea tools to upload local inputs, list models, inspect the selected model schema, then call image generation with schema-verified prompt and reference fields.
 
 ## Banned
 

@@ -6,7 +6,7 @@
 ToolError: mcp__krea-public-api__... is not available
 ```
 
-The Krea MCP server isn't installed. The CLI is the default surface, so first check `which krea && krea doctor 2>&1 | head -5`. If the CLI is healthy, use it. If the CLI is unavailable and MCP is missing too, tell the user to install the CLI or connect the MCP. Don't fall back to direct HTTP for normal generation; direct HTTP is only for documented custom workflows like LoRA training or code generated via `krea-build`.
+The Krea MCP server isn't installed. Check whether an authenticated CLI is available with `command -v krea && krea doctor`. If CLI is healthy, use it. If neither CLI nor MCP is available, tell the user to install/authenticate the CLI or connect the MCP. Don't fall back to direct HTTP for normal generation; direct HTTP is only for documented custom workflows like LoRA training or code generated via `krea-build`.
 
 ## Authentication
 
@@ -140,7 +140,8 @@ These came from a campaign session where ambiguous "storyboard" vocabulary and s
 For agents writing direct HTTP against the public Krea 2 endpoint in a custom integration, the on-wire shape differs from MCP camelCase:
 
 - Auth header: `Authorization: Bearer $KREA_API_KEY` (the same key used by the CLI; do not invent an `x-api-key` header — that is not the public-API convention).
-- Body field names use snake_case: `aspect_ratio` (not `aspectRatio`), `resolution` (e.g. `"1K"`), `prompt`, `image_style_references[]`.
+- Body field names use snake_case: `aspect_ratio` (not `aspectRatio`), `resolution` (e.g. `"1K"`), `prompt`, `image_style_references[]`, and, when live schema exposes it, `moodboards[]`.
+- Krea 2 moodboard generation uses `moodboards: [{id, strength}]` in the observed public-API schema, with observed `maxItems: 1`. For moodboard discovery and K2-specific rules, load `models/krea-2.md`.
 - Response uses `job_id` (not `id`). Prefer `krea jobs show <job_id> --json` for ad hoc agent work; in app code, use the documented job polling endpoint from the current API docs rather than guessing REST paths.
 - MCP `generate_image(model="krea/krea-2/*", input={aspect_ratio, ...})` still uses camelCase — the MCP server translates. Only the raw HTTP body needs snake_case.
 

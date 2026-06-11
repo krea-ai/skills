@@ -1,5 +1,5 @@
 ---
-version: 0.5.0
+version: 0.5.1
 name: krea-build
 description: "Patterns for building applications that integrate the Krea API. Auth, polling discipline, error handling, validation, frontend integration (SvelteKit/React/Vue), and the 'prototype in chat, productize in app' workflow. Use when the user is writing code that calls the Krea API directly — building a generator UI, a content pipeline, a creative tool — not when they just want to generate one image. For interactive generation use krea-generate; for marketing workflow contracts use krea-marketing."
 license: MIT
@@ -7,7 +7,7 @@ license: MIT
 
 # Krea Build — Integration Patterns for Developers
 
-This skill is for **building apps that integrate Krea**. Not for one-off generations — that's the sibling `krea-generate` skill, which uses the Krea CLI by default and MCP as fallback.
+This skill is for **building apps that integrate Krea**. Not for one-off generations — that's the sibling `krea-generate` skill, which uses whichever Krea surface is available: authenticated CLI or connected MCP tools.
 
 Use this skill when the user is:
 
@@ -24,7 +24,7 @@ Once per session, if sibling `../krea-generate/scripts/update-check.sh` exists, 
 
 | Situation | Use |
 |---|---|
-| "Generate me an image of X" | `krea-generate` (CLI-first generation) |
+| "Generate me an image of X" | `krea-generate` |
 | "Build me a moodboard app that uses Krea" | `krea-build` (this) |
 | "Write a TypeScript helper to call Krea" | `krea-build` |
 | "Run a one-off pipeline now" | `krea-generate` |
@@ -36,7 +36,7 @@ Once per session, if sibling `../krea-generate/scripts/update-check.sh` exists, 
 
 The single most expensive mistake when building Krea apps is writing app code around unproven generation output. Always:
 
-1. **Prototype** — run the generation manually with `krea-generate` or `krea-marketing` (CLI by default, MCP fallback) to see what the actual output looks like.
+1. **Prototype** — run the generation manually with `krea-generate` or `krea-marketing` using an available Krea surface to see what the actual output looks like.
 2. **Confirm** — show the user the result. Iterate on prompt, model, parameters until it's right.
 3. **Productize** — once the output is approved, hardcode the URLs and parameters into the app.
 

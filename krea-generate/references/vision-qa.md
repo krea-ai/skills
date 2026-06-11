@@ -38,7 +38,7 @@ When a workflow generates a batch of stills in parallel (asset sheet, chain keyf
 > C (Gear-5 + Azure Dragon) — silver hair and golden aura present, dragon clearly serpentine, golden eye on subject. ✓
 > ...
 
-If three of four pass and one fails, regenerate the failing one immediately — don't proceed to the video step with a weak link in the chain. The cost of regenerating a still is a few seconds and a handful of CU; the cost of a Seedance clip refusing or producing mush because its end_image was unclear is minutes of wall-clock and a confused user.
+If three of four pass and one fails, regenerate the failing one immediately — don't proceed to the video step with a weak link in the chain. The cost of regenerating a still is a few seconds and a handful of CU; the cost of a video clip refusing or producing mush because its end frame was unclear is minutes of wall-clock and a confused user.
 
 ## Video frame sampling
 

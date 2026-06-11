@@ -4,23 +4,20 @@ Use live model discovery. Do not rely on remembered model IDs.
 
 ## Required Checks
 
-```bash
-krea doctor
-krea models list --json
-krea models show <model-id> --json
-```
+1. Verify that an authenticated CLI or connected MCP tools are available.
+2. List live models through that surface.
+3. Inspect the selected model schema through that surface.
+4. Submit using only fields exposed by the live schema and the current CLI help or MCP tool schema.
 
-Inspect schemas for exact field names. Current Krea CLI fields may use snake_case in schema, while CLI convenience flags expose `--start-image`, `--aspect`, and raw `-i key=value` inputs.
+## Selection Policy
 
-## Current Defaults
+Use live model discovery. Do not maintain animation defaults here. Pick candidates by matching the approved animation task to live model descriptions and schemas:
 
-These are defaults, not permanent promises:
-
-- Draft character/style exploration: fast image model from live catalog.
-- Production model sheets and keyframes: prefer `openai/gpt-image-2`, `krea/krea-2/medium`, or `krea/krea-2/large` when present and suitable.
-- Approved shot animation: prefer `bytedance/seedance-2` for flagship video when present.
-- Draft animation tests: prefer `bytedance/seedance-2-fast` or another fast video model when present.
-- Final/highest-fidelity alternatives: evaluate live Veo, Kling, Runway, or other video models by schema and brief.
+- Draft character/style exploration: fast image model capability.
+- Production model sheets and keyframes: text fidelity, reference handling, and high-fidelity still capability.
+- Approved shot animation: cinematic video capability with required frame/reference controls.
+- Draft animation tests: faster video capability when available.
+- Final/highest-fidelity alternatives: evaluate live video models by schema and brief.
 
 ## Seedance-Style Schema Needs
 

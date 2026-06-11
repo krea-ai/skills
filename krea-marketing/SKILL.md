@@ -1,5 +1,5 @@
 ---
-version: 0.5.0
+version: 0.5.1
 name: krea-marketing
 description: "Marketing and paid-social creative workflows with Krea. Use for product photoshoots, marketplace cards, DTC static ad templates, campaign key visuals, UGC/social ads, product URL to creative, ad storyboards, social packs, product launches, Meta Ads performance-informed creative planning, and gated Meta Ads activation. For generic media generation use krea-generate; for professional animation use krea-animation; for app/API integration use krea-build."
 license: MIT
@@ -28,6 +28,20 @@ If the user connects Meta, read performance context first. If they decline or ca
 4. Writes are paused/draft by default.
 5. Live launch, budget changes, status changes, publishing, or catalog mutations require explicit approval naming account, entity, action, budget/status, and live-vs-paused state.
 6. Never invent performance data. If Meta is unavailable, label recommendations as creative hypotheses.
+
+## Marketing Image Model Policy
+
+For marketing stills, ad layouts, product images, and storyboard sheets, use the marketing image set:
+
+- `openai/gpt-image-2` (default)
+- a live Nano Banana 2 model when `list_models` exposes one (for example an id/name containing `nano-banana-2` or `nanobanana-2`)
+- a live Nano Banana Pro model (for example `google/nano-banana-pro`, or an id/name containing `nano-banana-pro` or `nanobanana-pro`)
+
+Always verify the candidate with live model discovery and schema inspection through the available Krea surface before submitting. Do not invent a model id that is not live.
+
+Any model in the set is acceptable. Default to `openai/gpt-image-2`; it is the strongest generalist in the set and must come first for text-heavy ad templates, key-visual sheets, posters, typography, exact copy, and storyboard sheets. For product hero, lifestyle, marketplace, and final marketing stills, do not silently pick for the user: name `openai/gpt-image-2` as the default alongside the live Nano Banana option and let the user choose; if they have no preference, use `openai/gpt-image-2`. If none of the marketing image set is available or the live schema cannot accept the required references/aspect/size, say so and pick the nearest live model only as an explicit fallback.
+
+This policy is for image generation. Resolve video models separately from live `list_models`.
 
 ## Routing
 
