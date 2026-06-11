@@ -23,12 +23,12 @@ Hard prescription. Follow in order.
 2. Read a sample of training images with vision; reject blurry, tiny, duplicated, or off-style inputs.
 3. If local, upload or ensure each training image has a reachable HTTPS URL.
 4. Validate URL reachability with `curl -sfI` where possible.
-5. Submit training through the Krea HTTP API; CLI/MCP may not expose training.
-6. Poll every 30-60 seconds using `../references/progress-reporting.md`.
-7. On completion, capture `style_id` and trigger word.
-8. Resolve a style-aware image model from live `list_models` and inspect schema for the exact style field, such as `style_id`, MCP `styleId`, or `styles`.
-9. Generate 3-5 samples using the new style at strength ~0.85.
-10. Suggest pinning the style ID in `KREA_PREFERENCES.md` if the user will reuse it.
+5. Discover or verify the current supported training base models from Krea's live training API/docs before submitting. Do not use a remembered training model id.
+6. Submit training through the Krea HTTP API; CLI/MCP may not expose training.
+7. Poll every 30-60 seconds using `../references/progress-reporting.md`.
+8. On completion, capture `style_id` and trigger word.
+9. Resolve a style-aware image model from live `list_models` and inspect schema for the exact style field, such as `style_id`, MCP `styleId`, or `styles`.
+10. Generate 3-5 samples using the new style at strength ~0.85.
 11. **Deliver** style ID, trigger word, sample outputs, and QA notes.
 
 ### Direct API training
@@ -41,7 +41,7 @@ JOB=$(curl -sf -X POST https://api.krea.ai/styles/train \
   -H "Authorization: Bearer $KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "flux_dev",
+    "model": "<verified-training-base-model>",
     "type": "Style",
     "name": "<style-name>",
     "urls": ["https://cdn/image-01.jpg", "https://cdn/image-02.jpg"],

@@ -10,7 +10,7 @@ Use when the user provides one still image, one keyframe, one character pose, on
 2. Ask only for missing high-impact choices: duration, aspect, motion, audio, and final vs test.
 3. Run cost preflight before video.
 4. Upload the still if it is local. Store the URL in the project or response.
-5. Use `krea models list --json` and `krea models show <video-model> --json`.
+5. List live models and inspect the selected video model schema through the available Krea surface.
 6. Write a motion-only prompt:
    - The still defines the subject and composition.
    - The prompt defines camera, subject motion, atmosphere, timing, and what must not drift.

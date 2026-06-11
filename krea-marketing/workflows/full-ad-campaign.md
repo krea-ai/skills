@@ -28,33 +28,20 @@ Hard prescription. Follow in order.
 5. Extract product facts from the URL or user brief. Do not invent claims.
 6. Read product images with vision and identify product shape, materials, label, and brand palette.
 7. Confirm the extracted brief in one line before generating if a URL was used.
-8. Resolve live archetypes: `fast image draft`, `high-fidelity image`, `text in image / typography` if copy appears in image, and `faithful upscale` for winners.
-9. Generate cheap drafts by angle and format first, unless step 1 routed to a key-visual sheet or social storyboard gate.
+8. Resolve live marketing image candidates using the marketing image set in `../SKILL.md`: default `openai/gpt-image-2` (always first for copy-heavy images); for product/final stills, offer live Nano Banana 2 / Nano Banana Pro as alternatives and let the user choose. Use a live faithful upscale/enhance model only for user-approved winners that need resolution cleanup.
+9. Generate lightweight drafts by angle and format first, unless step 1 routed to a key-visual sheet or social storyboard gate.
 10. Read drafts with vision and reject outputs where product identity or claims are wrong.
 11. Show a contact sheet or labeled list; let the user pick winners for final render/upscale.
 12. Generate final winners through `product-photo-hero.md`, `product-photo-lifestyle.md`, `dtc-ad-templates.md`, `../../krea-generate/workflows/image-text-poster.md`, `key-visual-sheet.md`, or `social-video-short.md` as needed.
 13. **Deliver** organized outputs by platform, with QA notes and any unsupported claims removed.
 
-### CLI
+### CLI path
 
-```bash
-# After extracting and confirming brief:
-krea generate image -m "<fast-image-draft>" \
-  --aspect 9:16 \
-  -p "<product> TikTok draft, <angle>, preserving factual claims only" \
-  --wait -o ./draft-tiktok.png
+When using CLI, verify the surface with `../../krea-generate/references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
 
-# reference field name (image_url vs image_urls) comes from `krea models show <id>`
-krea generate image -m "<high-fidelity-image>" \
-  --aspect 16:9 \
-  -i image_url="$KREA_PRODUCT_REF_URL" \
-  -p "<approved hero angle final prompt>" \
-  --wait -o ./hero-final.png
-```
+### MCP path
 
-### MCP fallback
-
-Use MCP only if the CLI is unavailable. Run `list_models()`, inspect `get_model_schema(...)` for draft and final image models, then call `generate_image` with schema-verified campaign prompt, reference, aspect, quality, and resolution fields.
+When using MCP, use the available Krea tools to list models, inspect schema for draft and final image models, then call image generation with schema-verified campaign prompt, reference, aspect, quality, and resolution fields.
 
 ## Banned
 

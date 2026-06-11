@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.1
+
+- Added a Marketing Image Model Policy to `krea-marketing/SKILL.md`: the marketing image set is `openai/gpt-image-2` (default), live Nano Banana 2, and live Nano Banana Pro. `gpt-image-2` always comes first for text-heavy work (ad templates, key visuals, posters, exact copy, storyboard sheets); for product hero, lifestyle, marketplace, and final stills the agent names `gpt-image-2` as the default alongside the live Nano Banana option and lets the user choose. All marketing workflows now resolve image models through this policy.
+- Rewrote `krea-generate` model selection around pure live discovery: `model-catalog.md` archetypes no longer name model IDs or keyword-match on remembered names; `preferences.md` became a model-selection boundary (`KREA_PREFERENCES.md`/`CLAUDE.md` pins no longer override live discovery; explicit per-request user model picks are verified live); `cli-or-mcp.md` is now a surface availability gate with CLI and MCP as peers instead of a CLI-first command reference.
+- Replaced hardcoded CLI command examples across `krea-generate` and `krea-marketing` workflows with surface-agnostic CLI/MCP path guidance: discover command syntax from the installed CLI help or connected MCP tool schemas, and treat command shapes from memory or old transcripts as stale.
+- Added `krea-generate/references/models/krea-2.md`: Krea 2 live-schema field notes (aspect_ratio, resolution, creativity, intensity, complexity, image_style_references, styles, moodboards), authenticated moodboard discovery rules, moodboard strength guidance, and QA notes. Wired from `SKILL.md`, `model-catalog.md`, and `troubleshooting.md`.
+- `krea-animation`: switched skill rules and `references/krea-model-strategy.md` to live model discovery; `scripts/submit_video_jobs.py` now resolves draft/final video models from the live catalog by capability keywords instead of hardcoded model lists, and exits with an explicit error when no live model matches.
+- `lora-train-and-use.md`: the training base model must be verified against Krea's live training API/docs instead of a hardcoded `flux_dev`; dropped the `KREA_PREFERENCES.md` style-pin suggestion.
+- README: prerequisites now present the authenticated CLI and connected MCP as peer surfaces; fixed the stale version badge.
+- Bumped synced package, plugin, marketplace, codex/cursor manifest, and skill versions to `0.5.1`.
+
 ## 0.5.0
 
 - Added a DTC static ad-format library to `krea-marketing`: `references/dtc-ad-formats.md` — 16 brand-agnostic, original ad-format templates (headline, offer, bundle, testimonial, press, UGC two-panel, spec callouts, benefits, comparison diptych, before/after, magazine, behind-the-product, manifesto, what's-in-the-box, organic, lifestyle-in-use), each with its required structural device, an art-direction treatment, and a placeholder prompt template organized by the existing static format families.

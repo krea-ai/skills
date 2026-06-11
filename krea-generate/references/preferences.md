@@ -1,49 +1,27 @@
-# Project Preferences
+# Model Selection Boundary
 
-Krea's model lineup changes fast and what's "best" depends on the project (architecture studio vs. boutique creative vs. enterprise marketing all want different defaults). To avoid hardcoding choices in this skill, projects can override defaults via a preferences file.
+`krea-generate` is the generic Krea skill. It must discover models from the live Krea catalog instead of maintaining project-level model recommendations.
 
-## Where preferences live
+## Rule
 
-The skill checks, in this order:
+For every generation task:
 
-1. `KREA_PREFERENCES.md` at the repository root
-2. A `## Krea preferences` H2 section inside the repo's `CLAUDE.md`
-3. A `## Krea preferences` H2 section inside the user-level `~/.claude/CLAUDE.md`
+1. List live models through the available Krea surface.
+2. Choose candidates by matching the user's intent against live model category, name, description, and capabilities.
+3. Inspect the chosen candidate's schema through the same surface.
+4. Submit only with fields present in that live schema.
 
-The first match wins.
+Do not read `KREA_PREFERENCES.md`, `CLAUDE.md`, user memory, or local project notes as generic model-selection overrides. Those files can describe the user's brief, style, or output constraints, but they do not replace live discovery.
 
-If none exist, the skill uses the archetype defaults in `model-catalog.md`.
+## Explicit User Model Requests
 
-## Format
+If the user names a model for the current request, treat that as an instruction for this request only:
 
-Free-form markdown with bullet points. The skill reads it as guidance, not as a structured config. Examples:
+1. Look for that model in live `list_models`.
+2. Confirm the schema supports the needed prompt, references, aspect, duration, resolution, or enhance fields.
+3. If it fits, use it.
+4. If it is unavailable or lacks required fields, explain the mismatch and select the nearest live alternative.
 
-```markdown
-## Krea preferences
+## Where Opinionated Model Preferences Belong
 
-- Default to `krea/krea-2/large` for flagship image generation
-- Use `bfl/flux-1-dev` only when the brief asks for cheap or fast drafts
-- For final image work, prefer `nano-banana-pro` over `gpt-image`
-- Use `seedance-2.0` for any cinematic / multi-shot video
-- For face animation, prefer Kling over Veo (Kling handles faces better in our tests)
-- Always check `topaz-standard-enhance` first for upscaling before reaching for generative variants
-- Stick to 16:9 aspect ratio unless the brief explicitly calls for vertical
-```
-
-## What the skill does with preferences
-
-1. When picking an archetype's candidate model, **honor explicit pins** in the preferences file. ("Default to X for Y" — use X for Y.)
-2. When the user gives a brief that the preferences don't cover, fall back to the archetype default in `model-catalog.md`.
-3. When the preferences and the user's explicit instruction conflict, the user wins. ("Use gpt-image for this one" overrides "prefer nano-banana-pro for final".)
-
-## Updating preferences
-
-A common pattern: one or two "champions" in a studio or org maintain the preferences file as new models ship. The skill doesn't auto-update it — that's intentional. The champion knows the team's taste; the skill doesn't.
-
-If you (the agent) repeatedly notice the user picking the same model for the same intent, you can offer once: *"I notice you keep choosing X for this kind of brief. Want me to pin that in `KREA_PREFERENCES.md`?"* — then stop and wait for an answer. Don't write the file unprompted.
-
-## When NOT to write preferences
-
-- Don't write a preferences file just to record what a one-off generation used.
-- Don't pin a model the user has only tried once.
-- Don't store user-specific secrets, API keys, or personal data here. Preferences are committed to the repo.
+Domain skills may be opinionated when the domain needs it. For example, marketing image preferences belong in `../krea-marketing/SKILL.md`, not here. Animation-specific model playbooks belong in `../krea-animation/` or in `references/models/` after a model has already been selected from live discovery.

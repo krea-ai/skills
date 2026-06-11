@@ -20,27 +20,20 @@ Hard prescription. Follow in order.
 
 1. Read any attached image with vision before routing.
 2. Load `../references/model-catalog.md` and resolve the `fast image draft` archetype from live `list_models`.
-3. Call `get_model_schema` or `krea models show` for the chosen model; confirm accepted aspect and prompt fields.
+3. Inspect the chosen model schema through the available Krea surface; confirm accepted aspect and prompt fields.
 4. Submit one draft first. Do not ask cost-preflight unless the estimated total is >100 CU.
 5. If the user asked for options, generate 2-4 cheap variations, not a premium batch.
 6. Download outputs locally and read them with vision.
 7. If the draft clearly misses the subject, retry once with a more literal prompt.
 8. Deliver with a one-line summary and saved path or URL.
 
-### CLI
+### CLI path
 
-```bash
-krea models list --json
-krea models show "<fast-image-draft>" --json
-krea generate image -m "<fast-image-draft>" \
-  --aspect 1:1 \
-  -p "<user brief, lightly tightened only if needed>" \
-  --wait -o ./draft.png
-```
+When using CLI, verify the surface with `../references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
 
-### MCP fallback
+### MCP path
 
-Use MCP only if the CLI is unavailable. Run `list_models()`, inspect `get_model_schema(...)`, then call `generate_image` with schema-verified prompt, aspect, size, and quality fields.
+When using MCP, use the available Krea tools to list models, inspect the selected model schema, then call image generation with schema-verified prompt, aspect, size, and quality fields.
 
 ## Banned
 

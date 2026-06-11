@@ -66,8 +66,8 @@ URL=$(jq -r '.result.urls[0]' /tmp/result.json)
 
 Video job completion payloads return URLs at one of two paths depending on model + completion timing:
 
-- Most models (Seedance-2, Kling, Veo) terminal payload: `.result.urls[0]`
-- Some intermediate or older models: `.urls[0]` at top level
+- Most terminal payloads: `.result.urls[0]`
+- Some intermediate or older payloads: `.urls[0]` at top level
 
 Always use the defensive jq path:
 
@@ -75,7 +75,7 @@ Always use the defensive jq path:
 URL=$(echo "$JSON" | jq -r '.result.urls[0] // .urls[0]')
 ```
 
-If both return null, the job is either still processing OR shadow-failed (per `models/seedance-2.md` "Content-filter shadow-fail" — empty `result:{}` with `status:"completed"`). Distinguish by checking `.status` and `.result` separately.
+If both return null, the job is either still processing or completed without a usable result payload. Distinguish by checking `.status` and `.result` separately; for selected models with known empty-result behavior, load the relevant file in `models/` or `troubleshooting.md`.
 
 ## What goes in chat output
 

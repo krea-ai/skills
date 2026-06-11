@@ -32,7 +32,7 @@ Generate 2–3 sample images interactively. Show them in chat. Iterate on prompt
 ```
 User: "build me a moodboard of sci-fi cityscapes"
 Agent: "Let me generate 3 sample frames first so we can pick a direction."
-       -> uses krea-generate to run 3 CLI-first sample generations with varied prompts
+       -> uses krea-generate to run 3 sample generations with varied prompts through an available Krea surface
        → shows results to user
 User: "love the second one — go heavier on rain and night"
 Agent: → regenerates with refined prompts

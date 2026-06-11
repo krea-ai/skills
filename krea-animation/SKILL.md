@@ -1,5 +1,5 @@
 ---
-version: 0.5.0
+version: 0.5.1
 name: krea-animation
 description: "Professional AI animation and anime production workflows with Krea. Use for long-form animation, anime series, storyboard-to-video, shotlist-to-sequence, asset bibles, model sheets, keyframes, animatics, AI video clips, edit assembly, QA, retakes, and studio productivity workflows. For one-off generic image/video generation use krea-generate; for product/campaign/UGC marketing use krea-marketing; for app/API integration use krea-build."
 license: MIT
@@ -16,8 +16,8 @@ This skill is anime-first by default, but applies to any character, narrative, p
 1. Do not jump from idea to long video. First create or inspect the project bible, storyboard, and shot list.
 2. Do not animate unapproved characters, locations, keyframes, or shot prompts.
 3. Run cost preflight before any video, LoRA training, or large batch. Use `../krea-generate/references/cost-preflight.md`.
-4. Use the Krea CLI first. Run `krea doctor`, then `krea models list --json`, then `krea models show <model> --json` before relying on a model schema.
-5. Prefer live model archetypes over memory. Current defaults can prefer GPT Image 2 or Krea 2 for model sheets/keyframes and Seedance 2 for approved animation, but the live catalog is authoritative.
+4. Verify that either an authenticated Krea CLI or connected Krea MCP tools are available. Use `../krea-generate/references/cli-or-mcp.md`.
+5. Prefer live model discovery over memory. List models and inspect the selected model schema through the available surface before relying on any field or capability.
 6. Upload local references before generation. Keep Krea asset URLs in manifests.
 7. Video jobs are async. Poll and report progress using `../krea-generate/references/progress-reporting.md`.
 8. Normalize clips before assembly. Strip random per-clip audio unless the workflow explicitly asks to keep it.

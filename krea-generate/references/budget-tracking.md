@@ -18,7 +18,7 @@ Use this whenever a workflow spans multiple billable operations: narrative video
 - Every LoRA training run.
 - Every re-roll. Aborted (validation-rejected) submissions are not billed; do not count them.
 
-Uploads via `krea upload` and schema reads via `krea models show` are free.
+Uploads and schema reads are free.
 
 ## Where to read the cost
 

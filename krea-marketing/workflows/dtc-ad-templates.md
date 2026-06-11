@@ -35,9 +35,9 @@ Hard prescription. Follow in order.
    product, aspect, format count), show `N formats × per-image ≈ total CU` and a rough
    wall-clock, and wait for go.
 2. Verify the CLI (`../../krea-generate/references/cli-or-mcp.md`). Resolve a text-capable
-   image model **live** from `list_models` (see `../../krea-generate/references/model-catalog.md`).
+   model from the marketing image set in `../SKILL.md` **live** from `list_models`.
    Prefer `openai/gpt-image-2` when confirmed available (strong in-image text); otherwise
-   `google/nano-banana-pro`.
+   use live Nano Banana 2 if available, then Nano Banana Pro.
 3. Read the product reference with vision: shape, materials, label, colour, proportions —
    so you can judge fidelity later.
 4. **Upload the reference once**: `krea upload <image> --json` → capture the asset URL;
@@ -54,8 +54,8 @@ Hard prescription. Follow in order.
    - `openai/gpt-image-2`: pass explicit `--width/--height` in **multiples of 16**, and run
      **async** — submit with `--json`, capture `job_id`, `krea jobs wait <job_id> --json`,
      download `result.urls[0]`. Synchronous `--wait` on this model hits a Cloudflare **524**.
-   - `google/nano-banana-pro` (and similar): pass `-i aspect_ratio={{aspect}}`; `--wait -o`
-     is fine.
+   - Nano Banana 2 / Nano Banana Pro (schema permitting): pass the live schema's
+     aspect or size fields; `--wait -o` is fine when the model completes inside the CLI wait cap.
    - Retry transient `502`/`524`/empty-job-id with backoff. Skip a format whose file already
      exists (resumable).
 8. **Vision-QA each output against its structural device** (`../../krea-generate/references/vision-qa.md`).
@@ -68,30 +68,16 @@ Hard prescription. Follow in order.
    `./dtc-ads/comparison-diptych.png`), with a short QA note per image and any unsupported
    copy removed. Offer one-lever variants on request.
 
-### CLI
+### CLI path
 
-```bash
-# 1) upload the product reference once
-REF=$(krea upload ./product.png --json | jq -r '.url // .image_url // .assetUrl')
+When using CLI, verify the surface with `../../krea-generate/references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
 
-# 2a) gpt-image-2 — multiples of 16 + async (avoids Cloudflare 524)
-JID=$(krea generate image -m openai/gpt-image-2 \
-  -i image_urls="[\"$REF\"]" --width 1024 --height 1280 \
-  -p "<filled comparison-diptych prompt + tail>" --json | jq -r '.job_id')
-URL=$(krea jobs wait "$JID" --json --timeout 600 | jq -r '.result.urls[0]')
-curl -fsSL "$URL" -o ./comparison-diptych.png
+### MCP path
 
-# 2b) nano-banana-pro — aspect_ratio, synchronous is fine
-krea generate image -m google/nano-banana-pro \
-  -i image_urls="[\"$REF\"]" -i aspect_ratio=4:5 \
-  -p "<filled headline-hero prompt + tail>" --wait -o ./headline-hero.png
-```
-
-### MCP fallback
-
-Use MCP only if the CLI is unavailable. `list_models()`, `get_model_schema(<model>)` to
-confirm the image-input field and size/aspect params, then `generate_image(...)` with the
-schema-verified prompt, reference, and dimensions; poll with `get_job(...)` for slow models.
+When using MCP, use the available Krea tools to list models and inspect the selected model
+schema to confirm the image-input field and size/aspect params, then call image generation
+with the schema-verified prompt, reference, and dimensions; poll slow jobs with the available
+job-status tool.
 
 ## Banned
 
