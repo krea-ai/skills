@@ -15,11 +15,11 @@ from typing import Any
 
 
 PLUGIN_NAME = "krea"
-DEFAULT_OUTPUT = Path("codex-plugin/dist/krea-codex-plugin.zip")
+DEFAULT_OUTPUT = Path(".codex-plugin/dist/krea-codex-plugin.zip")
 SOURCE_MANIFEST = Path(".codex-plugin/plugin.json")
-OVERRIDES_PATH = Path("codex-plugin/plugin-overrides.json")
-MCP_SOURCE = Path("codex-plugin/.mcp.json")
-ASSETS_SOURCE = Path("codex-plugin/assets")
+OVERRIDES_PATH = Path(".codex-plugin/plugin-overrides.json")
+MCP_SOURCE = Path(".codex-plugin/.mcp.json")
+ASSETS_SOURCE = Path(".codex-plugin/assets")
 SKILLS_DEST = Path("skills")
 
 SKIP_DIRS = {
@@ -183,7 +183,7 @@ def copy_assets(repo_root: Path, staging_root: Path) -> None:
     if not source_root.is_dir():
         return
     for source in sorted(source_root.rglob("*")):
-        if not source.is_file() or should_skip_asset_file(source):
+        if not source.is_file() or should_skip_asset_file(source, source_root):
             continue
         relative = source.relative_to(source_root)
         target = staging_root / "assets" / relative
@@ -261,10 +261,11 @@ def should_skip_file(path: Path, root: Path) -> bool:
     return any(part in SKIP_DIRS for part in relative.parts)
 
 
-def should_skip_asset_file(path: Path) -> bool:
+def should_skip_asset_file(path: Path, source_root: Path) -> bool:
+    relative = path.relative_to(source_root)
     if path.name.startswith(".") or path.suffix.lower() in SKIP_SUFFIXES:
         return True
-    return any(part.startswith(".") or part == "__pycache__" for part in path.parts)
+    return any(part.startswith(".") or part == "__pycache__" for part in relative.parts)
 
 
 def validate_plugin_root(staging_root: Path) -> None:
