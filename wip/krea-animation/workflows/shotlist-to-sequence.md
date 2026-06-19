@@ -8,7 +8,7 @@ Use when a storyboard and shot list are approved and the user wants to generate 
 
 1. Run `scripts/validate_project.py <project>`. Fix blocking errors before spending credits.
 2. Run cost preflight. Estimate approved shot count, seconds per shot, model family, resolution, and retry budget.
-3. Resolve the live model with `../references/krea-model-strategy.md`. If the chosen model is Seedance-style, also load `../../krea-generate/references/models/seedance-2.md`.
+3. Resolve the live model with `../references/krea-model-strategy.md`. If the chosen model is Seedance-style, also load `../../../krea-generate/references/models/seedance-2.md`.
 4. Run `scripts/build_manifests.py <project>` to produce video job and edit manifests.
 5. Dry-run submission:
    ```bash

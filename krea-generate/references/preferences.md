@@ -24,4 +24,4 @@ If the user names a model for the current request, treat that as an instruction 
 
 ## Where Opinionated Model Preferences Belong
 
-Domain skills may be opinionated when the domain needs it. For example, marketing image preferences belong in `../krea-marketing/SKILL.md`, not here. Animation-specific model playbooks belong in `../krea-animation/` or in `references/models/` after a model has already been selected from live discovery.
+Domain skills may be opinionated when the domain needs it. For example, marketing image preferences belong in `../krea-marketing/SKILL.md`, not here. Animation-specific model playbooks belong in `references/models/` after a model has already been selected from live discovery.
