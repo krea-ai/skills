@@ -4,7 +4,7 @@ When a user says one of these words, they may mean different artifacts. Disambig
 
 ## Storyboard
 
-- **Film pre-vis**: temporal sequence of frames at t=0, t=3s, t=7s, etc.; 4-32 panels, action labels, frame numbers. Route social ads to `../workflows/social-video-short.md`; route narrative/animation to `../../krea-animation/SKILL.md`.
+- **Film pre-vis**: temporal sequence of frames at t=0, t=3s, t=7s, etc.; 4-32 panels, action labels, frame numbers. Route social ads to `../workflows/social-video-short.md`; for narrative animation, ask whether to simplify into a marketing storyboard or provide an external production workflow.
 - **Campaign key-visual sheet**: hero headline plus a finished grid of product shots, brand graphics, and footer caption; often doubles as approval brief. Common in CPG, FMCG, and agency work. Route to `../workflows/key-visual-sheet.md`.
 - **Product/UI flow**: screen-to-screen or step-to-step mockups. Ask for the expected medium and reference before routing.
 
