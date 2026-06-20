@@ -1,7 +1,7 @@
 {
   "name": "krea",
   "version": "0.5.2",
-  "description": "Use Krea's creative AI suite to generate, edit, enhance, animate, and produce visual work across Krea models.",
+  "description": "Use Krea's creative AI suite to generate, edit, enhance, and produce visual work across Krea models.",
   "author": {
     "name": "Krea",
     "url": "https://krea.ai"
@@ -27,7 +27,7 @@
   "interface": {
     "displayName": "Krea",
     "shortDescription": "Generate, enhance, and edit images and videos with Krea.",
-    "longDescription": "This plugin turns Codex into an open-ended Krea creative agent: describe what you want to make, improve, restyle, animate, upscale, adapt for marketing, or turn into a production workflow, and the agent routes the task through the right Krea surface and available models. Use it for quick image and video generation, generative editing, realtime exploration, high-resolution enhancement, LoRA/custom model workflows, product and campaign creative, architecture and interior visualization, storyboards, animation planning, multi-step creative production, and more.",
+    "longDescription": "This plugin turns Codex into an open-ended Krea creative agent: describe what you want to make, improve, restyle, upscale, adapt for marketing, or turn into a visual workflow, and the agent routes the task through the right Krea surface and available models. Use it for quick image and video generation, generative editing, realtime exploration, high-resolution enhancement, LoRA/custom model workflows, product and campaign creative, architecture and interior visualization, and more.",
     "developerName": "Krea AI, Inc.",
     "category": "Creativity",
     "capabilities": [
@@ -37,7 +37,7 @@
     "websiteURL": "https://krea.ai",
     "defaultPrompt": [
       "Generate 20 variations of my product in different studio backgrounds and angles",
-      "Make a storyboard based on this character and script, then animate it",
+      "Make a 5-second product teaser from this reference image",
       "Upscale this image with your top 5 enhancers and let me compare the results"
     ]
   }

@@ -18,7 +18,7 @@ Use this skill when the user is:
 
 ## Self-update check (opt-in)
 
-Once per session, if sibling `../krea-generate/scripts/update-check.sh` exists, run it. Prints `UPGRADE_AVAILABLE <local> <remote>` if a newer version is out. Surface that to the user once, then continue. Snoozes 24h→48h→7d. Disable with `touch ~/.krea-skills/update-check-disabled`.
+Once per session, if sibling `../../krea-generate/scripts/update-check.sh` exists, run it. Prints `UPGRADE_AVAILABLE <local> <remote>` if a newer version is out. Surface that to the user once, then continue. Snoozes 24h→48h→7d. Disable with `touch ~/.krea-skills/update-check-disabled`.
 
 ## When to use this skill vs. sibling skills
 
