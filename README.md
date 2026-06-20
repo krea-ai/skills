@@ -2,17 +2,18 @@
 
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![version](https://img.shields.io/badge/version-0.5.2-green.svg)](VERSION)
-[![skills](https://img.shields.io/badge/skills-4-purple.svg)](#install-the-skills)
+[![skills](https://img.shields.io/badge/skills-3-purple.svg)](#install-the-skills)
 [![discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.com/invite/krea-1002244500581798028)
 
-Four Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get the full Krea skill suite.
+Three packaged Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get the Krea skill suite.
 
 | Skill | When to use |
 |---|---|
+| **`krea-core`** | Shared Krea agent contract and router. Use first to apply Krea tone, fast-path simple generation, and route to generation or marketing workflows. |
 | **`krea-generate`** | Canonical generic-generation router. Image, video primitives, enhancement, edits, LoRA, portraits, text/poster work, and archviz through whichever Krea surface is available: authenticated CLI or connected MCP. |
 | **`krea-marketing`** | Marketing creative workflow: product photoshoots, marketplace image sets, DTC static ad templates (one product photo → a library of on-brand ad formats), key visuals, UGC/social ads, campaign packs, and optional Meta Ads CLI/MCP performance context. |
-| **`krea-animation`** | Professional animation and anime production workflow: asset bibles, model sheets, storyboards, shot lists, Krea video jobs, edit assembly, QA, and retakes. |
-| **`krea-build`** | Patterns for developers writing apps that integrate the Krea API: auth, polling, error handling, validation, frontend snippets for SvelteKit / React / Vue. Also the place to generate repeatable pipeline scripts in the user's own stack. |
+
+Experimental animation and app-integration material lives under `wip/` and is not installed or packaged by default.
 
 Works with Claude Code, Cursor, Codex, Windsurf, OpenCode, Gemini CLI, OpenClaw, and any agent that picks up `~/.<agent>/skills/<name>/SKILL.md`.
 
@@ -22,7 +23,7 @@ Works with Claude Code, Cursor, Codex, Windsurf, OpenCode, Gemini CLI, OpenClaw,
 npx skills add krea-ai/skills
 ```
 
-Installs all four skills. This is the supported install path across agents that use skill packages.
+Installs the packaged skills. This is the supported install path across agents that use skill packages.
 
 ## Prerequisites — one of these
 
@@ -69,22 +70,6 @@ These route through `krea-generate/workflows/archviz-3d-to-render.md` for struct
 ```
 
 These trigger `krea-marketing`. The agent starts with a compact creative intake. For paid-social, performance, campaign-analysis, catalog-performance, or activation work, it asks whether to connect Meta Ads CLI/MCP for better performance context; otherwise it proceeds Krea-only from product refs, brand refs, and goals. Any live launch, budget, status, catalog, or publishing change stays gated and paused/draft by default unless explicitly approved.
-
-```
-> Help me make an anime pilot from scratch with AI.
-> Turn this approved storyboard into a shotlist and Krea video sequence.
-> Set up an asset bible, character model sheets, retake log, and final edit for a 60s animated short.
-```
-
-These trigger `krea-animation` - the studio-style animation pipeline. It enforces asset sheets, storyboards, shot approval, generated clips, edit assembly, QA frames, and retakes before final delivery.
-
-```
-> Help me add a Krea image generator to my SvelteKit app.
-> Set up server-side polling for video generation in my Next.js app.
-> Give me a repeatable pipeline script for my product launch workflow.
-```
-
-These trigger `krea-build` - developer-focused integration patterns. The agent generates code in your stack (TypeScript, Python, Bash - whatever fits).
 
 ## Updates
 

@@ -1,7 +1,7 @@
 ---
 version: 0.5.2
 name: krea-core
-description: "Shared Krea agent contract and router. Use first for Krea tasks to apply Krea's core tone, avoid overthinking simple generation requests, and route to krea-generate, krea-marketing, krea-animation, or krea-build."
+description: "Shared Krea agent contract and router. Use first for Krea tasks to apply Krea's core tone, avoid overthinking simple generation requests, and route to krea-generate or krea-marketing."
 license: MIT
 ---
 
@@ -24,9 +24,7 @@ Use deeper workflow skills only when the task is multi-step, domain-specific, ex
 
 ## Skill Routing
 
-- Generic image/video/edit/enhance/LoRA/portrait/archviz: `../krea-generate/SKILL.md`
+- Generic image/video/edit/enhance/LoRA/portrait/archviz and one-off animation prompts: `../krea-generate/SKILL.md`
 - Product photos, ads, campaigns, UGC, marketplace, paid-social creative: `../krea-marketing/SKILL.md`
-- Animation, anime, storyboards, shot lists, continuity, retakes: `../krea-animation/SKILL.md`
-- Apps, API clients, frontend integrations, production pipelines: `../krea-build/SKILL.md`
 
 When a domain skill applies, load it and follow it. Otherwise use `krea-generate`.

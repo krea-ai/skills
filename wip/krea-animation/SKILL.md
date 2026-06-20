@@ -15,11 +15,11 @@ This skill is anime-first by default, but applies to any character, narrative, p
 
 1. Do not jump from idea to long video. First create or inspect the project bible, storyboard, and shot list.
 2. Do not animate unapproved characters, locations, keyframes, or shot prompts.
-3. Run cost preflight before any video, LoRA training, or large batch. Use `../krea-generate/references/cost-preflight.md`.
-4. Verify that either an authenticated Krea CLI or connected Krea MCP tools are available. Use `../krea-generate/references/cli-or-mcp.md`.
+3. Run cost preflight before any video, LoRA training, or large batch. Use `../../krea-generate/references/cost-preflight.md`.
+4. Verify that either an authenticated Krea CLI or connected Krea MCP tools are available. Use `../../krea-generate/references/cli-or-mcp.md`.
 5. Prefer live model discovery over memory. List models and inspect the selected model schema through the available surface before relying on any field or capability.
 6. Upload local references before generation. Keep Krea asset URLs in manifests.
-7. Video jobs are async. Poll and report progress using `../krea-generate/references/progress-reporting.md`.
+7. Video jobs are async. Poll and report progress using `../../krea-generate/references/progress-reporting.md`.
 8. Normalize clips before assembly. Strip random per-clip audio unless the workflow explicitly asks to keep it.
 9. Sample frames and review continuity before delivery. If a shot fails, log a retake instead of pretending it is acceptable.
 10. Do not commit copyrighted references or generated run media into this skills repo.
@@ -76,11 +76,11 @@ Load only what the active workflow needs:
 
 Reuse sibling Krea references instead of duplicating them:
 
-- `../krea-generate/references/cli-or-mcp.md`
-- `../krea-generate/references/media-inputs.md`
-- `../krea-generate/references/async-polling.md`
-- `../krea-generate/references/progress-reporting.md`
-- `../krea-generate/references/troubleshooting.md`
+- `../../krea-generate/references/cli-or-mcp.md`
+- `../../krea-generate/references/media-inputs.md`
+- `../../krea-generate/references/async-polling.md`
+- `../../krea-generate/references/progress-reporting.md`
+- `../../krea-generate/references/troubleshooting.md`
 
 ## Scripts
 

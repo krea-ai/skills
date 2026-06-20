@@ -1,7 +1,7 @@
 ---
 version: 0.5.2
 name: krea-marketing
-description: "Marketing and paid-social creative workflows with Krea. Before acting, ensure you have read krea-core/SKILL.md. Use for product photoshoots, marketplace cards, DTC static ad templates, campaign key visuals, UGC/social ads, product URL to creative, ad storyboards, social packs, product launches, Meta Ads performance-informed creative planning, and gated Meta Ads activation. For generic media generation use krea-generate; for professional animation use krea-animation; for app/API integration use krea-build."
+description: "Marketing and paid-social creative workflows with Krea. Before acting, ensure you have read krea-core/SKILL.md. Use for product photoshoots, marketplace cards, DTC static ad templates, campaign key visuals, UGC/social ads, product URL to creative, ad storyboards, social packs, product launches, Meta Ads performance-informed creative planning, and gated Meta Ads activation. For generic media generation use krea-generate."
 license: MIT
 ---
 
@@ -57,7 +57,7 @@ This policy is for image generation. Resolve video models separately from live `
 | DTC static ad templates / ad format library / N on-brand static ads from one product photo | `workflows/dtc-ad-templates.md` |
 | Meta account analysis, creative performance readout, campaign draft/activation | `workflows/meta-ads-performance.md` |
 
-If the user asks for a non-marketing image/video, use `../krea-generate/SKILL.md`. If they ask for anime, long-form animation, shotlists, or retakes, use `../krea-animation/SKILL.md`; designed motion-graphics composition inside launch work (typography, beat-synced cuts, overlays) routes through the `hyperframes` skill, which `workflows/launch-teaser.md` references the same way multi-shot narrative references krea-animation. If they ask to build a marketing app/tool, use `../krea-build/SKILL.md` and this skill as the creative workflow contract.
+If the user asks for a non-marketing image/video, use `../krea-generate/SKILL.md`. Designed motion-graphics composition inside launch work (typography, beat-synced cuts, overlays) routes through `workflows/launch-teaser.md`. If they ask to build a marketing app/tool, provide the creative workflow contract here and keep implementation guidance scoped to the user's existing stack.
 
 ## References
 
