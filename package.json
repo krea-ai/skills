@@ -1,7 +1,7 @@
 {
   "name": "krea-skills",
   "version": "0.5.2",
-  "description": "Four Agent Skills for Krea.ai: generation, marketing creative, professional animation production, and developer integration patterns.",
+  "description": "Krea.ai agent skills for shared routing, generation, and marketing creative workflows.",
   "keywords": ["agent-skill", "krea", "image-generation", "video-generation", "ai-art", "lora", "mcp", "archviz", "marketing", "meta-ads", "marketplace", "product-photography", "animation", "anime", "storyboard"],
   "author": "Krea AI",
   "license": "MIT",
@@ -9,11 +9,13 @@
     "type": "git",
     "url": "https://github.com/krea-ai/skills.git"
   },
+  "scripts": {
+    "build:codex-plugin": "python3 .codex-plugin/build.py"
+  },
   "files": [
+    "krea-core/",
     "krea-generate/",
     "krea-marketing/",
-    "krea-animation/",
-    "krea-build/",
     "evals/",
     "scripts/",
     ".claude-plugin/",

@@ -1,15 +1,13 @@
 ---
 version: 0.5.2
 name: krea-generate
-description: "Generate and transform media through Krea. Use for generic image generation, generic short video, image editing, enhancement/upscale, LoRA training, portraits, text-heavy images, and architectural visualization from 3D/CAD screenshots. For product, campaign, UGC, marketplace, or paid-social creative use krea-marketing. For professional animation, anime, storyboards, shotlists, and retakes use krea-animation. For app/API integration use krea-build."
+description: "Generate and transform media through Krea. Before acting, ensure you have read krea-core/SKILL.md. Use for generic image generation, generic short video, image editing, enhancement/upscale, LoRA training, portraits, text-heavy images, and architectural visualization from 3D/CAD screenshots. For product, campaign, UGC, marketplace, or paid-social creative use krea-marketing."
 license: MIT
 ---
 
 # Krea Generate - Media Generation
 
-Use Krea through whichever supported surface is available: an authenticated Krea CLI or connected Krea MCP tools. This skill handles Krea generation primitives and non-marketing creative workflows. It is not the marketing router and not the animation production router.
-
-For developers building apps that call Krea programmatically, use `../krea-build/SKILL.md`.
+Use Krea through whichever supported surface is available: an authenticated Krea CLI or connected Krea MCP tools. This skill handles Krea generation primitives and non-marketing creative workflows. It is not the marketing router and does not provide the experimental WIP production pipelines.
 
 ## Bootstrap
 
@@ -58,9 +56,8 @@ Surface `UPGRADE_AVAILABLE` or `JUST_UPGRADED` once; otherwise stay quiet.
 | creative enhance / relight / faithful restyle | `workflows/enhance-creative.md` |
 | train a LoRA / fine-tune on these images | `workflows/lora-train-and-use.md` |
 | product photo / campaign / ad / UGC / key visual / marketplace card / paid social | use `../krea-marketing/SKILL.md` |
-| professional animation / anime / storyboard-to-video / shotlist / retakes | use `../krea-animation/SKILL.md` |
 
-Never submit a video generation job without loading a workflow. For marketing video, route to `krea-marketing`; for production animation or storyboarded narrative, route to `krea-animation`.
+Never submit a video generation job without loading a workflow. For marketing video, route to `krea-marketing`; for non-marketing short video, use `workflows/video-generic-short.md`.
 
 ## References
 
@@ -82,8 +79,6 @@ Load only what the active workflow needs:
 ## Related Skills
 
 - `../krea-marketing/SKILL.md` - product photos, marketplace cards, campaigns, UGC/social ads, Meta Ads CLI/MCP performance context, and paid-social activation.
-- `../krea-animation/SKILL.md` - studio-style animation production, anime, shotlists, keyframes, generated clips, edit assembly, QA, and retakes.
-- `../krea-build/SKILL.md` - API clients, frontend snippets, validation, and repeatable app code.
 
 ## Filename Pattern
 

@@ -8,9 +8,14 @@
     {
       "name": "krea",
       "source": "./",
-      "description": "Four Krea skills: generation workflows, marketing creative, professional animation production, and developer integration patterns.",
+      "description": "Krea skills: shared routing, generation workflows, and marketing creative.",
       "version": "0.5.2",
       "skills": [
+        {
+          "name": "core",
+          "path": "krea-core",
+          "invoke": "/krea:core"
+        },
         {
           "name": "generate",
           "path": "krea-generate",
@@ -20,16 +25,6 @@
           "name": "marketing",
           "path": "krea-marketing",
           "invoke": "/krea:marketing"
-        },
-        {
-          "name": "animation",
-          "path": "krea-animation",
-          "invoke": "/krea:animation"
-        },
-        {
-          "name": "build",
-          "path": "krea-build",
-          "invoke": "/krea:build"
         }
       ]
     }
