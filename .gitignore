@@ -5,6 +5,7 @@ __pycache__/
 .pipeline-state.json
 node_modules/
 clawhub/
+.codex-plugin/dist/
 
 # Internal research dumps (competitor recon, scratch). Never publish.
 research/

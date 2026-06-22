@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      issues: write
       pull-requests: write
       id-token: write
     steps:
@@ -19,6 +20,7 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ github.token }}
           track_progress: true
           use_sticky_comment: true
           prompt: |
@@ -29,7 +31,7 @@ jobs:
             This repo ships skill packages consumed by Claude Code, Codex, and Cursor as plugins.
 
             Repository conventions to keep in mind:
-            - The public skill surface is `krea-generate` for generic generation workflows, `krea-marketing` for product/campaign/paid-social workflows, `krea-animation` for studio animation workflows, and `krea-build` for developer integration. Each ships a `SKILL.md` whose frontmatter must be valid and version-synced with `VERSION`, `package.json`, and the plugin manifests under `.claude-plugin/`, `.codex-plugin/`, and `.cursor-plugin/`.
+            - The public skill surface is `krea-core` for shared routing/tone, `krea-generate` for generic generation workflows, and `krea-marketing` for product/campaign/paid-social workflows. Experimental `krea-animation` and `krea-build` material lives under `wip/` and is not packaged by default.
             - `validate.yml` already enforces frontmatter, JSON validity, version sync, and the `update-check.sh` smoke test. Flag any change that would break those checks.
             - Skill prose is the product. Treat instructions, examples, and triggers as code: ambiguity, contradictions, or stale model/tool names are real bugs.
             - Relative references between skills (e.g. `../krea-generate/...`) must resolve. Call out broken links, missing referenced files, or examples that point at non-existent paths.

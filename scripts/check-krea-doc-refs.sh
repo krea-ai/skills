@@ -8,6 +8,20 @@ cd "$ROOT"
 fail=0
 pattern='((\.\./)+)?([A-Za-z0-9_-]+/)?(references|workflows)/[A-Za-z0-9_./-]+\.md'
 
+targets=()
+for root in krea-core krea-generate krea-marketing wip; do
+  if [ -e "$root" ]; then
+    while IFS= read -r file; do
+      targets+=("$file")
+    done < <(find "$root" -type f -name '*.md' | sort)
+  fi
+done
+
+if [ "${#targets[@]}" -eq 0 ]; then
+  echo "No markdown docs found"
+  exit 0
+fi
+
 while IFS=: read -r file line text; do
   while IFS= read -r ref; do
     [ -z "$ref" ] && continue
@@ -20,10 +34,6 @@ while IFS=: read -r file line text; do
       fail=1
     fi
   done < <(printf '%s\n' "$text" | rg -No "$pattern")
-done < <(rg -n "$pattern" \
-  krea-generate/SKILL.md krea-generate/workflows krea-generate/references \
-  krea-marketing/SKILL.md krea-marketing/workflows krea-marketing/references \
-  krea-animation/SKILL.md krea-animation/workflows krea-animation/references \
-  krea-build/SKILL.md krea-build/references)
+done < <(rg -n "$pattern" "${targets[@]}")
 
 exit "$fail"

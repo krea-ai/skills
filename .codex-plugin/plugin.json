@@ -1,9 +1,9 @@
 {
   "name": "krea",
   "version": "0.5.2",
-  "description": "Four Krea skills: generation workflows, marketing creative, professional animation production, and developer integration patterns.",
+  "description": "Use Krea's creative AI suite to generate, edit, enhance, and produce visual work across Krea models.",
   "author": {
-    "name": "Krea AI",
+    "name": "Krea",
     "url": "https://krea.ai"
   },
   "homepage": "https://krea.ai",
@@ -25,22 +25,20 @@
   ],
   "skills": "./",
   "interface": {
-    "displayName": "Krea AI",
-    "shortDescription": "Generate, market, animate, and build with Krea workflow skills.",
-    "longDescription": "Krea AI Skills turn your agent into a Krea-native creative collaborator. krea-generate is the canonical router for generic image, video, edit, enhancement, LoRA, portrait, text-poster, and archviz workflows. krea-marketing handles product photography, marketplace image sets, key visuals, UGC/social ads, campaign packs, and optional Meta Ads CLI/MCP performance context. krea-animation adds studio-style animation production with asset bibles, storyboards, shot lists, generated clips, edit assembly, QA, and retakes. krea-build helps developers integrate Krea into their own applications.",
-    "developerName": "Krea AI",
-    "category": "Design",
+    "displayName": "Krea",
+    "shortDescription": "Generate, enhance, and edit images and videos with Krea.",
+    "longDescription": "This plugin turns Codex into an open-ended Krea creative agent: describe what you want to make, improve, restyle, upscale, adapt for marketing, or turn into a visual workflow, and the agent routes the task through the right Krea surface and available models. Use it for quick image and video generation, generative editing, realtime exploration, high-resolution enhancement, LoRA/custom model workflows, product and campaign creative, architecture and interior visualization, and more.",
+    "developerName": "Krea AI, Inc.",
+    "category": "Creativity",
     "capabilities": [
       "Read",
       "Write"
     ],
     "websiteURL": "https://krea.ai",
     "defaultPrompt": [
-      "Generate an image of a cyberpunk cat at golden hour",
-      "Render this Sketchup screenshot in photoreal evening light",
-      "Create a marketplace image set and Meta-informed ad variants for this product",
-      "Create an anime pilot workflow from this story idea",
-      "Help me integrate Krea image generation into my SvelteKit app"
+      "Generate 20 variations of my product in different studio backgrounds and angles",
+      "Make a 5-second product teaser from this reference image",
+      "Upscale this image with your top 5 enhancers and let me compare the results"
     ]
   }
 }

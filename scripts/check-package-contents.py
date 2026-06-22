@@ -21,12 +21,11 @@ DENY_SUFFIXES = {
 
 DENY_PARTS = {"__pycache__", "runs", "research", "node_modules"}
 REQUIRED_SKILL_DIRS = {
+    "krea-core",
     "krea-generate",
     "krea-marketing",
-    "krea-animation",
-    "krea-build",
 }
-FORBIDDEN_PREFIXES = {"krea-ai/"}
+FORBIDDEN_PREFIXES = {"krea-ai/", "wip/"}
 
 
 def main() -> int:
