@@ -22,20 +22,16 @@ Hard prescription. Follow in order.
 1. Read the source image with vision and state the edit target internally.
 2. Resolve the `image-to-image / face reference` archetype from live `list_models`.
 3. Inspect schema for `image_url` versus `image_urls` or MCP equivalents, edit strength, mask, or preservation fields.
-4. Upload local input to Krea. If the source is an external URL, download it first, then `krea upload` the downloaded file so the generation input uses a Krea-hosted URL.
+4. Upload local input to Krea through MCP. If the source is an external URL, download it first, then use MCP upload so the generation input uses a Krea-hosted URL.
 5. Prompt the change, not a full re-description of the source: "change X to Y, preserve A/B/C".
 6. Generate one edited candidate.
 7. Read output with vision and compare against the source.
 8. If preservation failed, retry once with stronger preservation language or a lower edit strength.
 9. Deliver with a one-line summary and QA notes.
 
-### CLI path
-
-When using CLI, verify the surface with `../references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
-
 ### MCP path
 
-When using MCP, use the available Krea tools to upload local inputs, list models, inspect the selected model schema, then call image generation with schema-verified prompt and reference fields.
+Use the available Krea MCP tools to upload local inputs, list models, inspect the selected model schema, then call image generation with schema-verified prompt and reference fields.
 
 ## Banned
 

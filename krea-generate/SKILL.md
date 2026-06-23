@@ -7,19 +7,13 @@ license: MIT
 
 # Krea Generate - Media Generation
 
-Use Krea through whichever supported surface is available: an authenticated Krea CLI or connected Krea MCP tools. This skill handles Krea generation primitives and non-marketing creative workflows. It is not the marketing router and does not provide the experimental WIP production pipelines.
+Use Krea through connected Krea MCP tools only. This skill handles Krea generation primitives and non-marketing creative workflows. It is not the marketing router and does not provide the experimental WIP production pipelines.
 
 ## Bootstrap
 
-Verify at least one Krea surface before generation. For CLI, check that `krea` exists and can reach the API:
+Verify Krea MCP tools are present in the current agent tool list before generation. If the MCP server or a required MCP capability is missing, stop and ask the user to connect or authenticate Krea MCP. Do not use non-MCP fallbacks.
 
-```bash
-command -v krea && krea doctor
-```
-
-For MCP, use the Krea tools only when they are present in the current agent tool list. If neither CLI nor MCP is available, ask the user to install/authenticate the CLI or connect MCP.
-
-When using CLI, discover command shapes from `krea --help` and subcommand help. When using MCP, use the tool schemas exposed in the current session.
+Use the tool schemas exposed in the current session. Do not invent MCP tool names or input fields.
 
 Before the first generation in a session, optionally run the passive update check only if this skill directory contains `scripts/update-check.sh`:
 
@@ -36,7 +30,7 @@ Surface `UPGRADE_AVAILABLE` or `JUST_UPGRADED` once; otherwise stay quiet.
 3. Vision-first. Read attached images before generating, and read generated stills/frames before approving or reusing them. Use `references/vision-qa.md`.
 4. For cheap images/enhance, pick the best live-discovered schema match. For video, training, batches, 4K, or >100 CU, run `references/cost-preflight.md`.
 5. Progress reporting is mandatory for async polling over 30 seconds. Use `references/progress-reporting.md`.
-6. Always list live models through the available surface before choosing a model, then inspect the selected model schema through that same surface. Do not choose from remembered model IDs or baked-in recommendations.
+6. Always list live models through Krea MCP before choosing a model, then inspect the selected model schema through Krea MCP. Do not choose from remembered model IDs or baked-in recommendations.
 7. Normalize generation references to Krea-hosted assets before generation. Local files and arbitrary external media URLs must be uploaded to Krea first; already-Krea asset URLs can be passed directly.
 8. Generic generation does not honor persistent model preference files. If the user explicitly names a model for the current request, verify it live and use it only if the schema fits.
 9. Do not pretend bad outputs are fine. Name the mismatch and offer a concrete retry path.
@@ -63,7 +57,7 @@ Never submit a video generation job without loading a workflow. For marketing vi
 
 Load only what the active workflow needs:
 
-- `references/cli-or-mcp.md` - verify that CLI or MCP is available; discover operation shape from the chosen surface.
+- `references/mcp-surface.md` - verify MCP availability and discover operation shape from the connected tools.
 - `references/model-catalog.md` - archetypes to resolve through live `list_models`.
 - `references/media-inputs.md` - uploads, local files, image refs, start/end frames.
 - `references/async-polling.md` - job lifecycle semantics.
@@ -73,12 +67,12 @@ Load only what the active workflow needs:
 - `references/cost-preflight.md` - approval before expensive operations.
 - `references/budget-tracking.md` - running CU tracker.
 - `references/progress-reporting.md` - mandatory pings during long async polling.
-- `references/troubleshooting.md` - known CLI/model issues and recovery.
+- `references/troubleshooting.md` - known MCP/model issues and recovery.
 - `references/models/` - per-model prompting playbooks. Load only after resolving that model; for resolved Krea 2 or any moodboard work - discovery, preset-gallery search, or moodboard-driven generation - load `references/models/krea-2.md`.
 
 ## Related Skills
 
-- `../krea-marketing/SKILL.md` - product photos, marketplace cards, campaigns, UGC/social ads, Meta Ads CLI/MCP performance context, and paid-social activation.
+- `../krea-marketing/SKILL.md` - product photos, marketplace cards, campaigns, UGC/social ads, Meta Ads performance context, and paid-social activation.
 
 ## Filename Pattern
 
