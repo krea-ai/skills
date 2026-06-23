@@ -3,7 +3,7 @@
 ## MCP tool missing
 
 ```
-ToolError: mcp__krea-public-api__... is not available
+ToolError: mcp__krea__... is not available
 ```
 
 The Krea MCP server isn't installed. Check whether an authenticated CLI is available with `command -v krea && krea doctor`. If CLI is healthy, use it. If neither CLI nor MCP is available, tell the user to install/authenticate the CLI or connect the MCP. Don't fall back to direct HTTP for normal generation; direct HTTP is only for documented custom workflows like LoRA training or user-provided app integration code.

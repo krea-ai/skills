@@ -39,7 +39,7 @@ krea auth login          # prompts for a Krea API key and stores it locally
 # If your agent has Krea MCP connected, the skills can use it directly.
 ```
 
-Verify the CLI path with `krea doctor`. For the MCP path, check your agent's MCP tool list for `mcp__krea-public-api__*` tools.
+Verify the CLI path with `krea doctor`. For the MCP path, check your agent's MCP tool list for `mcp__krea__*` tools.
 
 ## Use
 
