@@ -1,10 +1,8 @@
-# Meta Ads CLI And MCP
+# Meta Ads MCP
 
 Use this reference when a marketing user wants performance-informed creative planning, campaign analysis, catalog context, or Meta Ads activation.
 
-Official docs: <https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-cli/ads-cli-overview>
-
-The official docs are the source of truth. Meta Ads CLI/MCP is a fast-moving authenticated ads-ops surface, so verify command names and permissions live before using them.
+The connected Meta Ads MCP tools are the source of truth. Meta Ads is a fast-moving authenticated ads-ops surface, so verify tool names, schemas, and permissions live before using them.
 
 ## Role In This Skill
 
@@ -28,19 +26,18 @@ Use Meta Ads after creative only with approval:
 Ask this in the marketing intake when relevant:
 
 ```text
-Do you want me to connect Meta Ads CLI/MCP for performance context before creative planning? If yes, I will read account/campaign/catalog signals first. If not, I will proceed Krea-only from your product refs, brand refs, and goals.
+Do you want me to connect Meta Ads MCP for performance context before creative planning? If yes, I will read account/campaign/catalog signals first. If not, I will proceed Krea-only from your product refs, brand refs, and goals.
 ```
 
 ## Discovery
 
-Before any Meta command:
+Before any Meta call:
 
-1. Check whether a Meta Ads CLI command is available.
-2. Check whether a Meta Ads MCP connector is available.
-3. Read the tool help/list output.
-4. Confirm the selected ad account before reads or writes.
+1. Check whether a Meta Ads MCP connector is available.
+2. Read the exposed tool descriptions and schemas.
+3. Confirm the selected ad account before reads or writes.
 
-Do not guess command names from memory. If neither Meta surface is connected, continue Krea-only.
+Do not guess tool names from memory. If Meta MCP is not connected, continue Krea-only.
 
 ## Read-First Analysis
 

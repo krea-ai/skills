@@ -7,7 +7,7 @@ license: MIT
 
 # Krea Build — Integration Patterns for Developers
 
-This skill is for **building apps that integrate Krea**. Not for one-off generations — that's the sibling `krea-generate` skill, which uses whichever Krea surface is available: authenticated CLI or connected MCP tools.
+This skill is for **building apps that integrate Krea**. Not for one-off generations — that's the sibling `krea-generate` skill, which uses connected Krea MCP tools.
 
 Use this skill when the user is:
 

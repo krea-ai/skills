@@ -15,8 +15,8 @@ Ask once, skipping what is already clear:
 
 ## Recipe
 
-1. Load `../references/meta-ads-cli.md`.
-2. Verify Meta Ads CLI/MCP availability and read help/tool descriptions. Do not guess command names.
+1. Load `../references/meta-ads-mcp.md`.
+2. Verify Meta Ads MCP availability and read tool descriptions. Do not guess tool names.
 3. Confirm the selected ad account before reading data.
 4. For creative planning, read relevant performance/campaign/catalog context and produce:
    - winning pattern

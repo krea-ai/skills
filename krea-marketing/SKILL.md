@@ -7,7 +7,7 @@ license: MIT
 
 # Krea Marketing - Performance-Informed Creative
 
-Use this skill when the user wants marketing creative, not just media generation. Treat Krea as the creative engine and optional Meta Ads CLI/MCP as the performance and activation layer.
+Use this skill when the user wants marketing creative, not just media generation. Treat Krea as the creative engine and optional Meta Ads MCP as the performance and activation layer.
 
 This skill must work without Meta Ads. Meta context improves decisions, but it is never required for product photos, campaign sheets, UGC storyboards, marketplace cards, or Krea generation.
 
@@ -16,13 +16,13 @@ This skill must work without Meta Ads. Meta context improves decisions, but it i
 For product, campaign, ad, UGC, paid-social, marketplace, product-launch, or more-than-3-deliverable requests, ask once in a compact message:
 
 1. Missing product/brand basics: product reference, URL, goal, platform, output count, required claims/copy, and visual reference.
-2. For paid-social, performance, campaign-analysis, catalog-performance, or activation requests only: whether the user wants to connect Meta Ads CLI/MCP for account-specific performance context before creative planning.
+2. For paid-social, performance, campaign-analysis, catalog-performance, or activation requests only: whether the user wants to connect Meta Ads MCP for account-specific performance context before creative planning.
 
 If the user connects Meta, read performance context first. If they decline or cannot connect it, proceed Krea-only.
 
 ## Meta Ads Rules
 
-1. Meta Ads CLI/MCP is optional and must be verified live before use. See `references/meta-ads-cli.md`.
+1. Meta Ads MCP is optional and must be verified live before use. See `references/meta-ads-mcp.md`.
 2. Use Meta reads before creative when available: winning/weak formats, hooks, placements, fatigue, product/catalog performance, CTA signals, and audience context.
 3. Do not require Meta for generation. Continue with product refs, brand refs, and user goals.
 4. Writes are paused/draft by default.
@@ -37,7 +37,7 @@ For marketing stills, ad layouts, product images, and storyboard sheets, use the
 - a live Nano Banana 2 model when `list_models` exposes one (for example an id/name containing `nano-banana-2` or `nanobanana-2`)
 - a live Nano Banana Pro model (for example `google/nano-banana-pro`, or an id/name containing `nano-banana-pro` or `nanobanana-pro`)
 
-Always verify the candidate with live model discovery and schema inspection through the available Krea surface before submitting. Do not invent a model id that is not live.
+Always verify the candidate with live model discovery and schema inspection through Krea MCP before submitting. Do not invent a model id that is not live.
 
 Any model in the set is acceptable. Default to `openai/gpt-image-2`; it is the strongest generalist in the set and must come first for text-heavy ad templates, key-visual sheets, posters, typography, exact copy, and storyboard sheets. For product hero, lifestyle, marketplace, and final marketing stills, do not silently pick for the user: name `openai/gpt-image-2` as the default alongside the live Nano Banana option and let the user choose; if they have no preference, use `openai/gpt-image-2`. If none of the marketing image set is available or the live schema cannot accept the required references/aspect/size, say so and pick the nearest live model only as an explicit fallback.
 
@@ -65,12 +65,12 @@ If the user asks for a non-marketing image/video, use `../krea-generate/SKILL.md
 - `references/product-photoshoot.md` - Krea-native product photoshoot mode taxonomy adapted from Higgsfield research.
 - `references/dtc-ad-formats.md` - DTC static ad format library: per-format structural device, treatment, and brand-agnostic prompt template, organized by the static format families.
 - `references/marketplace-cards.md` - marketplace image scopes and compliance guardrails.
-- `references/meta-ads-cli.md` - optional Meta Ads CLI/MCP discovery, reads, and write gates.
+- `references/meta-ads-mcp.md` - optional Meta Ads MCP discovery, reads, and write gates.
 - `references/storyboard-variations.md` - A/B/C social storyboard directions.
 - `references/ugc-social-video.md` - UGC realism and adversarial QA.
 - `references/artifact-taxonomy.md` - disambiguate storyboard, key visual, hero shot, mockup, look book.
 
-Shared Krea references live in `../krea-generate/references/`: `cli-or-mcp.md`, `model-catalog.md`, `media-inputs.md`, `cost-preflight.md`, `progress-reporting.md`, `vision-qa.md`, `troubleshooting.md`, and `models/`.
+Shared Krea references live in `../krea-generate/references/`: `mcp-surface.md`, `model-catalog.md`, `media-inputs.md`, `cost-preflight.md`, `progress-reporting.md`, `vision-qa.md`, `troubleshooting.md`, and `models/`.
 
 ## Delivery Discipline
 

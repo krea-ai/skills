@@ -24,7 +24,7 @@ Hard prescription. Follow in order.
 1. **Cost-preflight** (see `../../krea-generate/references/cost-preflight.md`). A key-visual sheet is cheap compared with video, but it is still an approval gate for campaign work.
 2. Load `../references/marketing-creative-anatomy.md` if the user has not already locked the static format family.
 3. Upload product and style/layout references to Krea. If a reference is an external URL, download it first and upload the downloaded file.
-4. Resolve a `text-friendly image model` from the marketing image set in `../SKILL.md`; prefer `openai/gpt-image-2` only if live discovery confirms it and schema supports the needed refs, aspect, and quality. If it is unavailable, use live Nano Banana 2 if available, then Nano Banana Pro. Slow models like `openai/gpt-image-2` must be submitted asynchronously and polled through the available Krea surface; synchronous waits can hit gateway timeouts and lose the job id.
+4. Resolve a `text-friendly image model` from the marketing image set in `../SKILL.md`; prefer `openai/gpt-image-2` only if live discovery confirms it and schema supports the needed refs, aspect, and quality. If it is unavailable, use live Nano Banana 2 if available, then Nano Banana Pro. Slow models like `openai/gpt-image-2` must be submitted asynchronously and polled through Krea MCP; synchronous waits can hit gateway timeouts and lose the job id.
 5. Generate one sheet first, or 2-3 variants if the brief is loose. Do not generate downstream finals or videos yet.
 6. Prompt with mandatory sections:
    - **LAYOUT**: grid shape, gutters, headline placement, footer placement, and aspect.
@@ -40,13 +40,9 @@ Hard prescription. Follow in order.
    - Same content, different palette or graphic device.
 9. On approval, use the sheet as the brief for `social-video-short.md`, `../../krea-generate/workflows/image-final-render.md`, or `product-photo-lifestyle.md`.
 
-### CLI path
-
-When using CLI, verify the surface with `../../krea-generate/references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
-
 ### MCP path
 
-When using MCP, use the available Krea tools to upload product/layout references, list models, inspect the selected model schema, then call image generation with schema-verified prompt, reference, text, aspect, and quality fields.
+Use the available Krea MCP tools to upload product/layout references, list models, inspect the selected model schema, then call image generation with schema-verified prompt, reference, text, aspect, and quality fields.
 
 ## Banned
 

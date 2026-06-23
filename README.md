@@ -15,7 +15,7 @@ Three packaged Agent Skills for working with [Krea.ai](https://krea.ai). Install
 
 Experimental animation and app-integration material lives under `wip/` and is not installed or packaged by default.
 
-Works with Claude Code, Cursor, Codex, Windsurf, OpenCode, Gemini CLI, OpenClaw, and any agent that picks up `~/.<agent>/skills/<name>/SKILL.md`.
+Works with Claude Code, Cursor, Codex, Windsurf, OpenCode, Gemini, OpenClaw, and any agent that picks up `~/.<agent>/skills/<name>/SKILL.md`.
 
 ## Install the skills
 
@@ -79,7 +79,7 @@ Single-source version: `VERSION` file at repo root. CI enforces that `krea-gener
 
 ```bash
 bash evals/run.sh                 # v1 — regex + manual review
-bash evals/run.sh --judge         # v2 — Claude-CLI judge (disabled in v1)
+bash evals/run.sh --judge         # v2 — Claude judge (disabled in v1)
 ```
 
 ## License

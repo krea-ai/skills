@@ -22,7 +22,7 @@ Hard prescription. Follow in order.
 1. Load `../references/product-photoshoot.md` and classify the request into lifestyle, closeup/person, Pinterest, carousel, ad pack, virtual try-on, conceptual product, or restyle.
 2. Read product and optional people/location refs with vision.
 3. Resolve a final still model from the marketing image set in `../SKILL.md`: default `openai/gpt-image-2`, offering live Nano Banana 2 / Nano Banana Pro as alternatives the user can pick; require multi-reference support if people or rooms are involved.
-4. Inspect schema for `image_url`/`image_urls` or MCP equivalents, aspect, and resolution.
+4. Inspect schema for image-reference fields, aspect, and resolution.
 5. Cost-preflight for batches, 4K, or >100 CU.
 6. Upload local or external/non-Krea refs to Krea.
 7. Prompt product placement, environment, lighting, audience cue, and product preservation.
@@ -30,13 +30,9 @@ Hard prescription. Follow in order.
 9. Vision-check that the product is recognizable and plausibly placed.
 10. **Deliver** with platform labels and QA notes.
 
-### CLI path
-
-When using CLI, verify the surface with `../../krea-generate/references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
-
 ### MCP path
 
-When using MCP, use the available Krea tools to upload product, model, and brand references, list models, inspect the selected model schema, then call image generation with schema-verified multi-reference, prompt, and aspect fields.
+Use the available Krea MCP tools to upload product, model, and brand references, list models, inspect the selected model schema, then call image generation with schema-verified multi-reference, prompt, and aspect fields.
 
 ## Banned
 
