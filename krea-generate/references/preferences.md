@@ -6,7 +6,7 @@
 
 For every generation task:
 
-1. List live models through the available Krea surface.
+1. List live models through Krea MCP.
 2. Choose candidates by matching the user's intent against live model category, name, description, and capabilities.
 3. Inspect the chosen candidate's schema through the same surface.
 4. Submit only with fields present in that live schema.

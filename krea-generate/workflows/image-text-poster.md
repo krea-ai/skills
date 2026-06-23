@@ -29,13 +29,9 @@ Hard prescription. Follow in order.
 8. If text is wrong, retry with shorter text blocks or split into design-first image plus external typography recommendation.
 9. Deliver with spelling QA notes.
 
-### CLI path
-
-When using CLI, verify the surface with `../references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
-
 ### MCP path
 
-When using MCP, use the available Krea tools to list models, inspect the selected model schema, then call image generation with schema-verified prompt, aspect, text, quality, and resolution fields.
+Use the available Krea MCP tools to list models, inspect the selected model schema, then call image generation with schema-verified prompt, aspect, text, quality, and resolution fields.
 
 ## Banned
 

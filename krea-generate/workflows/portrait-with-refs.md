@@ -29,13 +29,9 @@ Hard prescription. Follow in order.
 8. Read output with vision; compare likeness, age, hair, and key features.
 9. Deliver with QA notes or route to LoRA if identity is insufficient.
 
-### CLI path
-
-When using CLI, verify the surface with `../references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
-
 ### MCP path
 
-When using MCP, use the available Krea tools to upload local face references, list models, inspect the selected model schema, then call image generation with schema-verified multi-reference, prompt, and aspect fields.
+Use the available Krea MCP tools to upload local face references, list models, inspect the selected model schema, then call image generation with schema-verified multi-reference, prompt, and aspect fields.
 
 ## Banned
 

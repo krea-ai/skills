@@ -4,7 +4,7 @@ Krea's model lineup changes faster than this skill ships. This document intentio
 
 ## How To Use This File
 
-1. List live models through the available Krea surface: authenticated CLI or connected MCP.
+1. List live models through Krea MCP.
 2. Identify the user's intent.
 3. Match that intent to an archetype below.
 4. Read the live model `category`, `name`, and `description` for candidates that describe the needed capability.

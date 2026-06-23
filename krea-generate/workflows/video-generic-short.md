@@ -29,9 +29,9 @@ Ask once only when missing:
 7. Poll with `../references/progress-reporting.md`.
 8. Download or surface the result URL. Sample frames when local media is available and check the visible action matches the brief.
 
-### CLI path
+### MCP path
 
-When using CLI, verify the surface with `../references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
+Use the available Krea MCP tools to upload local references, list models, inspect the selected model schema, then call video generation with schema-verified prompt, reference, duration, aspect, resolution, and audio fields.
 
 ## Banned
 
@@ -47,4 +47,4 @@ When using CLI, verify the surface with `../references/cli-or-mcp.md`, discover 
 | Output feels like an ad | Marketing language leaked in | Route to `krea-marketing` and build a campaign brief |
 | Multiple cuts needed | Workflow too simple | Ask whether to simplify to one clip or provide an external shot plan first |
 | Motion is too slow or static | Prompt lacked specific action | Add concrete motion, direction, and timing |
-| Job times out | Video queue or CLI wait cap | Poll manually and report progress |
+| Job times out | Video queue or sync timeout cap | Poll manually and report progress |

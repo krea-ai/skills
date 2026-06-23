@@ -10,8 +10,8 @@ Three packaged Agent Skills for working with [Krea.ai](https://krea.ai). Install
 | Skill | When to use |
 |---|---|
 | **`krea-core`** | Shared Krea agent contract and router. Use first to apply Krea tone, fast-path simple generation, and route to generation or marketing workflows. |
-| **`krea-generate`** | Canonical generic-generation router. Image, video primitives, enhancement, edits, LoRA, portraits, text/poster work, and archviz through whichever Krea surface is available: authenticated CLI or connected MCP. |
-| **`krea-marketing`** | Marketing creative workflow: product photoshoots, marketplace image sets, DTC static ad templates (one product photo → a library of on-brand ad formats), key visuals, UGC/social ads, campaign packs, and optional Meta Ads CLI/MCP performance context. |
+| **`krea-generate`** | Canonical generic-generation router. Image, video primitives, enhancement, edits, LoRA, portraits, text/poster work, and archviz through connected Krea MCP tools. |
+| **`krea-marketing`** | Marketing creative workflow: product photoshoots, marketplace image sets, DTC static ad templates (one product photo → a library of on-brand ad formats), key visuals, UGC/social ads, campaign packs, and optional Meta Ads performance context. |
 
 Experimental animation and app-integration material lives under `wip/` and is not installed or packaged by default.
 
@@ -25,21 +25,11 @@ npx skills add krea-ai/skills
 
 Installs the packaged skills. This is the supported install path across agents that use skill packages.
 
-## Prerequisites — one of these
+## Prerequisites
 
-The skills work through whichever Krea surface is available: an authenticated Krea CLI or a connected Krea MCP server.
+The packaged Codex plugin uses a connected Krea MCP server.
 
-```bash
-# Option A — Krea CLI (universal, works with any agent that runs bash)
-npm install -g @krea-ai/cli
-krea auth login          # prompts for a Krea API key and stores it locally
-# OR: export KREA_API_KEY=...
-
-# Option B — Krea MCP server
-# If your agent has Krea MCP connected, the skills can use it directly.
-```
-
-Verify the CLI path with `krea doctor`. For the MCP path, check your agent's MCP tool list for `mcp__krea__*` tools.
+Check your agent's MCP tool list for `mcp__krea__*` tools. If the tools are missing, connect or authenticate the Krea MCP server before using generation skills.
 
 ## Use
 
@@ -51,7 +41,7 @@ Verify the CLI path with `krea doctor`. For the MCP path, check your agent's MCP
 > Upscale this photo to 4K.
 ```
 
-These stay in `krea-generate` and route to the right model via the live CLI / MCP catalog.
+These stay in `krea-generate` and route to the right model via the live MCP catalog.
 
 ```
 > Render this Sketchup screenshot in golden hour, photoreal.
@@ -69,7 +59,7 @@ These route through `krea-generate/workflows/archviz-3d-to-render.md` for struct
 > Use Meta Ads performance context before making new ad creative.
 ```
 
-These trigger `krea-marketing`. The agent starts with a compact creative intake. For paid-social, performance, campaign-analysis, catalog-performance, or activation work, it asks whether to connect Meta Ads CLI/MCP for better performance context; otherwise it proceeds Krea-only from product refs, brand refs, and goals. Any live launch, budget, status, catalog, or publishing change stays gated and paused/draft by default unless explicitly approved.
+These trigger `krea-marketing`. The agent starts with a compact creative intake. For paid-social, performance, campaign-analysis, catalog-performance, or activation work, it asks whether to connect performance context; otherwise it proceeds Krea-only from product refs, brand refs, and goals. Any live launch, budget, status, catalog, or publishing change stays gated and paused/draft by default unless explicitly approved.
 
 ## Updates
 

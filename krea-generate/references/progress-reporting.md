@@ -19,27 +19,9 @@ The 2026-05-17 production session went 30+ minutes with silent polling. That sil
 - Do not ping more often than every 25 seconds unless the status changed or the user asked.
 - For multiple parallel jobs, aggregate in one line instead of sending one message per job.
 
-## CLI Loop
-
-Use `krea jobs wait` only when it can surface long waits reliably in the current CLI. If it may hit a timeout cap, use manual polling:
-
-```bash
-START=$(date +%s)
-while :; do
-  krea jobs show "$JOB" --json > job.json
-  STATUS=$(jq -r .status job.json)
-  case "$STATUS" in
-    completed|failed|cancelled) break ;;
-  esac
-  sleep 20
-done
-```
-
-Send progress messages from the agent between loop checks. Do not dump raw JSON into chat.
-
 ## MCP Loop
 
-For MCP, call `get_job(jobId=<id>)`, inspect the status, sleep roughly 20 seconds, and repeat until terminal. Ping the user on status changes and every 25-35 seconds during unchanged processing.
+Call `get_job(jobId=<id>)`, inspect the status, sleep roughly 20 seconds, and repeat until terminal. Ping the user on status changes and every 25-35 seconds during unchanged processing.
 
 ## What to Say
 
