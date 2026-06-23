@@ -16,8 +16,8 @@ This skill is anime-first by default, but applies to any character, narrative, p
 1. Do not jump from idea to long video. First create or inspect the project bible, storyboard, and shot list.
 2. Do not animate unapproved characters, locations, keyframes, or shot prompts.
 3. Run cost preflight before any video, LoRA training, or large batch. Use `../../krea-generate/references/cost-preflight.md`.
-4. Verify that either an authenticated Krea CLI or connected Krea MCP tools are available. Use `../../krea-generate/references/cli-or-mcp.md`.
-5. Prefer live model discovery over memory. List models and inspect the selected model schema through the available surface before relying on any field or capability.
+4. Verify that connected Krea MCP tools are available. Use `../../krea-generate/references/mcp-surface.md`.
+5. Prefer live model discovery over memory. List models and inspect the selected model schema through Krea MCP before relying on any field or capability.
 6. Upload local references before generation. Keep Krea asset URLs in manifests.
 7. Video jobs are async. Poll and report progress using `../../krea-generate/references/progress-reporting.md`.
 8. Normalize clips before assembly. Strip random per-clip audio unless the workflow explicitly asks to keep it.
@@ -76,7 +76,7 @@ Load only what the active workflow needs:
 
 Reuse sibling Krea references instead of duplicating them:
 
-- `../../krea-generate/references/cli-or-mcp.md`
+- `../../krea-generate/references/mcp-surface.md`
 - `../../krea-generate/references/media-inputs.md`
 - `../../krea-generate/references/async-polling.md`
 - `../../krea-generate/references/progress-reporting.md`
@@ -87,7 +87,7 @@ Reuse sibling Krea references instead of duplicating them:
 - `scripts/scaffold_project.py` - create the production folder structure and starter templates.
 - `scripts/validate_project.py` - check required files, shot metadata, approvals, and media references.
 - `scripts/build_manifests.py` - compile asset, keyframe, video job, duration, and concat manifests.
-- `scripts/submit_video_jobs.py` - submit approved video jobs or print dry-run Krea commands.
+- `scripts/submit_video_jobs.py` - compile approved video job plans for MCP submission.
 - `scripts/poll_video_jobs.py` - poll Krea jobs, write results, and optionally download raw clips.
 - `scripts/assemble_edit.py` - normalize, concatenate, and optionally smooth transitions.
 - `scripts/sample_qa_frames.py` - extract frames for continuity and retake review.

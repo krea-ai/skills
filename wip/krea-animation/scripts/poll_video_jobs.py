@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
-"""Poll Krea video jobs and optionally download completed raw clips."""
+"""Prepare Krea MCP job status checks and optionally download completed raw clips."""
 
 from __future__ import annotations
 
 import argparse
-import time
 import urllib.request
 from pathlib import Path
 
-from _common import command_exists, result_url, run_json, project_root
+from _common import project_root
 
 
 def read_jobs(path: Path) -> list[tuple[str, str]]:
@@ -32,52 +31,55 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("project", help="Project directory")
     parser.add_argument("--download", action="store_true", help="Download completed raw clips")
-    parser.add_argument("--interval", type=int, default=20, help="Polling interval in seconds")
-    parser.add_argument("--max-iterations", type=int, default=120)
-    parser.add_argument("--once", action="store_true", help="Poll once and exit")
+    parser.add_argument("--results-jsonl", help="Optional JSONL file of MCP get_job responses to merge")
     args = parser.parse_args()
-
-    if not command_exists("krea"):
-        raise SystemExit("krea CLI not found")
 
     root = project_root(args.project)
     jobs_path = root / "04_generation/jobs/jobs.tsv"
     results_path = root / "04_generation/jobs/results.tsv"
+    checks_path = root / "04_generation/jobs/mcp-status-checks.jsonl"
     raw_dir = root / "05_edit/shots_raw"
     pending = read_jobs(jobs_path)
     if not pending:
         raise SystemExit(f"No jobs found at {jobs_path}")
 
+    checks_path.write_text(
+        "\n".join(
+            f'{{"shot_id": "{shot_id}", "tool": "get_job", "jobId": "{job_id}"}}'
+            for shot_id, job_id in pending
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
     results: list[str] = []
-    for iteration in range(1, args.max_iterations + 1):
-        print(f"poll {iteration}: {len(pending)} pending")
-        next_pending: list[tuple[str, str]] = []
-        for shot_id, job_id in pending:
-            data = run_json(["krea", "jobs", "show", job_id, "--json"])
-            status = data.get("status", "unknown")
-            url = result_url(data)
+    if args.results_jsonl:
+        import json
+
+        responses = Path(args.results_jsonl).read_text(encoding="utf-8").splitlines()
+        for line in responses:
+            if not line.strip():
+                continue
+            data = json.loads(line)
+            shot_id = str(data.get("shot_id", ""))
+            status = str(data.get("status", "unknown"))
+            result = data.get("result") if isinstance(data.get("result"), dict) else {}
+            urls = result.get("urls") if isinstance(result.get("urls"), list) else data.get("urls")
+            url = urls[0] if isinstance(urls, list) and urls else ""
             if status == "completed":
                 if args.download and url:
                     out = raw_dir / f"shot-{shot_id}-raw.mp4"
                     if not out.exists():
                         download(url, out)
                 results.append(f"{shot_id}\tcompleted\t{url}")
-                print(f"  {shot_id} completed")
             elif status in {"failed", "cancelled"}:
                 results.append(f"{shot_id}\t{status}\t")
-                print(f"  {shot_id} {status}")
-            else:
-                next_pending.append((shot_id, job_id))
         results_path.write_text("\n".join(results) + ("\n" if results else ""), encoding="utf-8")
-        pending = next_pending
-        if not pending or args.once:
-            break
-        time.sleep(args.interval)
 
-    if pending:
-        with results_path.open("a", encoding="utf-8") as handle:
-            for shot_id, job_id in pending:
-                handle.write(f"{shot_id}\tpending\t{job_id}\n")
+    with results_path.open("a", encoding="utf-8") as handle:
+        for shot_id, job_id in pending:
+            handle.write(f"{shot_id}\tpending\t{job_id}\n")
+    print(f"Wrote MCP status checks: {checks_path}")
     print(f"Wrote {results_path}")
 
 

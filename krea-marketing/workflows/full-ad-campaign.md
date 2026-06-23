@@ -35,13 +35,9 @@ Hard prescription. Follow in order.
 12. Generate final winners through `product-photo-hero.md`, `product-photo-lifestyle.md`, `dtc-ad-templates.md`, `../../krea-generate/workflows/image-text-poster.md`, `key-visual-sheet.md`, or `social-video-short.md` as needed.
 13. **Deliver** organized outputs by platform, with QA notes and any unsupported claims removed.
 
-### CLI path
-
-When using CLI, verify the surface with `../../krea-generate/references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
-
 ### MCP path
 
-When using MCP, use the available Krea tools to list models, inspect schema for draft and final image models, then call image generation with schema-verified campaign prompt, reference, aspect, quality, and resolution fields.
+Use the available Krea MCP tools to list models, inspect schema for draft and final image models, then call image generation with schema-verified campaign prompt, reference, aspect, quality, and resolution fields.
 
 ## Banned
 

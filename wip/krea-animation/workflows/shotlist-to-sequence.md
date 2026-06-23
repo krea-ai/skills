@@ -38,7 +38,7 @@ Use when a storyboard and shot list are approved and the user wants to generate 
 - A scene is not one clip. Use shot grammar from `../references/shot-grammar.md`: most scenes become 3-6 shots of 2-4 seconds each.
 - Use approved keyframes only. If the shot starts from the previous shot's extracted last frame, generate the predecessor first and update the manifest before submitting the dependent shot.
 - For Seedance-style models, `end_image` and `reference_images` are mutually exclusive. Chained shots use `start_image` + `end_image`; terminal or hard-cut shots use `start_image` + `reference_images`.
-- Discover submit syntax from the available Krea surface and use only fields present in the selected model schema. Do not copy CLI flags or MCP field names from memory.
+- Discover submit fields from Krea MCP and use only fields present in the selected model schema. Do not copy MCP field names from memory.
 - Keep native generated audio only when the shot plan explicitly calls for it. Otherwise default to no generated clip audio and assemble the final audio bed separately.
 - Treat a completed job with no result URL as a failed shot. Retry once with a simpler prompt, then log a retake.
 

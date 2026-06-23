@@ -18,7 +18,7 @@ If the user gave a tight, complete brief, skip Clarify entirely and proceed to R
 
 ## Recipe
 
-Hard prescription. Follow in order - the order IS the deliverable. The quality comes from separating AI footage from designed motion: video models generate raw, textless, cinematic material; ALL typography, cuts, flashes, HUD overlays, and beat sync are built deterministically in an HTML composition layer on top. That layer is the `hyperframes` skill; if it is not installed, install it first: `npx skills add heygen-com/hyperframes --skill hyperframes` and `npx skills add heygen-com/hyperframes --skill hyperframes-cli`.
+Hard prescription. Follow in order - the order IS the deliverable. The quality comes from separating AI footage from designed motion: video models generate raw, textless, cinematic material; ALL typography, cuts, flashes, HUD overlays, and beat sync are built deterministically in an HTML composition layer on top. That layer is the `hyperframes` skill; if it is not installed, install it first: `npx skills add heygen-com/hyperframes --skill hyperframes`.
 
 1. **Lock the beat grid first.** Pick a rhythm template from the `hyperframes` skill's beat-direction patterns before generating anything; for 10-20s teasers default to SLAM-proof-SLAM-hold. Write down exact cut timestamps (for 15s, e.g. 3.0 / 6.2 / 7.4 / 10.8 / 13.0). Everything downstream serves these numbers.
 2. **Pick a visual style** from the `hyperframes` skill's visual-styles presets - Shadow Cut for dark/dramatic, Maximalist Type for loud hype. The product's own aesthetic decides.
@@ -32,13 +32,13 @@ Hard prescription. Follow in order - the order IS the deliverable. The quality c
    - flash frames (1 white default; at most one colored accent, used once) and optional glitch/RGB-split bursts, HUD brackets, or scanlines per the chosen visual style;
    - end card: name/tagline reveal on the final hit, fade to black.
    - **Known trap**: video elements must NOT be nested inside timed divs - that violates the frozen-video contract. Wrap each video in a NON-timed div for scale/punch animations and put `data-start` on the video itself.
-7. **Gate the render**: lint → validate → inspect → render via the hyperframes CLI. No skipped gates.
+7. **Gate the render**: lint -> validate -> inspect -> render with HyperFrames. No skipped gates.
 8. **Vision-QA rendered frames**: extract 4-6 frames with ffmpeg at the beat timestamps; check type legibility, clipping, safe areas, and product fidelity. Fix and re-render once.
 9. **Deliver** with a beat-map summary - what happens at each timestamp. Offer the vertical cut.
 
-### CLI path
+### MCP path
 
-When using CLI, verify the Krea surface with `../../krea-generate/references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, and inspect live model schemas before submitting. Treat command shapes from memory as stale. The `hyperframes` skill owns all composition details. Skeleton:
+Verify Krea MCP with `../../krea-generate/references/mcp-surface.md`, inspect live model schemas before submitting, and use only fields exposed by the connected MCP tools. The `hyperframes` skill owns all composition details. Skeleton:
 
 ```text
 1. Upload the product reference to Krea; use the returned Krea-hosted URL.
@@ -48,8 +48,7 @@ When using CLI, verify the Krea surface with `../../krea-generate/references/cli
    4-5s, one steady camera move, natural realtime.
 4. curl -X POST https://api.elevenlabs.io/v1/music with the cut timestamps
    written into the prompt as explicit hits; ffprobe the returned file.
-5. Compose, then: npx hyperframes lint && npx hyperframes validate &&
-   npx hyperframes inspect && npx hyperframes render -o final/<name>.mp4
+5. Compose, then run the HyperFrames lint, validate, inspect, and render gates.
 ```
 
 ## Banned
