@@ -7,7 +7,7 @@ User asks for a simple generated clip, text-to-video, ambient motion, nature/pro
 Route away from this workflow when:
 
 - The brief mentions product, ad, UGC, campaign, social creative, CTA, marketplace, or Meta Ads -> `../../krea-marketing/SKILL.md`.
-- The brief needs characters across shots, storyboard approval, shotlists, or retakes -> say the packaged skills cover only short single-clip video and ask whether to simplify to one clip.
+- The brief needs characters across shots, storyboard approval, shotlists, or retakes -> `../../krea-animation/SKILL.md`.
 
 ## Clarify
 
@@ -36,7 +36,7 @@ Use the available Krea MCP tools to upload local references, list models, inspec
 ## Banned
 
 - Do not use this for UGC/social ads; route to `krea-marketing`.
-- Do not use this for long-form/narrative/character continuity; ask the user to simplify to one clip or provide a packaged production workflow.
+- Do not use this for long-form/narrative/character continuity; route to `krea-animation` or ask whether to simplify to one clip.
 - Do not silently poll.
 - Do not promise exact identity or product fidelity from a text-only video prompt.
 
@@ -45,6 +45,6 @@ Use the available Krea MCP tools to upload local references, list models, inspec
 | Symptom | Cause | Fix |
 |---|---|---|
 | Output feels like an ad | Marketing language leaked in | Route to `krea-marketing` and build a campaign brief |
-| Multiple cuts needed | Workflow too simple | Ask whether to simplify to one clip or provide an external shot plan first |
+| Multiple cuts needed | Workflow too simple | Route to `krea-animation` or ask whether to simplify to one clip |
 | Motion is too slow or static | Prompt lacked specific action | Add concrete motion, direction, and timing |
 | Job times out | Video queue or sync timeout cap | Poll manually and report progress |
