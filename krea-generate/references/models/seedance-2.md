@@ -73,7 +73,7 @@ and action choreography, BGM references @Audio1, scene references @Image2
 
 ## Krea Operating Rules
 
-These are Krea workflow rules for `bytedance/seedance-2`. Always confirm the live schema with `krea models show <id> --json` before submitting.
+These are Krea workflow rules for `bytedance/seedance-2`. Always confirm the live schema through Krea MCP before submitting.
 
 ### Mutually exclusive media paths
 

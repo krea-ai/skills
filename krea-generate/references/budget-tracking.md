@@ -7,10 +7,10 @@ Use this whenever a workflow spans multiple billable operations: narrative video
 ## Protocol
 
 1. **Initialize at session start.** Record `session_cu_spent = 0` in your working memory. If the user shares a budget or token balance, record `session_cu_budget` too; otherwise treat budget as unknown.
-2. **Add each successful job's cost** as it returns. Both CLI and MCP surface CU per job — capture it from the result.
+2. **Add each successful job's cost** as it returns. MCP job responses surface CU per job when available - capture it from the result.
 3. **Surface the running total at logical breakpoints**: after each asset batch, after each scene approval, before any single op estimated above 500 CU. Keep the line short: `Session spend: ~840 CU.`
 4. **Warn early.** When `session_cu_spent` is climbing toward `session_cu_budget` (if known) or past ~2000 CU (if unknown), recommend a checkpoint: "Spend so far ~X CU — keep going or pause to checkpoint?"
-5. **Handle 402 Payment Required as a first-class outcome.** On the first 402, stop submitting jobs, surface the current spend, and tell the user: "Your account hit the credit limit. Top up at https://www.krea.ai/settings/billing, or switch profiles with `krea auth login --profile <other>`. Work is saved; we resume when you're ready."
+5. **Handle 402 Payment Required as a first-class outcome.** On the first 402, stop submitting jobs, surface the current spend, and tell the user: "Your account hit the credit limit. Top up at https://www.krea.ai/settings/billing, or authenticate Krea MCP with an account that has credits. Work is saved; we resume when you're ready."
 
 ## What counts as billable
 
@@ -22,8 +22,7 @@ Uploads and schema reads are free.
 
 ## Where to read the cost
 
-- **CLI**: after a job completes, the CLI prints `Cost: ~X CU`. Capture from stdout, or from `--json` output (`.cost` field on the job result).
-- **MCP**: the job response includes a cost field once terminal. Read `get_job(...).result.cost` (schema-dependent).
+- The job response includes a cost field once terminal. Read `get_job(...).result.cost` or the equivalent schema-declared field.
 
 ## Aggregating across asynchronous jobs
 

@@ -1,29 +1,29 @@
 # Media Inputs
 
-How to pass reference images, start frames, and audio files to Krea models through the CLI or MCP.
+How to pass reference images, start frames, and audio files to Krea models through MCP.
 
 ## Asset rule: upload before generation
 
-Krea generation tools accept media references as **URLs**, but model input validators intentionally restrict which asset hosts can be used. Treat local files and arbitrary external URLs as source material, not as final model inputs. Before passing a media URL into fields such as `image_url`, `image_urls`, `reference_images`, `start_image`, `end_image`, `style_images[].url`, `image_style_references[].url`, or MCP-translated camelCase equivalents, first make sure it is a Krea-hosted or explicitly approved asset URL.
+Krea generation tools accept media references as **URLs**, but model input validators intentionally restrict which asset hosts can be used. Treat local files and arbitrary external URLs as source material, not as final model inputs. Before passing a media URL into fields such as `image_url`, `imageUrl`, `image_urls`, `imageUrls`, `reference_images`, `start_image`, `startImage`, `end_image`, `endImage`, `style_images[].url`, or `image_style_references[].url`, first make sure it is a Krea-hosted or explicitly approved asset URL.
 
-If the URL is not already a Krea asset URL, download it to a local temp file, upload it with `krea upload` or MCP `upload_asset`, then pass the returned Krea URL to the generation model. This is the skill-level fix for `Invalid asset URL` failures.
+If the URL is not already a Krea asset URL, download it to a local temp file, upload it with MCP `upload_asset`, then pass the returned Krea URL to the generation model. This is the skill-level fix for `Invalid asset URL` failures.
 
 ### Hosted URL from the user
 
 When the user pasted an image/video/audio URL, do not pass it straight into generation unless it is already a Krea/approved asset host. Rehost it through Krea first:
 
 1. Download the URL to a temporary local file.
-2. Upload that file through the available Krea surface.
+2. Upload that file through Krea MCP.
 3. Pass the returned Krea-hosted URL into the reference field declared by the selected model schema.
 
-Use the field name accepted by the selected model schema. CLI schemas commonly use snake_case, such as singular image-reference fields, array reference fields, frame-anchor fields, or structured style-reference arrays. MCP tools may expose camelCase equivalents; verify the connected tool schema before using MCP.
+Use the field name accepted by the selected MCP model schema. Do not assume field casing; verify the connected tool schema before submitting.
 
 ### Local file (use upload)
 
 When the user has a file on their machine:
 
 1. Read the file with the agent's vision if visual understanding matters.
-2. Upload the file through the available Krea surface.
+2. Upload the file through Krea MCP.
 3. Use the returned Krea URL in the selected model's schema-confirmed media field.
 
 **Important distinction:** `upload_asset` puts a file on Krea's servers so Krea models can use it as a reference. This is **not** the same as the agent reading an image. The agent reads images with its built-in vision (the `Read` tool on a local file path). Use both, for different jobs:
@@ -31,15 +31,15 @@ When the user has a file on their machine:
 | What you need | How |
 |---|---|
 | The agent understands what's in the user's image | `Read` the local file (the agent's vision) |
-| Krea uses the image as a generation reference | `krea upload` or `upload_asset` -> pass the returned Krea URL into the model's input |
+| Krea uses the image as a generation reference | `upload_asset` -> pass the returned Krea URL into the model's input |
 
 Often you do both: read the file first to know the brief better, then upload it to Krea so the model can use it.
 
-## CLI upload pattern
+## MCP upload pattern
 
-When using CLI, upload local files or downloaded external URLs once, resolve the Krea-hosted URL, then pass that URL using the field accepted by the selected model schema.
+Upload local files or downloaded external URLs once, resolve the Krea-hosted URL, then pass that URL using the field accepted by the selected model schema.
 
-Do not guess field names or CLI flags. Discover upload and generation syntax from the installed CLI help, then inspect the live model schema first; different models use different reference fields.
+Do not guess field names. Inspect the live MCP model schema first; different models use different reference fields.
 
 ## Field-name crosswalk
 
@@ -47,11 +47,11 @@ The hosting rule applies regardless of naming convention. Always inspect the liv
 
 | Field family | Common shapes |
 |---|---|
-| Single image reference | `image_url` or MCP-translated `imageUrl` |
-| Multiple image references | `image_urls`, `reference_images`, or MCP-translated equivalents |
-| Video frame anchors | `start_image`, `end_image`, or MCP-translated equivalents |
-| Style/reference objects | `style_images[].url`, `image_style_references[].url`, or MCP-translated equivalents |
-| Audio/video references | Schema-specific URL fields such as `reference_audios`, `reference_videos`, or MCP-translated equivalents |
+| Single image reference | `image_url`, `imageUrl`, or another schema-declared single URL field |
+| Multiple image references | `image_urls`, `imageUrls`, `reference_images`, or another schema-declared array field |
+| Video frame anchors | `start_image`, `startImage`, `end_image`, `endImage`, or schema-declared equivalents |
+| Style/reference objects | `style_images[].url`, `image_style_references[].url`, or schema-declared equivalents |
+| Audio/video references | Schema-specific URL fields such as `reference_audios`, `reference_videos`, or schema-declared equivalents |
 
 ## Which URLs can be passed directly?
 
@@ -59,10 +59,10 @@ Pass direct URLs only when they are already Krea-hosted or an explicitly approve
 
 ## Single image vs multiple images
 
-Each model declares which input shape it accepts. Inspect the selected model schema through the available Krea surface to confirm. Common shapes are:
+Each model declares which input shape it accepts. Inspect the selected model schema through Krea MCP to confirm. Common shapes are:
 
-- **`image_url` / MCP `imageUrl`** (string, singular) - one reference.
-- **`image_urls` / MCP `imageUrls`** (array of strings) - multiple references.
+- **`image_url` / `imageUrl`** (string, singular) - one reference.
+- **`image_urls` / `imageUrls`** (array of strings) - multiple references.
 - **`reference_images`** (array of strings) - common for video reference images.
 
 ## Reference image quality
@@ -75,7 +75,7 @@ Reference images that are too small (< 512px on the long side) often fail to anc
 
 Example with multiple face references for a generated scene:
 
-1. Upload each face photo through the available Krea surface.
+1. Upload each face photo through Krea MCP.
 2. Select a live model whose schema supports multiple image references.
 3. Pass the returned Krea URLs in the schema-confirmed multi-reference field.
 
@@ -83,21 +83,21 @@ Example with multiple face references for a generated scene:
 
 Image-to-video models commonly accept:
 
-- **`start_image` / MCP `startImage`** - the first frame the video animates from
-- **`end_image` / MCP `endImage`** - an optional last frame
+- **`start_image` / `startImage`** - the first frame the video animates from
+- **`end_image` / `endImage`** - an optional last frame
 - **`audio` or reference-audio fields** - a reference audio track for lipsync or soundtrack matching, model-dependent
 
-Inspect the selected model schema through the available surface to confirm exact field names; different models name these differently.
+Inspect the selected model schema through Krea MCP to confirm exact field names; different models name these differently.
 
 ## Audio reference
 
 For models that support an `audio` input (lipsync, music-driven motion):
 
-1. Upload the audio file through the available Krea surface.
+1. Upload the audio file through Krea MCP.
 2. Confirm the selected model's audio-reference field from its schema.
 3. Pass the returned Krea URL in that schema-confirmed field.
 
-Don't pass `generate_audio=true` or MCP `generateAudio: true` to a model that takes a reference audio file - those are different mechanisms. Confirm with the schema.
+Don't pass `generate_audio=true` or `generateAudio: true` to a model that takes a reference audio file - those are different mechanisms. Confirm with the schema.
 
 ## Common upload mistakes
 

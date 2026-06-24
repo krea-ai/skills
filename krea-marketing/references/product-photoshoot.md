@@ -1,6 +1,6 @@
 # Product Photoshoot Modes
 
-Use this reference for brand/product stills. It adapts the useful Higgsfield mode taxonomy into Krea-native workflows; do not call Higgsfield CLI commands.
+Use this reference for brand/product stills. It adapts the useful Higgsfield mode taxonomy into Krea-native workflows; do not call external generator commands.
 
 ## Modes
 

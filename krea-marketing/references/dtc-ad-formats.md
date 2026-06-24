@@ -101,8 +101,8 @@ Default **`4:5` (1080×1350)** — the dominant paid-social static ratio. Overri
 | 9:16 | tall portrait | 1080×1920 | 1024×1824 |
 | 16:9 (landscape / link placements) | wide landscape | 1920×1080 | 1824×1024 |
 
-`openai/gpt-image-2` requires explicit `--width/--height` in multiples of 16 (use the right
-column). `google/nano-banana-pro` takes `-i aspect_ratio={{aspect}}` instead.
+`openai/gpt-image-2` requires explicit `width`/`height` in multiples of 16 (use the right
+column). `google/nano-banana-pro` takes `aspect_ratio={{aspect}}` instead.
 
 ## F. Format registry (core)
 
