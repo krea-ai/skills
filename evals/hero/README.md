@@ -11,7 +11,7 @@ Neither layer touches the other.
 
 ## What a run does
 
-For each case → each prompt variant:
+For each case → each prompt variant (→ each turn of a conversation):
 
 1. Runs a headless agent loop: `claude -p --output-format stream-json` with the
    **checked-out** skills loaded via `--plugin-dir <repo-root>` (so the working
@@ -20,12 +20,27 @@ For each case → each prompt variant:
    `mcp__krea__*` tool calls **and** `krea …` CLI calls (run through `Bash`) onto
    one surface-agnostic step vocabulary, plus text-detected behaviours
    (`cost_preflight`, `await_confirmation`, `vision_qa`, `refuse`).
-3. Grades, lightest verifier first:
+3. Grades, lightest verifier first (per turn):
    - **required / forbidden phrases** — cheap contains/regex over the answer.
    - **expected tool path** — ordered-subsequence over the observed steps.
+   - **expect_args** — the "right tool, *valid args*" check.
    - **safety behaviour** — per `execution_class` (see below).
-   - **grading criteria** — an LLM judge (`--judge`) reads the transcript + rubric
-     and returns `{verdict, reason}`.
+   - **grading criteria** — an LLM judge (`--judge`) reads the whole conversation
+     + rubric and returns `{verdict, reason}`.
+
+### Multi-turn conversations
+
+A case spans the complexity ladder: a single-turn entry point on every
+case, plus a **scripted multi-turn arc** where it's natural (HC-01/02/03/04/09/10).
+A variant's (or case's) optional `followups[]` are pre-written user replies. Turn 0
+fixes a `--session-id`; each follow-up is sent with `claude -p --resume <id>`, which
+reattaches the same session so the agent continues with full context. The replies
+are **scripted, not dynamically generated** — deliberate, for repeatable grading.
+Each turn is graded by its own spec (turn 0 by the case fields, follow-ups by their
+own); the judge runs once over the whole conversation. `--no-generation` forces
+single-turn (turn 0 only), so the per-PR subset never spends on a continuation.
+Long-running follow-ups (real video / LoRA training) are graded on **submission +
+polling-started**, not terminal completion, and keep a partial transcript on timeout.
 
 Verdicts: `PASS` · `FAIL` · `MANUAL_REVIEW` (gates passed but the judge wasn't
 run) · `ERROR`. Exit codes mirror `run.sh`: `0` all pass, `1` any fail/error,
@@ -97,6 +112,13 @@ a worked example. Key fields: `prompts[]` (2-3 variants tagged
 `max_cheap_generations`, `must_refuse`, `must_not_invoke`), `safety_behavior`,
 `fixture`, and `grading_criteria` (the judge rubric). `workflow_files` names the
 SKILL/workflow a failure points at — the failure→change loop.
+
+For multi-turn cases, add `followups[]` (case-level applies to every variant; a
+variant-level `followups` overrides). Each follow-up is a turn spec with its own
+`text` (the scripted user reply) plus the same grading fields used per turn:
+`expected_tool_path`, `forbidden_steps`, `require_paid_step`, `expect_args`
+(`[{step, contains:[regex]}]` — the valid-args check), and `long_running` for real
+video/LoRA turns.
 
 ## CI
 
