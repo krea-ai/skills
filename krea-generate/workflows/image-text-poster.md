@@ -2,7 +2,7 @@
 
 ## Trigger
 
-User asks for a poster, flyer, banner, packaging mockup, signage, ad with readable copy, title card, or any typography-heavy image. When in doubt between this workflow and `image-final-render.md`, pick this if legible text is central to success.
+User asks for a poster, flyer, banner, packaging mockup, signage, ad with readable copy, title card, or any typography-heavy image. When in doubt between this workflow and `image.md`, pick this if legible text is central to success.
 
 ## Clarify
 
