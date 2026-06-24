@@ -1,11 +1,23 @@
 name: Hero Evals
 
-# hero-eval layer (evals/hero/). Drives each hero case through a
-# headless `claude -p` agent loop with the checked-out skills loaded, captures the
-# tool path, and grades it (deterministic gates + LLM judge).
+# Hero-eval layer (evals/hero/). Drives each hero case through a headless
+# `claude -p` agent loop with the checked-out skills loaded, captures the tool
+# path, and grades it (deterministic gates + LLM judge).
 #
 # This is separate from validate.yml (lint/version) and claude.yml (PR review),
 # and from the regex smoke suite (evals/run.sh), none of which are touched.
+#
+# SECRETS / PUBLIC-REPO SAFETY
+# This is a public repo, so secrets are handled the same way krea-ai/app does:
+#   * Real secrets are pulled at runtime from Infisical (Infisical/secrets-action),
+#     NOT stored as repo secrets. The only repo secrets are the two Infisical
+#     machine-identity bootstrap creds (INFISICAL_CLIENT_ID / INFISICAL_SECRET).
+#   * The secret-bearing job (`hero-evals`) runs ONLY on trusted triggers
+#     (schedule / workflow_dispatch / repository_dispatch). It is gated with
+#     `if: github.event_name != 'pull_request'`, so a pull request can never
+#     reach Infisical or any secret.
+#   * Pull requests run `hero-evals-pr-offline`: the offline self-test only — no
+#     secrets, no network, nothing to exfiltrate even though it runs PR code.
 
 on:
   schedule:
@@ -24,11 +36,11 @@ on:
         default: "claude-sonnet-4-6"
         type: string
   repository_dispatch:
-    # Fired by the webapp on a tool-surface change (separate, additive PR there).
+    # Fired by an internal repository_dispatch when the tool surface changes.
     types: [krea-tools-changed]
   pull_request:
-    # The generation-free subset runs only when a PR carries the label below.
-    types: [labeled, synchronize]
+    # Offline self-test only (see hero-evals-pr-offline) — runs on every PR.
+    types: [opened, synchronize, reopened]
 
 # Serialize: the demo Krea account + API quota are shared across runs.
 concurrency:
@@ -38,21 +50,47 @@ concurrency:
 permissions:
   contents: read
 
+# Infisical coordinates (non-secret). Mirrors krea-ai/app.
+# TODO(confirm): point these at where the eval secrets live, and prefer a
+# DEDICATED, least-privilege machine identity scoped to ONLY the eval/demo
+# secrets — do not reuse the webapp prod identity on a public repo.
+# The Infisical path must contain: ANTHROPIC_API_KEY, KREA_API_KEY (demo
+# account), SLACK_WEBHOOK_URL (the #dept-api webhook).
+env:
+  INFISICAL_DOMAIN: "https://app.infisical.com"
+  INFISICAL_IDENTITY_ID: "" # TODO: machine-identity ID for this repo's evals
+  INFISICAL_PROJECT_SLUG: "webapp" # TODO: confirm project slug
+  INFISICAL_ENV_SLUG: "prod" # TODO: confirm environment
+  INFISICAL_SECRET_PATH: "/main" # TODO: confirm secret path
+
 jobs:
-  # ── Full suite: nightly / manual / tool-change dispatch ────────────────────
+  # ── Full suite: nightly / manual / tool-change dispatch (TRUSTED only) ──────
+  # Secrets pulled from Infisical here; never runs on pull_request.
   hero-evals:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      KREA_API_KEY: ${{ secrets.KREA_API_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       HERO_MODEL: ${{ github.event.inputs.model || 'claude-sonnet-4-6' }}
       HERO_JUDGE_MODEL: "claude-haiku-4-5-20251001"
       HERO_ONLY: ${{ github.event.inputs.only || '' }}
     steps:
       - uses: actions/checkout@v4
+
+      # Pulls ANTHROPIC_API_KEY / KREA_API_KEY / SLACK_WEBHOOK_URL from Infisical
+      # into the job environment (export-type: env) for all subsequent steps.
+      - name: Export secrets from Infisical
+        uses: Infisical/secrets-action@v1.0.15
+        with:
+          method: "universal"
+          identity-id: ${{ env.INFISICAL_IDENTITY_ID }}
+          client-id: ${{ secrets.INFISICAL_CLIENT_ID }}
+          client-secret: ${{ secrets.INFISICAL_SECRET }}
+          domain: ${{ env.INFISICAL_DOMAIN }}
+          env-slug: ${{ env.INFISICAL_ENV_SLUG }}
+          secret-path: ${{ env.INFISICAL_SECRET_PATH }}
+          project-slug: ${{ env.INFISICAL_PROJECT_SLUG }}
+          export-type: "env"
 
       - uses: actions/setup-python@v5
         with:
@@ -113,19 +151,14 @@ jobs:
         if: always()
         run: test "${{ steps.run.outcome }}" = "success"
 
-  # ── Generation-free subset: per-PR, label-gated ────────────────────────────
-  hero-evals-pr-subset:
-    if: >
-      github.event_name == 'pull_request' &&
-      contains(github.event.pull_request.labels.*.name, 'run-hero-evals')
+  # ── Pull-request check: OFFLINE, secret-free (safe on a public repo) ────────
+  # Runs the parser/verifier self-test with no API calls and no secrets. Runs PR
+  # code, but there is nothing to steal. The real (secret-bearing) suite runs on
+  # schedule / workflow_dispatch from the trusted branch only.
+  hero-evals-pr-offline:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    env:
-      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      KREA_API_KEY: ${{ secrets.KREA_API_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      HERO_MODEL: "claude-sonnet-4-6"
-      HERO_JUDGE_MODEL: "claude-haiku-4-5-20251001"
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
@@ -133,47 +166,5 @@ jobs:
         with:
           python-version: "3.12"
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install Claude Code CLI
-        run: |
-          npm install -g @anthropic-ai/claude-code
-          claude --version
-
-      - name: Install Krea CLI
-        run: |
-          npm install -g @krea-ai/cli
-          krea --version
-
-      - name: Self-test the runner (offline)
+      - name: Offline self-test (no API, no secrets)
         run: python evals/hero/run.py --selftest
-
-      - name: Run generation-free hero subset
-        id: run
-        continue-on-error: true
-        # --no-generation drops execute-cheap cases AND disallows paid ops, so the
-        # subset cannot spend Krea credits even if an agent misbehaves.
-        run: |
-          python evals/hero/run.py \
-            --judge \
-            --no-generation \
-            --exec-class no-invoke,refuse,confirm-and-stop \
-            --model "$HERO_MODEL" \
-            --judge-model "$HERO_JUDGE_MODEL" \
-            --out evals/hero/runs \
-            --json-summary evals/hero/runs/latest-summary.json
-
-      - name: Upload run artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: hero-eval-pr-${{ github.run_id }}
-          path: evals/hero/runs/**
-          retention-days: 7
-          if-no-files-found: warn
-
-      - name: Reflect eval result in job status
-        if: always()
-        run: test "${{ steps.run.outcome }}" = "success"

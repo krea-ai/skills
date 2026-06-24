@@ -128,7 +128,13 @@ video/LoRA turns.
 ## CI
 
 `.github/workflows/evals.yml`: full suite nightly (07:00 UTC) +
-`workflow_dispatch` + `repository_dispatch(krea-tools-changed)` (fired by the
-webapp when the tool surface changes); plus a generation-free subset on PRs
-labeled `run-hero-evals`. Secrets: `ANTHROPIC_API_KEY`, `KREA_API_KEY`
-(demo account), `SLACK_WEBHOOK_URL`.
+`workflow_dispatch` + `repository_dispatch(krea-tools-changed)`. This is a
+**public** repo, so the secret-bearing suite runs only on those trusted
+triggers; pull requests run an **offline, secret-free** self-test only.
+
+Secrets are pulled at runtime from **Infisical** (`Infisical/secrets-action`,
+mirroring `krea-ai/app`) — `ANTHROPIC_API_KEY`, `KREA_API_KEY` (demo account),
+and `SLACK_WEBHOOK_URL` live at the configured Infisical path. The only repo
+secrets are the Infisical machine-identity bootstrap creds
+(`INFISICAL_CLIENT_ID`, `INFISICAL_SECRET`); use a dedicated least-privilege
+identity scoped to just the eval/demo secrets.
