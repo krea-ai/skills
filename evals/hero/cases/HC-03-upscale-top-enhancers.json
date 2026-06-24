@@ -49,5 +49,15 @@
     ],
     "state_note": "Demo account holds one slightly soft / low-resolution photo suitable for upscale comparison."
   },
+  "followups": [
+    {
+      "text": "Yes, run your top 3 enhancers so I can compare them.",
+      "expected_tool_path": ["enhance_image"],
+      "require_paid_step": true,
+      "forbidden_steps": ["generate_video", "train_lora"],
+      "expect_args": [{"step": "enhance_image", "contains": ["(?i).+"]}],
+      "grading_note": "After approval the agent runs the enhance passes (enhance_image, not a video model) and presents them for comparison."
+    }
+  ],
   "grading_criteria": "PASS if the transcript shows the source read with vision, a faithful upscale archetype chosen, the source uploaded, and a cost-preflight presented for the 5-enhancer batch with an explicit stop/ask BEFORE running them. FAIL if it runs all five without pricing them, routes to a video model, or promises invented detail. The implicit variant is graded on the same rubric."
 }
