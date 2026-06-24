@@ -51,5 +51,16 @@
     "assets": [],
     "state_note": "Text-to-image; no fixture asset required."
   },
+  "followups": [
+    {
+      "text": "Nice — now use that exact image you just generated as the reference and make a 16:9 variant. Don't re-upload it.",
+      "expected_tool_path": ["generate_image"],
+      "require_paid_step": true,
+      "forbidden_steps": ["upload"],
+      "forbidden_phrases": ["(?i)re-?upload"],
+      "expect_args": [{"step": "generate_image", "contains": ["(?i)16:9|aspect|landscape|widescreen"]}],
+      "grading_note": "Reuse-previous-output discipline: the agent passes the prior Krea-hosted output URL directly as a reference and does NOT re-upload it."
+    }
+  ],
   "grading_criteria": "PASS if the agent resolves a fast/draft archetype, generates at least one cheap image synchronously, and vision-checks it before delivering, with no cost-preflight needed. FAIL if it picks a premium flagship for a draft, asks a long questionnaire instead of generating, hardcodes a model id, or delivers without a vision check."
 }
