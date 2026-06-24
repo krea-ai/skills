@@ -61,7 +61,7 @@ Use the available Krea MCP tools to list models, inspect schema for both storybo
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| Output horizontal despite `--aspect 9:16` | Landscape `--start-image` or `reference_images[0]` bias, issue #11 | Drop start image; pad sheet to portrait; or use face refs plus timeline only |
+| Output horizontal despite `aspect_ratio="9:16"` | Landscape `start_image` or `reference_images[0]` bias, issue #11 | Drop start image; pad sheet to portrait; or use face refs plus timeline only |
 | Output is slow motion | Prompt contained banned pacing words, issue #14 | Rewrite with natural realtime, smooth, steady, fluid |
 | Video feels stitched | Per-panel generation was used, issue #15 | Use one storyboard sheet and one timeline-driven video job |
 | Upload URL empty | Upload response missing a URL | Retry upload through MCP; if it still fails, stop and surface the asset error |

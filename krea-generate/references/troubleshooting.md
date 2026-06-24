@@ -74,10 +74,10 @@ These were uncovered during a production session that burned ~5,000 CU before pr
 |---|---|---|---|
 | #7 | Kontext / Seedream-4 reject generation inputs containing external URLs (`image_url`, `style_images.0.url`, etc.) | Asset validation intentionally expects Krea-hosted/approved assets | Download external URLs when needed, upload every local/non-Krea file through MCP first, then use the returned Krea-hosted URL |
 | #9 | Long video generation exceeds sync wait limits | Sync generation waits cap at 300s | Submit async, then use MCP `get_job` polling |
-| #11 | Video output is horizontal despite `--aspect 9:16` or `-i aspect_ratio="9:16"` | A landscape `--start-image` or landscape `reference_images[0]` can override aspect in Seedance-style models | Do not pass `--start-image` for vertical social video; pad the storyboard to portrait or drop the landscape storyboard ref; see `../../krea-marketing/workflows/social-video-short.md` |
+| #11 | Video output is horizontal despite `aspect_ratio="9:16"` | A landscape `start_image` or landscape `reference_images[0]` can override aspect in Seedance-style models | Do not pass a landscape `start_image` for vertical social video; pad the storyboard to portrait or drop the landscape storyboard ref; see `../../krea-marketing/workflows/social-video-short.md` |
 | - | `quality` is ignored or rejected by a specific model | The selected model may not support `quality` | Check the MCP model schema; use only fields present in the schema |
 | - | Slow image models exceed the synchronous gateway window | The timeout response may not include a usable job id, even if the running job is billed | Prefer async when the model is slow; retry transient 502/524 with backoff |
-| - | `gpt-image-2` rejects dimensions such as 1080x1350, or `aspect_ratio` alone | The model requires explicit `--width`/`--height` in multiples of 16 | Use ÷16 sizes: 1024x1280 (4:5), 1024x1024 (1:1), 1024x1360 (3:4), 1024x1824 (9:16) |
+| - | `gpt-image-2` rejects dimensions such as 1080x1350, or `aspect_ratio` alone | The model requires explicit `width`/`height` in multiples of 16 | Use ÷16 sizes: 1024x1280 (4:5), 1024x1024 (1:1), 1024x1360 (3:4), 1024x1824 (9:16) |
 
 ### Model behavior
 
