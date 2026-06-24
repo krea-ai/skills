@@ -1,6 +1,6 @@
 name: Hero Evals
 
-# Deck-compliant hero-eval layer (evals/hero/). Drives each hero case through a
+# Hero-eval layer (evals/hero/). Drives each hero case through a
 # headless `claude -p` agent loop with the checked-out skills loaded, captures the
 # tool path, and grades it (deterministic gates + LLM judge).
 #
@@ -24,7 +24,7 @@ on:
         default: "claude-sonnet-4-6"
         type: string
   repository_dispatch:
-    # Fired by the webapp on a tool-surface change (separate, additive PR there).
+    # Fired by an external repository_dispatch on a tool-surface change.
     types: [krea-tools-changed]
   pull_request:
     # The generation-free subset runs only when a PR carries the label below.

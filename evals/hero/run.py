@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Hero eval runner for the Krea Codex plugin.
+"""Hero eval runner for the Krea plugin.
 
-Deck-compliant hero layer (see evals/hero/README.md): drives each hero case
+Hero layer (see evals/hero/README.md): drives each hero case
 through a headless `claude -p` agent loop with the checked-out skills loaded,
 captures the full transcript, reconstructs the ordered TOOL PATH (whether the
 agent used the Krea CLI via Bash or the mcp__krea__* tools), and grades the run
@@ -435,7 +435,7 @@ def is_ordered_subsequence(expected: list[str], actual: list[str]) -> bool:
 
 
 def check_args(expect_args: list, tool_calls: list[dict]) -> list[str]:
-    """Deck's 'right tool, valid args' check: for each {step, contains:[regex]},
+    """'Right tool, valid args' check: for each {step, contains:[regex]},
     require some tool call of that step whose args match every regex."""
     reasons = []
     for spec in expect_args or []:

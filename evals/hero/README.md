@@ -1,6 +1,6 @@
 # Hero evals
 
-Deck-compliant **hero-eval layer** for the Krea Codex plugin. It tests whether an
+**Hero-eval layer** for the Krea plugin. It tests whether an
 agent can *complete* a hero workflow using the Krea tools — graded over the
 **tool path + final outcome**, with full transcripts captured.
 
@@ -28,14 +28,14 @@ For each case → each prompt variant (→ each turn of a conversation):
 3. Grades, lightest verifier first (per turn):
    - **required / forbidden phrases** — cheap contains/regex over the answer.
    - **expected tool path** — ordered-subsequence over the observed steps.
-   - **expect_args** — the deck's "right tool, *valid args*" check.
+   - **expect_args** — the "right tool, *valid args*" check.
    - **safety behaviour** — per `execution_class` (see below).
    - **grading criteria** — an LLM judge (`--judge`) reads the whole conversation
      + rubric and returns `{verdict, reason}`.
 
 ### Multi-turn conversations
 
-A case spans the deck's complexity ladder: a single-turn entry point on every
+A case spans a complexity ladder: a single-turn entry point on every
 case, plus a **scripted multi-turn arc** where it's natural (HC-01/02/03/04/09/10).
 A variant's (or case's) optional `followups[]` are pre-written user replies. Turn 0
 fixes a `--session-id`; each follow-up is sent with `claude -p --resume <id>`, which
@@ -116,7 +116,7 @@ a worked example. Key fields: `prompts[]` (2-3 variants tagged
 (`require_preflight`, `require_await`, `require_paid_step`,
 `max_cheap_generations`, `must_refuse`, `must_not_invoke`), `safety_behavior`,
 `fixture`, and `grading_criteria` (the judge rubric). `workflow_files` names the
-SKILL/workflow a failure points at — the deck's failure→change loop.
+SKILL/workflow a failure points at — the failure→change loop.
 
 For multi-turn cases, add `followups[]` (case-level applies to every variant; a
 variant-level `followups` overrides). Each follow-up is a turn spec with its own
