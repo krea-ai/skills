@@ -35,7 +35,7 @@ jobs:
             - `validate.yml` already enforces frontmatter, JSON validity, version sync, and the `update-check.sh` smoke test. Flag any change that would break those checks.
             - Skill prose is the product. Treat instructions, examples, and triggers as code: ambiguity, contradictions, or stale model/tool names are real bugs.
             - Relative references between skills (e.g. `../krea-generate/...`) must resolve. Call out broken links, missing referenced files, or examples that point at non-existent paths.
-            - Shell scripts under `scripts/` and `evals/` should stay POSIX-friendly and pass `bash -n`. Flag obvious portability or quoting issues.
+            - Shell scripts under `scripts/` should stay POSIX-friendly and pass `bash -n`. Flag obvious portability or quoting issues.
             - Plugin manifests must stay valid JSON and keep versions aligned with the `VERSION` file.
 
             Priorities:

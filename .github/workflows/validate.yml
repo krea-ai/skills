@@ -104,11 +104,6 @@ jobs:
           grep -qx $'SC001_SH010\tfailed\tcompleted without result URL' "$results"
           echo "OK animation MCP helpers"
 
-      - name: Smoke-test eval runner syntax
-        run: |
-          bash -n evals/run.sh
-          echo "OK evals/run.sh syntax"
-
       - name: Enforce VERSION sync across all declaration sites
         run: |
           VERSION="$(tr -d '[:space:]' < VERSION)"

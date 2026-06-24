@@ -73,15 +73,6 @@ The `krea-generate` skill includes an opt-in update notification. Once per sessi
 
 Single-source version: `VERSION` file at repo root. CI enforces that `krea-generate/VERSION`, all SKILL.md frontmatters, plugin manifests, and `package.json` agree.
 
-## Evals
-
-`evals/run.sh` runs 40 regression scenarios through `claude -p` in headless mode and grades responses with regex (PASS / FAIL / MANUAL_REVIEW). See `evals/README.md` for methodology.
-
-```bash
-bash evals/run.sh                 # v1 — regex + manual review
-bash evals/run.sh --judge         # v2 — Claude judge (disabled in v1)
-```
-
 ## License
 
 MIT
