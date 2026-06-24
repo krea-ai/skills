@@ -29,13 +29,9 @@ Hard prescription. Follow in order.
 8. Read output with vision; verify massing, openings, materials, and camera.
 9. **Deliver** with one-line summary and suggested next variant only if useful.
 
-### CLI path
-
-When using CLI, verify the surface with `../references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
-
 ### MCP path
 
-When using MCP, use the available Krea tools to upload local references, list models, inspect the selected model schema, then call image generation with schema-verified reference and aspect fields. Do not copy field names from memory.
+Use the available Krea MCP tools to upload local references, list models, inspect the selected model schema, then call image generation with schema-verified reference and aspect fields. Do not copy field names from memory.
 
 ## Banned
 

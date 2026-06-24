@@ -2,7 +2,7 @@
 
 ## Trigger
 
-User asks to train a LoRA, fine-tune a style, keep a brand/person/product consistent, create a reusable style ID, or generate samples from a custom style. When in doubt between this workflow and `portrait-with-refs.md`, pick this if repeatability or exact identity across many outputs matters.
+User asks to train a LoRA, fine-tune a style, keep a brand/person/product consistent, create a reusable style ID, or generate samples from a custom style. Use this when repeatability or exact identity across many outputs matters.
 
 ## Clarify
 
@@ -22,44 +22,23 @@ Hard prescription. Follow in order.
 1. **Cost-preflight** (mandatory - see `../references/cost-preflight.md`). Training can take 15-45 minutes.
 2. Read a sample of training images with vision; reject blurry, tiny, duplicated, or off-style inputs.
 3. If local, upload or ensure each training image has a reachable HTTPS URL.
-4. Validate URL reachability with `curl -sfI` where possible.
-5. Discover or verify the current supported training base models from Krea's live training API/docs before submitting. Do not use a remembered training model id.
-6. Submit training through the Krea HTTP API; CLI/MCP may not expose training.
+4. Validate URL reachability through MCP when that capability is available; otherwise rely on MCP upload/training errors.
+5. Discover or verify the current supported training base models through Krea MCP before submitting. Do not use a remembered training model id.
+6. Submit training through Krea MCP only. If MCP does not expose LoRA training, stop and tell the user this capability is not available in the connected Krea MCP server yet.
 7. Poll every 30-60 seconds using `../references/progress-reporting.md`.
 8. On completion, capture `style_id` and trigger word.
 9. Resolve a style-aware image model from live `list_models` and inspect schema for the exact style field, such as `style_id`, MCP `styleId`, or `styles`.
 10. Generate 3-5 samples using the new style at strength ~0.85.
 11. **Deliver** style ID, trigger word, sample outputs, and QA notes.
 
-### Direct API training
+### MCP training
 
-Verify the current training endpoint, auth header, and payload shape before use. This path is direct HTTP because Krea CLI/MCP may not expose LoRA training yet; it is not the normal generation path.
-
-```bash
-KEY="$KREA_API_KEY"
-JOB=$(curl -sf -X POST https://api.krea.ai/styles/train \
-  -H "Authorization: Bearer $KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "<verified-training-base-model>",
-    "type": "Style",
-    "name": "<style-name>",
-    "urls": ["https://cdn/image-01.jpg", "https://cdn/image-02.jpg"],
-    "trigger_word": "<trigger>",
-    "max_train_steps": 1000
-  }' | jq -r .job_id)
-
-while :; do
-  STATUS=$(curl -sf "https://api.krea.ai/jobs/$JOB" -H "Authorization: Bearer $KEY" | jq -r .status)
-  case "$STATUS" in completed|failed|cancelled) break ;; esac
-  sleep 60
-done
-```
+Verify the current MCP tool schema for LoRA/style training before use. Use only fields exposed by the connected MCP server. Do not use non-MCP endpoints or assume training payload fields from memory.
 
 ### Generate samples after training
 
 ```
-# Use CLI or MCP after completion for style-aware image generation:
+# Use MCP after completion for style-aware image generation:
 list_models()
 get_model_schema(model="<style-aware-image-model>")
 generate_image(model="<style-aware-image-model>", input={prompt, <schema-style-field>, <schema-strength-field>}, sync=true)
@@ -85,4 +64,4 @@ generate_image(model="<style-aware-image-model>", input={prompt, <schema-style-f
 | Training fails mid-run | Bad URL or inaccessible asset | HEAD-check URLs and resubmit |
 | Samples ignore style | Underfit or missing trigger | Use trigger word and style strength; retrain with better set |
 | Samples all look same | Overfit | Lower style strength or retrain with more varied images |
-| User wants one portrait only | LoRA is overkill | Route to `portrait-with-refs.md` |
+| User wants one portrait only | LoRA is overkill | Route to `image.md` |

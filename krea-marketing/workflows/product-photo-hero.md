@@ -30,13 +30,9 @@ Hard prescription. Follow in order.
 9. Read output with vision; verify product identity, proportions, label, and color.
 10. **Deliver** with a one-line summary and QA notes.
 
-### CLI path
-
-When using CLI, verify the surface with `../../krea-generate/references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
-
 ### MCP path
 
-When using MCP, use the available Krea tools to upload product references, list models, inspect the selected model schema, then call image generation with schema-verified product reference, prompt, aspect, and quality fields.
+Use the available Krea MCP tools to upload product references, list models, inspect the selected model schema, then call image generation with schema-verified product reference, prompt, aspect, and quality fields.
 
 ## Banned
 

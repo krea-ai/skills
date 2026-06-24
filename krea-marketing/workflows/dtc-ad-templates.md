@@ -34,14 +34,13 @@ Hard prescription. Follow in order.
    is a batch (one image per selected format). Restate the brief in one line (brand,
    product, aspect, format count), show `N formats × per-image ≈ total CU` and a rough
    wall-clock, and wait for go.
-2. Verify the CLI (`../../krea-generate/references/cli-or-mcp.md`). Resolve a text-capable
+2. Verify Krea MCP (`../../krea-generate/references/mcp-surface.md`). Resolve a text-capable
    model from the marketing image set in `../SKILL.md` **live** from `list_models`.
    Prefer `openai/gpt-image-2` when confirmed available (strong in-image text); otherwise
    use live Nano Banana 2 if available, then Nano Banana Pro.
 3. Read the product reference with vision: shape, materials, label, colour, proportions —
    so you can judge fidelity later.
-4. **Upload the reference once**: `krea upload <image> --json` → capture the asset URL;
-   reuse it for every format via `-i image_urls=["<url>"]`.
+4. **Upload the reference once** through Krea MCP; capture the asset URL and reuse it for every format through the schema-declared image-reference field.
 5. Load `../references/dtc-ad-formats.md`. Select formats (core set, or the user's subset).
    **Drop** any format whose `required` fields the brief can't honestly supply — do not
    invent quotes, press names, ratings, certifications, or pricing.
@@ -51,11 +50,9 @@ Hard prescription. Follow in order.
 7. **Generate one image per format** — submit every selected format's job first (async),
    then poll them all, so the batch's wall-clock is roughly one job's time rather than N×.
    Model-aware hard requirements (see `../../krea-generate/references/troubleshooting.md`):
-   - `openai/gpt-image-2`: pass explicit `--width/--height` in **multiples of 16**, and run
-     **async** — submit with `--json`, capture `job_id`, `krea jobs wait <job_id> --json`,
-     download `result.urls[0]`. Synchronous `--wait` on this model hits a Cloudflare **524**.
+   - `openai/gpt-image-2`: pass explicit width/height in **multiples of 16** when the MCP schema supports them, and run **async**; capture the returned job id, poll with MCP `get_job`, then download `result.urls[0]`.
    - Nano Banana 2 / Nano Banana Pro (schema permitting): pass the live schema's
-     aspect or size fields; `--wait -o` is fine when the model completes inside the CLI wait cap.
+     aspect or size fields; synchronous calls are fine only when the model completes inside the MCP timeout cap.
    - Retry transient `502`/`524`/empty-job-id with backoff. Skip a format whose file already
      exists (resumable).
 8. **Vision-QA each output against its structural device** (`../../krea-generate/references/vision-qa.md`).
@@ -68,13 +65,9 @@ Hard prescription. Follow in order.
    `./dtc-ads/comparison-diptych.png`), with a short QA note per image and any unsupported
    copy removed. Offer one-lever variants on request.
 
-### CLI path
-
-When using CLI, verify the surface with `../../krea-generate/references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
-
 ### MCP path
 
-When using MCP, use the available Krea tools to list models and inspect the selected model
+Use the available Krea MCP tools to list models and inspect the selected model
 schema to confirm the image-input field and size/aspect params, then call image generation
 with the schema-verified prompt, reference, and dimensions; poll slow jobs with the available
 job-status tool.
@@ -84,7 +77,7 @@ job-status tool.
 - Do not invent claims, quotes, press names, ratings, certifications, or pricing. Drop the
   format instead.
 - Do not skip the structural-device QA — a pretty image that isn't the format is a miss.
-- Do not run `openai/gpt-image-2` synchronously (Cloudflare 524) or with non-÷16 dimensions.
+- Do not run `openai/gpt-image-2` synchronously when it is slow, and do not use non-divisible-by-16 dimensions.
 - Do not pad to the whole library when the brief only supports a few formats.
 - Do not write generated images into the skill's own directory; deliver them into the
   user's project output folder.

@@ -1,6 +1,6 @@
 # Eval Scenarios
 
-39 scenarios. Format per scenario:
+40 scenarios. Format per scenario:
 
 - **Category**: routing | refusal | cost | vision | polling | edge_case
 - **User input**: exact brief
@@ -336,7 +336,7 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 ### 37. Meta-connected performance brief before creative
 
 - **Category**: routing
-- **User input**: "We have Meta Ads CLI connected. Before making new ads for this catalog item, inspect performance and tell me what creative angles to produce."
+- **User input**: "We have Meta Ads MCP connected. Before making new ads for this catalog item, inspect performance and tell me what creative angles to produce."
 - **Expected**: agent reads Meta performance context before creative generation and looks for winning/weak formats, hooks, placements, fatigue, catalog, CTA, and audience signals
 - **Pass regex**: `(?i)meta ads|performance|before.*creative|winning|weak|hook|placement|fatigue|catalog|CTA|audience`
 - **Fail regex**: `(?i)generate.*first|skip.*performance|publish|budget change`

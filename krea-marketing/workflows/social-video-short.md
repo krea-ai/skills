@@ -28,26 +28,22 @@ Hard prescription. Follow in order.
 5. Decide whether the brief is locked or loose. If locked, generate one storyboard. If loose, load `../references/storyboard-variations.md` and default to 3 parallel storyboard variants that vary on at least two axes.
 6. Show storyboard variants together with `A/B/C` labels and one-line captions. Wait for an explicit user pick or merge request before animating. Iterate cheaply here before burning video credits.
 7. Upload the chosen storyboard and any local/non-Krea refs to Krea. Use the returned Krea-hosted URLs in generation inputs.
-8. Avoid the Seedance aspect trap (issue #11): do not pass `--start-image` for vertical output. If the storyboard sheet is landscape and final output must be 9:16, pad the sheet to portrait before upload or drop the sheet from `reference_images` and rely on face refs plus a detailed timeline prompt.
+8. Avoid the Seedance aspect trap (issue #11): do not pass a landscape start image for vertical output. If the storyboard sheet is landscape and final output must be 9:16, pad the sheet to portrait before upload or drop the sheet from `reference_images` and rely on face refs plus a detailed timeline prompt.
 9. Compose a timestamped timeline prompt. Use `TIMELINE`, `STYLE`, `CAMERA`, `TRANSITIONS`, and `OUTPUT` sections. Strip the words `slow`, `gentle`, `soft`, and `slow motion`; use `smooth`, `steady`, `fluid`, or `natural realtime` instead.
 10. Submit one video job async. Use `reference_images` for storyboard/refs, not per-panel concatenation.
 11. Poll with `../../krea-generate/references/progress-reporting.md`: ping on status changes and every 25-35 seconds while unchanged.
 12. Download, normalize to the requested delivery frame with ffmpeg, sample 4-6 frames, and vision-check continuity/identity before delivering.
 13. **Deliver** with a one-line summary and QA notes.
 
-### CLI path
-
-When using CLI, verify the surface with `../../krea-generate/references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
-
 ### MCP path
 
-When using MCP, use the available Krea tools to list models, inspect schema for both storyboard and video models, upload the approved storyboard, then call video generation with schema-verified prompt, reference, aspect, duration, and resolution fields. Poll with the available job-status tool and progress pings.
+Use the available Krea MCP tools to list models, inspect schema for both storyboard and video models, upload the approved storyboard, then call video generation with schema-verified prompt, reference, aspect, duration, and resolution fields. Poll with the available job-status tool and progress pings.
 
 ## Banned
 
 - Do not submit video before storyboard approval - this is the #11 fix and the 2026-05-17 lesson. The storyboard gate is a creative gate and is not skipped by a session-level cost-preflight override.
 - Do not generate panels separately and ffmpeg-concatenate - it creates stitched snippets, not a coherent social video.
-- Do not pass landscape `--start-image` into Seedance for vertical output - issue #11.
+- Do not pass a landscape start image into Seedance for vertical output - issue #11.
 - Do not put a landscape storyboard first in `reference_images` for 9:16 unless padded to portrait - issue #11.
 - Do not use `slow`, `gentle`, `soft`, or `slow motion` in prompts - Seedance often literalizes them.
 - Do not rely on synchronous video generation waits; they can cap before the job finishes. Submit asynchronously, then poll through the available Krea surface.
@@ -65,11 +61,11 @@ When using MCP, use the available Krea tools to list models, inspect schema for 
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| Output horizontal despite `--aspect 9:16` | Landscape `--start-image` or `reference_images[0]` bias, issue #11 | Drop start image; pad sheet to portrait; or use face refs plus timeline only |
+| Output horizontal despite `aspect_ratio="9:16"` | Landscape `start_image` or `reference_images[0]` bias, issue #11 | Drop start image; pad sheet to portrait; or use face refs plus timeline only |
 | Output is slow motion | Prompt contained banned pacing words, issue #14 | Rewrite with natural realtime, smooth, steady, fluid |
 | Video feels stitched | Per-panel generation was used, issue #15 | Use one storyboard sheet and one timeline-driven video job |
-| Upload URL empty | Old CLI upload issue #6 | Upgrade CLI; if blocked on an old install, resolve asset by ID through the assets endpoint |
-| Job times out | Sync generation wait cap | Submit async, then use `krea jobs wait <id> --timeout 1800` or a manual `krea jobs show` loop |
+| Upload URL empty | Upload response missing a URL | Retry upload through MCP; if it still fails, stop and surface the asset error |
+| Job times out | Sync generation wait cap | Submit async, then poll with MCP `get_job` |
 | External URL rejected | Public API asset validation, issue #7 | Download the asset if needed, upload it to Krea, then use the returned Krea URL |
 | Identity drifts | Face refs weak, issue #16 | Use 2-3 varied refs or route to `../../krea-generate/workflows/lora-train-and-use.md` |
 | User lost trust during wait | Silent polling, issue #17 | Follow `../../krea-generate/references/progress-reporting.md` every 25-35 seconds |

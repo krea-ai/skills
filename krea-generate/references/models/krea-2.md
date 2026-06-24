@@ -17,7 +17,7 @@ Observed live Krea 2 image IDs on 2026-06-11 included:
 - `krea/krea-2/medium`
 - `krea/krea-2/medium-turbo`
 
-Do not assume those IDs still exist. Confirm with live `list_models` through the available Krea surface, then inspect the chosen model schema.
+Do not assume those IDs still exist. Confirm with live `list_models` through Krea MCP, then inspect the chosen model schema.
 
 The Krea 2 schemas observed on 2026-06-11 exposed these important fields:
 
@@ -77,7 +77,7 @@ This endpoint is authenticated web-app state. In an unauthenticated request on 2
 {"message":"Unauthorized"}
 ```
 
-Treat this as separate from CLI/public-API key auth unless the current Krea tooling explicitly documents otherwise. The CLI can generate with a moodboard ID once the K2 schema exposes `moodboards`, but it does not by itself prove that `www.krea.ai/api/moodboards` is accessible without a logged-in web session.
+Treat this as separate from MCP auth unless the current Krea tooling explicitly documents otherwise. The ability to generate with a moodboard ID once the K2 schema exposes `moodboards` does not by itself prove that `www.krea.ai/api/moodboards` is accessible without a logged-in web session.
 
 Safe discovery rules for personal boards:
 

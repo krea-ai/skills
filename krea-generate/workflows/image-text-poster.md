@@ -2,7 +2,7 @@
 
 ## Trigger
 
-User asks for a poster, flyer, banner, packaging mockup, signage, ad with readable copy, title card, or any typography-heavy image. When in doubt between this workflow and `image-final-render.md`, pick this if legible text is central to success.
+User asks for a poster, flyer, banner, packaging mockup, signage, ad with readable copy, title card, or any typography-heavy image. When in doubt between this workflow and `image.md`, pick this if legible text is central to success.
 
 ## Clarify
 
@@ -20,7 +20,7 @@ If the user gave a tight, complete brief, skip Clarify entirely and proceed to R
 Hard prescription. Follow in order.
 
 1. Extract exact copy. Do not paraphrase text that should appear in the image.
-2. Resolve `text in image / typography` archetype from live `list_models`.
+2. Resolve `text in image / typography` archetype from live `list_models`. Prefer `openai/gpt-image-2` for lots of text copy or high-quality editorial overlays when live schema fits.
 3. Inspect schema for prompt, text, aspect, and quality fields.
 4. If references are supplied, read them with vision and upload local assets.
 5. Write a layout prompt with explicit hierarchy: headline, subhead, body, CTA.
@@ -29,13 +29,9 @@ Hard prescription. Follow in order.
 8. If text is wrong, retry with shorter text blocks or split into design-first image plus external typography recommendation.
 9. Deliver with spelling QA notes.
 
-### CLI path
-
-When using CLI, verify the surface with `../references/cli-or-mcp.md`, discover current command syntax from the installed CLI help, inspect the selected model schema, then submit using only live-supported fields. Treat command shapes from memory or old transcripts as stale.
-
 ### MCP path
 
-When using MCP, use the available Krea tools to list models, inspect the selected model schema, then call image generation with schema-verified prompt, aspect, text, quality, and resolution fields.
+Use the available Krea MCP tools to list models, inspect the selected model schema, then call image generation with schema-verified prompt, aspect, text, quality, and resolution fields.
 
 ## Banned
 

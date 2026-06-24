@@ -38,7 +38,7 @@ Write each line verbatim in the original language. Translate only if the user ne
 
 ## The "logline only" trap
 
-If the user gave you only a logline ("anime about a samurai apprentice"), do NOT proceed to storyboard. Run the concept development step in `../../krea-animation/workflows/series-from-scratch.md` first — propose 3 distinct concepts and let the user pick. Each pitch should already imply a spine in one sentence: *"Mira (apprentice who's never struck) wants to protect her dying master from an ink-dragon she accidentally summoned (obstacle she caused herself raises stakes); the cranes aren't her weapon, they're her signature (turn from soldier to artist); she signs the scroll instead of striking (new normal)."* That sentence is more useful than ten descriptive paragraphs.
+If the user gave you only a logline ("anime about a samurai apprentice"), do NOT proceed to storyboard. Run the concept development step in `../workflows/series-from-scratch.md` first — propose 3 distinct concepts and let the user pick. Each pitch should already imply a spine in one sentence: *"Mira (apprentice who's never struck) wants to protect her dying master from an ink-dragon she accidentally summoned (obstacle she caused herself raises stakes); the cranes aren't her weapon, they're her signature (turn from soldier to artist); she signs the scroll instead of striking (new normal)."* That sentence is more useful than ten descriptive paragraphs.
 
 ## The taste gate (write this last, before storyboarding)
 
