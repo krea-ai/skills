@@ -36,7 +36,7 @@ If a model does not support an end frame, convert the plan to start-frame plus r
 
 ## Cost Discipline
 
-Use `../../../krea-generate/references/cost-preflight.md` before any video, batch, or final-quality run. Show the user:
+Use `../../krea-generate/references/cost-preflight.md` before any video, batch, or final-quality run. Show the user:
 
 - number of shots
 - seconds per shot
@@ -46,4 +46,4 @@ Use `../../../krea-generate/references/cost-preflight.md` before any video, batc
 
 ## App Work
 
-If the user asks to build a UI, API, or production integration, route implementation to `../../krea-build/SKILL.md`. This skill defines the creative and production contract.
+If the user asks to build a UI, API, or production integration, use the app-integration skill if it is installed. This skill defines the creative and production contract.
