@@ -1,17 +1,23 @@
 name: Hero Evals
 
-# hero-eval layer (evals/hero/). Drives each hero case through a
-# headless `claude -p` agent loop with the checked-out skills loaded, captures the
-# tool path, and grades it (deterministic gates + LLM judge).
+# Hero-eval layer (evals/hero/). Drives each hero case through a headless
+# `claude -p` agent loop with the checked-out skills loaded, captures the tool
+# path, and grades it (deterministic gates + LLM judge).
 #
 # This is separate from validate.yml (lint/version) and claude.yml (PR review),
 # and from the regex smoke suite (evals/run.sh), none of which are touched.
+#
+# PUBLIC-REPO SAFETY / WHO CAN TRIGGER
+# The secret-bearing suite runs ONLY on push to main + manual dispatch — both
+# require repo WRITE access, so only internal collaborators can trigger it. It
+# also targets the `evals` GitHub Environment: a repo admin should add required
+# reviewers (the internal team) and a main-only deployment-branch policy there
+# to enforce internal-only approval before secrets are exposed. Pull requests
+# run an OFFLINE, secret-free self-test only.
 
 on:
-  schedule:
-    # 07:00 UTC == 00:00 America/Los_Angeles. Runs after the day's merges settle,
-    # off-peak for the Anthropic + Krea APIs.
-    - cron: "0 7 * * *"
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       only:
@@ -23,12 +29,9 @@ on:
         required: false
         default: "claude-sonnet-4-6"
         type: string
-  repository_dispatch:
-    # Fired by the webapp on a tool-surface change (separate, additive PR there).
-    types: [krea-tools-changed]
   pull_request:
-    # The generation-free subset runs only when a PR carries the label below.
-    types: [labeled, synchronize]
+    # Offline, secret-free self-test only (see hero-evals-pr-offline).
+    types: [opened, synchronize, reopened]
 
 # Serialize: the demo Krea account + API quota are shared across runs.
 concurrency:
@@ -39,11 +42,14 @@ permissions:
   contents: read
 
 jobs:
-  # ── Full suite: nightly / manual / tool-change dispatch ────────────────────
+  # ── Full suite: push to main + manual dispatch (internal write-access only) ──
   hero-evals:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    # Gate: add required reviewers (internal team) + main-only branch policy to
+    # this environment in repo settings to enforce internal-only approval.
+    environment: evals
     env:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       KREA_API_KEY: ${{ secrets.KREA_API_KEY }}
@@ -72,8 +78,13 @@ jobs:
           npm install -g @krea-ai/cli
           krea --version
 
-      - name: Verify Krea auth (CLI + KREA_API_KEY)
-        run: krea doctor || echo "::warning::krea doctor non-zero; running in KEY-only mode"
+      - name: Verify Krea auth (fail loudly if KREA_API_KEY is missing)
+        run: |
+          if [ -z "$KREA_API_KEY" ]; then
+            echo "::error::KREA_API_KEY is empty — the real-generation cases cannot run."
+            exit 1
+          fi
+          krea doctor || echo "::warning::krea doctor non-zero; running in KEY-only mode"
 
       - name: Self-test the runner (offline)
         run: python evals/hero/run.py --selftest
@@ -90,12 +101,20 @@ jobs:
             --out evals/hero/runs \
             --json-summary evals/hero/runs/latest-summary.json
 
-      - name: Upload run artifacts (transcripts + summary)
+      - name: Upload run results (results only — no raw transcripts)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: hero-eval-run-${{ github.run_id }}
-          path: evals/hero/runs/**
+          name: hero-eval-results-${{ github.run_id }}
+          # Public repo: publish ONLY the graded results (allowlist). Raw
+          # transcripts / prompts / final answers / stderr are never uploaded.
+          # The pass/fail summary is also sent to the notify webhook.
+          path: |
+            evals/hero/runs/latest-summary.json
+            evals/hero/runs/history.jsonl
+            evals/hero/runs/**/summary.json
+            evals/hero/runs/**/verdict.json
+            evals/hero/runs/**/tool_path.json
           retention-days: 14
           if-no-files-found: warn
 
@@ -106,26 +125,19 @@ jobs:
             --summary evals/hero/runs/latest-summary.json \
             --run-url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
             --trigger "${{ github.event_name }}" \
-            --reason "${{ github.event.client_payload.reason }}" \
             --outcome "${{ steps.run.outcome }}"
 
       - name: Reflect eval result in job status
         if: always()
         run: test "${{ steps.run.outcome }}" = "success"
 
-  # ── Generation-free subset: per-PR, label-gated ────────────────────────────
-  hero-evals-pr-subset:
-    if: >
-      github.event_name == 'pull_request' &&
-      contains(github.event.pull_request.labels.*.name, 'run-hero-evals')
+  # ── Pull-request check: OFFLINE, secret-free (safe on a public repo) ────────
+  # Runs the parser/verifier self-test — no API calls, no secrets, nothing to
+  # exfiltrate even though it runs PR code. The real suite runs on push to main.
+  hero-evals-pr-offline:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    env:
-      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      KREA_API_KEY: ${{ secrets.KREA_API_KEY }}
-      NOTIFY_WEBHOOK_URL: ${{ secrets.NOTIFY_WEBHOOK_URL }}
-      HERO_MODEL: "claude-sonnet-4-6"
-      HERO_JUDGE_MODEL: "claude-haiku-4-5-20251001"
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
@@ -133,47 +145,5 @@ jobs:
         with:
           python-version: "3.12"
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install Claude Code CLI
-        run: |
-          npm install -g @anthropic-ai/claude-code
-          claude --version
-
-      - name: Install Krea CLI
-        run: |
-          npm install -g @krea-ai/cli
-          krea --version
-
-      - name: Self-test the runner (offline)
+      - name: Offline self-test (no API, no secrets)
         run: python evals/hero/run.py --selftest
-
-      - name: Run generation-free hero subset
-        id: run
-        continue-on-error: true
-        # --no-generation drops execute-cheap cases AND disallows paid ops, so the
-        # subset cannot spend Krea credits even if an agent misbehaves.
-        run: |
-          python evals/hero/run.py \
-            --judge \
-            --no-generation \
-            --exec-class no-invoke,refuse,confirm-and-stop \
-            --model "$HERO_MODEL" \
-            --judge-model "$HERO_JUDGE_MODEL" \
-            --out evals/hero/runs \
-            --json-summary evals/hero/runs/latest-summary.json
-
-      - name: Upload run artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: hero-eval-pr-${{ github.run_id }}
-          path: evals/hero/runs/**
-          retention-days: 7
-          if-no-files-found: warn
-
-      - name: Reflect eval result in job status
-        if: always()
-        run: test "${{ steps.run.outcome }}" = "success"

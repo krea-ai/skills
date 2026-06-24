@@ -43,7 +43,7 @@ reattaches the same session so the agent continues with full context. The replie
 are **scripted, not dynamically generated** — deliberate, for repeatable grading.
 Each turn is graded by its own spec (turn 0 by the case fields, follow-ups by their
 own); the judge runs once over the whole conversation. `--no-generation` forces
-single-turn (turn 0 only), so the per-PR subset never spends on a continuation.
+single-turn (turn 0 only) and disallows paid ops (handy for a cheap local run).
 Long-running follow-ups (real video / LoRA training) are graded on **submission +
 polling-started**, not terminal completion, and keep a partial transcript on timeout.
 
@@ -77,7 +77,7 @@ python evals/hero/run.py --list
 # one case, with the LLM judge (needs ANTHROPIC_API_KEY + KREA_API_KEY)
 python evals/hero/run.py --case HC-04 --judge
 
-# generation-free subset (what the per-PR CI job runs)
+# generation-free subset (manual; CI runs only --selftest on PRs)
 python evals/hero/run.py --no-generation --exec-class no-invoke,refuse,confirm-and-stop --judge
 
 # everything
@@ -127,8 +127,12 @@ video/LoRA turns.
 
 ## CI
 
-`.github/workflows/evals.yml`: full suite nightly (07:00 UTC) +
-`workflow_dispatch` + `repository_dispatch(krea-tools-changed)` (fired by the
-webapp when the tool surface changes); plus a generation-free subset on PRs
-labeled `run-hero-evals`. Secrets: `ANTHROPIC_API_KEY`, `KREA_API_KEY`
-(demo account), `NOTIFY_WEBHOOK_URL`.
+`.github/workflows/evals.yml`. This is a **public** repo, so the secret-bearing
+suite runs only on **push to `main`** + **manual `workflow_dispatch`** — both
+require repo write access, so only internal collaborators can trigger it. The
+job targets the `evals` GitHub Environment; a repo admin should add **required
+reviewers** (internal team) + a **main-only** branch policy there to enforce
+internal-only approval before secrets are exposed. Pull requests run an
+**offline, secret-free** self-test only. The uploaded artifact is **results
+only** (no raw transcripts). Secrets: `ANTHROPIC_API_KEY`, `KREA_API_KEY`,
+`NOTIFY_WEBHOOK_URL`.
