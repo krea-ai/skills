@@ -28,6 +28,7 @@ Exit codes: 0 all pass, 1 any fail/error, 2 manual-review-without-judge, 3 harne
 from __future__ import annotations
 
 import argparse
+import atexit
 import json
 import os
 import re
@@ -671,7 +672,6 @@ def run_turn(prompt: str, *, model: str, budget: float, disallowed: list[str],
     cmd = [
         "claude", "-p",
         "--output-format", "stream-json", "--verbose",
-        "--plugin-dir", str(REPO_ROOT),
         "--model", model,
         "--max-budget-usd", str(budget),
         "--permission-mode", "bypassPermissions",
@@ -722,6 +722,51 @@ def slug(text: str) -> str:
     return re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", text.lower())).strip("-")[:48]
 
 
+SKILL_DIRS = ("krea-core", "krea-generate", "krea-marketing")
+
+
+def _skills_root() -> Path:
+    base = os.environ.get("CLAUDE_CONFIG_DIR") or os.path.expanduser("~/.claude")
+    return Path(base) / "skills"
+
+
+def install_skills() -> list:
+    """Install the checked-out skills into the agent's skills dir (the way
+    `npx skills add` does), so `claude -p` actually registers
+    krea-core/generate/marketing.
+
+    NOTE: `--plugin-dir <repo>` loads the plugin but does NOT register this
+    repo's top-level skill layout (Claude Code discovers plugin skills under a
+    `skills/` subdir, which this repo doesn't use). Installing into the skills
+    dir is the faithful mechanism. Returns the links we created so we can remove
+    them afterwards.
+    """
+    root = _skills_root()
+    root.mkdir(parents=True, exist_ok=True)
+    created = []
+    for s in SKILL_DIRS:
+        link = root / s
+        target = REPO_ROOT / s
+        if not target.exists():
+            continue
+        if link.is_symlink() and os.path.realpath(str(link)) == os.path.realpath(str(target)):
+            continue  # already linked to our checkout
+        if link.exists() or link.is_symlink():
+            print(f"  note: {link} already exists; leaving it in place", file=sys.stderr)
+            continue
+        link.symlink_to(target)
+        created.append(link)
+    return created
+
+
+def uninstall_skills(created: list) -> None:
+    for link in created:
+        try:
+            link.unlink()
+        except OSError:
+            pass
+
+
 def load_env_local() -> None:
     env = REPO_ROOT / ".env.local"
     if not env.exists():
@@ -761,6 +806,9 @@ def run(args: argparse.Namespace) -> int:
               file=sys.stderr)
         return 3
 
+    installed_links = install_skills()
+    atexit.register(uninstall_skills, installed_links)
+
     ts = os.environ.get("HERO_TIMESTAMP") or time.strftime("%Y%m%d-%H%M%S")
     out_root = Path(args.out) / ts
     out_root.mkdir(parents=True, exist_ok=True)
@@ -769,6 +817,7 @@ def run(args: argparse.Namespace) -> int:
     print(f"    Cases:      {len(cases)}  ({', '.join(c['id'] for c in cases)})")
     print(f"    Model:      {args.model}   Judge: {args.judge_model if args.judge else 'off'}")
     print(f"    No-gen:     {args.no_generation}")
+    print(f"    Skills:     {[l.name for l in installed_links] or 'already present'} -> {_skills_root()}")
     print(f"    Output:     {out_root}\n")
 
     tally = {"PASS": 0, "FAIL": 0, "MANUAL_REVIEW": 0, "ERROR": 0}

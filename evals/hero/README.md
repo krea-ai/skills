@@ -13,9 +13,14 @@ Neither layer touches the other.
 
 For each case → each prompt variant (→ each turn of a conversation):
 
-1. Runs a headless agent loop: `claude -p --output-format stream-json` with the
-   **checked-out** skills loaded via `--plugin-dir <repo-root>` (so the working
-   tree's skills are evaluated, not the published ones).
+1. Installs the **checked-out** skills into the agent skills dir (`~/.claude/skills`,
+   or `$CLAUDE_CONFIG_DIR/skills`) the way `npx skills add` does, then runs a
+   headless agent loop: `claude -p --output-format stream-json`. So the working
+   tree's skills are evaluated, not the published ones, and the symlinks are
+   removed when the run ends. (`--plugin-dir` is *not* used: Claude Code only
+   discovers plugin skills under a `skills/` subdir, which this repo's top-level
+   `krea-core/`/`krea-generate/`/`krea-marketing/` layout doesn't use — so it
+   would load the plugin but register zero skills.)
 2. Parses the transcript into an ordered **tool path**, mapping both
    `mcp__krea__*` tool calls **and** `krea …` CLI calls (run through `Bash`) onto
    one surface-agnostic step vocabulary, plus text-detected behaviours

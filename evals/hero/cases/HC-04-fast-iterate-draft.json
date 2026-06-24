@@ -29,8 +29,8 @@
   "required_facts": [
     "A fast/draft archetype is chosen, not a premium flagship model",
     "The draft is generated without a cost-preflight because it is well under 100 CU",
-    "The image is generated synchronously (no async video-style polling chatter)",
-    "The generated image is read with vision before delivery"
+    "The image result is delivered inline (briefly polling the CLI job for the result is fine; no video-style 'check back later' handoff)",
+    "The agent confirms the output matches the brief (describes/inspects the generated image) before delivering"
   ],
   "required_phrases": [
     "(?i)draft|quick|fast|cheap|exploration|test|option"
@@ -53,14 +53,14 @@
   },
   "followups": [
     {
-      "text": "Nice — now use that exact image you just generated as the reference and make a 16:9 variant. Don't re-upload it.",
+      "text": "Nice — take the first image you just generated, use it directly as the reference (reuse its URL, don't re-upload), and make a 16:9 widescreen variant.",
       "expected_tool_path": ["generate_image"],
       "require_paid_step": true,
       "forbidden_steps": ["upload"],
       "forbidden_phrases": ["(?i)re-?upload"],
-      "expect_args": [{"step": "generate_image", "contains": ["(?i)16:9|aspect|landscape|widescreen"]}],
+      "expect_args": [{"step": "generate_image", "contains": ["(?i)16:9|aspect|landscape|widescreen|width|height"]}],
       "grading_note": "Reuse-previous-output discipline: the agent passes the prior Krea-hosted output URL directly as a reference and does NOT re-upload it."
     }
   ],
-  "grading_criteria": "PASS if the agent resolves a fast/draft archetype, generates at least one cheap image synchronously, and vision-checks it before delivering, with no cost-preflight needed. FAIL if it picks a premium flagship for a draft, asks a long questionnaire instead of generating, hardcodes a model id, or delivers without a vision check."
+  "grading_criteria": "PASS if the agent resolves a fast/draft archetype (not a flagship), generates at least one cheap image and delivers it with a check that it matches the brief, no cost-preflight needed. Briefly polling the CLI job for the image result is acceptable (the Krea CLI is async by default); only a video-style 'I'll check back later' handoff is wrong. FAIL if it picks a premium flagship for a draft, asks a long questionnaire instead of generating, hardcodes a model id, or delivers without confirming the output."
 }
