@@ -2,7 +2,7 @@
 
 ## Trigger
 
-User asks to train a LoRA, fine-tune a style, keep a brand/person/product consistent, create a reusable style ID, or generate samples from a custom style. When in doubt between this workflow and `portrait-with-refs.md`, pick this if repeatability or exact identity across many outputs matters.
+User asks to train a LoRA, fine-tune a style, keep a brand/person/product consistent, create a reusable style ID, or generate samples from a custom style. Use this when repeatability or exact identity across many outputs matters.
 
 ## Clarify
 
@@ -64,4 +64,4 @@ generate_image(model="<style-aware-image-model>", input={prompt, <schema-style-f
 | Training fails mid-run | Bad URL or inaccessible asset | HEAD-check URLs and resubmit |
 | Samples ignore style | Underfit or missing trigger | Use trigger word and style strength; retrain with better set |
 | Samples all look same | Overfit | Lower style strength or retrain with more varied images |
-| User wants one portrait only | LoRA is overkill | Route to `portrait-with-refs.md` |
+| User wants one portrait only | LoRA is overkill | Route to `image.md` |

@@ -18,11 +18,11 @@ A finished campaign layout that establishes headline, product treatment, palette
 
 ## Hero Shot
 
-A single iconic product, person, or scene image. Route product/brand hero shots to `../workflows/product-photo-hero.md`; route non-marketing hero images to `../../krea-generate/workflows/image-final-render.md`.
+A single iconic product, person, or scene image. Route product/brand hero shots to `../workflows/product-photo-hero.md`; route non-marketing hero images to `../../krea-generate/workflows/image.md`.
 
 ## Mockup
 
-A product-in-context render such as packaging on shelf, poster in street, app on phone, or label on object. Route product lifestyle work to `../workflows/product-photo-lifestyle.md`; route non-marketing edits to `../../krea-generate/workflows/image-edit-i2i.md`.
+A product-in-context render such as packaging on shelf, poster in street, app on phone, or label on object. Route product lifestyle work to `../workflows/product-photo-lifestyle.md`; route non-marketing edits to `../../krea-generate/workflows/image.md`.
 
 ## Tearsheet / Look Book
 

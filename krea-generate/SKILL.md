@@ -1,7 +1,7 @@
 ---
 version: 0.5.2
 name: krea-generate
-description: "Generate and transform media through Krea MCP. Use for generic image generation, generic short video, image editing, enhancement/upscale, LoRA training, portraits, text-heavy images, and architectural visualization from 3D/CAD screenshots. For product, campaign, UGC, marketplace, or paid-social creative use krea-marketing."
+description: "Generate and transform media through Krea MCP. Use for generic image generation, generic short video, image editing, enhancement/upscale, LoRA training, text-heavy images, and architectural visualization from 3D/CAD screenshots. For product, campaign, UGC, marketplace, or paid-social creative use krea-marketing."
 license: MIT
 ---
 
@@ -37,19 +37,29 @@ Surface `UPGRADE_AVAILABLE` or `JUST_UPGRADED` once; otherwise stay quiet.
 8. Generic generation does not honor persistent model preference files. If the user explicitly names a model for the current request, verify it live and use it only if the schema fits.
 9. Do not pretend bad outputs are fine. Name the mismatch and offer a concrete retry path.
 
+## Quick Image Shortcut
+
+Use this directly from `SKILL.md` for simple image generation with no source image, no references, no product/marketing context, no final-quality requirement, no typography-heavy copy, and no video.
+
+1. Verify Krea MCP tools are connected.
+2. List live image models and pick a fast, low-cost schema match.
+3. Inspect the selected model schema before submitting.
+4. Generate one image using the user's prompt and explicit aspect ratio. If no aspect is given, infer it from the use case or default to 1:1.
+5. Read the generated image with vision before delivery. If it clearly misses the subject, retry once with a more literal prompt.
+
+Load `workflows/image.md` instead when the user provides references, asks for an edit/restyle, wants final or high-quality output, needs multiple options, or the request has preservation constraints.
+
 ## Routing
 
 | Intent | Workflow |
 |---|---|
-| generic image / quick image draft | `workflows/image-fast-iterate.md` |
-| production-quality image / final hero asset without product-marketing context | `workflows/image-final-render.md` |
-| transform / edit / restyle this image | `workflows/image-edit-i2i.md` |
+| simple generic image with no references | use Quick Image Shortcut above |
+| image with references / production-quality image / final hero asset without product-marketing context | `workflows/image.md` |
+| transform / edit / restyle this image | `workflows/image.md` |
 | poster / typography / text-heavy image | `workflows/image-text-poster.md` |
-| portrait with face refs | `workflows/portrait-with-refs.md` |
 | generic short video / text-to-video / non-ad clip | `workflows/video-generic-short.md` |
 | 3D screenshot -> photoreal render / archviz | `workflows/archviz-3d-to-render.md` |
-| upscale / 4K / enhance / make sharper | `workflows/enhance-upscale.md` |
-| creative enhance / relight / faithful restyle | `workflows/enhance-creative.md` |
+| upscale / 4K / enhance / make sharper / creative enhance / relight / faithful restyle | `workflows/enhance.md` |
 | train a LoRA / fine-tune on these images | `workflows/lora-train-and-use.md` |
 | product photo / campaign / ad / UGC / key visual / marketplace card / paid social | use `../krea-marketing/SKILL.md` |
 
