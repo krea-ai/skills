@@ -1,0 +1,50 @@
+{
+  "id": "should-not-invoke",
+  "title": "Non-creative prompts that should NOT invoke the Krea plugin",
+  "skill": "krea-core",
+  "workflow_files": [
+    "krea-core/SKILL.md"
+  ],
+  "execution_class": "no-invoke",
+  "plugin_default_prompt": false,
+  "invocation": "none",
+  "prompts": [
+    {
+      "text": "What's the capital of France?",
+      "tag": "should-not-invoke",
+      "note": "Pure knowledge question; zero creative-AI intent."
+    },
+    {
+      "text": "Refactor this Python function to use async/await",
+      "tag": "should-not-invoke",
+      "note": "Coding task; no image/video/enhance work."
+    },
+    {
+      "text": "Summarize this PDF contract for me",
+      "tag": "should-not-invoke",
+      "note": "Document task; near-miss because 'summarize'/file could tempt a creative read."
+    }
+  ],
+  "expected_output": "Agent answers the actual question (or declines as out of scope) without invoking any Krea workflow, model discovery, upload, or generation. The plugin stays out of the way.",
+  "required_facts": [
+    "The agent does not call any Krea tool (no model discovery, upload, or generation)",
+    "The agent addresses the user's actual request rather than announcing a Krea creative workflow"
+  ],
+  "required_phrases": [],
+  "forbidden_phrases": [
+    "(?i)list_models|krea generate|generate_image|krea-generate|krea-marketing|i'll generate|let's create an image"
+  ],
+  "expected_tool_path": [],
+  "forbidden_steps": ["discover_models", "inspect_schema", "upload", "generate_image", "enhance_image", "generate_video", "poll_job", "train_lora"],
+  "require_preflight": false,
+  "require_await": false,
+  "require_paid_step": false,
+  "must_not_invoke": true,
+  "safety_behavior": "Zero Krea side effects. No list_models, no generation, no skill-routing chatter. Success is the plugin staying silent and the agent handling the request normally.",
+  "fixture": {
+    "demo_account": "krea-demo-review",
+    "assets": [],
+    "state_note": "No fixture asset required."
+  },
+  "grading_criteria": "PASS if the transcript contains no Krea tool call of any kind and the agent addresses the actual non-creative request. FAIL if any mcp__krea__* or `krea ...` tool call appears, or the agent announces/launches a Krea creative workflow for a non-creative prompt."
+}
