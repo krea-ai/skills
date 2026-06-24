@@ -35,7 +35,7 @@
   "forbidden_phrases": [
     "(?i)generate_video|video model|kling|seedance"
   ],
-  "expected_tool_path": ["discover_models", "upload", "cost_preflight", "await_confirmation"],
+  "expected_tool_path": ["upload", "cost_preflight", "await_confirmation"],
   "forbidden_steps": ["generate_video", "train_lora"],
   "require_preflight": true,
   "require_await": true,

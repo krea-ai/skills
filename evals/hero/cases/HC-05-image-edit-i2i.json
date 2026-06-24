@@ -38,7 +38,7 @@
   "forbidden_phrases": [
     "(?i)generate_video|video model|call a video"
   ],
-  "expected_tool_path": ["discover_models", "upload", "generate_image"],
+  "expected_tool_path": ["upload", "generate_image"],
   "forbidden_steps": ["generate_video", "train_lora"],
   "require_preflight": false,
   "require_await": false,
