@@ -32,17 +32,36 @@ Surface `UPGRADE_AVAILABLE` or `JUST_UPGRADED` once; otherwise stay quiet.
 3. Vision-first. Read attached images before generating, and read generated stills/frames before approving or reusing them. Use `references/vision-qa.md`.
 4. For cheap images/enhance, pick the best live-discovered schema match. For video, training, batches, 4K, or >100 CU, run `references/cost-preflight.md`.
 5. Progress reporting is mandatory for async polling over 30 seconds. Use `references/progress-reporting.md`.
-6. Always list live models through Krea MCP before choosing a model, then inspect the selected model schema through Krea MCP. Do not choose from remembered model IDs or baked-in recommendations.
+6. Always list live models through Krea MCP before choosing a model, then inspect the selected model schema through Krea MCP. Use the Default Model Policy below when the user does not specify a model; if the preferred model is unavailable or the live schema does not fit, choose the nearest live alternative and say why.
 7. Normalize generation references to Krea-hosted assets before generation. Local files and arbitrary external media URLs must be uploaded to Krea first; already-Krea asset URLs can be passed directly.
 8. Generic generation does not honor persistent model preference files. If the user explicitly names a model for the current request, verify it live and use it only if the schema fits.
 9. Do not pretend bad outputs are fine. Name the mismatch and offer a concrete retry path.
+
+## Default Model Policy
+
+When the user does not specify a model, prefer these defaults after confirming they exist in live `list_models` and their schemas support the request:
+
+| Surface | Default |
+|---|---|
+| text-to-image: illustration, graphic, expressive art, stylized visual | `krea/krea-2/medium` |
+| text-to-image: photorealism, high detail, crispness, polish, final quality | `krea/krea-2/large` |
+| image edit: quality matters | `google/nano-banana-pro` |
+| image edit: ordinary edit, speed/cost matters, or quality bar is unspecified | `google/nano-banana-2` |
+| image edit: very high quality, slow/pricey acceptable, or lots of text/editorial overlay copy | `openai/gpt-image-2` |
+| image edit: small text additions | `google/nano-banana-2` or `google/nano-banana-pro` |
+| creative enhance | `topaz/generative-enhance` |
+| precise upscale/enhance | `topaz/standard-enhance` |
+| generic video | `bytedance/seedance-2-fast` |
+| high-end video request | `bytedance/seedance-2` |
+
+Treat these as preference order, not permission to skip discovery. Match by live id/name/description, inspect the schema, and fall back only when the preferred model is missing or cannot accept the required inputs.
 
 ## Quick Image Shortcut
 
 Use this directly from `SKILL.md` for simple image generation with no source image, no references, no product/marketing context, no final-quality requirement, no typography-heavy copy, and no video.
 
 1. Verify Krea MCP tools are connected.
-2. List live image models and pick a fast, low-cost schema match.
+2. List live image models and apply the Default Model Policy: `krea/krea-2/medium` for illustration/graphic/expressive art; `krea/krea-2/large` for photoreal, detailed, crisp, or polished output.
 3. Inspect the selected model schema before submitting.
 4. Generate one image using the user's prompt and explicit aspect ratio. If no aspect is given, infer it from the use case or default to 1:1.
 5. Read the generated image with vision before delivery. If it clearly misses the subject, retry once with a more literal prompt.
@@ -75,7 +94,7 @@ Load only what the active workflow needs:
 - `references/async-polling.md` - job lifecycle semantics.
 - `references/prompt-engineering.md` - prompt handling by modality.
 - `references/vision-qa.md` - output inspection and retake discipline.
-- `references/preferences.md` - model-selection boundary: no generic model pins.
+- `references/preferences.md` - model-selection boundary: live discovery plus shipped default policy.
 - `references/cost-preflight.md` - approval before expensive operations.
 - `references/budget-tracking.md` - running CU tracker.
 - `references/progress-reporting.md` - mandatory pings during long async polling.

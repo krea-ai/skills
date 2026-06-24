@@ -20,7 +20,7 @@ If the user gave a tight, complete brief, skip Clarify entirely and proceed to R
 Hard prescription. Follow in order.
 
 1. Extract exact copy. Do not paraphrase text that should appear in the image.
-2. Resolve `text in image / typography` archetype from live `list_models`.
+2. Resolve `text in image / typography` archetype from live `list_models`. Prefer `openai/gpt-image-2` for lots of text copy or high-quality editorial overlays when live schema fits.
 3. Inspect schema for prompt, text, aspect, and quality fields.
 4. If references are supplied, read them with vision and upload local assets.
 5. Write a layout prompt with explicit hierarchy: headline, subhead, body, CTA.

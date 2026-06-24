@@ -1,17 +1,37 @@
-# Model Catalog — Live Discovery
+# Model Catalog - Live Discovery And Defaults
 
-Krea's model lineup changes faster than this skill ships. This document intentionally avoids recommending specific model IDs. Use it to map an intent to the kind of capability to look for in live `list_models()` output.
+Krea's model lineup changes faster than this skill ships. Use this document to map an intent to a preferred live model and a fallback archetype from `list_models()` output.
 
 ## How To Use This File
 
 1. List live models through Krea MCP.
 2. Identify the user's intent.
 3. Match that intent to an archetype below.
-4. Read the live model `category`, `name`, and `description` for candidates that describe the needed capability.
-5. Inspect the schema for each candidate through the same surface.
-6. Choose the candidate whose live description and schema best match the request.
+4. Apply the default model policy when a named default is available.
+5. Read the live model `category`, `name`, and `description` for candidates that describe the needed capability.
+6. Inspect the schema for each candidate through the same surface.
+7. Choose the default candidate if its live description and schema fit; otherwise choose the nearest live alternative.
 
 Do not choose from memory, local preferences, stale examples, or model IDs in old transcripts. The live catalog and live schema are the source of truth.
+
+## Default Model Policy
+
+These defaults apply only when the user has not named a model. Match by live id/name/description, then inspect schema before use.
+
+| Intent | Preferred model |
+|---|---|
+| text-to-image illustration, graphic, expressive art, stylized visual | `krea/krea-2/medium` |
+| text-to-image photorealism, high detail, crispness, polish, final quality | `krea/krea-2/large` |
+| image edit where quality is important | `google/nano-banana-pro` |
+| ordinary image edit or unspecified quality bar | `google/nano-banana-2` |
+| very high-quality image edit, lots of text copy, editorial overlay, or slow/pricey acceptable | `openai/gpt-image-2` |
+| small text additions in an edit | `google/nano-banana-2` or `google/nano-banana-pro` |
+| creative enhance | `topaz/generative-enhance` |
+| precise upscale/enhance | `topaz/standard-enhance` |
+| generic video | Seedance-2-fast |
+| high-end video request | Seedance-2 |
+
+If a preferred model is unavailable, lacks required reference/aspect/text/duration/enhance fields, or fails live schema validation, explain the mismatch briefly and choose the closest live model by archetype.
 
 ---
 
@@ -20,6 +40,8 @@ Do not choose from memory, local preferences, stale examples, or model IDs in ol
 ### Fast Image Draft
 
 **Intent.** The user is exploring, asking for quick concepts, or expects several iterations.
+
+**Default.** Prefer `krea/krea-2/medium` for illustration, graphic, expressive art, or stylized visuals. Prefer `krea/krea-2/large` for photoreal, crisp, detailed, polished, or final-looking drafts.
 
 **Live catalog signals.** Look for descriptions that emphasize speed, low cost, drafts, exploration, quick iteration, or lightweight generation.
 
@@ -33,6 +55,8 @@ Do not choose from memory, local preferences, stale examples, or model IDs in ol
 
 **Intent.** The user wants a polished final, hero asset, photoreal render, production image, or high-quality still.
 
+**Default.** Prefer `krea/krea-2/large` when live discovery confirms a matching model and schema.
+
 **Live catalog signals.** Look for descriptions that emphasize photorealism, high fidelity, premium quality, production quality, flagship capability, or high resolution.
 
 **Schema hints.** Confirm resolution, quality, aspect ratio or width/height, and reference-image support when references matter.
@@ -44,6 +68,8 @@ Do not choose from memory, local preferences, stale examples, or model IDs in ol
 ### Text In Image / Typography
 
 **Intent.** The image must contain readable words, labels, signage, poster copy, UI text, or packaging text.
+
+**Default.** For image edits with lots of text copy or high-quality editorial overlays, prefer `openai/gpt-image-2`. For small text additions in an edit, `google/nano-banana-2` or `google/nano-banana-pro` is acceptable when schema fits.
 
 **Live catalog signals.** Look for descriptions that emphasize text rendering, typography, lettering, signage, copy fidelity, or design/layout strength.
 
@@ -57,6 +83,8 @@ Do not choose from memory, local preferences, stale examples, or model IDs in ol
 
 **Intent.** The user wants illustration, cartoon, anime, painterly style, expressive character design, or a non-photoreal look.
 
+**Default.** Prefer `krea/krea-2/medium` when live discovery confirms a matching model and schema.
+
 **Live catalog signals.** Look for descriptions that emphasize illustration, stylization, character work, expressive style, art direction, or style transfer.
 
 **Schema hints.** Confirm style fields, reference support, and any style-strength controls.
@@ -68,6 +96,8 @@ Do not choose from memory, local preferences, stale examples, or model IDs in ol
 ### Image-To-Image / Subject Reference
 
 **Intent.** The user provides an existing image to edit, transform, restyle, or preserve as a subject/face/product reference.
+
+**Default.** Use `google/nano-banana-2` for ordinary edits or unspecified quality, `google/nano-banana-pro` when quality is important, and `openai/gpt-image-2` only for very high-quality edits or lots of text/editorial overlay copy.
 
 **Live catalog signals.** Look for descriptions that mention image prompts, references, editing, subject preservation, face reference, style reference, or character reference.
 
@@ -97,6 +127,8 @@ Do not choose from memory, local preferences, stale examples, or model IDs in ol
 
 **Intent.** Quick motion tests, simple generated clips, rough exploration, or short ambient motion.
 
+**Default.** Prefer Seedance-2-fast when live discovery confirms a matching model and schema.
+
 **Live catalog signals.** Look for descriptions that emphasize speed, draft quality, budget, lightweight video, or fast text-to-video.
 
 **Schema hints.** Confirm duration, aspect ratio, resolution, prompt, and any reference/start-frame fields.
@@ -106,6 +138,8 @@ Do not choose from memory, local preferences, stale examples, or model IDs in ol
 ### Cinematic Video
 
 **Intent.** Polished clip, coherent camera movement, production feel, multi-action motion, or identity-sensitive video.
+
+**Default.** Prefer Seedance-2 for high-end video requests when live discovery confirms a matching model and schema.
 
 **Live catalog signals.** Look for descriptions that emphasize cinematic quality, high fidelity, multi-shot or long motion handling, realistic motion, subject consistency, or production video.
 
@@ -141,6 +175,8 @@ Do not choose from memory, local preferences, stale examples, or model IDs in ol
 
 **Intent.** Increase resolution, sharpen, denoise, or clean up an existing image while preserving content.
 
+**Default.** Prefer `topaz/standard-enhance` when live discovery confirms a matching model and schema.
+
 **Live catalog signals.** Look for descriptions that emphasize faithful upscale, preservation, sharpening, denoise, restoration, or non-generative enhancement.
 
 **Schema hints.** Confirm target width/height or scale, denoise/sharpen controls, and whether face enhancement is optional.
@@ -150,6 +186,8 @@ Do not choose from memory, local preferences, stale examples, or model IDs in ol
 ### Creative Enhance
 
 **Intent.** Improve an image while allowing the model to invent extra detail, lighting, texture, or polish.
+
+**Default.** Prefer `topaz/generative-enhance` when live discovery confirms a matching model and schema.
 
 **Live catalog signals.** Look for descriptions that emphasize creative enhancement, generative detail, relighting, refinement, or detail injection.
 
@@ -181,11 +219,11 @@ Classify the request before choosing a model:
 10. Upscale without changing content -> faithful upscale.
 11. Enhance with creative changes -> creative enhance.
 
-Then resolve the archetype through live `list_models`, inspect schema, and submit.
+Then resolve the preferred default or archetype through live `list_models`, inspect schema, and submit.
 
 ## Boundaries
 
-- Never hardcode a model ID based on memory.
+- Never hardcode a model ID based on memory; named defaults in this file still require live discovery and schema inspection.
 - Do not use generic preference files to override live discovery.
 - If the user names a specific model for this request, verify it exists in live `list_models`; use it only if the live schema supports the job.
 - Domain-specific skills may add model preferences for their domain. For marketing image preferences, route to `../krea-marketing/SKILL.md`.

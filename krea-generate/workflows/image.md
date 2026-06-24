@@ -32,7 +32,7 @@ Hard prescription. Follow in order.
 
 1. Read every attached/source/reference image with vision before routing.
 2. If the run is >100 CU, 4K, a premium batch, or otherwise expensive, run `../references/cost-preflight.md`.
-3. Load `../references/model-catalog.md` and resolve the right live archetype:
+3. Load `../references/model-catalog.md` and resolve the right live default/archetype:
    - Fast draft: `fast image draft`.
    - High fidelity: `high-fidelity image`.
    - Edit/restyle/preservation: `image-to-image / face reference`.
@@ -49,7 +49,7 @@ Hard prescription. Follow in order.
 
 ### MCP path
 
-Use available Krea MCP tools to upload inputs, list models, inspect schemas, generate images, and poll jobs. Do not hardcode model IDs or input fields.
+Use available Krea MCP tools to upload inputs, list models, inspect schemas, generate images, and poll jobs. Do not skip live verification of model names or input fields.
 
 ## Banned
 

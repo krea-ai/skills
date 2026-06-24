@@ -1,17 +1,17 @@
 # Model Selection Boundary
 
-`krea-generate` is the generic Krea skill. It must discover models from the live Krea catalog instead of maintaining project-level model recommendations.
+`krea-generate` is the generic Krea skill. It must discover models from the live Krea catalog, then apply the shipped default model policy in `../SKILL.md` and `model-catalog.md` when the user has not specified a model.
 
 ## Rule
 
 For every generation task:
 
 1. List live models through Krea MCP.
-2. Choose candidates by matching the user's intent against live model category, name, description, and capabilities.
+2. Choose candidates by matching the user's intent against live model category, name, description, capabilities, and the default model policy.
 3. Inspect the chosen candidate's schema through the same surface.
 4. Submit only with fields present in that live schema.
 
-Do not read `KREA_PREFERENCES.md`, `CLAUDE.md`, user memory, or local project notes as generic model-selection overrides. Those files can describe the user's brief, style, or output constraints, but they do not replace live discovery.
+Do not read `KREA_PREFERENCES.md`, `CLAUDE.md`, user memory, or local project notes as generic model-selection overrides. Those files can describe the user's brief, style, or output constraints, but they do not replace live discovery or the shipped default policy.
 
 ## Explicit User Model Requests
 
