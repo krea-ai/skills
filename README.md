@@ -2,14 +2,13 @@
 
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![version](https://img.shields.io/badge/version-0.5.2-green.svg)](VERSION)
-[![skills](https://img.shields.io/badge/skills-4-purple.svg)](#install-the-skills)
+[![skills](https://img.shields.io/badge/skills-3-purple.svg)](#install-the-skills)
 [![discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.com/invite/krea-1002244500581798028)
 
-Four packaged Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get the Krea skill suite.
+Three packaged Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get the Krea skill suite.
 
 | Skill | When to use |
 |---|---|
-| **`krea-core`** | Shared Krea agent contract and router. Use first to apply Krea tone, fast-path simple generation, and route to generation or marketing workflows. |
 | **`krea-generate`** | Canonical generic-generation router. Image, video primitives, enhancement, edits, LoRA, portraits, text/poster work, and archviz through connected Krea MCP tools. |
 | **`krea-marketing`** | Marketing creative workflow: product photoshoots, marketplace image sets, DTC static ad templates (one product photo → a library of on-brand ad formats), key visuals, UGC/social ads, campaign packs, and optional Meta Ads performance context. |
 | **`krea-animation`** | Studio animation workflow: anime series, storyboard-to-video, shotlists, asset bibles, model sheets, keyframes, AI video clips, edit assembly, QA, and retakes. |
