@@ -5,8 +5,7 @@
   "workflow_files": [
     "krea-generate/workflows/archviz-3d-to-render.md"
   ],
-  "execution_class": "execute-cheap",
-  "plugin_default_prompt": false,
+  "default_prompt": false,
   "invocation": "both",
   "prompts": [
     {
@@ -32,23 +31,18 @@
     "Massing, window rhythm, and camera are preserved",
     "One structural pass is produced before any variants, and the work stays in krea-generate (not marketing)"
   ],
-  "required_phrases": [
-    "(?i)structural|massing|preserve|image-to-image|i2i|photoreal|render|viewport|architect"
+  "expected_tool_path": [
+    "upload",
+    "generate_image"
   ],
-  "forbidden_phrases": [
-    "(?i)krea-marketing|product photo|ugc|marketplace|tiktok"
-  ],
-  "expected_tool_path": ["upload", "generate_image"],
-  "forbidden_steps": ["generate_video", "train_lora"],
-  "require_preflight": false,
-  "require_await": false,
-  "require_paid_step": true,
-  "max_cheap_generations": 2,
   "safety_behavior": "A single 1K structural pass is low-cost and may proceed; only 4K/batch crosses the cost-preflight threshold. The agent must not change massing/window rhythm/camera and must not route to marketing/product workflows.",
   "fixture": {
-    "demo_account": "krea-demo-review",
+    "review_account": "krea-demo-review",
     "assets": [
-      { "role": "3d_screenshot", "url": "https://cdn.krea.ai/demo/sketchup-villa-1280.jpg" }
+      {
+        "role": "3d_screenshot",
+        "url": "https://cdn.krea.ai/demo/sketchup-villa-1280.jpg"
+      }
     ],
     "state_note": "Demo account holds a SketchUp/Rhino/Revit viewport screenshot of a building, >=1024px on the long side."
   },

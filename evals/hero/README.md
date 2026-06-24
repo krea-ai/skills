@@ -1,138 +1,105 @@
 # Hero evals
 
-**hero-eval layer** for the Krea plugin. It tests whether an
-agent can *complete* a hero workflow using the Krea tools — graded over the
-**tool path + final outcome**, with full transcripts captured.
+Hero-use-case evals for the Krea Codex plugin, structured the way the *"How to
+Build a Great Codex Plugin"* deck asks for them.
 
-This sits **beside** the regex smoke suite (`../scenarios.md` + `../run.sh`), which
-greps the final text only. The hero layer is the tool-path-graded superset:
-several hero cases reuse smoke-suite prompts but verify the *actual* tool calls.
-Neither layer touches the other.
+**The eval loop runs in Codex with `@plugin-eval`** — that's where the plugin
+(the Krea MCP app + skills) loads natively and drives the agent/tool calls. This
+folder is the repo-side half the deck also requires:
 
-## What a run does
+- **`cases/*.json`** — the golden **hero specs** (`@plugin-eval` and reviewers read
+  these): user prompt(s), expected output, required facts, expected tool path,
+  safety behavior, fixture/state, grading criteria.
+- **`run.py`** — a **transcript grader** + offline lint/self-test. It grades a
+  captured run against a spec (`transcript → verifier → result`); it does **not**
+  drive a live agent/tool surface (that's `@plugin-eval`'s job in Codex).
 
-For each case → each prompt variant (→ each turn of a conversation):
+> Why not run the whole loop in CI? The plugin is MCP-only and the Krea MCP is
+> OAuth-based, so it doesn't run in a headless CI agent. The deck's guidance is to
+> **run the loop in Codex, start manual, and automate only the stable parts** — so
+> CI here runs just the secret-free spec lint + grader self-test.
 
-1. Installs the **checked-out** skills into the agent skills dir (`~/.claude/skills`,
-   or `$CLAUDE_CONFIG_DIR/skills`) the way `npx skills add` does, then runs a
-   headless agent loop: `claude -p --output-format stream-json`. So the working
-   tree's skills are evaluated, not the published ones, and the symlinks are
-   removed when the run ends. (`--plugin-dir` is *not* used: Claude Code only
-   discovers plugin skills under a `skills/` subdir, which this repo's top-level
-   `krea-core/`/`krea-generate/`/`krea-marketing/` layout doesn't use — so it
-   would load the plugin but register zero skills.)
-2. Parses the transcript into an ordered **tool path**, mapping both
-   `mcp__krea__*` tool calls **and** `krea …` CLI calls (run through `Bash`) onto
-   one surface-agnostic step vocabulary, plus text-detected behaviours
-   (`cost_preflight`, `await_confirmation`, `vision_qa`, `refuse`).
-3. Grades, lightest verifier first (per turn):
-   - **required / forbidden phrases** — cheap contains/regex over the answer.
-   - **expected tool path** — ordered-subsequence over the observed steps.
-   - **expect_args** — the "right tool, *valid args*" check.
-   - **safety behaviour** — per `execution_class` (see below).
-   - **grading criteria** — an LLM judge (`--judge`) reads the whole conversation
-     + rubric and returns `{verdict, reason}`.
+## Run the evals (in Codex)
 
-### Multi-turn conversations
+1. **Connect the Krea plugin in Codex** (deck appendix): install/authenticate the
+   Krea app in ChatGPT, confirm it appears in Codex, and verify `mcp__krea__*`
+   tools are available.
+2. **Provision the review account** with the fixture assets each case references
+   (`fixture.assets[].url`) and a clean job history.
+3. **Get the prompts:** `python evals/hero/run.py --print-prompts` (add `--case HC-02`
+   for one). Each case lists its 2-3 prompt variants and any scripted follow-up
+   replies.
+4. **Run with `@plugin-eval`** against the connected plugin. For a **multi-turn**
+   case, send the prompt, then — when the agent stops to ask — send the case's
+   scripted follow-up reply (the "(then reply) …" lines).
+5. **Save the transcript** as JSON and grade it (next section).
 
-A case spans the complexity ladder: a single-turn entry point on every
-case, plus a **scripted multi-turn arc** where it's natural (HC-01/02/03/04/09/10).
-A variant's (or case's) optional `followups[]` are pre-written user replies. Turn 0
-fixes a `--session-id`; each follow-up is sent with `claude -p --resume <id>`, which
-reattaches the same session so the agent continues with full context. The replies
-are **scripted, not dynamically generated** — deliberate, for repeatable grading.
-Each turn is graded by its own spec (turn 0 by the case fields, follow-ups by their
-own); the judge runs once over the whole conversation. `--no-generation` forces
-single-turn (turn 0 only) and disallows paid ops (handy for a cheap local run).
-Long-running follow-ups (real video / LoRA training) are graded on **submission +
-polling-started**, not terminal completion, and keep a partial transcript on timeout.
-
-Verdicts: `PASS` · `FAIL` · `MANUAL_REVIEW` (gates passed but the judge wasn't
-run) · `ERROR`. Exit codes mirror `run.sh`: `0` all pass, `1` any fail/error,
-`2` manual-review-without-judge, `3` harness error.
-
-## Execution classes (and how they keep CI cheap)
-
-| class | correct behaviour | Krea spend |
-|---|---|---|
-| `confirm-and-stop` | present a cost-preflight and **stop** before the expensive op (video / LoRA train / large batch) | ~$0 (cheap prep only) |
-| `execute-cheap` | run one cheap real generation and deliver | a few cents |
-| `no-invoke` | answer normally; **don't** touch any Krea tool | $0 |
-| `refuse` | decline unsafe generation; no `generate_image` | $0 |
-
-The runner also passes `--disallowedTools` for the costly ops a correct
-`confirm-and-stop` / `refuse` / `no-invoke` run would never reach (defense in
-depth), and caps Anthropic spend with `--max-budget-usd`. The demo account's
-credit cap is the final backstop.
-
-## Usage
+## Grade a captured transcript
 
 ```bash
-# offline — validates the parser + verifier with synthetic transcripts (no API)
-python evals/hero/run.py --selftest
-
-# list cases
-python evals/hero/run.py --list
-
-# one case, with the LLM judge (needs ANTHROPIC_API_KEY + KREA_API_KEY)
-python evals/hero/run.py --case HC-04 --judge
-
-# generation-free subset (manual; CI runs only --selftest on PRs)
-python evals/hero/run.py --no-generation --exec-class no-invoke,refuse,confirm-and-stop --judge
-
-# everything
-python evals/hero/run.py --judge
+python evals/hero/run.py --grade HC-02 transcript.json --judge
 ```
 
-Flags: `--only ids`, `--case id`, `--exec-class classes`, `--limit N`,
-`--no-generation`/`--no-execute`, `--model`, `--judge-model`, `--judge`,
-`--budget`, `--out`, `--json-summary`. `--only`/`--case` accept an id
-(`fast-iterate-draft`), a number (`4`), or `HC-04`.
+Transcript format (single- or multi-turn):
 
-Outputs land in `evals/hero/runs/<timestamp>/` (git-ignored): per-variant
-`transcript.jsonl`, `tool_path.json`, `final.txt`, `verdict.json`; plus
-`summary.json` and an appended `runs/history.jsonl`.
+```json
+{ "turns": [
+  { "user": "<prompt>", "assistant": "<final text>",
+    "tool_calls": [ {"name": "mcp__krea__list_models", "args": {}} ] },
+  { "user": "<scripted follow-up reply>", "assistant": "...",
+    "tool_calls": [ {"name": "mcp__krea__generate_video", "args": {"duration": 5}} ] }
+] }
+```
 
-## Auth & fixtures
+A Claude Code `--output-format stream-json` dump is also accepted. The grader
+applies the deck's lightest-verifier ladder:
 
-- **Auth**: Krea CLI + `KREA_API_KEY` (README Option A) — headless-friendly. MCP
-  OAuth is *not* used in CI; with only the CLI authed, tool calls appear as
-  `Bash(krea …)` and the runner maps them to the same logical steps. (Set
-  `HERO_ATTACH_MCP=1` to also attach `.codex-plugin/.mcp.json` locally.)
-- **Fixtures** are **Krea-hosted demo-account asset URLs** declared in each
-  case's `fixture.assets[].url` — never committed binaries. Provision the
-  `krea-demo-review` account with the referenced assets (one product photo, a
-  soft photo for upscale, a product-on-plain-bg for i2i, a 3D viewport
-  screenshot, and a 15-18 image mascot training set) and keep its job history
-  clean so the cost-gate cases start fresh.
+1. **Expected tool path** — deterministic ordered-subsequence over the whole
+   conversation (tool names are mapped surface-agnostically: `mcp__krea__*`,
+   `krea …` CLI, or already-logical step names all normalize to the same steps).
+2. **LLM judge** (`--judge`) — grades `required_facts` + `safety_behavior` +
+   `grading_criteria` over the full transcript (incl. all turns). Without
+   `--judge` a tool-path-clean run is `MANUAL_REVIEW` (judge deferred). A judge
+   that can't run returns `ERROR`, never a silent pass.
+
+## Multi-turn
+
+Cases that need a follow-up (HC-01/02/03/04/09/10) carry `followups` — scripted
+user replies. The pattern is the deck's "prompts that require follow-ups": turn 0
+the agent should stop (cost-preflight / clarifying question); after the scripted
+reply it should proceed correctly. The grader reconstructs the tool path across
+**all** turns and the judge evaluates the whole arc.
 
 ## Case format
 
-One JSON file per case in `cases/`. See `cases/HC-02-product-teaser-5s.json` for
-a worked example. Key fields: `prompts[]` (2-3 variants tagged
-`clear|ambiguous|misspelled|should-not-invoke|implicit|explicit`),
-`expected_output`, `required_facts`, `required_phrases`/`forbidden_phrases`,
-`expected_tool_path`, `forbidden_steps`, `execution_class` + control flags
-(`require_preflight`, `require_await`, `require_paid_step`,
-`max_cheap_generations`, `must_refuse`, `must_not_invoke`), `safety_behavior`,
-`fixture`, and `grading_criteria` (the judge rubric). `workflow_files` names the
-SKILL/workflow a failure points at — the failure→change loop.
+One JSON file per case. Fields map to the deck's spec table:
 
-For multi-turn cases, add `followups[]` (case-level applies to every variant; a
-variant-level `followups` overrides). Each follow-up is a turn spec with its own
-`text` (the scripted user reply) plus the same grading fields used per turn:
-`expected_tool_path`, `forbidden_steps`, `require_paid_step`, `expect_args`
-(`[{step, contains:[regex]}]` — the valid-args check), and `long_running` for real
-video/LoRA turns.
+| Field | Deck field |
+|---|---|
+| `prompts[]` (`text` + `tag`: clear/ambiguous/misspelled/should-not-invoke/implicit/explicit) | User prompt(s) |
+| `expected_output` | Expected output |
+| `required_facts` | Required facts |
+| `expected_tool_path` | Expected tool path (logical, surface-agnostic) |
+| `safety_behavior` | Safety behavior |
+| `fixture` | Fixture / state |
+| `grading_criteria` | Grading criteria |
 
-## CI
+Plus `skill` + `workflow_files` (which SKILL a failure points at — the deck's
+failure→change loop), `default_prompt` (maps to a directory default prompt), and
+`followups` (scripted multi-turn replies).
 
-`.github/workflows/evals.yml`. This is a **public** repo, so the secret-bearing
-suite runs only on **push to `main`** + **manual `workflow_dispatch`** — both
-require repo write access, so only internal collaborators can trigger it. The
-job targets the `evals` GitHub Environment; a repo admin should add **required
-reviewers** (internal team) + a **main-only** branch policy there to enforce
-internal-only approval before secrets are exposed. Pull requests run an
-**offline, secret-free** self-test only. The uploaded artifact is **results
-only** (no raw transcripts). Secrets: `ANTHROPIC_API_KEY`, `KREA_API_KEY`,
-`NOTIFY_WEBHOOK_URL`.
+## Offline (CI)
+
+```bash
+python evals/hero/run.py --lint       # validate every spec
+python evals/hero/run.py --selftest   # grader unit checks (incl. multi-turn), no API
+```
+
+`.github/workflows/evals.yml` runs exactly these two on push/PR — no secrets, no
+live generation.
+
+## Submission checklist (deck §05)
+
+- [ ] Hero prompts + repeatable eval scenarios documented (these specs).
+- [ ] Review/demo account with realistic dummy data (the fixtures).
+- [ ] Hero workflows validated in Codex via `@plugin-eval`; transcripts captured + graded.
