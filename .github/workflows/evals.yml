@@ -1,0 +1,179 @@
+name: Hero Evals
+
+# hero-eval layer (evals/hero/). Drives each hero case through a
+# headless `claude -p` agent loop with the checked-out skills loaded, captures the
+# tool path, and grades it (deterministic gates + LLM judge).
+#
+# This is separate from validate.yml (lint/version) and claude.yml (PR review),
+# and from the regex smoke suite (evals/run.sh), none of which are touched.
+
+on:
+  schedule:
+    # 07:00 UTC == 00:00 America/Los_Angeles. Runs after the day's merges settle,
+    # off-peak for the Anthropic + Krea APIs.
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Comma-separated hero case ids to run (blank = all)"
+        required: false
+        type: string
+      model:
+        description: "Harness model (agent under test)"
+        required: false
+        default: "claude-sonnet-4-6"
+        type: string
+  repository_dispatch:
+    # Fired by the webapp on a tool-surface change (separate, additive PR there).
+    types: [krea-tools-changed]
+  pull_request:
+    # The generation-free subset runs only when a PR carries the label below.
+    types: [labeled, synchronize]
+
+# Serialize: the demo Krea account + API quota are shared across runs.
+concurrency:
+  group: hero-evals-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  # ── Full suite: nightly / manual / tool-change dispatch ────────────────────
+  hero-evals:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      KREA_API_KEY: ${{ secrets.KREA_API_KEY }}
+      NOTIFY_WEBHOOK_URL: ${{ secrets.NOTIFY_WEBHOOK_URL }}
+      HERO_MODEL: ${{ github.event.inputs.model || 'claude-sonnet-4-6' }}
+      HERO_JUDGE_MODEL: "claude-haiku-4-5-20251001"
+      HERO_ONLY: ${{ github.event.inputs.only || '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Claude Code CLI
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude --version
+
+      - name: Install Krea CLI
+        run: |
+          npm install -g @krea-ai/cli
+          krea --version
+
+      - name: Verify Krea auth (CLI + KREA_API_KEY)
+        run: krea doctor || echo "::warning::krea doctor non-zero; running in KEY-only mode"
+
+      - name: Self-test the runner (offline)
+        run: python evals/hero/run.py --selftest
+
+      - name: Run hero evals
+        id: run
+        continue-on-error: true
+        run: |
+          python evals/hero/run.py \
+            --judge \
+            --model "$HERO_MODEL" \
+            --judge-model "$HERO_JUDGE_MODEL" \
+            ${HERO_ONLY:+--only "$HERO_ONLY"} \
+            --out evals/hero/runs \
+            --json-summary evals/hero/runs/latest-summary.json
+
+      - name: Upload run artifacts (transcripts + summary)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hero-eval-run-${{ github.run_id }}
+          path: evals/hero/runs/**
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: Post run summary
+        if: always()
+        run: |
+          python evals/hero/notify.py \
+            --summary evals/hero/runs/latest-summary.json \
+            --run-url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --trigger "${{ github.event_name }}" \
+            --reason "${{ github.event.client_payload.reason }}" \
+            --outcome "${{ steps.run.outcome }}"
+
+      - name: Reflect eval result in job status
+        if: always()
+        run: test "${{ steps.run.outcome }}" = "success"
+
+  # ── Generation-free subset: per-PR, label-gated ────────────────────────────
+  hero-evals-pr-subset:
+    if: >
+      github.event_name == 'pull_request' &&
+      contains(github.event.pull_request.labels.*.name, 'run-hero-evals')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      KREA_API_KEY: ${{ secrets.KREA_API_KEY }}
+      NOTIFY_WEBHOOK_URL: ${{ secrets.NOTIFY_WEBHOOK_URL }}
+      HERO_MODEL: "claude-sonnet-4-6"
+      HERO_JUDGE_MODEL: "claude-haiku-4-5-20251001"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Claude Code CLI
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude --version
+
+      - name: Install Krea CLI
+        run: |
+          npm install -g @krea-ai/cli
+          krea --version
+
+      - name: Self-test the runner (offline)
+        run: python evals/hero/run.py --selftest
+
+      - name: Run generation-free hero subset
+        id: run
+        continue-on-error: true
+        # --no-generation drops execute-cheap cases AND disallows paid ops, so the
+        # subset cannot spend Krea credits even if an agent misbehaves.
+        run: |
+          python evals/hero/run.py \
+            --judge \
+            --no-generation \
+            --exec-class no-invoke,refuse,confirm-and-stop \
+            --model "$HERO_MODEL" \
+            --judge-model "$HERO_JUDGE_MODEL" \
+            --out evals/hero/runs \
+            --json-summary evals/hero/runs/latest-summary.json
+
+      - name: Upload run artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hero-eval-pr-${{ github.run_id }}
+          path: evals/hero/runs/**
+          retention-days: 7
+          if-no-files-found: warn
+
+      - name: Reflect eval result in job status
+        if: always()
+        run: test "${{ steps.run.outcome }}" = "success"

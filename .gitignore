@@ -10,8 +10,14 @@ clawhub/
 # Internal research dumps (competitor recon, scratch). Never publish.
 research/
 
-# Eval results — write-only local cache, never committed
+# Eval results — write-only local cache, never committed.
+# The bare `runs/` pattern matches at any depth, so it also covers
+# evals/hero/runs/ (verified via `git check-ignore`).
 runs/
+
+# Hero-eval fixtures are Krea-hosted demo-account URLs, never committed binaries.
+# Guard against anyone dropping a local binary fixture into the tree.
+evals/hero/fixtures/
 
 # Local env (API keys for eval runner, etc.)
 .env.local
