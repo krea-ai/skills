@@ -12,26 +12,31 @@ Use when a storyboard and shot list are approved and the user wants to generate 
 4. Run `scripts/build_manifests.py <project>` to produce video job and edit manifests.
 5. Dry-run submission:
    ```bash
-   python3 krea-animation/scripts/submit_video_jobs.py <project> --dry-run
+   VERIFIED_MODEL_ID="bytedance/seedance-2-fast"
+   python3 krea-animation/scripts/submit_video_jobs.py <project> --dry-run --model "$VERIFIED_MODEL_ID"
    ```
 6. Inspect the dry-run. Confirm every approved shot has a Krea-hosted `start_image` and that Seedance-style shots use only one of `end_image` or `reference_images`.
-7. Submit only approved shots. For the first pass, submit 1-3 representative shots before the whole sequence.
-8. Poll jobs with progress updates:
+7. Submit only approved payloads from `04_generation/jobs/mcp-video-jobs.jsonl` through the connected Krea MCP `generate_video` tool. For the first pass, submit 1-3 representative shots before the whole sequence. Write returned job IDs to `04_generation/jobs/jobs.tsv`.
+8. Prepare MCP job-status checks:
    ```bash
-   python3 krea-animation/scripts/poll_video_jobs.py <project> --download
+   python3 krea-animation/scripts/poll_video_jobs.py <project>
    ```
-9. Sample mid/end frames for the test shots. Log concrete retakes before submitting the rest of the sequence.
-10. Continue in batches. Keep in-scene continuity serialized when a shot depends on the previous shot's last frame; batch independent hard-cut shots in parallel within live model limits.
-11. Normalize and assemble:
+9. Call Krea MCP `get_job` for each row in `04_generation/jobs/mcp-status-checks.jsonl`, save the responses as JSONL, then merge and optionally download completed clips:
+   ```bash
+   python3 krea-animation/scripts/poll_video_jobs.py <project> --results-jsonl <project>/04_generation/jobs/mcp-results.jsonl --download
+   ```
+10. Sample mid/end frames for the test shots. Log concrete retakes before submitting the rest of the sequence.
+11. Continue in batches. Keep in-scene continuity serialized when a shot depends on the previous shot's last frame; batch independent hard-cut shots in parallel within live model limits.
+12. Normalize and assemble:
    ```bash
    python3 krea-animation/scripts/assemble_edit.py <project> --fps 24 --size 1280x720
    ```
-12. Sample QA frames:
+13. Sample QA frames:
    ```bash
    python3 krea-animation/scripts/sample_qa_frames.py <project>
    ```
-13. Review against storyboard, style bible, and asset bible. Log retakes in `06_qa/retakes.csv`.
-14. Repeat generation only for failed shots. Keep passed clips locked.
+14. Review against storyboard, style bible, and asset bible. Log retakes in `06_qa/retakes.csv`.
+15. Repeat generation only for failed shots. Keep passed clips locked.
 
 ## Shot Generation Rules
 

@@ -10,10 +10,10 @@ from pathlib import Path
 from _common import read_csv, project_root
 
 
-def resolve_model(requested: str, quality: str) -> str:
-    if requested != "auto":
-        return requested
-    raise SystemExit("Pass --model explicitly after verifying the live catalog through Krea MCP.")
+def resolve_model(requested: str) -> str:
+    if requested == "auto":
+        return ""
+    return requested.strip()
 
 
 def payload_for(row: dict[str, str], model: str, quality: str) -> dict[str, object]:
@@ -24,7 +24,12 @@ def payload_for(row: dict[str, str], model: str, quality: str) -> dict[str, obje
     except ValueError:
         duration = duration_raw
     resolution = "1080p" if quality == "final" else "720p"
-    selected_model = row.get("model") or model
+    selected_model = (row.get("model") or "").strip() or model
+    if not selected_model:
+        shot_id = row.get("shot_id", "<unknown>")
+        raise SystemExit(
+            f"{shot_id}: pass --model explicitly or set the manifest model after verifying the live catalog through Krea MCP."
+        )
     input_payload: dict[str, object] = {
         "prompt": row.get("prompt", ""),
         "aspect_ratio": aspect,
@@ -61,7 +66,7 @@ def main() -> None:
     jobs_dir.mkdir(parents=True, exist_ok=True)
     manifest = root / "04_generation/manifests/video_jobs.csv"
     rows = [row for row in read_csv(manifest) if row.get("status") in {"approved_for_video", "retake"}]
-    model = resolve_model(args.model, args.quality)
+    model = resolve_model(args.model)
     payloads = [payload_for(row, model, args.quality) for row in rows]
 
     out = jobs_dir / "mcp-video-jobs.jsonl"

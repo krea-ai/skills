@@ -51,12 +51,13 @@ python3 krea-animation/scripts/scaffold_project.py \
   --fps 24
 ```
 
-Then validate and generate manifests:
+Then validate, generate manifests, and build MCP payloads with the live-verified video model:
 
 ```bash
+VERIFIED_MODEL_ID="bytedance/seedance-2-fast"
 python3 krea-animation/scripts/validate_project.py ./runs/my-animation
 python3 krea-animation/scripts/build_manifests.py ./runs/my-animation
-python3 krea-animation/scripts/submit_video_jobs.py ./runs/my-animation --dry-run
+python3 krea-animation/scripts/submit_video_jobs.py ./runs/my-animation --dry-run --model "$VERIFIED_MODEL_ID"
 ```
 
 Use the scripts from the user's project directory when possible so outputs land with the project, not inside this skill.

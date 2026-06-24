@@ -26,6 +26,7 @@ REQUIRED_SKILL_DIRS = {
     "krea-animation",
 }
 FORBIDDEN_PREFIXES = {"krea-ai/", "wip/"}
+MARKETPLACE_PATH = Path(".claude-plugin/marketplace.json")
 
 
 def main() -> int:
@@ -65,8 +66,66 @@ def main() -> int:
         for name in missing:
             print(f"  {name}/", file=sys.stderr)
         return 1
+    marketplace_errors = validate_marketplace_skills()
+    if marketplace_errors:
+        print("Claude marketplace skill paths are invalid:", file=sys.stderr)
+        for error in marketplace_errors:
+            print(f"  {error}", file=sys.stderr)
+        return 1
     print("OK package contents")
     return 0
+
+
+def validate_marketplace_skills() -> list[str]:
+    if not MARKETPLACE_PATH.is_file():
+        return [f"missing {MARKETPLACE_PATH}"]
+    with MARKETPLACE_PATH.open(encoding="utf-8") as handle:
+        payload = json.load(handle)
+
+    errors: list[str] = []
+    marketplace_dirs: set[str] = set()
+    plugins = payload.get("plugins")
+    if not isinstance(plugins, list):
+        return ["plugins must be a list"]
+
+    for plugin_index, plugin in enumerate(plugins):
+        if not isinstance(plugin, dict):
+            errors.append(f"plugins[{plugin_index}] must be an object")
+            continue
+        skills = plugin.get("skills")
+        if not isinstance(skills, list):
+            errors.append(f"plugins[{plugin_index}].skills must be a list")
+            continue
+        for skill_index, skill in enumerate(skills):
+            if not isinstance(skill, dict):
+                errors.append(f"plugins[{plugin_index}].skills[{skill_index}] must be an object")
+                continue
+            skill_name = str(skill.get("name", f"[{skill_index}]"))
+            raw_path = skill.get("path")
+            if not isinstance(raw_path, str) or not raw_path:
+                errors.append(f"{skill_name}: path must be a non-empty string")
+                continue
+            skill_path = Path(raw_path)
+            if skill_path.is_absolute() or ".." in skill_path.parts:
+                errors.append(f"{skill_name}: path must stay within the repo: {raw_path}")
+                continue
+            marketplace_dirs.add(raw_path)
+            if any(raw_path == prefix.rstrip("/") or raw_path.startswith(prefix) for prefix in FORBIDDEN_PREFIXES):
+                errors.append(f"{skill_name}: path uses removed or unpublished skill path: {raw_path}")
+                continue
+            if not skill_path.is_dir():
+                errors.append(f"{skill_name}: path does not exist: {raw_path}")
+                continue
+            if not (skill_path / "SKILL.md").is_file():
+                errors.append(f"{skill_name}: path has no SKILL.md: {raw_path}")
+
+    missing_marketplace = sorted(REQUIRED_SKILL_DIRS - marketplace_dirs)
+    for name in missing_marketplace:
+        errors.append(f"missing required marketplace skill path: {name}")
+    extra_marketplace = sorted(marketplace_dirs - REQUIRED_SKILL_DIRS)
+    for name in extra_marketplace:
+        errors.append(f"unexpected marketplace skill path: {name}")
+    return errors
 
 
 if __name__ == "__main__":

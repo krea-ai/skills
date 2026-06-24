@@ -4,10 +4,11 @@
 from __future__ import annotations
 
 import argparse
+import json
 import urllib.request
 from pathlib import Path
 
-from _common import project_root
+from _common import project_root, result_url
 
 
 def read_jobs(path: Path) -> list[tuple[str, str]]:
@@ -25,6 +26,59 @@ def download(url: str, out: Path) -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     with urllib.request.urlopen(url, timeout=120) as response:
         out.write_bytes(response.read())
+
+
+def response_job_id(data: dict[str, object]) -> str:
+    for key in ("jobId", "job_id", "id"):
+        value = data.get(key)
+        if isinstance(value, str) and value:
+            return value
+    job = data.get("job")
+    if isinstance(job, dict):
+        value = job.get("id")
+        if isinstance(value, str) and value:
+            return value
+    return ""
+
+
+def status_rows(
+    pending: list[tuple[str, str]], results_jsonl: str | None, raw_dir: Path, should_download: bool
+) -> list[str]:
+    rows_by_shot: dict[str, str] = {}
+    shot_by_job = {job_id: shot_id for shot_id, job_id in pending}
+    if results_jsonl:
+        responses = Path(results_jsonl).read_text(encoding="utf-8").splitlines()
+        for line in responses:
+            if not line.strip():
+                continue
+            data = json.loads(line)
+            shot_id = str(data.get("shot_id") or data.get("shotId") or "").strip()
+            response_job = response_job_id(data)
+            if not shot_id:
+                shot_id = shot_by_job.get(response_job, "")
+            if not shot_id:
+                continue
+            status = str(data.get("status", "unknown")).lower()
+            if status == "completed":
+                url = result_url(data)
+                if not url:
+                    rows_by_shot[shot_id] = f"{shot_id}\tfailed\tcompleted without result URL"
+                    continue
+                if should_download:
+                    out = raw_dir / f"shot-{shot_id}-raw.mp4"
+                    if not out.exists():
+                        download(url, out)
+                rows_by_shot[shot_id] = f"{shot_id}\tcompleted\t{url}"
+            elif status in {"failed", "cancelled", "canceled"}:
+                rows_by_shot[shot_id] = f"{shot_id}\t{status}\t"
+            else:
+                job_id = response_job or next((job for item_shot, job in pending if item_shot == shot_id), "")
+                rows_by_shot[shot_id] = f"{shot_id}\tpending\t{job_id}"
+
+    rows: list[str] = []
+    for shot_id, job_id in pending:
+        rows.append(rows_by_shot.get(shot_id, f"{shot_id}\tpending\t{job_id}"))
+    return rows
 
 
 def main() -> None:
@@ -45,40 +99,15 @@ def main() -> None:
 
     checks_path.write_text(
         "\n".join(
-            f'{{"shot_id": "{shot_id}", "tool": "get_job", "jobId": "{job_id}"}}'
+            json.dumps({"shot_id": shot_id, "tool": "get_job", "jobId": job_id}, sort_keys=True)
             for shot_id, job_id in pending
         )
         + "\n",
         encoding="utf-8",
     )
 
-    results: list[str] = []
-    if args.results_jsonl:
-        import json
-
-        responses = Path(args.results_jsonl).read_text(encoding="utf-8").splitlines()
-        for line in responses:
-            if not line.strip():
-                continue
-            data = json.loads(line)
-            shot_id = str(data.get("shot_id", ""))
-            status = str(data.get("status", "unknown"))
-            result = data.get("result") if isinstance(data.get("result"), dict) else {}
-            urls = result.get("urls") if isinstance(result.get("urls"), list) else data.get("urls")
-            url = urls[0] if isinstance(urls, list) and urls else ""
-            if status == "completed":
-                if args.download and url:
-                    out = raw_dir / f"shot-{shot_id}-raw.mp4"
-                    if not out.exists():
-                        download(url, out)
-                results.append(f"{shot_id}\tcompleted\t{url}")
-            elif status in {"failed", "cancelled"}:
-                results.append(f"{shot_id}\t{status}\t")
-        results_path.write_text("\n".join(results) + ("\n" if results else ""), encoding="utf-8")
-
-    with results_path.open("a", encoding="utf-8") as handle:
-        for shot_id, job_id in pending:
-            handle.write(f"{shot_id}\tpending\t{job_id}\n")
+    results = status_rows(pending, args.results_jsonl, raw_dir, args.download)
+    results_path.write_text("\n".join(results) + "\n", encoding="utf-8")
     print(f"Wrote MCP status checks: {checks_path}")
     print(f"Wrote {results_path}")
 
