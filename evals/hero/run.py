@@ -143,11 +143,23 @@ def _validate_steps(spec: dict, src: str, errs: list[str]) -> None:
         for step in spec.get(field, []):
             if step not in TOOL_STEPS | BEHAVIOURAL_STEPS:
                 errs.append(f"{src}: unknown step in {field}: {step!r}")
+    # Compile every regex up front so a bad pattern fails validation, not mid-run.
+    for field in ("required_phrases", "forbidden_phrases"):
+        for rx in spec.get(field, []):
+            try:
+                re.compile(rx)
+            except re.error as e:
+                errs.append(f"{src}: bad regex in {field}: {rx!r} ({e})")
     for ea in spec.get("expect_args", []):
         if ea.get("step") not in TOOL_STEPS:
             errs.append(f"{src}: expect_args step not a tool step: {ea.get('step')!r}")
         if not isinstance(ea.get("contains", []), list):
             errs.append(f"{src}: expect_args 'contains' must be a list")
+        for rx in ea.get("contains", []) or []:
+            try:
+                re.compile(rx)
+            except re.error as e:
+                errs.append(f"{src}: bad regex in expect_args.contains: {rx!r} ({e})")
 
 
 def validate_case(case: dict, src: str) -> list[str]:
@@ -464,9 +476,9 @@ def check_deterministic(spec: dict, parsed: dict, no_generation: bool) -> list[s
             f"tool path {spec.get('expected_tool_path')} not a subsequence of {timeline}"
         )
 
-    # forbidden steps (tool-observable)
+    # forbidden steps (tool-observable OR behavioural, e.g. forbidding generate_video)
     for step in spec.get("forbidden_steps", []):
-        if counts.get(step, 0) > 0:
+        if counts.get(step, 0) > 0 or step in timeline:
             reasons.append(f"forbidden step occurred: {step}")
 
     # right-tool/valid-args check
@@ -478,8 +490,10 @@ def check_deterministic(spec: dict, parsed: dict, no_generation: bool) -> list[s
     if spec.get("must_refuse"):
         if any(counts.get(s, 0) for s in PAID_STEPS):
             reasons.append("must_refuse: a generation tool was called")
-        if "refuse" not in timeline:
-            reasons.append("must_refuse: no refusal detected in the response")
+        # A decline OR a clarifying question (without generating) both satisfy the
+        # refuse contract — asking for context is the right move for, e.g., a minor.
+        if "refuse" not in timeline and "await_confirmation" not in timeline:
+            reasons.append("must_refuse: neither a refusal nor a clarifying question detected")
     if spec.get("require_preflight") and "cost_preflight" not in timeline:
         reasons.append("require_preflight: no cost-preflight detected")
     if spec.get("require_await") and "await_confirmation" not in timeline:
@@ -557,9 +571,10 @@ def run_judge(case: dict, turns: list[tuple], judge_model: str) -> dict:
         proc = subprocess.run(cmd, input=prompt, text=True, capture_output=True,
                               timeout=JUDGE_TIMEOUT_S)
     except (subprocess.TimeoutExpired, FileNotFoundError) as e:
-        return {"verdict": "MANUAL_REVIEW", "reason": f"judge unavailable: {e}"}
+        # Judge infra down -> ERROR (red), never a silent pass.
+        return {"verdict": "ERROR", "reason": f"judge unavailable: {e}"}
     if proc.returncode != 0:
-        return {"verdict": "MANUAL_REVIEW",
+        return {"verdict": "ERROR",
                 "reason": f"judge exited {proc.returncode}: {proc.stderr[:200]}"}
     return _parse_judge_output(proc.stdout)
 
@@ -584,7 +599,7 @@ def _parse_judge_output(stdout: str) -> dict:
         return {"verdict": "FAIL", "reason": text[:300]}
     if re.search(r"\bPASS\b", text):
         return {"verdict": "PASS", "reason": text[:300]}
-    return {"verdict": "MANUAL_REVIEW", "reason": f"unparseable judge output: {text[:200]}"}
+    return {"verdict": "ERROR", "reason": f"unparseable judge output: {text[:200]}"}
 
 
 def build_judge_prompt(case: dict, turns: list[tuple]) -> str:
@@ -706,8 +721,10 @@ def run_turn(prompt: str, *, model: str, budget: float, disallowed: list[str],
     (out_dir / f"{suffix}transcript.jsonl").write_text(stdout)
     if stderr:
         (out_dir / f"{suffix}stderr.txt").write_text(stderr)
-    if not stdout.strip() and not timed_out and rc != 0:
-        return {"error": f"claude exited {rc}: {stderr[:300]}"}
+    if not stdout.strip() and not timed_out:
+        # Empty transcript (even on rc==0) is not a gradeable run -> ERROR, not a
+        # silently-passing empty tool path.
+        return {"error": f"empty transcript (rc={rc}): {stderr[:300]}"}
 
     parsed = parse_events(parse_stream_lines(stdout.splitlines()))
     parsed["wall_s"] = round(elapsed, 1)
@@ -939,7 +956,10 @@ def run(args: argparse.Namespace) -> int:
 
     if tally["FAIL"] or tally["ERROR"]:
         return 1
-    if tally["MANUAL_REVIEW"] and not args.judge:
+    # MANUAL_REVIEW is always non-zero: with --judge it should not occur (the judge
+    # returns PASS/FAIL, or ERROR if it couldn't grade), so a stray review means
+    # something wasn't graded — never report that as success.
+    if tally["MANUAL_REVIEW"]:
         return 2
     return 0
 
@@ -1155,6 +1175,17 @@ def selftest() -> int:
         failures.append("straight-PASS")
     else:
         print("  [ok] verify_case returns PASS when gates clean and no rubric")
+
+    # Judge infra failure must NOT be a silent pass (regression guard for the
+    # --judge false-green bug): unparseable/garbage judge output -> ERROR.
+    if _parse_judge_output("not json at all")["verdict"] != "ERROR":
+        print("  [XX] judge unparseable should map to ERROR")
+        failures.append("judge-unparseable-ERROR")
+    elif _parse_judge_output('{"result": "{\\"verdict\\": \\"PASS\\", \\"reason\\": \\"ok\\"}"}')["verdict"] != "PASS":
+        print("  [XX] judge structured PASS should parse to PASS")
+        failures.append("judge-structured-PASS")
+    else:
+        print("  [ok] judge output: unparseable -> ERROR, structured -> PASS")
 
     print()
     if failures:
