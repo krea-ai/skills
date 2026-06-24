@@ -33,7 +33,7 @@ while IFS=: read -r file line text; do
       echo "::error file=$file,line=$line::Missing doc reference: $ref -> $target"
       fail=1
     fi
-  done < <(printf '%s\n' "$text" | rg -No "$pattern")
-done < <(rg -n "$pattern" "${targets[@]}")
+  done < <(printf '%s\n' "$text" | grep -oE "$pattern")
+done < <(grep -HnE "$pattern" "${targets[@]}")
 
 exit "$fail"
