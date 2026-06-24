@@ -19,7 +19,7 @@ DENY_SUFFIXES = {
     ".psd",
 }
 
-DENY_PARTS = {"__pycache__", "runs", "research", "node_modules"}
+DENY_PARTS = {"__pycache__", "runs", "research", "node_modules", "fixtures"}
 REQUIRED_SKILL_DIRS = {
     "krea-core",
     "krea-generate",

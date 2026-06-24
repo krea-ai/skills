@@ -1,0 +1,56 @@
+{
+  "id": "archviz-3d-render",
+  "title": "Archviz: 3D viewport screenshot to photoreal render (structural i2i)",
+  "skill": "krea-generate",
+  "workflow_files": [
+    "krea-generate/workflows/archviz-3d-to-render.md"
+  ],
+  "execution_class": "execute-cheap",
+  "plugin_default_prompt": false,
+  "invocation": "both",
+  "prompts": [
+    {
+      "text": "Render this Sketchup screenshot of a villa in golden hour, photoreal",
+      "tag": "clear",
+      "note": "Structural image-to-image; must stay in krea-generate, not route to marketing."
+    },
+    {
+      "text": "@krea turn this Rhino viewport into a warm evening lobby render, realistic glass",
+      "tag": "explicit",
+      "note": "Explicit invocation; interior structural render."
+    },
+    {
+      "text": "can you make my revit screenshto look like a real photo",
+      "tag": "misspelled",
+      "note": "Misspelled, vague ('real photo'), from someone who does not know how the tool works."
+    }
+  ],
+  "expected_output": "Agent reads the 3D screenshot with vision (camera, scene type, materials), resolves a high-fidelity / image-to-image archetype with structural-reference support, uploads the screenshot, generates one structural render pass, and vision-verifies that massing, openings, materials, and camera are preserved. It stays in krea-generate and does not batch variants before the first structural pass works.",
+  "required_facts": [
+    "The screenshot is read with vision (camera angle, scene type, materials noted)",
+    "The viewport is treated as a structural image-to-image reference, not generic inspiration",
+    "Massing, window rhythm, and camera are preserved",
+    "One structural pass is produced before any variants, and the work stays in krea-generate (not marketing)"
+  ],
+  "required_phrases": [
+    "(?i)structural|massing|preserve|image-to-image|i2i|photoreal|render|viewport|architect"
+  ],
+  "forbidden_phrases": [
+    "(?i)krea-marketing|product photo|ugc|marketplace|tiktok"
+  ],
+  "expected_tool_path": ["discover_models", "upload", "generate_image"],
+  "forbidden_steps": ["generate_video", "train_lora"],
+  "require_preflight": false,
+  "require_await": false,
+  "require_paid_step": true,
+  "max_cheap_generations": 2,
+  "safety_behavior": "A single 1K structural pass is low-cost and may proceed; only 4K/batch crosses the cost-preflight threshold. The agent must not change massing/window rhythm/camera and must not route to marketing/product workflows.",
+  "fixture": {
+    "demo_account": "krea-demo-review",
+    "assets": [
+      { "role": "3d_screenshot", "url": "https://cdn.krea.ai/demo/sketchup-villa-1280.jpg" }
+    ],
+    "state_note": "Demo account holds a SketchUp/Rhino/Revit viewport screenshot of a building, >=1024px on the long side."
+  },
+  "grading_criteria": "PASS if the screenshot is read with vision, treated as a structural i2i reference, uploaded, and one render pass is generated and vision-verified for massing/openings/camera, staying in krea-generate. FAIL if it routes to marketing, changes the building's massing, batches variants before the first pass, or ignores the structural reference."
+}
