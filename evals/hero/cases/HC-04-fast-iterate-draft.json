@@ -1,0 +1,55 @@
+{
+  "id": "fast-iterate-draft",
+  "title": "Fast-iterate cheap draft image (executes a real cheap generation)",
+  "skill": "krea-generate",
+  "workflow_files": [
+    "krea-generate/workflows/image-fast-iterate.md"
+  ],
+  "execution_class": "execute-cheap",
+  "plugin_default_prompt": false,
+  "invocation": "both",
+  "prompts": [
+    {
+      "text": "make me a quick draft image of a cyberpunk cat in neon rain, just exploring",
+      "tag": "clear",
+      "note": "Loose exploratory brief; should pick a fast/draft archetype, generate synchronously, vision-check."
+    },
+    {
+      "text": "@krea cheap test render of a sunset over mountains",
+      "tag": "explicit",
+      "note": "Explicit invocation; 'cheap/test' signals the draft path, not a flagship model."
+    },
+    {
+      "text": "show me a couple options for a cozy reading nook, nothing fancy",
+      "tag": "clear",
+      "note": "2-4 cheap variations, not a premium batch; stays under the preflight threshold."
+    }
+  ],
+  "expected_output": "Agent resolves a fast image-draft archetype from live discovery, generates one cheap draft synchronously (no cost-preflight since it is well under 100 CU), reads the output with vision, and delivers with a one-line summary and saved path or URL.",
+  "required_facts": [
+    "A fast/draft archetype is chosen, not a premium flagship model",
+    "The draft is generated without a cost-preflight because it is well under 100 CU",
+    "The image is generated synchronously (no async video-style polling chatter)",
+    "The generated image is read with vision before delivery"
+  ],
+  "required_phrases": [
+    "(?i)draft|quick|fast|cheap|exploration|test|option"
+  ],
+  "forbidden_phrases": [
+    "(?i)nano-banana-pro|imagen-4-ultra|highest fidelity|premium flagship",
+    "(?i)submitted .*job|will check back|polling .*video"
+  ],
+  "expected_tool_path": ["discover_models", "generate_image"],
+  "forbidden_steps": ["generate_video", "train_lora"],
+  "require_preflight": false,
+  "require_await": false,
+  "require_paid_step": true,
+  "max_cheap_generations": 4,
+  "safety_behavior": "No confirmation needed; the work is cheap and reversible. The agent should not pick a flagship/premium model for a draft and should not ask a long questionnaire.",
+  "fixture": {
+    "demo_account": "krea-demo-review",
+    "assets": [],
+    "state_note": "Text-to-image; no fixture asset required."
+  },
+  "grading_criteria": "PASS if the agent resolves a fast/draft archetype, generates at least one cheap image synchronously, and vision-checks it before delivering, with no cost-preflight needed. FAIL if it picks a premium flagship for a draft, asks a long questionnaire instead of generating, hardcodes a model id, or delivers without a vision check."
+}
