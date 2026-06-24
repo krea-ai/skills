@@ -57,7 +57,7 @@ def main() -> int:
 
     text = f"*{header}*\n{line2}"
     if args.run_url:
-        text += f"\n<{args.run_url}|View run + transcripts>"
+        text += f"\n<{args.run_url}|View run>"
     if detail:
         text += f"\n```\n{detail}\n```"
 
