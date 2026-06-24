@@ -15,7 +15,7 @@ Three packaged Agent Skills for working with [Krea.ai](https://krea.ai). Install
 
 Experimental app-integration material lives under `wip/` and is not installed or packaged by default.
 
-Works with Claude Code, Cursor, Codex, Windsurf, OpenCode, Gemini, OpenClaw, and any agent that picks up `~/.<agent>/skills/<name>/SKILL.md`.
+Works with Claude Code, Codex, Windsurf, OpenCode, Gemini, OpenClaw, and any agent that picks up `~/.<agent>/skills/<name>/SKILL.md`.
 
 ## Install the skills
 

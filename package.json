@@ -20,7 +20,6 @@
     "scripts/",
     ".claude-plugin/",
     ".codex-plugin/",
-    ".cursor-plugin/",
     "VERSION",
     "LICENSE",
     "README.md",

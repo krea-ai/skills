@@ -27,7 +27,6 @@ SKIP_DIRS = {
     ".github",
     ".claude-plugin",
     ".codex-plugin",
-    ".cursor-plugin",
     ".cursor",
     "codex-plugin",
     "node_modules",

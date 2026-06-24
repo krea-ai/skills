@@ -28,7 +28,7 @@ jobs:
             PR NUMBER: ${{ github.event.pull_request.number }}
 
             You are reviewing a pull request for the Krea skills repository.
-            This repo ships skill packages consumed by Claude Code, Codex, and Cursor as plugins.
+            This repo ships skill packages consumed by Claude Code and Codex as plugins.
 
             Repository conventions to keep in mind:
             - The public skill surface is `krea-generate` for generic generation workflows, `krea-marketing` for product/campaign/paid-social workflows, and `krea-animation` for animation/storyboard workflows. Experimental `krea-build` material lives under `wip/` and is not packaged by default.

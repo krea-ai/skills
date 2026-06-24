@@ -26,7 +26,7 @@ jobs:
 
       - name: Validate plugin manifest JSON
         run: |
-          for f in .claude-plugin/*.json .codex-plugin/*.json .cursor-plugin/*.json; do
+          for f in .claude-plugin/*.json .codex-plugin/*.json; do
             jq -e . "$f" >/dev/null || { echo "::error::Invalid JSON: $f"; exit 1; }
             echo "OK $f"
           done
@@ -135,7 +135,6 @@ jobs:
           check ".claude-plugin/plugin.json"      "$VERSION" "$(jq -r .version .claude-plugin/plugin.json)"
           check ".claude-plugin/marketplace.json" "$VERSION" "$(jq -r '.plugins[0].version' .claude-plugin/marketplace.json)"
           check ".codex-plugin/plugin.json"       "$VERSION" "$(jq -r .version .codex-plugin/plugin.json)"
-          check ".cursor-plugin/plugin.json"      "$VERSION" "$(jq -r .version .cursor-plugin/plugin.json)"
           exit $fail
 
       - name: Smoke-test update-check script

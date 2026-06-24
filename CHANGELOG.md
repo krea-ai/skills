@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Removed the Cursor plugin manifest and package/CI references for Cursor plugin publishing.
+
 ## 0.5.2
 
 - Documented public moodboard discovery in `krea-generate/references/models/krea-2.md`: the preset moodboard gallery at `GET https://www.krea.ai/api/preset-moodboards` answers unauthenticated (verified live 2026-06-11, ~3549 boards) and supports `limit`, `seed` (stable shuffle order), `search` (keyword filter the agent can query directly), and `cursor` pagination. Recorded the observed response shape (`items[].id` as the K2 moodboard UUID, `styleName`, `styleDescription`, `styleKeywords`, `isStaffPick`, Krea-hosted `previewImages`/`images`), a preset discovery recipe (search → shortlist → vision-check previews → pass the UUID into `moodboards: [{id, strength}]`), and kept the authenticated `/api/moodboards` rules for personal boards. The `image_style_references` fallback now names preset preview URLs as valid Krea-hosted style references.
