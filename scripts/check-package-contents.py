@@ -21,9 +21,9 @@ DENY_SUFFIXES = {
 
 DENY_PARTS = {"__pycache__", "runs", "research", "node_modules"}
 REQUIRED_SKILL_DIRS = {
-    "krea-core",
     "krea-generate",
     "krea-marketing",
+    "krea-animation",
 }
 FORBIDDEN_PREFIXES = {"krea-ai/", "wip/"}
 

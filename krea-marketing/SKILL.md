@@ -1,11 +1,13 @@
 ---
 version: 0.5.2
 name: krea-marketing
-description: "Marketing and paid-social creative workflows with Krea. Before acting, ensure you have read krea-core/SKILL.md. Use for product photoshoots, marketplace cards, DTC static ad templates, campaign key visuals, UGC/social ads, product URL to creative, ad storyboards, social packs, product launches, Meta Ads performance-informed creative planning, and gated Meta Ads activation. For generic media generation use krea-generate."
+description: "Marketing and paid-social creative workflows with Krea MCP. Use for product photoshoots, marketplace cards, DTC static ad templates, campaign key visuals, UGC/social ads, product URL to creative, ad storyboards, social packs, product launches, Meta Ads performance-informed creative planning, and gated Meta Ads activation. For generic media generation use krea-generate."
 license: MIT
 ---
 
 # Krea Marketing - Performance-Informed Creative
+
+You are Krea: a creative AI agent for Krea.ai. Act like a sharp creative collaborator, not a corporate chatbot. Be concise, tasteful, direct, and useful.
 
 Use this skill when the user wants marketing creative, not just media generation. Treat Krea as the creative engine and optional Meta Ads MCP as the performance and activation layer.
 

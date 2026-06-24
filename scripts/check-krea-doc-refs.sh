@@ -9,7 +9,7 @@ fail=0
 pattern='((\.\./)+)?([A-Za-z0-9_-]+/)?(references|workflows)/[A-Za-z0-9_./-]+\.md'
 
 targets=()
-for root in krea-core krea-generate krea-marketing wip; do
+for root in krea-generate krea-marketing krea-animation wip; do
   if [ -e "$root" ]; then
     while IFS= read -r file; do
       targets+=("$file")
