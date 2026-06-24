@@ -1,7 +1,7 @@
 ---
 version: 0.5.2
 name: krea-animation
-description: "Professional AI animation and anime production workflows with Krea. Before acting, ensure you have read krea-core/SKILL.md. Use for long-form animation, anime series, storyboard-to-video, shotlist-to-sequence, asset bibles, model sheets, keyframes, animatics, AI video clips, edit assembly, QA, retakes, and studio productivity workflows. For one-off generic image/video generation use krea-generate; for product/campaign/UGC marketing use krea-marketing; for app/API integration use krea-build."
+description: "Professional AI animation and anime production workflows with Krea. Before acting, ensure you have read krea-core/SKILL.md. Use for long-form animation, anime series, storyboard-to-video, shotlist-to-sequence, asset bibles, model sheets, keyframes, animatics, AI video clips, edit assembly, QA, retakes, and studio productivity workflows. For one-off generic image/video generation use krea-generate; for product/campaign/UGC marketing use krea-marketing."
 license: MIT
 ---
 
@@ -15,11 +15,11 @@ This skill is anime-first by default, but applies to any character, narrative, p
 
 1. Do not jump from idea to long video. First create or inspect the project bible, storyboard, and shot list.
 2. Do not animate unapproved characters, locations, keyframes, or shot prompts.
-3. Run cost preflight before any video, LoRA training, or large batch. Use `../../krea-generate/references/cost-preflight.md`.
-4. Verify that connected Krea MCP tools are available. Use `../../krea-generate/references/mcp-surface.md`.
+3. Run cost preflight before any video, LoRA training, or large batch. Use `../krea-generate/references/cost-preflight.md`.
+4. Verify that connected Krea MCP tools are available. Use `../krea-generate/references/mcp-surface.md`.
 5. Prefer live model discovery over memory. List models and inspect the selected model schema through Krea MCP before relying on any field or capability.
 6. Upload local references before generation. Keep Krea asset URLs in manifests.
-7. Video jobs are async. Poll and report progress using `../../krea-generate/references/progress-reporting.md`.
+7. Video jobs are async. Poll and report progress using `../krea-generate/references/progress-reporting.md`.
 8. Normalize clips before assembly. Strip random per-clip audio unless the workflow explicitly asks to keep it.
 9. Sample frames and review continuity before delivery. If a shot fails, log a retake instead of pretending it is acceptable.
 10. Do not commit copyrighted references or generated run media into this skills repo.
@@ -34,7 +34,7 @@ This skill is anime-first by default, but applies to any character, narrative, p
 | Animate one still, one illustration, one model sheet pose, or one keyframe | `workflows/still-to-motion.md` |
 | Improve failed clips, manage retakes, final assembly, delivery checks | `workflows/retakes-and-delivery.md` |
 
-If the user asks to build a web app or internal tool around this pipeline, use `../krea-build/SKILL.md` for implementation and this skill only for the creative workflow contract.
+If the user asks to build a web app or internal tool around this pipeline, use the app-integration skill if it is installed; this skill only defines the creative workflow contract.
 
 ## Project Scaffold
 
@@ -76,11 +76,11 @@ Load only what the active workflow needs:
 
 Reuse sibling Krea references instead of duplicating them:
 
-- `../../krea-generate/references/mcp-surface.md`
-- `../../krea-generate/references/media-inputs.md`
-- `../../krea-generate/references/async-polling.md`
-- `../../krea-generate/references/progress-reporting.md`
-- `../../krea-generate/references/troubleshooting.md`
+- `../krea-generate/references/mcp-surface.md`
+- `../krea-generate/references/media-inputs.md`
+- `../krea-generate/references/async-polling.md`
+- `../krea-generate/references/progress-reporting.md`
+- `../krea-generate/references/troubleshooting.md`
 
 ## Scripts
 
