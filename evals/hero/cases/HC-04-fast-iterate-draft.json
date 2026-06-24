@@ -37,7 +37,7 @@
   ],
   "forbidden_phrases": [
     "(?i)nano-banana-pro|imagen-4-ultra|highest fidelity|premium flagship",
-    "(?i)submitted .*job|will check back|polling .*video"
+    "(?i)check back later|come back later|i'?ll (let you know|update you) when|polling .*video"
   ],
   "expected_tool_path": ["discover_models", "generate_image"],
   "forbidden_steps": ["generate_video", "train_lora"],
