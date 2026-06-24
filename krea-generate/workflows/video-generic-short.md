@@ -21,7 +21,7 @@ Ask once only when missing:
 ## Recipe
 
 1. Run `../references/cost-preflight.md`; video is expensive and async.
-2. Resolve a `cinematic video` or `text-to-video` model from live `list_models`.
+2. Resolve the video model from live `list_models`: default Seedance-2-fast for generic video; use Seedance-2 for high-end video requests.
 3. Inspect schema for duration, aspect, resolution, audio, and reference fields.
 4. If the prompt includes local/non-Krea references, upload them first.
 5. Prompt visible motion, camera, subject, atmosphere, and timing. Keep it one coherent clip.

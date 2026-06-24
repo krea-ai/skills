@@ -31,8 +31,8 @@ Hard prescription. Follow in order.
 
 1. Read the input image with vision.
 2. Pick the mode:
-   - Precise upscale: resolve `faithful upscale` from live `list_models`.
-   - Creative enhance: resolve `creative enhance` or `bloom / creative detail injection` from live `list_models`.
+   - Precise upscale: prefer `topaz/standard-enhance`, falling back to `faithful upscale` from live `list_models`.
+   - Creative enhance: prefer `topaz/generative-enhance`, falling back to `creative enhance` or `bloom / creative detail injection` from live `list_models`.
 3. Inspect the selected model schema for image, width, height, scale, denoise, sharpen, face enhancement, creativity, strength, and prompt fields.
 4. Run `../references/cost-preflight.md` if the target is 4K, premium, or >100 CU.
 5. Upload local or external input images to Krea first.
@@ -47,7 +47,7 @@ Hard prescription. Follow in order.
 
 ### MCP path
 
-Use available Krea MCP tools to upload inputs, list models, inspect schemas, run enhancement/upscale jobs, and poll results. Do not hardcode model IDs or input fields.
+Use available Krea MCP tools to upload inputs, list models, inspect schemas, run enhancement/upscale jobs, and poll results. Do not skip live verification of model names or input fields.
 
 ## Banned
 
