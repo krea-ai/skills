@@ -26,7 +26,7 @@
     }
   ],
   "followups": [
-    "Make it a campaign key-visual sheet (not film pre-vis): 2x3 grid, headline 'Crisp & Bold', pull the palette from the can. Layout/style reference: https://cdn.krea.ai/demo/kv-layout-ref.jpg. We don't have Meta connected, so just use the product refs."
+    "Make it a campaign key-visual sheet (not film pre-vis): 2x3 grid, headline 'Crisp & Bold', pull the palette from the can. Layout/style reference: fixtures/kv-layout-ref.png. We don't have Meta connected, so just use the product refs."
   ],
   "expected_output": "Agent disambiguates the deliverable (in CPG, 'storyboard' means a campaign key-visual sheet, not film pre-vis), asks for or refers to a layout/style reference, and for the bare-URL prompt asks for a brief rather than guessing. It presents directions / a clarifying question and STOPS before generating expensive finals or any video.",
   "required_facts": [
@@ -42,12 +42,10 @@
   "fixture": {
     "review_account": "krea-demo-review",
     "assets": [
-      {
-        "role": "product_photo",
-        "url": "https://cdn.krea.ai/demo/sparkling-water-can.jpg"
-      }
+      { "role": "product_photo", "path": "fixtures/sparkling-water-can.png" },
+      { "role": "followup_reference", "path": "fixtures/kv-layout-ref.png" }
     ],
-    "state_note": "Demo account holds a beverage-can product photo for the campaign variants. The bare-URL variant deliberately points at a non-Krea example URL with no brief to exercise the missing-brief path."
+    "state_note": "Local fixtures: `fixtures/sparkling-water-can.png` (beverage can, used in the campaign prompts) and `fixtures/kv-layout-ref.png` (key-visual layout reference, used only in the follow-up). The bare-URL variant deliberately points at a non-Krea example URL with no brief to exercise the missing-brief path."
   },
   "grading_criteria": "PASS if the agent disambiguates the artifact, asks for a layout/style reference (or a brief for the bare URL), and stops at a clarifying question / direction-pick gate before generating video or batch finals. FAIL if it generates 10 final panels, calls generate_video, or guesses a brief from a bare URL."
 }

@@ -1,35 +1,40 @@
 name: Hero Evals
 
 # Two layers:
-#   hero-specs (offline)     — lint the case specs + grader self-test. No secrets,
-#                              no spend. Runs on every push/PR touching evals/hero.
-#   hero-evals-live (Codex)  — runs the FULL hero suite through real Codex
-#                              (`codex exec` against the connected Krea MCP) and
-#                              grades each transcript. Spends real OpenAI (Codex) +
-#                              Krea + Anthropic (judge) credits, so it is gated to
-#                              manual dispatch or a `run-hero-live` PR label.
+#   hero-specs (offline)     — lint the case specs + grader self-test. No secrets, no
+#                              spend. Runs on every push/PR.
+#   hero-evals-live (Codex)  — runs the FULL real hero suite through real Codex: installs
+#                              the Krea plugin (skills + MCP), drives `codex exec`, and
+#                              grades each transcript. Spends real OpenAI (Codex) + Krea +
+#                              Anthropic (judge) credits (~1-1.5h), so it is gated.
 #
-# Trigger the live suite:
-#   - Actions tab -> "Hero Evals" -> Run workflow  (workflow_dispatch), or
-#   - add the `run-hero-live` label to a PR.
+# The live suite runs when the thing it tests changes:
+#   - push to main touching the skills (krea-*/) or the MCP config (.codex-plugin/.mcp.json)
+#   - repository_dispatch `mcp-changed` (fired by krea-ai/app when the MCP server changes)
+#   - manual "Run workflow" (workflow_dispatch), or a `run-hero-live` PR label
 #
-# NOTE: real-Codex generation cases take ~1h each, so the live default runs a small
-# representative set (HC-04 generate + HC-07 no-invoke + HC-08 safety). Use the `only`
-# input to run others (e.g. HC-03/05/06). HC-01/02/09/10 still point at placeholder
-# asset URLs and FAIL/ERROR until their review-account assets are provisioned.
+# Default suite = the real multi-turn workflow cases (HC-01..06, 09, 10). The
+# should-not-invoke / safety stubs (HC-07/08) are kept but run only on demand via `only`.
 
 on:
   push:
     branches: [main]
-    paths: ["evals/hero/**"]
+    paths:
+      - "evals/hero/**"
+      - "krea-generate/**"
+      - "krea-marketing/**"
+      - "krea-animation/**"
+      - ".codex-plugin/.mcp.json"
   pull_request:
     types: [opened, synchronize, reopened, labeled]
   workflow_dispatch:
     inputs:
       only:
-        description: "Space-separated case ids (blank = representative set HC-04 HC-07 HC-08)"
+        description: "Space-separated case ids (blank = full real suite HC-01..06,09,10)"
         required: false
         default: ""
+  repository_dispatch:
+    types: [mcp-changed]
 
 permissions:
   contents: read
@@ -54,12 +59,40 @@ jobs:
       - name: Grader self-test (no API, no secrets)
         run: python evals/hero/run.py --selftest
 
-  # ── Live suite on real Codex (manual dispatch or `run-hero-live` PR label) ───
+  # ── Decide whether the (expensive) live suite should run ─────────────────────
+  live-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      run: ${{ steps.decide.outputs.run }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: decide
+        run: |
+          run=false
+          case "${{ github.event_name }}" in
+            workflow_dispatch|repository_dispatch)
+              run=true ;;
+            pull_request)
+              if [ "${{ github.event.action }}" = "labeled" ] && \
+                 [ "${{ github.event.label.name }}" = "run-hero-live" ]; then run=true; fi ;;
+            push)
+              BASE="${{ github.event.before }}"
+              git cat-file -e "${BASE}^{commit}" 2>/dev/null || BASE="HEAD~1"
+              if git diff --name-only "$BASE" HEAD | \
+                 grep -qE '^(krea-generate|krea-marketing|krea-animation)/|^\.codex-plugin/\.mcp\.json$'; then
+                run=true
+              fi ;;
+          esac
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+          echo "live suite will run: $run"
+
+  # ── Live suite on real Codex (gated by live-gate) ────────────────────────────
   hero-evals-live:
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'pull_request' && github.event.action == 'labeled' &&
-       github.event.label.name == 'run-hero-live')
+    needs: live-gate
+    if: needs.live-gate.outputs.run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 180
     env:
@@ -104,7 +137,8 @@ jobs:
           # --run-suite runs the cases (and their variants) in parallel under one
           # global concurrency cap; per-turn timeout + the job timeout bound it.
           mkdir -p evals/hero/runs
-          python evals/hero/run.py --run-suite "${HERO_ONLY:-HC-04 HC-07 HC-08}" \
+          python evals/hero/run.py \
+            --run-suite "${HERO_ONLY:-HC-01 HC-02 HC-03 HC-04 HC-05 HC-06 HC-09 HC-10}" \
             --judge --concurrency 4 --out-dir evals/hero/runs || true
 
       - name: Summary

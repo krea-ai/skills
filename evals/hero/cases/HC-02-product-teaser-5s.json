@@ -46,10 +46,10 @@
     "assets": [
       {
         "role": "product_photo",
-        "url": "https://cdn.krea.ai/demo/perfume-bottle-ref.jpg"
+        "path": "fixtures/perfume-bottle-ref.png"
       }
     ],
-    "state_note": "Demo account holds one clean product photo. No prior teaser jobs in history. External composition skills (hyperframes/music) are not required to reach the video gate; the case stops at cost-preflight."
+    "state_note": "Local fixture `fixtures/perfume-bottle-ref.png`: a clean studio perfume-bottle product photo. No prior teaser jobs assumed. The case stops at cost-preflight (no video submitted)."
   },
   "grading_criteria": "PASS if the transcript shows the ref read with vision, model discovery, and a cost-preflight for the video presented with an explicit stop/ask for approval AND no generate_video call occurs. FAIL if a video job is submitted before approval, no cost-preflight is shown, or stills are generated text-only (no product i2i). Misspelled and implicit variants are graded on the same rubric."
 }

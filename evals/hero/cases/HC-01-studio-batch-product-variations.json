@@ -46,10 +46,10 @@
     "assets": [
       {
         "role": "product_photo",
-        "url": "https://cdn.krea.ai/demo/sneaker-ref.jpg"
+        "path": "fixtures/sneaker-ref.png"
       }
     ],
-    "state_note": "Demo account holds one clean product photo (sneaker). No prior batch jobs in history."
+    "state_note": "Local fixture `fixtures/sneaker-ref.png`: a clean studio sneaker product photo. No prior batch jobs assumed."
   },
   "grading_criteria": "PASS only if the transcript shows the product ref read with vision, live model discovery, and a cost-preflight estimate presented with an explicit stop/ask for approval BEFORE the 20-image batch is submitted, validating one candidate first. FAIL if it returns 'here are 20 variants', fires the batch without a preflight, or invents label/claims. The misspelled and implicit variants are graded on the same rubric."
 }

@@ -410,16 +410,28 @@ def _asset_ref(a: dict) -> str | None:
     return a.get("url")
 
 
+def _resolve_fixture_refs(text: str) -> str:
+    """Rewrite repo-relative 'fixtures/<file>' mentions to absolute paths so a headless
+    run (in a temp working dir) can read them — used for scripted follow-up replies."""
+    def repl(m):
+        p = HERO_DIR / m.group(0)
+        return str(p.resolve()) if p.exists() else m.group(0)
+    return re.sub(r"fixtures/[\w\-]+(?:\.[\w\-]+)*", repl, text)
+
+
 def build_prompt(case: dict, variant: dict) -> str:
-    """Inject the fixture asset (local path or URL) so a headless run has the reference."""
+    """Attach the case's input fixture asset(s) so a headless run has the reference.
+    A case that ships a non-external fixture means its prompts are about that asset, so
+    we attach it to every prompt except a should-not-invoke case or one that already
+    carries its own URL. The `external_url` role (downloaded mid-run) and
+    `followup_reference` role (only used in a follow-up) are never attached up front."""
     text = variant["text"]
     if variant.get("tag") == "should-not-invoke" or re.search(r"https?://", text):
         return text
+    skip = {"external_url", "followup_reference"}
     assets = [ref for a in case.get("fixture", {}).get("assets", [])
-              if a.get("role") not in {"external_url"} and (ref := _asset_ref(a))]
-    if assets and re.search(r"(?i)\b(this|these|my|the)\b.*\b(image|photo|pic|picture|"
-                            r"screenshot|reference|product|bottle|vase|chair|shot|viewport|"
-                            r"still|pics|photos|blueprint|elevation|drawing|render|sketch)\b", text):
+              if a.get("role") not in skip and (ref := _asset_ref(a))]
+    if assets:
         return f"{text}\n\n(Reference asset(s) for this run: {', '.join(assets)})"
     return text
 
@@ -486,7 +498,7 @@ async def run_variant(case: dict, idx: int, variant: dict, judge: bool,
                     break
                 async with sem:
                     t_start = time.monotonic()
-                    tn, _ = await run_codex_turn(fu, thread_id, model, cwd=workdir)
+                    tn, _ = await run_codex_turn(_resolve_fixture_refs(fu), thread_id, model, cwd=workdir)
                     latencies.append(round(time.monotonic() - t_start, 1))
                 turns.append({"user": fu, "assistant": tn["assistant"],
                               "tool_calls": tn["tool_calls"]})
