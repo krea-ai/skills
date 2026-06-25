@@ -114,6 +114,20 @@ jobs:
             echo "- \`$(basename "$f" .json)\` -> $v" | tee -a "$GITHUB_STEP_SUMMARY"
           done
 
+      # Posts the run summary to NOTIFY_WEBHOOK_URL (an incoming-webhook secret).
+      # No-ops cleanly when the secret is unset, so it never fails the job.
+      - name: Post results to feedback webhook
+        if: always()
+        env:
+          NOTIFY_WEBHOOK_URL: ${{ secrets.NOTIFY_WEBHOOK_URL }}
+        run: |
+          python evals/hero/run.py --summarize evals/hero/runs > evals/hero/runs/summary.json
+          python evals/hero/notify.py \
+            --summary evals/hero/runs/summary.json \
+            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --trigger "${{ github.event_name }}" \
+            --reason "${{ github.event.inputs.only }}"
+
       - name: Upload transcripts + verdicts
         if: always()
         uses: actions/upload-artifact@v4

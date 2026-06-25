@@ -472,6 +472,34 @@ def cmd_grade(case, path, judge):
     return 0 if res["verdict"] in ("PASS",) else (2 if res["verdict"] == "MANUAL_REVIEW" else 1)
 
 
+# ── Summary roll-up (per-case run outputs -> notifier summary shape) ──────────
+def summarize_runs(case_outputs: list) -> dict:
+    """case_outputs: [(label, run_output_dict)]. Roll per-variant verdicts into the
+    {pass, fail, manual_review, error, variants, model, results:[{id, verdict}]} shape."""
+    counts = {"PASS": 0, "FAIL": 0, "MANUAL_REVIEW": 0, "ERROR": 0}
+    rows, model = [], None
+    for label, data in case_outputs:
+        model = model or data.get("model")
+        for r in data.get("results", []):
+            v = r.get("verdict", "ERROR")
+            counts[v] = counts.get(v, 0) + 1
+            rows.append({"id": f"{label} [{r.get('variant', '')}]", "verdict": v})
+    return {"pass": counts["PASS"], "fail": counts["FAIL"],
+            "manual_review": counts["MANUAL_REVIEW"], "error": counts["ERROR"],
+            "variants": sum(counts.values()), "model": model or "?", "results": rows}
+
+
+def cmd_summarize(dirpath: Path) -> int:
+    outs = []
+    for path in sorted(dirpath.glob("HC-*.json")):
+        try:
+            outs.append((path.stem, json.loads(path.read_text())))
+        except (OSError, json.JSONDecodeError):
+            continue
+    print(json.dumps(summarize_runs(outs), indent=2))
+    return 0
+
+
 def selftest() -> int:
     cases = {c["id"]: c for c in load_cases()}
     fails = []
@@ -523,6 +551,15 @@ def selftest() -> int:
     # judge infra failure must never be a silent pass
     check("judge unparseable -> ERROR", _parse_judge("garbage")["verdict"] == "ERROR")
 
+    # summary roll-up: per-variant verdicts -> notifier counts
+    summ = summarize_runs([
+        ("HC-04", {"model": "gpt-x", "results": [{"variant": "clear", "verdict": "PASS"},
+                                                 {"variant": "explicit", "verdict": "FAIL"}]}),
+        ("HC-07", {"results": [{"variant": "should-not-invoke", "verdict": "PASS"}]})])
+    check("summarize roll-up",
+          summ["pass"] == 2 and summ["fail"] == 1 and summ["variants"] == 3
+          and summ["model"] == "gpt-x" and len(summ["results"]) == 3)
+
     print("SELFTEST " + ("FAILED: " + str(fails) if fails else "PASSED"))
     return 1 if fails else 0
 
@@ -541,10 +578,14 @@ def main(argv=None) -> int:
     ap.add_argument("--case", help="filter to one case (with --print-prompts/--list)")
     ap.add_argument("--judge", action="store_true", help="run the LLM judge when grading")
     ap.add_argument("--selftest", action="store_true", help="offline grader checks")
+    ap.add_argument("--summarize", metavar="DIR",
+                    help="roll up a dir of run outputs (HC-*.json) into a notifier summary")
     args = ap.parse_args(argv)
 
     if args.selftest:
         return selftest()
+    if args.summarize:
+        return cmd_summarize(Path(args.summarize))
 
     cases = load_cases()  # also lints
     if args.case:
@@ -572,7 +613,8 @@ def main(argv=None) -> int:
             print(f"no case matches {args.run_codex!r}", file=sys.stderr)
             return 1
         res = asyncio.run(run_codex_case(match[0], args.judge, args.model))
-        print(json.dumps({"case": match[0]["id"], "results": res}, indent=2))
+        print(json.dumps({"case": match[0]["id"], "model": args.model or "codex-default",
+                          "results": res}, indent=2))
         verdicts = [r["verdict"] for r in res]
         if "ERROR" in verdicts or "FAIL" in verdicts:
             return 1
