@@ -15,6 +15,20 @@ import urllib.error
 import urllib.request
 
 
+def _section_chunks(lines: list, limit: int = 2800) -> list:
+    """Pack per-case lines into mrkdwn section blocks under Slack's ~3000-char limit."""
+    blocks, buf = [], ""
+    for ln in lines:
+        if buf and len(buf) + len(ln) + 1 > limit:
+            blocks.append({"type": "section", "text": {"type": "mrkdwn", "text": buf}})
+            buf = ln
+        else:
+            buf = f"{buf}\n{ln}" if buf else ln
+    if buf:
+        blocks.append({"type": "section", "text": {"type": "mrkdwn", "text": buf}})
+    return blocks
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--summary", required=True, help="path to the run summary.json")
@@ -39,10 +53,16 @@ def main() -> int:
     header = f"{'✅' if ok else '❌'} Hero evals — {passed}/{total} passed"
 
     # Per-case one-liners for quick triage.
+    # Per-case line + the judge's one-line "what went right / wrong" summary.
     icons = {"PASS": "✅", "FAIL": "❌", "MANUAL_REVIEW": "🟡", "ERROR": "💥"}
-    rows = [f"{icons.get(c.get('verdict'), '•')} `{c.get('id')}` — {c.get('verdict')}"
-            for c in s.get("results", [])]
-    detail = "\n".join(rows)
+    lines = []
+    for c in s.get("results", []):
+        v = c.get("verdict", "")
+        line = f"{icons.get(v, '•')} `{c.get('id')}` — *{v}*"
+        reason = (c.get("reason") or "").strip().replace("\n", " ")
+        if reason:
+            line += f"\n› {reason[:220]}"
+        lines.append(line)
 
     ctx = [f"model `{s.get('model', '?')}`"]
     if args.trigger:
@@ -61,8 +81,7 @@ def main() -> int:
             {"type": "mrkdwn", "text": f"*Errors:* {error}"},
         ]},
     ]
-    if detail:
-        blocks.append({"type": "section", "text": {"type": "mrkdwn", "text": detail[:2900]}})
+    blocks += _section_chunks(lines)
     if context_line:
         blocks.append({"type": "context", "elements": [{"type": "mrkdwn", "text": context_line[:1000]}]})
     if args.run_url:
@@ -75,7 +94,7 @@ def main() -> int:
     webhook = os.environ.get("NOTIFY_WEBHOOK_URL")
     if not webhook:
         print("notify: NOTIFY_WEBHOOK_URL unset; summary below:\n"
-              f"{header}\n{context_line}\n{detail}")
+              f"{header}\n{context_line}\n" + "\n".join(lines))
         return 0
 
     payload = json.dumps({"text": text_fallback, "blocks": blocks}).encode()
