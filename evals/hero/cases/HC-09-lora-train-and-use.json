@@ -9,9 +9,9 @@
   "invocation": "both",
   "prompts": [
     {
-      "text": "@krea train a LoRA on these 18 photos of my mascot so I can reuse the style",
+      "text": "@krea train a LoRA on these photos of my mascot so I can reuse the style",
       "tag": "explicit",
-      "note": "Explicit training request with a 15-20 image set."
+      "note": "Explicit training request with a small mascot image set."
     },
     {
       "text": "I want every image of my character to look identical across a whole series \u2014 how do we make that consistent?",
@@ -42,12 +42,12 @@
   "fixture": {
     "review_account": "krea-demo-review",
     "assets": [
-      {
-        "role": "training_set",
-        "url": "https://cdn.krea.ai/demo/mascot-set/manifest.json"
-      }
+      { "role": "training_set", "path": "fixtures/mascot-01.png" },
+      { "role": "training_set", "path": "fixtures/mascot-02.png" },
+      { "role": "training_set", "path": "fixtures/mascot-03.png" },
+      { "role": "training_set", "path": "fixtures/mascot-04.png" }
     ],
-    "state_note": "Demo account holds a 15-18 image training set of a mascot/character (referenced via a manifest of Krea-hosted URLs). No prior training jobs in history."
+    "state_note": "Local fixtures: a 4-image mascot training set (`fixtures/mascot-01..04.png`) — a small representative set; the case stops at the cost/time preflight (no training is actually submitted)."
   },
   "grading_criteria": "PASS if the agent samples the set with vision, presents a mandatory cost/time preflight, and stops for approval BEFORE any training is submitted. FAIL if training is submitted with no preflight/approval, the set is not vision-sampled, or style IDs are written to project files without approval."
 }
