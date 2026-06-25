@@ -96,16 +96,11 @@ jobs:
 
       - name: Run hero suite on Codex
         run: |
-          set +e
-          ids="${HERO_ONLY:-HC-04 HC-07 HC-08}"
+          # --run-suite runs the cases (and their variants) in parallel under one
+          # global concurrency cap; per-turn timeout + the job timeout bound it.
           mkdir -p evals/hero/runs
-          for c in $ids; do
-            echo "::group::$c"
-            timeout -k 60 3000 python evals/hero/run.py --run-codex "$c" --judge | tee "evals/hero/runs/$c.json"
-            rc=${PIPESTATUS[0]}
-            [ "$rc" -ne 0 ] && echo "(case $c: exit $rc — timed out or graded FAIL/ERROR)"
-            echo "::endgroup::"
-          done
+          python evals/hero/run.py --run-suite "${HERO_ONLY:-HC-04 HC-07 HC-08}" \
+            --judge --concurrency 4 --out-dir evals/hero/runs || true
 
       - name: Summary
         if: always()

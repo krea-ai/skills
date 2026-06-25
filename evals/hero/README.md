@@ -42,6 +42,18 @@ evals/hero/
    each result for failure analysis. HC-03/04/05/06/07/08 run today; HC-01/02/09/10 need
    their review-account assets first (see [Fixtures](#fixtures)).
 
+**Run several in parallel.** Generation cases take ~1h each on real Codex, so run them
+concurrently instead of one-at-a-time — cases *and* their prompt variants run in parallel
+under one global cap:
+
+```bash
+python evals/hero/run.py --run-suite "HC-03 HC-04 HC-05 HC-06 HC-07 HC-08" \
+  --judge --concurrency 4 --out-dir evals/hero/runs   # blank suite = HC-03..08
+```
+
+Wall-clock becomes the slowest single variant-chain, not the sum. `--out-dir` writes one
+`<id>.json` per case; `--concurrency` bounds simultaneous `codex exec` calls.
+
 ## Routing
 
 Codex ships a built-in image-generation tool, and for a generic "make an image" prompt it

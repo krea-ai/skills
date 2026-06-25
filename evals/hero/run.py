@@ -429,46 +429,63 @@ async def run_codex_turn(prompt: str, resume_id: str | None, model: str | None,
     return parse_codex_events(events), completed
 
 
-async def run_codex_case(case: dict, judge: bool, model: str | None) -> list[dict]:
-    """Run every prompt variant (+ scripted follow-ups) through real Codex and grade.
+async def run_variant(case: dict, idx: int, variant: dict, judge: bool,
+                      model: str | None, sem: asyncio.Semaphore) -> dict:
+    """Run one prompt variant (turn 0 + scripted follow-ups, which stay sequential
+    because they resume the same thread) in its own working dir, then grade it.
 
-    Each run happens in a throwaway working dir carrying ROUTING_DIRECTIVE as AGENTS.md,
-    so Codex routes creative work to the Krea MCP instead of its built-in image tool.
-    The full transcript is kept on each result for failure analysis."""
-    results = []
+    Each codex call is gated by `sem`, and the variant runs in a throwaway working dir
+    carrying ROUTING_DIRECTIVE as AGENTS.md so Codex routes creative work to the Krea
+    MCP. Safe to gather — independent variants run concurrently; the blocking judge runs
+    in a thread so it never stalls the event loop."""
     followups = case.get("followups", [])
+    turns, thread_id, err, latencies = [], None, None, []
     with tempfile.TemporaryDirectory(prefix="krea-eval-") as workdir:
         (Path(workdir) / "AGENTS.md").write_text(ROUTING_DIRECTIVE)
-        for i, variant in enumerate(case["prompts"]):
-            turns, thread_id, err, latencies = [], None, None, []
-            try:
+        try:
+            async with sem:
                 t_start = time.monotonic()
                 t0, _ = await run_codex_turn(build_prompt(case, variant), None, model, cwd=workdir)
                 latencies.append(round(time.monotonic() - t_start, 1))
-                turns.append({"user": variant["text"], "assistant": t0["assistant"],
-                              "tool_calls": t0["tool_calls"]})
-                thread_id = t0["thread_id"]
-                for fu in followups:
-                    if not thread_id:
-                        break
+            turns.append({"user": variant["text"], "assistant": t0["assistant"],
+                          "tool_calls": t0["tool_calls"]})
+            thread_id = t0["thread_id"]
+            for fu in followups:
+                if not thread_id:
+                    break
+                async with sem:
                     t_start = time.monotonic()
                     tn, _ = await run_codex_turn(fu, thread_id, model, cwd=workdir)
                     latencies.append(round(time.monotonic() - t_start, 1))
-                    turns.append({"user": fu, "assistant": tn["assistant"],
-                                  "tool_calls": tn["tool_calls"]})
-            except (subprocess.TimeoutExpired, FileNotFoundError) as e:
-                err = str(e)
-            if err:
-                results.append({"variant": variant.get("tag", i), "verdict": "ERROR",
-                                "reasons": [err], "latency_s": latencies, "transcript": turns})
-                continue
-            tr = normalize({"turns": turns})
-            res = grade(case, tr, judge)
-            res.update({"variant": variant.get("tag", i), "turns": len(turns),
-                        "latency_s": latencies, "total_latency_s": round(sum(latencies), 1),
-                        "observed_timeline": tr["timeline"], "transcript": turns})
-            results.append(res)
-    return results
+                turns.append({"user": fu, "assistant": tn["assistant"],
+                              "tool_calls": tn["tool_calls"]})
+        except (subprocess.TimeoutExpired, FileNotFoundError) as e:
+            err = str(e)
+    if err:
+        return {"variant": variant.get("tag", idx), "verdict": "ERROR",
+                "reasons": [err], "latency_s": latencies, "transcript": turns}
+    tr = normalize({"turns": turns})
+    res = await asyncio.to_thread(grade, case, tr, judge)
+    res.update({"variant": variant.get("tag", idx), "turns": len(turns),
+                "latency_s": latencies, "total_latency_s": round(sum(latencies), 1),
+                "observed_timeline": tr["timeline"], "transcript": turns})
+    return res
+
+
+async def run_codex_cases(cases: list, judge: bool, model: str | None,
+                          concurrency: int) -> list:
+    """Run every variant of every case concurrently under one global concurrency cap.
+    Wall-clock is the slowest single variant-chain, not the sum of all of them."""
+    sem = asyncio.Semaphore(max(1, concurrency))
+
+    async def one_case(case: dict) -> dict:
+        results = await asyncio.gather(*[
+            run_variant(case, i, v, judge, model, sem)
+            for i, v in enumerate(case["prompts"])])
+        return {"case": case["id"], "model": model or "codex-default",
+                "results": list(results)}
+
+    return list(await asyncio.gather(*[one_case(c) for c in cases]))
 
 
 # ── CLI ──────────────────────────────────────────────────────────────────────
@@ -594,6 +611,16 @@ def selftest() -> int:
     return 1 if fails else 0
 
 
+def _suite_exit(cases_out: list) -> int:
+    """1 if any variant ERROR/FAIL, 2 if any MANUAL_REVIEW, else 0."""
+    verdicts = [r["verdict"] for c in cases_out for r in c.get("results", [])]
+    if "ERROR" in verdicts or "FAIL" in verdicts:
+        return 1
+    if "MANUAL_REVIEW" in verdicts:
+        return 2
+    return 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Krea hero-eval specs + transcript grader")
     ap.add_argument("--lint", action="store_true", help="validate all case specs")
@@ -603,8 +630,15 @@ def main(argv=None) -> int:
     ap.add_argument("--grade", nargs=2, metavar=("CASE", "TRANSCRIPT"),
                     help="grade a captured transcript against a case")
     ap.add_argument("--run-codex", dest="run_codex", metavar="CASE",
-                    help="run a case through real Codex (codex exec) + grade it")
-    ap.add_argument("--model", help="Codex model override for --run-codex")
+                    help="run one case through real Codex (codex exec) + grade it")
+    ap.add_argument("--run-suite", dest="run_suite", nargs="?", const="", metavar="IDS",
+                    help="run several cases in parallel (space-separated ids; "
+                         "blank = HC-03..08) + grade them")
+    ap.add_argument("--concurrency", type=int, default=4,
+                    help="max concurrent codex calls for --run-codex/--run-suite (default 4)")
+    ap.add_argument("--out-dir", dest="out_dir", metavar="DIR",
+                    help="with --run-suite, also write each case result to DIR/<id>.json")
+    ap.add_argument("--model", help="Codex model override for --run-codex/--run-suite")
     ap.add_argument("--case", help="filter to one case (with --print-prompts/--list)")
     ap.add_argument("--judge", action="store_true", help="run the LLM judge when grading")
     ap.add_argument("--selftest", action="store_true", help="offline grader checks")
@@ -642,15 +676,28 @@ def main(argv=None) -> int:
         if not match:
             print(f"no case matches {args.run_codex!r}", file=sys.stderr)
             return 1
-        res = asyncio.run(run_codex_case(match[0], args.judge, args.model))
-        print(json.dumps({"case": match[0]["id"], "model": args.model or "codex-default",
-                          "results": res}, indent=2))
-        verdicts = [r["verdict"] for r in res]
-        if "ERROR" in verdicts or "FAIL" in verdicts:
-            return 1
-        if "MANUAL_REVIEW" in verdicts:
-            return 2
-        return 0
+        out = asyncio.run(run_codex_cases(match[:1], args.judge, args.model, args.concurrency))
+        print(json.dumps(out[0], indent=2))
+        return _suite_exit(out)
+    if args.run_suite is not None:
+        tokens = args.run_suite.split() or ["HC-03", "HC-04", "HC-05", "HC-06", "HC-07", "HC-08"]
+        allc = load_cases()
+        selected = []
+        for tok in tokens:
+            m = [c for c in allc if case_matches(c, tok)]
+            if not m:
+                print(f"no case matches {tok!r}", file=sys.stderr)
+                return 1
+            selected.append((tok, m[0]))
+        out = asyncio.run(run_codex_cases([c for _, c in selected], args.judge,
+                                          args.model, args.concurrency))
+        if args.out_dir:
+            d = Path(args.out_dir)
+            d.mkdir(parents=True, exist_ok=True)
+            for (tok, _), case_out in zip(selected, out):
+                (d / f"{tok}.json").write_text(json.dumps(case_out, indent=2))
+        print(json.dumps({"cases": out}, indent=2))
+        return _suite_exit(out)
 
     ap.print_help()
     return 0
