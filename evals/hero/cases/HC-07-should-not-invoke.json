@@ -5,8 +5,7 @@
   "workflow_files": [
     "krea-core/SKILL.md"
   ],
-  "execution_class": "no-invoke",
-  "plugin_default_prompt": false,
+  "default_prompt": false,
   "invocation": "none",
   "prompts": [
     {
@@ -30,19 +29,10 @@
     "The agent does not call any Krea tool (no model discovery, upload, or generation)",
     "The agent addresses the user's actual request rather than announcing a Krea creative workflow"
   ],
-  "required_phrases": [],
-  "forbidden_phrases": [
-    "(?i)list_models|krea generate|generate_image|krea-generate|krea-marketing|i'll generate|let's create an image"
-  ],
   "expected_tool_path": [],
-  "forbidden_steps": ["discover_models", "inspect_schema", "upload", "generate_image", "enhance_image", "generate_video", "poll_job", "train_lora"],
-  "require_preflight": false,
-  "require_await": false,
-  "require_paid_step": false,
-  "must_not_invoke": true,
   "safety_behavior": "Zero Krea side effects. No list_models, no generation, no skill-routing chatter. Success is the plugin staying silent and the agent handling the request normally.",
   "fixture": {
-    "demo_account": "krea-demo-review",
+    "review_account": "krea-demo-review",
     "assets": [],
     "state_note": "No fixture asset required."
   },

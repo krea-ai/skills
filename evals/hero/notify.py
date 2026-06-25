@@ -36,37 +36,49 @@ def main() -> int:
     error = s.get("error", 0)
     total = s.get("variants", passed + fail + review + error)
     ok = (args.outcome == "success") if args.outcome else (fail == 0 and error == 0)
-    status = ":white_check_mark: PASS" if ok else ":x: FAIL"
-
-    header = f"Hero evals {status} — {passed}/{total} passed"
-    bits = [f"{fail} fail", f"{review} review", f"{error} error",
-            f"model `{s.get('model', '?')}`"]
-    if args.trigger:
-        bits.append(f"trigger `{args.trigger}`")
-    if args.reason:
-        bits.append(f"_{args.reason}_")
-    line2 = " · ".join(bits)
+    header = f"{'✅' if ok else '❌'} Hero evals — {passed}/{total} passed"
 
     # Per-case one-liners for quick triage.
-    rows = []
-    for c in s.get("results", []):
-        emoji = {"PASS": "✅", "FAIL": "❌", "MANUAL_REVIEW": "🟡", "ERROR": "💥"}.get(
-            c.get("verdict"), "•")
-        rows.append(f"{emoji} {c.get('id')} ({c.get('verdict')})")
+    icons = {"PASS": "✅", "FAIL": "❌", "MANUAL_REVIEW": "🟡", "ERROR": "💥"}
+    rows = [f"{icons.get(c.get('verdict'), '•')} `{c.get('id')}` — {c.get('verdict')}"
+            for c in s.get("results", [])]
     detail = "\n".join(rows)
 
-    text = f"*{header}*\n{line2}"
-    if args.run_url:
-        text += f"\n<{args.run_url}|View run>"
+    ctx = [f"model `{s.get('model', '?')}`"]
+    if args.trigger:
+        ctx.append(f"trigger `{args.trigger}`")
+    if args.reason:
+        ctx.append(args.reason)
+    context_line = " · ".join(ctx)
+
+    # Slack Block Kit for a clean layout, with a plain-text fallback.
+    blocks = [
+        {"type": "header", "text": {"type": "plain_text", "text": header[:150], "emoji": True}},
+        {"type": "section", "fields": [
+            {"type": "mrkdwn", "text": f"*Passed:* {passed}/{total}"},
+            {"type": "mrkdwn", "text": f"*Failed:* {fail}"},
+            {"type": "mrkdwn", "text": f"*Review:* {review}"},
+            {"type": "mrkdwn", "text": f"*Errors:* {error}"},
+        ]},
+    ]
     if detail:
-        text += f"\n```\n{detail}\n```"
+        blocks.append({"type": "section", "text": {"type": "mrkdwn", "text": detail[:2900]}})
+    if context_line:
+        blocks.append({"type": "context", "elements": [{"type": "mrkdwn", "text": context_line[:1000]}]})
+    if args.run_url:
+        blocks.append({"type": "actions", "elements": [
+            {"type": "button", "text": {"type": "plain_text", "text": "View CI run"},
+             "url": args.run_url}]})
+
+    text_fallback = f"Hero evals: {passed}/{total} passed, {fail} failed, {error} errors"
 
     webhook = os.environ.get("NOTIFY_WEBHOOK_URL")
     if not webhook:
-        print("notify: NOTIFY_WEBHOOK_URL unset; summary below:\n" + text)
+        print("notify: NOTIFY_WEBHOOK_URL unset; summary below:\n"
+              f"{header}\n{context_line}\n{detail}")
         return 0
 
-    payload = json.dumps({"text": text}).encode()
+    payload = json.dumps({"text": text_fallback, "blocks": blocks}).encode()
     req = urllib.request.Request(webhook, data=payload,
                                  headers={"Content-Type": "application/json"})
     try:

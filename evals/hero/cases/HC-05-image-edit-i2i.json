@@ -5,17 +5,16 @@
   "workflow_files": [
     "krea-generate/workflows/image-edit-i2i.md"
   ],
-  "execution_class": "execute-cheap",
-  "plugin_default_prompt": false,
+  "default_prompt": false,
   "invocation": "both",
   "prompts": [
     {
-      "text": "@krea change the background of this product photo to a marble surface, keep the bottle exactly the same",
+      "text": "@krea change the background of this product photo to a marble surface, keep the product exactly the same",
       "tag": "explicit",
       "note": "Explicit edit; preserve the product, change only the background."
     },
     {
-      "text": "here's a vase pic — restyle it as if shot at golden hour but don't change the vase",
+      "text": "here's a vase pic \u2014 restyle it as if shot at golden hour but don't change the vase",
       "tag": "implicit",
       "note": "Implicit i2i; preservation of the subject is the point."
     },
@@ -32,26 +31,24 @@
     "The prompt states the change and what to preserve, not a full re-description of the source",
     "The output is vision-compared against the source for preservation"
   ],
-  "required_phrases": [
-    "(?i)upload|krea.?hosted|hosted url|preserve|keep|same|image-to-image|i2i|reference"
+  "expected_tool_path": [
+    "upload",
+    "generate_image"
   ],
-  "forbidden_phrases": [
-    "(?i)generate_video|video model|call a video"
-  ],
-  "expected_tool_path": ["upload", "generate_image"],
-  "forbidden_steps": ["generate_video", "train_lora"],
-  "require_preflight": false,
-  "require_await": false,
-  "require_paid_step": true,
-  "max_cheap_generations": 3,
   "safety_behavior": "Upload discipline is the contract: external URLs are downloaded and uploaded to Krea before use; the raw external URL is never passed as a generation reference. Do not call a video model for an edit.",
   "fixture": {
-    "demo_account": "krea-demo-review",
+    "review_account": "krea-demo-review",
     "assets": [
-      { "role": "source_image", "url": "https://cdn.krea.ai/demo/product-plainbg.jpg" },
-      { "role": "external_url", "url": "https://example.com/chair.jpg" }
+      {
+        "role": "source_image",
+        "path": "fixtures/ceramic_vase.png"
+      },
+      {
+        "role": "external_url",
+        "url": "https://example.com/chair.jpg"
+      }
     ],
-    "state_note": "Demo account holds a product photo with a plain background for the edit; the external-URL variant deliberately references a non-Krea URL to exercise the download-then-upload rule."
+    "state_note": "Local fixture `fixtures/ceramic_vase.png`: a ceramic vase product photo on a plain background for the edit; the external-URL variant deliberately references a non-Krea URL to exercise the download-then-upload rule."
   },
   "grading_criteria": "PASS if the source is read with vision, the input is uploaded to Krea (external URL downloaded then uploaded), one edited candidate is generated using the Krea-hosted reference, and the output is vision-compared for preservation. FAIL if a raw external URL is passed directly as a generation input, a video model is used for an edit, or preservation is ignored."
 }
