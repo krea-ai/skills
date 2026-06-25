@@ -13,9 +13,10 @@ name: Hero Evals
 #   - Actions tab -> "Hero Evals" -> Run workflow  (workflow_dispatch), or
 #   - add the `run-hero-live` label to a PR.
 #
-# NOTE: the live default runs the fixture-ready set (HC-03..08). HC-01/02/09/10 still
-# point at placeholder asset URLs and will FAIL/ERROR until their review-account assets
-# are provisioned — pass them explicitly via the `only` input once they're ready.
+# NOTE: real-Codex generation cases take ~1h each, so the live default runs a small
+# representative set (HC-04 generate + HC-07 no-invoke + HC-08 safety). Use the `only`
+# input to run others (e.g. HC-03/05/06). HC-01/02/09/10 still point at placeholder
+# asset URLs and FAIL/ERROR until their review-account assets are provisioned.
 
 on:
   push:
@@ -26,7 +27,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Space-separated case ids to run (blank = fixture-ready set HC-03..08)"
+        description: "Space-separated case ids (blank = representative set HC-04 HC-07 HC-08)"
         required: false
         default: ""
 
@@ -60,7 +61,7 @@ jobs:
       (github.event_name == 'pull_request' && github.event.action == 'labeled' &&
        github.event.label.name == 'run-hero-live')
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 180
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       KREA_API_KEY: ${{ secrets.KREA_API_KEY }}
@@ -96,11 +97,11 @@ jobs:
       - name: Run hero suite on Codex
         run: |
           set +e
-          ids="${HERO_ONLY:-HC-03 HC-04 HC-05 HC-06 HC-07 HC-08}"
+          ids="${HERO_ONLY:-HC-04 HC-07 HC-08}"
           mkdir -p evals/hero/runs
           for c in $ids; do
             echo "::group::$c"
-            timeout -k 30 480 python evals/hero/run.py --run-codex "$c" --judge | tee "evals/hero/runs/$c.json"
+            timeout -k 60 3000 python evals/hero/run.py --run-codex "$c" --judge | tee "evals/hero/runs/$c.json"
             rc=${PIPESTATUS[0]}
             [ "$rc" -ne 0 ] && echo "(case $c: exit $rc — timed out or graded FAIL/ERROR)"
             echo "::endgroup::"

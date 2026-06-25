@@ -394,7 +394,7 @@ def build_prompt(case: dict, variant: dict) -> str:
 
 
 async def run_codex_turn(prompt: str, resume_id: str | None, model: str | None,
-                         timeout: int = 900, cwd: str | None = None):
+                         timeout: int = 1800, cwd: str | None = None):
     cmd = ["codex", "exec"]
     if resume_id:
         cmd += ["resume", resume_id]
