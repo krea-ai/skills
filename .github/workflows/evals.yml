@@ -82,6 +82,11 @@ jobs:
           npm install -g @openai/codex
           codex --version
 
+      - name: Install Claude CLI (LLM judge)
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude --version
+
       - name: Authenticate Codex (API key, non-interactive)
         run: |
           printenv OPENAI_API_KEY | codex login --with-api-key
