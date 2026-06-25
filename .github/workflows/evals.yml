@@ -13,8 +13,9 @@ name: Hero Evals
 #   - Actions tab -> "Hero Evals" -> Run workflow  (workflow_dispatch), or
 #   - add the `run-hero-live` label to a PR.
 #
-# NOTE: cases that depend on demo-account fixtures (placeholder asset URLs) will
-# FAIL/ERROR until that review account is provisioned — expected until then.
+# NOTE: the live default runs the fixture-ready set (HC-03..08). HC-01/02/09/10 still
+# point at placeholder asset URLs and will FAIL/ERROR until their review-account assets
+# are provisioned — pass them explicitly via the `only` input once they're ready.
 
 on:
   push:
@@ -25,7 +26,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Space-separated case ids to run (blank = all 10)"
+        description: "Space-separated case ids to run (blank = fixture-ready set HC-03..08)"
         required: false
         default: ""
 
@@ -93,7 +94,7 @@ jobs:
       - name: Run hero suite on Codex
         run: |
           set +e
-          ids="${HERO_ONLY:-HC-01 HC-02 HC-03 HC-04 HC-05 HC-06 HC-07 HC-08 HC-09 HC-10}"
+          ids="${HERO_ONLY:-HC-03 HC-04 HC-05 HC-06 HC-07 HC-08}"
           mkdir -p evals/hero/runs
           for c in $ids; do
             echo "::group::$c"
@@ -109,7 +110,7 @@ jobs:
           echo "## Hero suite (live Codex)" >> "$GITHUB_STEP_SUMMARY"
           for f in evals/hero/runs/HC-*.json; do
             [ -f "$f" ] || continue
-            v=$(jq -c '[.results[].verdict]' "$f" 2>/dev/null || echo '["parse-error"]')
+            v=$(jq -c '[.results[] | {v: .verdict, t: .total_latency_s}]' "$f" 2>/dev/null || echo '["parse-error"]')
             echo "- \`$(basename "$f" .json)\` -> $v" | tee -a "$GITHUB_STEP_SUMMARY"
           done
 

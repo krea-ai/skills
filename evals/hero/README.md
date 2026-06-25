@@ -1,46 +1,54 @@
 # Hero evals
 
-Hero-use-case evals for the Krea Codex plugin, structured the way the *"How to
-Build a Great Codex Plugin"* deck asks for them.
+Hero-use-case evals for the Krea Codex plugin: 10 cases (`cases/HC-*.json`) that each pin a real
+workflow to a golden spec, plus a runner/grader (`run.py`).
 
-**The eval loop runs in Codex with `@plugin-eval`** — that's where the plugin
-(the Krea MCP app + skills) loads natively and drives the agent/tool calls. This
-folder is the repo-side half the deck also requires:
+- **`run.py --run-codex CASE`** is the automated runner. It drives the case through real Codex
+  headless (`codex exec --json`, resuming the thread for follow-ups) against the connected Krea
+  MCP, then grades each transcript. Spends real OpenAI (Codex) + Krea + judge credits.
+- **`run.py --grade CASE transcript.json`** grades a transcript you captured some other way — e.g.
+  by running the prompts manually in Codex (the `@plugin-eval` plugin is handy for that).
+- **`run.py --lint` / `--selftest`** are offline: spec + fixture validation and grader unit tests,
+  no secrets, no spend. This is what CI runs on every push/PR.
 
-- **`cases/*.json`** — the golden **hero specs** (`@plugin-eval` and reviewers read
-  these): user prompt(s), expected output, required facts, expected tool path,
-  safety behavior, fixture/state, grading criteria.
-- **`run.py`** — a **transcript grader** + offline lint/self-test. It grades a
-  captured run against a spec (`transcript → verifier → result`); it does **not**
-  drive a live agent/tool surface (that's `@plugin-eval`'s job in Codex).
+## Layout
 
-> Why not run the whole loop in CI? The plugin is MCP-only and the Krea MCP is
-> OAuth-based, so it doesn't run in a headless CI agent. The deck's guidance is to
-> **run the loop in Codex, start manual, and automate only the stable parts** — so
-> CI here runs just the secret-free spec lint + grader self-test.
-
-## Run the evals (in Codex)
-
-1. **Connect the Krea plugin in Codex** (deck appendix): install/authenticate the
-   Krea app in ChatGPT, confirm it appears in Codex, and verify `mcp__krea__*`
-   tools are available.
-2. **Provision the review account** with the fixture assets each case references
-   (`fixture.assets[].url`) and a clean job history.
-3. **Get the prompts:** `python evals/hero/run.py --print-prompts` (add `--case HC-02`
-   for one). Each case lists its 2-3 prompt variants and any scripted follow-up
-   replies.
-4. **Run with `@plugin-eval`** against the connected plugin. For a **multi-turn**
-   case, send the prompt, then — when the agent stops to ask — send the case's
-   scripted follow-up reply (the "(then reply) …" lines).
-5. **Save the transcript** as JSON and grade it (next section).
-
-## Grade a captured transcript
-
-```bash
-python evals/hero/run.py --grade HC-02 transcript.json --judge
+```
+evals/hero/
+  cases/HC-*.json   golden specs (one per case)
+  fixtures/         committed reference images used by the cases
+  run.py            runner + grader + lint/selftest
 ```
 
-Transcript format (single- or multi-turn):
+## Run a case end-to-end (real Codex)
+
+1. **Authenticate Codex and connect the Krea MCP:**
+   ```bash
+   printenv OPENAI_API_KEY | codex login --with-api-key
+   codex mcp add krea --url https://api.krea.ai/mcp --bearer-token-env-var KREA_API_KEY
+   codex mcp list
+   ```
+2. **Run + grade:**
+   ```bash
+   python evals/hero/run.py --run-codex HC-05 --judge
+   ```
+   This sends each prompt variant (and any scripted follow-up) through Codex, reconstructs the tool
+   path, and grades it. HC-03/04/05/06/07/08 run today; HC-01/02/09/10 need their review-account
+   assets first (see [Fixtures](#fixtures)).
+
+### Interactive alternative
+
+Instead of the headless runner you can run the prompts by hand in Codex (e.g. with `@plugin-eval`),
+save the transcript as JSON, and grade it:
+
+```bash
+python evals/hero/run.py --print-prompts --case HC-05   # get the prompts + follow-ups
+python evals/hero/run.py --grade HC-05 transcript.json --judge
+```
+
+## Transcript format
+
+Single- or multi-turn:
 
 ```json
 { "turns": [
@@ -51,55 +59,63 @@ Transcript format (single- or multi-turn):
 ] }
 ```
 
-A Claude Code `--output-format stream-json` dump is also accepted. The grader
-applies the deck's lightest-verifier ladder:
+A `codex exec --json` event stream or a Claude Code `--output-format stream-json` dump is also
+accepted. The grader applies a lightest-verifier ladder:
 
-1. **Expected tool path** — deterministic ordered-subsequence over the whole
-   conversation (tool names are mapped surface-agnostically: `mcp__krea__*`,
-   `krea …` CLI, or already-logical step names all normalize to the same steps).
-2. **LLM judge** (`--judge`) — grades `required_facts` + `safety_behavior` +
-   `grading_criteria` over the full transcript (incl. all turns). Without
-   `--judge` a tool-path-clean run is `MANUAL_REVIEW` (judge deferred). A judge
-   that can't run returns `ERROR`, never a silent pass.
+1. **Expected tool path** — deterministic ordered-subsequence over the whole conversation (tool
+   names are mapped surface-agnostically: `mcp__krea__*`, `krea …` CLI, or already-logical step
+   names all normalize to the same steps).
+2. **LLM judge** (`--judge`) — grades `required_facts` + `safety_behavior` + `grading_criteria`
+   over the full transcript (incl. all turns). Without `--judge` a tool-path-clean run is
+   `MANUAL_REVIEW` (judge deferred). A judge that can't run returns `ERROR`, never a silent pass.
 
 ## Multi-turn
 
-Cases that need a follow-up (HC-01/02/03/04/09/10) carry `followups` — scripted
-user replies. The pattern is the deck's "prompts that require follow-ups": turn 0
-the agent should stop (cost-preflight / clarifying question); after the scripted
-reply it should proceed correctly. The grader reconstructs the tool path across
-**all** turns and the judge evaluates the whole arc.
+Cases that need a follow-up (HC-01/02/03/04/09/10) carry `followups` — scripted user replies. The
+pattern: on turn 0 the agent should stop (cost-preflight / clarifying question); after the scripted
+reply it should proceed correctly. The grader reconstructs the tool path across **all** turns and
+the judge evaluates the whole arc.
 
 ## Case format
 
-One JSON file per case. Fields map to the deck's spec table:
+One JSON file per case:
 
-| Field | Deck field |
+| Field | Meaning |
 |---|---|
-| `prompts[]` (`text` + `tag`: clear/ambiguous/misspelled/should-not-invoke/implicit/explicit) | User prompt(s) |
-| `expected_output` | Expected output |
-| `required_facts` | Required facts |
-| `expected_tool_path` | Expected tool path (logical, surface-agnostic) |
-| `safety_behavior` | Safety behavior |
-| `fixture` | Fixture / state |
-| `grading_criteria` | Grading criteria |
+| `prompts[]` (`text` + `tag`: clear/ambiguous/misspelled/should-not-invoke/implicit/explicit) | User prompt(s), covering a range of real-world phrasings + invocation styles |
+| `expected_output` | Representative successful final answer |
+| `required_facts` | Facts the verifier must see |
+| `expected_tool_path` | Required logical step sequence (surface-agnostic) |
+| `safety_behavior` | Side-effect / confirmation behavior to enforce |
+| `fixture` | Review account + reference assets (each a local `path` or a `url`) |
+| `grading_criteria` | Pass/fail rules for the verifier |
 
-Plus `skill` + `workflow_files` (which SKILL a failure points at — the deck's
-failure→change loop), `default_prompt` (maps to a directory default prompt), and
-`followups` (scripted multi-turn replies).
+Plus `skill` + `workflow_files` (which SKILL a failure points at — the failure→change loop),
+`default_prompt` (maps to a directory default prompt), and `followups` (scripted multi-turn replies).
+
+## Fixtures
+
+`cases/*.json` reference assets under `fixture.assets[]`, each as a local `path` (committed in
+`fixtures/`, resolved relative to `evals/hero/`) or a `url`. Local-path fixtures are verified to
+exist by `--lint`. HC-03/05/06 ship with committed images; HC-01/02/09/10 still point at
+placeholder URLs and need real review-account assets before they can run live.
 
 ## Offline (CI)
 
 ```bash
-python evals/hero/run.py --lint       # validate every spec
+python evals/hero/run.py --lint       # validate specs + fixtures
 python evals/hero/run.py --selftest   # grader unit checks (incl. multi-turn), no API
 ```
 
-`.github/workflows/evals.yml` runs exactly these two on push/PR — no secrets, no
-live generation.
+`.github/workflows/evals.yml` has two jobs:
 
-## Submission checklist (deck §05)
+- **`hero-specs`** — the offline gate above. Runs on every push to `main` / PR. No secrets, no spend.
+- **`hero-evals-live`** — runs the suite through real Codex (`--run-codex --judge`) and grades each
+  transcript. Spends real credits, so it's gated to manual dispatch ("Run workflow") or a
+  `run-hero-live` PR label.
+
+## Submission checklist
 
 - [ ] Hero prompts + repeatable eval scenarios documented (these specs).
-- [ ] Review/demo account with realistic dummy data (the fixtures).
-- [ ] Hero workflows validated in Codex via `@plugin-eval`; transcripts captured + graded.
+- [ ] Review/demo account with realistic data + the per-case fixture assets provisioned.
+- [ ] Hero workflows validated against real Codex; transcripts captured + graded.

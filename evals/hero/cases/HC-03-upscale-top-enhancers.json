@@ -41,10 +41,10 @@
     "assets": [
       {
         "role": "source_image",
-        "url": "https://cdn.krea.ai/demo/soft-photo-1024.jpg"
+        "path": "fixtures/lower-res-image.png"
       }
     ],
-    "state_note": "Demo account holds one slightly soft / low-resolution photo suitable for upscale comparison."
+    "state_note": "Local fixture `fixtures/lower-res-image.png`: a slightly soft / lower-resolution exterior photo suitable for upscale comparison."
   },
   "grading_criteria": "PASS if the transcript shows the source read with vision, a faithful upscale archetype chosen, the source uploaded, and a cost-preflight presented for the 5-enhancer batch with an explicit stop/ask BEFORE running them. FAIL if it runs all five without pricing them, routes to a video model, or promises invented detail. The implicit variant is graded on the same rubric."
 }

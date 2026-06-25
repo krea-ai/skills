@@ -1,36 +1,37 @@
 #!/usr/bin/env python3
-"""Hero-eval tooling for the Krea Codex plugin — deck-aligned.
+"""Hero-eval tooling for the Krea Codex plugin.
 
-The eval *loop* (case -> agent/tool calls -> transcript) runs in Codex with the
-`@plugin-eval` plugin, where the plugin's MCP tools + skills load natively. This
-file is the repo-side companion that the deck also asks for:
+`--run-codex` is the automated runner: it drives the hero suite through real Codex
+headless (`codex exec --json`, resuming the thread for multi-turn) against the
+connected Krea MCP, then grades each transcript. Running the same prompts manually
+in Codex (e.g. via the @plugin-eval plugin) and saving the transcript for `--grade`
+is the interactive alternative.
 
-  * the hero CASE SPECS (cases/*.json) — the golden specs reviewers + @plugin-eval
-    consume (User prompt(s) / Expected output / Required facts / Expected tool path
-    / Safety behavior / Fixture/state / Grading criteria);
-  * a VERIFIER that grades a captured transcript against a spec (the deck's
-    "transcript -> verifier -> result" half), single- or multi-turn;
-  * offline lint + self-test so the specs and grader stay healthy in CI without
-    any secrets or live calls.
-
-It deliberately does NOT drive a live agent/tool surface itself — that's
-@plugin-eval's job in Codex (and trying to do it headlessly is what coupled the
-old harness to the now-removed CLI surface).
+Pieces:
+  * hero CASE SPECS (cases/*.json) — the golden specs reviewers consume:
+    user prompt(s) / expected output / required facts / expected tool path /
+    safety behavior / fixture (local `path` or `url`) / grading criteria;
+  * a VERIFIER that grades a captured transcript against a spec
+    (the case -> transcript -> verifier -> result loop), single- or multi-turn;
+  * offline lint + self-test so the specs, fixtures and grader stay healthy in CI
+    without any secrets or live calls.
 
 Usage:
-  python evals/hero/run.py --lint                       # validate every case spec
+  python evals/hero/run.py --lint                       # validate specs + fixtures
   python evals/hero/run.py --list                       # list cases
-  python evals/hero/run.py --print-prompts [--case ID]  # prompts+followups for Codex
-  python evals/hero/run.py --grade CASE transcript.json [--judge]   # grade a run
+  python evals/hero/run.py --print-prompts [--case ID]  # prompts + follow-ups
+  python evals/hero/run.py --run-codex CASE [--judge] [--model M]  # drive Codex + grade
+  python evals/hero/run.py --grade CASE transcript.json [--judge]  # grade a saved run
   python evals/hero/run.py --selftest                   # offline grader checks
 
-Transcript format (what you save from a Codex/@plugin-eval run), JSON:
+Transcript format (what `--run-codex` produces, or what you save from a manual run):
   {"turns": [
      {"user": "<prompt>", "assistant": "<final text>",
       "tool_calls": [{"name": "mcp__krea__list_models", "args": {...}}, ...]},
      {"user": "<follow-up reply>", "assistant": "...", "tool_calls": [...]}
   ]}
-A Claude Code `--output-format stream-json` dump (lines of events) is also accepted.
+A `codex exec --json` event stream, or a Claude Code `--output-format stream-json`
+dump, is also accepted.
 """
 
 from __future__ import annotations
@@ -42,6 +43,7 @@ import json
 import re
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 HERO_DIR = Path(__file__).resolve().parent
@@ -226,6 +228,11 @@ def validate_case(c: dict) -> list[str]:
     for i, fu in enumerate(c.get("followups", [])):
         if not isinstance(fu, str):
             errs.append(f"{src}: followups[{i}] must be a string (a scripted user reply)")
+    for i, a in enumerate(c.get("fixture", {}).get("assets", [])):
+        if not a.get("path") and not a.get("url"):
+            errs.append(f"{src}: fixture.assets[{i}] needs a 'path' or 'url'")
+        if a.get("path") and not (HERO_DIR / a["path"]).exists():
+            errs.append(f"{src}: fixture asset path not found: {a['path']}")
     return errs
 
 
@@ -237,7 +244,7 @@ def case_matches(c: dict, tok: str) -> bool:
                    num, f"hc-{num}", f"hc-{int(num):02d}" if num else ""}
 
 
-# ── Grading (deck's lightest-verifier ladder) ────────────────────────────────
+# ── Grading (lightest-verifier ladder) ──────────────────────────────────────
 def grade(case: dict, transcript: dict, judge: bool) -> dict:
     reasons = []
     # 1) tool path — deterministic ordered-subsequence over the whole conversation
@@ -312,7 +319,7 @@ def _parse_judge(stdout: str) -> dict:
     return {"verdict": "ERROR", "reason": f"unparseable judge output: {text[:200]}"}
 
 
-# ── Codex CLI driver (the deck's loop, headless, on real Codex) ──────────────
+# ── Codex CLI driver (headless agent loop, on real Codex) ───────────────────
 # `codex exec --json` runs the agent loop against the connected Krea MCP and emits
 # JSONL events; `codex exec resume <thread_id>` continues a session for follow-ups.
 def parse_codex_events(events: list) -> dict:
@@ -342,17 +349,24 @@ def _is_codex_events(events: list) -> bool:
         ("thread.", "turn.", "item.")) for e in events)
 
 
+def _asset_ref(a: dict) -> str | None:
+    """A reference a headless run can use: absolute local path if present, else URL."""
+    if a.get("path"):
+        return str((HERO_DIR / a["path"]).resolve())
+    return a.get("url")
+
+
 def build_prompt(case: dict, variant: dict) -> str:
-    """Inject the demo fixture asset URL(s) so a headless run has the reference."""
+    """Inject the fixture asset (local path or URL) so a headless run has the reference."""
     text = variant["text"]
     if variant.get("tag") == "should-not-invoke" or re.search(r"https?://", text):
         return text
-    assets = [a["url"] for a in case.get("fixture", {}).get("assets", [])
-              if a.get("role") not in {"external_url"} and a.get("url")]
+    assets = [ref for a in case.get("fixture", {}).get("assets", [])
+              if a.get("role") not in {"external_url"} and (ref := _asset_ref(a))]
     if assets and re.search(r"(?i)\b(this|these|my|the)\b.*\b(image|photo|pic|picture|"
                             r"screenshot|reference|product|bottle|vase|chair|shot|viewport|"
-                            r"still|pics|photos)\b", text):
-        return f"{text}\n\n(Reference asset(s) on the Krea demo account: {', '.join(assets)})"
+                            r"still|pics|photos|blueprint|elevation|drawing|render|sketch)\b", text):
+        return f"{text}\n\n(Reference asset(s) for this run: {', '.join(assets)})"
     return text
 
 
@@ -396,27 +410,32 @@ async def run_codex_case(case: dict, judge: bool, model: str | None) -> list[dic
     results = []
     followups = case.get("followups", [])
     for i, variant in enumerate(case["prompts"]):
-        turns, thread_id, err = [], None, None
+        turns, thread_id, err, latencies = [], None, None, []
         try:
+            t_start = time.monotonic()
             t0, _ = await run_codex_turn(build_prompt(case, variant), None, model)
+            latencies.append(round(time.monotonic() - t_start, 1))
             turns.append({"user": variant["text"], "assistant": t0["assistant"],
                           "tool_calls": t0["tool_calls"]})
             thread_id = t0["thread_id"]
             for fu in followups:
                 if not thread_id:
                     break
+                t_start = time.monotonic()
                 tn, _ = await run_codex_turn(fu, thread_id, model)
+                latencies.append(round(time.monotonic() - t_start, 1))
                 turns.append({"user": fu, "assistant": tn["assistant"],
                               "tool_calls": tn["tool_calls"]})
         except (subprocess.TimeoutExpired, FileNotFoundError) as e:
             err = str(e)
         if err:
             results.append({"variant": variant.get("tag", i), "verdict": "ERROR",
-                            "reasons": [err]})
+                            "reasons": [err], "latency_s": latencies})
             continue
         tr = normalize({"turns": turns})
         res = grade(case, tr, judge)
         res.update({"variant": variant.get("tag", i), "turns": len(turns),
+                    "latency_s": latencies, "total_latency_s": round(sum(latencies), 1),
                     "observed_timeline": tr["timeline"]})
         results.append(res)
     return results
