@@ -488,8 +488,16 @@ async def run_variant(case: dict, idx: int, variant: dict, judge: bool,
         try:
             async with sem:
                 t_start = time.monotonic()
-                t0, _ = await run_codex_turn(build_prompt(case, variant), None, model, cwd=workdir)
+                t0, c0 = await run_codex_turn(build_prompt(case, variant), None, model, cwd=workdir)
                 latencies.append(round(time.monotonic() - t_start, 1))
+            # A turn with no tool calls AND no text means codex itself produced nothing
+            # (e.g. an auth/model failure) — surface its rc + stderr/stdout rather than
+            # silently grading an empty transcript.
+            if not t0["tool_calls"] and not (t0["assistant"] or "").strip():
+                etail = ((c0.stderr or "").strip().splitlines() or [""])[-1][:240]
+                otail = ((c0.stdout or "").strip().splitlines() or [""])[-1][:240]
+                raise RuntimeError(f"codex produced no output (rc={c0.returncode}); "
+                                   f"stderr: {etail or '-'}; stdout: {otail or '-'}")
             turns.append({"user": variant["text"], "assistant": t0["assistant"],
                           "tool_calls": t0["tool_calls"]})
             thread_id = t0["thread_id"]
@@ -502,7 +510,7 @@ async def run_variant(case: dict, idx: int, variant: dict, judge: bool,
                     latencies.append(round(time.monotonic() - t_start, 1))
                 turns.append({"user": fu, "assistant": tn["assistant"],
                               "tool_calls": tn["tool_calls"]})
-        except (subprocess.TimeoutExpired, FileNotFoundError) as e:
+        except (subprocess.TimeoutExpired, FileNotFoundError, RuntimeError) as e:
             err = str(e)
     if err:
         return {"variant": variant.get("tag", idx), "verdict": "ERROR",
