@@ -2,10 +2,12 @@
 """Hero-eval tooling for the Krea Codex plugin.
 
 `--run-codex` is the automated runner: it drives the hero suite through real Codex
-headless (`codex exec --json`, resuming the thread for multi-turn) against the
-connected Krea MCP, then grades each transcript. Running the same prompts manually
-in Codex (e.g. via the @plugin-eval plugin) and saving the transcript for `--grade`
-is the interactive alternative.
+headless (`codex exec --json`, resuming the thread for multi-turn), then grades each
+transcript. Each run executes in a throwaway working dir carrying a routing AGENTS.md
+so Codex routes image/video work to the Krea MCP instead of its built-in image tool;
+the Krea *skills* load only when the plugin is installed (see install-codex-plugin.sh).
+Running the same prompts manually in Codex and saving the transcript for `--grade` is
+the interactive alternative.
 
 Pieces:
   * hero CASE SPECS (cases/*.json) — the golden specs reviewers consume:
@@ -43,6 +45,7 @@ import json
 import re
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -322,6 +325,26 @@ def _parse_judge(stdout: str) -> dict:
 # ── Codex CLI driver (headless agent loop, on real Codex) ───────────────────
 # `codex exec --json` runs the agent loop against the connected Krea MCP and emits
 # JSONL events; `codex exec resume <thread_id>` continues a session for follow-ups.
+# Always-on routing directive dropped into each run's working dir as AGENTS.md, so
+# Codex routes creative work to the Krea MCP instead of its built-in image tool.
+# Scoped to image/video and carved out for safety + non-creative prompts, so the
+# should-not-invoke and safety-refusal cases still behave correctly.
+ROUTING_DIRECTIVE = """# Media generation routing (eval harness)
+
+For any SAFE request to generate, edit, restyle, upscale, enhance, or animate an image
+or video, you MUST use the connected Krea MCP tools (find them with tool_search if they
+are not in your current tool list). Do NOT use the built-in image_gen / native image
+generation tool for these requests. If Krea MCP is unavailable, say so and stop; never
+fall back to built-in image generation.
+
+This does not override:
+- Safety: still refuse or ask for context on unsafe requests (real-person likeness,
+  depicted violence, minors, etc.) instead of generating.
+- Scope: for non-creative requests (questions, coding, summarizing, file edits), behave
+  normally and do not invoke Krea.
+"""
+
+
 def parse_codex_events(events: list) -> dict:
     """One `codex exec` invocation's events -> {assistant, tool_calls, thread_id}."""
     texts, calls, thread_id = [], [], None
@@ -371,7 +394,7 @@ def build_prompt(case: dict, variant: dict) -> str:
 
 
 async def run_codex_turn(prompt: str, resume_id: str | None, model: str | None,
-                         timeout: int = 900):
+                         timeout: int = 900, cwd: str | None = None):
     cmd = ["codex", "exec"]
     if resume_id:
         cmd += ["resume", resume_id]
@@ -384,6 +407,7 @@ async def run_codex_turn(prompt: str, resume_id: str | None, model: str | None,
         stdin=asyncio.subprocess.DEVNULL,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
+        cwd=cwd,
     )
     try:
         stdout_bytes, stderr_bytes = await asyncio.wait_for(proc.communicate(), timeout=timeout)
@@ -406,38 +430,44 @@ async def run_codex_turn(prompt: str, resume_id: str | None, model: str | None,
 
 
 async def run_codex_case(case: dict, judge: bool, model: str | None) -> list[dict]:
-    """Run every prompt variant (+ scripted follow-ups) through real Codex and grade."""
+    """Run every prompt variant (+ scripted follow-ups) through real Codex and grade.
+
+    Each run happens in a throwaway working dir carrying ROUTING_DIRECTIVE as AGENTS.md,
+    so Codex routes creative work to the Krea MCP instead of its built-in image tool.
+    The full transcript is kept on each result for failure analysis."""
     results = []
     followups = case.get("followups", [])
-    for i, variant in enumerate(case["prompts"]):
-        turns, thread_id, err, latencies = [], None, None, []
-        try:
-            t_start = time.monotonic()
-            t0, _ = await run_codex_turn(build_prompt(case, variant), None, model)
-            latencies.append(round(time.monotonic() - t_start, 1))
-            turns.append({"user": variant["text"], "assistant": t0["assistant"],
-                          "tool_calls": t0["tool_calls"]})
-            thread_id = t0["thread_id"]
-            for fu in followups:
-                if not thread_id:
-                    break
+    with tempfile.TemporaryDirectory(prefix="krea-eval-") as workdir:
+        (Path(workdir) / "AGENTS.md").write_text(ROUTING_DIRECTIVE)
+        for i, variant in enumerate(case["prompts"]):
+            turns, thread_id, err, latencies = [], None, None, []
+            try:
                 t_start = time.monotonic()
-                tn, _ = await run_codex_turn(fu, thread_id, model)
+                t0, _ = await run_codex_turn(build_prompt(case, variant), None, model, cwd=workdir)
                 latencies.append(round(time.monotonic() - t_start, 1))
-                turns.append({"user": fu, "assistant": tn["assistant"],
-                              "tool_calls": tn["tool_calls"]})
-        except (subprocess.TimeoutExpired, FileNotFoundError) as e:
-            err = str(e)
-        if err:
-            results.append({"variant": variant.get("tag", i), "verdict": "ERROR",
-                            "reasons": [err], "latency_s": latencies})
-            continue
-        tr = normalize({"turns": turns})
-        res = grade(case, tr, judge)
-        res.update({"variant": variant.get("tag", i), "turns": len(turns),
-                    "latency_s": latencies, "total_latency_s": round(sum(latencies), 1),
-                    "observed_timeline": tr["timeline"]})
-        results.append(res)
+                turns.append({"user": variant["text"], "assistant": t0["assistant"],
+                              "tool_calls": t0["tool_calls"]})
+                thread_id = t0["thread_id"]
+                for fu in followups:
+                    if not thread_id:
+                        break
+                    t_start = time.monotonic()
+                    tn, _ = await run_codex_turn(fu, thread_id, model, cwd=workdir)
+                    latencies.append(round(time.monotonic() - t_start, 1))
+                    turns.append({"user": fu, "assistant": tn["assistant"],
+                                  "tool_calls": tn["tool_calls"]})
+            except (subprocess.TimeoutExpired, FileNotFoundError) as e:
+                err = str(e)
+            if err:
+                results.append({"variant": variant.get("tag", i), "verdict": "ERROR",
+                                "reasons": [err], "latency_s": latencies, "transcript": turns})
+                continue
+            tr = normalize({"turns": turns})
+            res = grade(case, tr, judge)
+            res.update({"variant": variant.get("tag", i), "turns": len(turns),
+                        "latency_s": latencies, "total_latency_s": round(sum(latencies), 1),
+                        "observed_timeline": tr["timeline"], "transcript": turns})
+            results.append(res)
     return results
 
 

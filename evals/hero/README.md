@@ -22,19 +22,34 @@ evals/hero/
 
 ## Run a case end-to-end (real Codex)
 
-1. **Authenticate Codex and connect the Krea MCP:**
+1. **Authenticate Codex and install the Krea plugin.** Install the *plugin* (not just
+   `codex mcp add`) — `codex exec` loads the Krea **skills** only when the plugin is
+   installed; an MCP added on its own gives the tools without the workflow guidance.
    ```bash
-   printenv OPENAI_API_KEY | codex login --with-api-key
-   codex mcp add krea --url https://api.krea.ai/mcp --bearer-token-env-var KREA_API_KEY
-   codex mcp list
+   printenv OPENAI_API_KEY | codex login --with-api-key   # or: codex login (ChatGPT)
+   export KREA_API_KEY=...                                 # Krea MCP bearer token
+   bash evals/hero/install-codex-plugin.sh                 # builds + installs the plugin
    ```
+   The helper builds the plugin and registers it with a **bearer-token** MCP variant
+   (the shipped `.codex-plugin/.mcp.json` is OAuth, which can't authenticate headlessly).
 2. **Run + grade:**
    ```bash
    python evals/hero/run.py --run-codex HC-05 --judge
    ```
-   This sends each prompt variant (and any scripted follow-up) through Codex, reconstructs the tool
-   path, and grades it. HC-03/04/05/06/07/08 run today; HC-01/02/09/10 need their review-account
-   assets first (see [Fixtures](#fixtures)).
+   Each run executes in a throwaway working dir carrying a routing `AGENTS.md` (see
+   [Routing](#routing) below), then sends each prompt variant (and any scripted follow-up)
+   through Codex, reconstructs the tool path, and grades it. The full transcript is kept on
+   each result for failure analysis. HC-03/04/05/06/07/08 run today; HC-01/02/09/10 need
+   their review-account assets first (see [Fixtures](#fixtures)).
+
+## Routing
+
+Codex ships a built-in image-generation tool, and for a generic "make an image" prompt it
+will use that instead of Krea — the Krea MCP tools sit behind `tool_search`, and the skill
+only binds once activated. So the runner drops a small `AGENTS.md` into each run's working
+dir instructing Codex to route image/video work to the Krea MCP (and not the built-in tool).
+It's scoped to creative requests, so the should-not-invoke and safety-refusal cases are
+unaffected. Without it, implicit prompts never reach Krea.
 
 ### Interactive alternative
 
