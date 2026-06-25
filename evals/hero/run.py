@@ -52,6 +52,7 @@ from pathlib import Path
 HERO_DIR = Path(__file__).resolve().parent
 CASES_DIR = HERO_DIR / "cases"
 JUDGE_MODEL = "claude-haiku-4-5-20251001"
+FIX_MODEL = "claude-sonnet-4-6"  # stronger model for the fix suggestion (accuracy matters)
 JUDGE_TIMEOUT_S = 180
 
 # ── Canonical, surface-agnostic step vocabulary ──────────────────────────────
@@ -351,6 +352,61 @@ def _parse_judge(stdout: str) -> dict:
     return {"verdict": "ERROR", "reason": f"unparseable judge output: {text[:200]}"}
 
 
+FIX_SCHEMA = json.dumps({"type": "object", "properties": {
+    "fix": {"type": "string", "description": "concise, actionable fix (<=4 short lines)"}},
+    "required": ["fix"]})
+
+
+def suggest_fix(case: dict, transcript: dict, reason: str) -> str:
+    """Ask a capable model for a concrete, accurate fix for a FAILED case (what to change
+    in the skill — or in the test, if the agent was actually right). Returns '' if the
+    model is unavailable, so it never blocks a run."""
+    convo = []
+    for i, t in enumerate(transcript["turns"]):
+        convo.append(f"### Turn {i}\nUser: {t['user'] or '(initial prompt)'}\n"
+                     f"Tool steps: {t['steps']}\nAssistant: {t['assistant'][:2500]}")
+    facts = "\n".join(f"  - {f}" for f in case.get("required_facts", [])) or "  (none)"
+    prompt = (
+        "A hero-eval case for the Krea Codex plugin FAILED. Propose the single most accurate, "
+        "actionable fix a maintainer can apply. Reply with the {fix} object.\n\n"
+        f"## Case\n{case.get('title')}\n\n"
+        f"## Grading criteria\n{case.get('grading_criteria')}\n\n"
+        f"## Required facts\n{facts}\n\n"
+        f"## Expected tool path (logical)\n{case.get('expected_tool_path')}\n\n"
+        f"## Safety behavior\n{case.get('safety_behavior')}\n\n"
+        f"## Skill that governs this (the place to change)\n{case.get('skill')} — "
+        f"files: {case.get('workflow_files')}\n\n"
+        f"## Why it failed\n{reason}\n\n"
+        f"## What the agent actually did\n" + "\n\n".join(convo) + "\n\n"
+        "Keep `fix` to <=4 short lines. Name the specific skill/workflow file to change when "
+        "relevant. If the agent was actually correct and the TEST is wrong (bad rubric/fixture/"
+        "expected path), say so and give the test fix instead. Prefer 1-2 options formatted like "
+        "'Skill (preferred): …' and 'Rubric: …'. Be concrete and reference the real Krea workflow; "
+        "no vague advice like 'improve the prompt'.")
+    cmd = ["claude", "-p", "--output-format", "json", "--json-schema", FIX_SCHEMA,
+           "--model", FIX_MODEL, "--max-budget-usd", "0.35", "--permission-mode", "bypassPermissions"]
+    try:
+        proc = subprocess.run(cmd, input=prompt, text=True, capture_output=True, timeout=JUDGE_TIMEOUT_S)
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        return ""
+    if proc.returncode != 0:
+        return ""
+    try:
+        outer = json.loads(proc.stdout)
+        result = outer.get("result", proc.stdout) if isinstance(outer, dict) else proc.stdout
+    except json.JSONDecodeError:
+        result = proc.stdout
+    inner = result if isinstance(result, dict) else None
+    if inner is None:
+        try:
+            inner = json.loads(result)
+        except (json.JSONDecodeError, TypeError):
+            inner = None
+    if isinstance(inner, dict) and inner.get("fix"):
+        return str(inner["fix"]).strip()
+    return (result if isinstance(result, str) else "").strip()[:700]
+
+
 # ── Codex CLI driver (headless agent loop, on real Codex) ───────────────────
 # `codex exec --json` runs the agent loop against the connected Krea MCP and emits
 # JSONL events; `codex exec resume <thread_id>` continues a session for follow-ups.
@@ -520,6 +576,8 @@ async def run_variant(case: dict, idx: int, variant: dict, judge: bool,
     res.update({"variant": variant.get("tag", idx), "turns": len(turns),
                 "latency_s": latencies, "total_latency_s": round(sum(latencies), 1),
                 "observed_timeline": tr["timeline"], "transcript": turns})
+    if judge and res.get("verdict") == "FAIL":
+        res["fix"] = await asyncio.to_thread(suggest_fix, case, tr, (res.get("reasons") or [""])[0])
     return res
 
 
@@ -565,6 +623,8 @@ def cmd_grade(case, path, judge):
         data = [json.loads(l) for l in raw.splitlines() if l.strip().startswith("{")]
     tr = normalize(data)
     res = grade(case, tr, judge)
+    if judge and res.get("verdict") == "FAIL":
+        res["fix"] = suggest_fix(case, tr, (res.get("reasons") or [""])[0])
     print(json.dumps({"case": case["id"], **res,
                       "observed_timeline": tr["timeline"]}, indent=2))
     return 0 if res["verdict"] in ("PASS",) else (2 if res["verdict"] == "MANUAL_REVIEW" else 1)
@@ -584,7 +644,7 @@ def summarize_runs(case_outputs: list) -> dict:
             counts[v] = counts.get(v, 0) + 1
             rows.append({"id": f"{label} [{r.get('variant', '')}]", "case": label,
                          "title": title, "variant": r.get("variant", ""), "verdict": v,
-                         "reason": (r.get("reasons") or [""])[0]})
+                         "reason": (r.get("reasons") or [""])[0], "fix": r.get("fix", "")})
     return {"pass": counts["PASS"], "fail": counts["FAIL"],
             "manual_review": counts["MANUAL_REVIEW"], "error": counts["ERROR"],
             "variants": sum(counts.values()), "model": model or "?", "results": rows}

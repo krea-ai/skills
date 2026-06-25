@@ -73,6 +73,9 @@ def main() -> int:
             ic = icons.get(r.get("verdict"), "•")
             reason = (r.get("reason") or "").strip().replace("\n", " ")
             lines.append(f"   {ic} {reason[:1500]}" if reason else f"   {ic} {r.get('verdict')}")
+            fix = " · ".join(s.strip() for s in (r.get("fix") or "").splitlines() if s.strip())
+            if fix:
+                lines.append(f"      💡 *Suggested fix:* {fix[:1500]}")
 
     ctx = [f"model `{s.get('model', '?')}`"]
     if args.trigger:
