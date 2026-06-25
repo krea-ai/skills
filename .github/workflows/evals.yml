@@ -1,26 +1,45 @@
-name: Hero Evals (offline)
+name: Hero Evals
 
-# The hero-eval LOOP runs in Codex with @plugin-eval (where the Krea MCP + skills
-# load natively). CI here is intentionally offline + secret-free: it only lints
-# the hero case specs and runs the transcript-grader self-test. Nothing here
-# drives a live agent or touches Krea/Anthropic credentials, so it's safe on a
-# public repo and on PRs from forks.
+# Two layers:
+#   hero-specs (offline)     — lint the case specs + grader self-test. No secrets,
+#                              no spend. Runs on every push/PR touching evals/hero.
+#   hero-evals-live (Codex)  — runs the FULL hero suite through real Codex
+#                              (`codex exec` against the connected Krea MCP) and
+#                              grades each transcript. Spends real OpenAI (Codex) +
+#                              Krea + Anthropic (judge) credits, so it is gated to
+#                              manual dispatch or a `run-hero-live` PR label.
 #
-# See evals/hero/README.md for the in-Codex run + grading flow.
+# Trigger the live suite:
+#   - Actions tab -> "Hero Evals" -> Run workflow  (workflow_dispatch), or
+#   - add the `run-hero-live` label to a PR.
+#
+# NOTE: cases that depend on demo-account fixtures (placeholder asset URLs) will
+# FAIL/ERROR until that review account is provisioned — expected until then.
 
 on:
   push:
     branches: [main]
     paths: ["evals/hero/**"]
   pull_request:
-    paths: ["evals/hero/**"]
+    types: [opened, synchronize, reopened, labeled]
   workflow_dispatch:
+    inputs:
+      only:
+        description: "Space-separated case ids to run (blank = all 10)"
+        required: false
+        default: ""
 
 permissions:
   contents: read
 
+concurrency:
+  group: hero-evals-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: false
+
 jobs:
+  # ── Offline gate: spec lint + grader self-test (no secrets, no spend) ────────
   hero-specs:
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -32,3 +51,73 @@ jobs:
         run: python evals/hero/run.py --lint
       - name: Grader self-test (no API, no secrets)
         run: python evals/hero/run.py --selftest
+
+  # ── Live suite on real Codex (manual dispatch or `run-hero-live` PR label) ───
+  hero-evals-live:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && github.event.action == 'labeled' &&
+       github.event.label.name == 'run-hero-live')
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      KREA_API_KEY: ${{ secrets.KREA_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      HERO_ONLY: ${{ github.event.inputs.only }}
+      CI: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Codex CLI
+        run: |
+          npm install -g @openai/codex
+          codex --version
+
+      - name: Authenticate Codex (API key, non-interactive)
+        run: |
+          printenv OPENAI_API_KEY | codex login --with-api-key
+          codex login status
+
+      - name: Connect the Krea MCP (bearer token)
+        run: |
+          codex mcp add krea --url https://api.krea.ai/mcp --bearer-token-env-var KREA_API_KEY
+          codex mcp list
+
+      - name: Run hero suite on Codex
+        run: |
+          set +e
+          ids="${HERO_ONLY:-HC-01 HC-02 HC-03 HC-04 HC-05 HC-06 HC-07 HC-08 HC-09 HC-10}"
+          mkdir -p evals/hero/runs
+          for c in $ids; do
+            echo "::group::$c"
+            timeout -k 30 480 python evals/hero/run.py --run-codex "$c" --judge | tee "evals/hero/runs/$c.json"
+            rc=${PIPESTATUS[0]}
+            [ "$rc" -ne 0 ] && echo "(case $c: exit $rc — timed out or graded FAIL/ERROR)"
+            echo "::endgroup::"
+          done
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Hero suite (live Codex)" >> "$GITHUB_STEP_SUMMARY"
+          for f in evals/hero/runs/HC-*.json; do
+            [ -f "$f" ] || continue
+            v=$(jq -c '[.results[].verdict]' "$f" 2>/dev/null || echo '["parse-error"]')
+            echo "- \`$(basename "$f" .json)\` -> $v" | tee -a "$GITHUB_STEP_SUMMARY"
+          done
+
+      - name: Upload transcripts + verdicts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hero-live-${{ github.run_id }}
+          path: evals/hero/runs/**
+          retention-days: 14
+          if-no-files-found: warn
