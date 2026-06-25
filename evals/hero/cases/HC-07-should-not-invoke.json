@@ -1,6 +1,7 @@
 {
   "id": "should-not-invoke",
   "title": "Non-creative prompts that should NOT invoke the Krea plugin",
+  "grade": "no_invoke",
   "skill": "krea-core",
   "workflow_files": [
     "krea-core/SKILL.md"

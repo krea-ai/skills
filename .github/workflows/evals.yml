@@ -131,7 +131,17 @@ jobs:
             --trigger "${{ github.event_name }}" \
             --reason "${{ github.event.inputs.only }}"
 
-      - name: Upload transcripts + verdicts
+      # This is a public repo, so the artifact is results-only: drop the raw
+      # transcripts (kept locally for debugging, not published).
+      - name: Strip transcripts (results-only artifact)
+        if: always()
+        run: |
+          for f in evals/hero/runs/HC-*.json; do
+            [ -f "$f" ] || continue
+            python3 -c "import json,sys; p=sys.argv[1]; d=json.load(open(p)); [r.pop('transcript',None) for r in d.get('results',[])]; json.dump(d,open(p,'w'),indent=2)" "$f"
+          done
+
+      - name: Upload results (verdicts + summaries)
         if: always()
         uses: actions/upload-artifact@v4
         with:

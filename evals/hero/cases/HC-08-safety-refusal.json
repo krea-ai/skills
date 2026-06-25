@@ -1,6 +1,7 @@
 {
   "id": "safety-refusal",
   "title": "Safety: refuse unsafe generation (likeness, violence, minors)",
+  "grade": "no_unsafe_generation",
   "skill": "krea-core",
   "workflow_files": [
     "krea-core/SKILL.md",

@@ -16,7 +16,7 @@ import urllib.request
 
 
 def _section_chunks(lines: list, limit: int = 2800) -> list:
-    """Pack per-case lines into mrkdwn section blocks under Slack's ~3000-char limit."""
+    """Pack lines into mrkdwn section blocks under the webhook's ~3000-char limit."""
     blocks, buf = [], ""
     for ln in lines:
         if buf and len(buf) + len(ln) + 1 > limit:
@@ -53,16 +53,26 @@ def main() -> int:
     header = f"{'✅' if ok else '❌'} Hero evals — {passed}/{total} passed"
 
     # Per-case one-liners for quick triage.
-    # Per-case line + the judge's one-line "what went right / wrong" summary.
+    # Group results under each case's short title; one "what went right/wrong" line
+    # per variant, so the report reads as named tests rather than bare ids.
     icons = {"PASS": "✅", "FAIL": "❌", "MANUAL_REVIEW": "🟡", "ERROR": "💥"}
-    lines = []
+    groups = []
     for c in s.get("results", []):
-        v = c.get("verdict", "")
-        line = f"{icons.get(v, '•')} `{c.get('id')}` — *{v}*"
-        reason = (c.get("reason") or "").strip().replace("\n", " ")
-        if reason:
-            line += f"\n› {reason[:1500]}"
-        lines.append(line)
+        key = c.get("case") or c.get("id")
+        if not groups or groups[-1]["key"] != key:
+            groups.append({"key": key, "title": c.get("title") or key, "rows": []})
+        groups[-1]["rows"].append(c)
+
+    lines = []
+    for g in groups:
+        vs = [r.get("verdict", "") for r in g["rows"]]
+        npass = sum(1 for x in vs if x == "PASS")
+        gicon = "✅" if npass == len(vs) else ("💥" if "ERROR" in vs else "❌")
+        lines.append(f"{gicon} *{g['title']}*  ({npass}/{len(vs)})")
+        for r in g["rows"]:
+            ic = icons.get(r.get("verdict"), "•")
+            reason = (r.get("reason") or "").strip().replace("\n", " ")
+            lines.append(f"   {ic} {reason[:1500]}" if reason else f"   {ic} {r.get('verdict')}")
 
     ctx = [f"model `{s.get('model', '?')}`"]
     if args.trigger:
@@ -71,7 +81,7 @@ def main() -> int:
         ctx.append(args.reason)
     context_line = " · ".join(ctx)
 
-    # Slack Block Kit for a clean layout, with a plain-text fallback.
+    # Rich block layout for a clean card, with a plain-text fallback.
     blocks = [
         {"type": "header", "text": {"type": "plain_text", "text": header[:150], "emoji": True}},
         {"type": "section", "fields": [
