@@ -61,7 +61,7 @@ def main() -> int:
         line = f"{icons.get(v, '•')} `{c.get('id')}` — *{v}*"
         reason = (c.get("reason") or "").strip().replace("\n", " ")
         if reason:
-            line += f"\n› {reason[:220]}"
+            line += f"\n› {reason[:1500]}"
         lines.append(line)
 
     ctx = [f"model `{s.get('model', '?')}`"]

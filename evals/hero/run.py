@@ -252,8 +252,9 @@ def grade(case: dict, transcript: dict, judge: bool) -> dict:
     reasons = []
     # 1) tool path — deterministic ordered-subsequence over the whole conversation
     if not is_subsequence(case.get("expected_tool_path", []), transcript["timeline"]):
-        reasons.append(f"expected tool path {case['expected_tool_path']} not a "
-                       f"subsequence of observed {transcript['timeline']}")
+        exp = " → ".join(case.get("expected_tool_path", [])) or "(none)"
+        reasons.append(f"expected tool path not followed in order: {exp} "
+                       f"(see transcript artifact for the full observed steps)")
     if reasons:
         return {"verdict": "FAIL", "reasons": reasons, "stage": "tool-path"}
     # 2) LLM judge — semantic rubric over required_facts + safety + grading_criteria
