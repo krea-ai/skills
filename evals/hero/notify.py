@@ -15,6 +15,20 @@ import urllib.error
 import urllib.request
 
 
+def _section_chunks(lines: list, limit: int = 2800) -> list:
+    """Pack lines into mrkdwn section blocks under the webhook's ~3000-char limit."""
+    blocks, buf = [], ""
+    for ln in lines:
+        if buf and len(buf) + len(ln) + 1 > limit:
+            blocks.append({"type": "section", "text": {"type": "mrkdwn", "text": buf}})
+            buf = ln
+        else:
+            buf = f"{buf}\n{ln}" if buf else ln
+    if buf:
+        blocks.append({"type": "section", "text": {"type": "mrkdwn", "text": buf}})
+    return blocks
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--summary", required=True, help="path to the run summary.json")
@@ -39,10 +53,26 @@ def main() -> int:
     header = f"{'✅' if ok else '❌'} Hero evals — {passed}/{total} passed"
 
     # Per-case one-liners for quick triage.
+    # Group results under each case's short title; one "what went right/wrong" line
+    # per variant, so the report reads as named tests rather than bare ids.
     icons = {"PASS": "✅", "FAIL": "❌", "MANUAL_REVIEW": "🟡", "ERROR": "💥"}
-    rows = [f"{icons.get(c.get('verdict'), '•')} `{c.get('id')}` — {c.get('verdict')}"
-            for c in s.get("results", [])]
-    detail = "\n".join(rows)
+    groups = []
+    for c in s.get("results", []):
+        key = c.get("case") or c.get("id")
+        if not groups or groups[-1]["key"] != key:
+            groups.append({"key": key, "title": c.get("title") or key, "rows": []})
+        groups[-1]["rows"].append(c)
+
+    lines = []
+    for g in groups:
+        vs = [r.get("verdict", "") for r in g["rows"]]
+        npass = sum(1 for x in vs if x == "PASS")
+        gicon = "✅" if npass == len(vs) else ("💥" if "ERROR" in vs else "❌")
+        lines.append(f"{gicon} *{g['title']}*  ({npass}/{len(vs)})")
+        for r in g["rows"]:
+            ic = icons.get(r.get("verdict"), "•")
+            reason = (r.get("reason") or "").strip().replace("\n", " ")
+            lines.append(f"   {ic} {reason[:1500]}" if reason else f"   {ic} {r.get('verdict')}")
 
     ctx = [f"model `{s.get('model', '?')}`"]
     if args.trigger:
@@ -51,7 +81,7 @@ def main() -> int:
         ctx.append(args.reason)
     context_line = " · ".join(ctx)
 
-    # Slack Block Kit for a clean layout, with a plain-text fallback.
+    # Rich block layout for a clean card, with a plain-text fallback.
     blocks = [
         {"type": "header", "text": {"type": "plain_text", "text": header[:150], "emoji": True}},
         {"type": "section", "fields": [
@@ -61,8 +91,7 @@ def main() -> int:
             {"type": "mrkdwn", "text": f"*Errors:* {error}"},
         ]},
     ]
-    if detail:
-        blocks.append({"type": "section", "text": {"type": "mrkdwn", "text": detail[:2900]}})
+    blocks += _section_chunks(lines)
     if context_line:
         blocks.append({"type": "context", "elements": [{"type": "mrkdwn", "text": context_line[:1000]}]})
     if args.run_url:
@@ -75,7 +104,7 @@ def main() -> int:
     webhook = os.environ.get("NOTIFY_WEBHOOK_URL")
     if not webhook:
         print("notify: NOTIFY_WEBHOOK_URL unset; summary below:\n"
-              f"{header}\n{context_line}\n{detail}")
+              f"{header}\n{context_line}\n" + "\n".join(lines))
         return 0
 
     payload = json.dumps({"text": text_fallback, "blocks": blocks}).encode()
