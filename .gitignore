@@ -19,6 +19,10 @@ runs/
 # small, non-sensitive fixtures the cases reference by local path; lint checks they exist.
 # (Cases without a committed image still use Krea-hosted/placeholder URLs instead.)
 
+# Codex-generated eval outputs. run.py isolates these to a temp working dir; this
+# guards against an accidental `codex exec` run inside the repo tree.
+evals/hero/outputs/
+
 # Local env (API keys for eval runner, etc.)
 .env.local
 .env.*.local
