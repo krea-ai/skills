@@ -410,6 +410,207 @@ When a user asks you to write a Seedance 2.0 prompt, follow this process:
 
 ---
 
+## Authored Style & Craft Prompting
+
+Use authored-craft mode when the user supplies a style reference, names a
+non-photoreal medium, or asks for acting, emotion, deliberate animation,
+or cinematic staging. Use the existing commercial / e-commerce templates
+below when the goal is product clarity, ad pacing, effects replication,
+UGC, or simple social conversion.
+
+This is a prompt-writing mode, not a schema exception. Still obey the
+**Krea Operating Rules** above: attach assets through the matching Krea
+fields, keep `end_image` and `reference_images` mutually exclusive, respect
+duration limits, treat empty completed results as shadow-fails, and submit
+Seedance-2 jobs within the concurrency cap.
+
+### Authored Prompt Patterns
+
+#### 1. Style Declaration Block With Hard Negatives
+
+Rationale: Lead with medium, technique, and cadence, then stack explicit
+negatives to suppress Seedance's default smooth AI look.
+
+Example:
+```
+Style: STOP-MOTION, hand-painted 2D oil, 12fps animated ON TWOS,
+constant painterly boil — NOT clay, NOT 3D, NOT puppets; NO interpolation,
+NO motion blur, NO morphing, NO liquid surfaces.
+```
+
+#### 2. Smooth-vs-Stepped Motion Split
+
+Rationale: State which motion stays smooth and which motion steps on twos
+so atmosphere feels alive while authored animation remains deliberate.
+
+Example:
+```
+Motion split: atmospherics — smoke, mist, snow, breath-vapor, ember-glow,
+and light — move smoothly; figures, faces, banners, drawn debris, clothing,
+and secondary action step on twos. Put this in the opening style block and
+reassert this exact split in Constraints.
+```
+
+#### 3. Acting as Held Micro-Expressions
+
+Rationale: Character emotion reads better as timed facial beats than as
+generic verbs like "she gets sad."
+
+Example:
+```
+Acting: hold on her face, clearly lit and legible, never blank; a flinch,
+then dawning anguish, eyes welling, brow wrenching, lips pressing tight,
+then a slow hardening, resolve setting in the jaw — each beat given TIME,
+animated on twos.
+```
+
+#### 4. Per-Shot Staging Grammar
+
+Rationale: Shot-specific lens, size, composition, massing, height, and
+camera behavior prevent generic centered footage.
+
+Example:
+```
+SHOT 1 — MEDIUM CLOSE, 50mm (choose 24mm / 35mm / 50mm per shot),
+theme: separation. Frame the daughter on the left third, never centered;
+her dark ink-mass face is cut against a pale doorway as negative space.
+Camera level for intimacy, gentle living handheld that barely breathes,
+not gimbal-smooth.
+```
+
+#### 5. HARD CUT Shot Chaining for Dialogue / Coverage
+
+Rationale: Coverage inside one generation reads as edited story instead
+of one drifting tableau.
+
+Example:
+```
+SHOT 1 — WIDE TWO-SHOT, 35mm, confrontation by thirds. Speaker A,
+lips synced: "Stay."
+HARD CUT to SHOT 2 — REVERSE MEDIUM CLOSE, 50mm, listener on right third.
+Speaker B, lips synced: "I can't."
+HARD CUT to SHOT 3 — CLOSE-UP, 50mm, hold past the line on the face.
+```
+
+#### 6. Constraints Tail
+
+Rationale: Long prompts decay over the generation duration; restating locks
+at the end keeps the clip from drifting back to defaults.
+
+Example:
+```
+Constraints: hand-painted stop-motion on twos at 12fps; atmosphere smooth
+but figures and faces stepped; held acting beats readable; separation
+composition by thirds; cold overcast light; NO music; STYLE @Image1,
+CHARACTER @Image2, ENVIRONMENT @Image3.
+```
+
+#### 7. Lighting Discipline for Authored Looks
+
+Rationale: Seedance tends to add god rays, lens flare, and blue grading
+unless the prompt names the light source and its negatives.
+
+Example:
+```
+Light: cold overcast dawn, no sun, NO rays, NO beams, NO god rays,
+NO lens flare; neutral white balance, NOT a blue filter, muted and
+desaturated; faces readable, never black voids.
+```
+
+#### 8. Diegetic-Only Audio Direction
+
+Rationale: Natural sound can protect a quiet authored scene from generic
+BGM and trailer scoring.
+
+Example:
+```
+Audio: NO MUSIC — only natural diegetic sound: wind, fire crackle, distant
+animals, breath, the shift of cloth, and the spoken lines. No subtitles.
+```
+
+#### 9. Asset-Role Lock List
+
+Rationale: Re-list every `@Image` / `@Video` / `@Audio` role at the tail so
+asset purpose does not decay mid-generation.
+
+Example:
+```
+Asset roles: STYLE @Image1, CHARACTER MOTHER @Image2, CHARACTER CHILD
+@Image3, ENVIRONMENT INTERIOR @Image4, CAMERA RHYTHM @Video1,
+DIEGETIC VOICE TONE @Audio1.
+```
+
+### Authored Prompt Skeleton
+
+```
+Style: <medium + technique + cadence>, <hard negatives>.
+References: STYLE @Image1, CHARACTER @Image2, ENVIRONMENT @Image3.
+Motion split: <smooth atmospherics>; <figures/faces/secondary action on twos>.
+Director's notes: <scene purpose>, <acting beats>, <composition theme>.
+SHOT 1 — <shot size>, <lens>, <composition by thirds>, <camera height/behavior>.
+HARD CUT to SHOT 2 — <reverse / insert / close-up>, <dialogue if any>.
+Audio: NO MUSIC — only <diegetic sound list>.
+Constraints: reassert style, cadence, motion split, acting, composition,
+lighting, audio, and asset-role list.
+```
+
+### Template: Authored Dialogue / Emotion Beat (Separation)
+
+```
+Style: HAND-PAINTED 2D gouache stop-motion, 12fps animated ON TWOS,
+constant paint boil — NOT 3D, NOT clay, NOT puppets; NO interpolation,
+NO motion blur, NO morphing. STYLE from @Image1. Mara @Image2, Ren @Image3,
+rainy station @Image4. Motion split: rain mist, lamp glow, and breath move
+smoothly; faces, hands, coats, paper ticket, and secondary action step on
+twos. Theme: separation.
+
+SHOT 1 — WIDE TWO-SHOT, 35mm, level camera, gentle living handheld.
+Mara stands on the left third under the shelter; Ren on the right third
+beyond the platform stripe, the empty track dividing them as pale negative
+space. His dark coat is an ink mass against wet concrete. Ren, lips synced:
+"The train is already here."
+HARD CUT to SHOT 2 — REVERSE MEDIUM CLOSE, 50mm, Mara on the left third,
+clearly lit by the station lamp. Hold her face: a flinch, then eyes welling,
+brow tightening, mouth almost answering, then silence given TIME on twos.
+HARD CUT to SHOT 3 — CLOSE-UP, 50mm, level and intimate. Mara's jaw sets;
+resolve hardens under grief. She whispers, lips synced: "Then go."
+
+Light: cold overcast night, NO rays, NO beams, NO lens flare; warm lamp
+softly readable on faces. Audio: NO MUSIC — rain, distant train brakes,
+breath, cloth shift, spoken lines. Constraints: gouache stop-motion on
+twos; atmosphere smooth, figures stepped; separation by thirds; STYLE
+@Image1, MARA @Image2, REN @Image3, STATION @Image4.
+```
+
+### Template: Authored Tension / Atmosphere Beat (Scale)
+
+```
+Style: SCRATCHED CHARCOAL AND INK 2D animation, 12fps ON TWOS, dry paper
+grain boil — NOT photoreal, NOT CGI, NOT glossy; NO interpolation, NO motion
+blur, NO morphing. STYLE @Image1, lone ranger @Image2, black tower @Image3,
+ash plain @Image4, storm sound @Audio1. Motion split: fog, ash drift,
+lightning glow, and distant dust move smoothly; the ranger, cloak, horse,
+banner, and drawn debris step on twos. Theme: scale.
+
+SHOT 1 — EXTREME WIDE, 24mm, low camera. The ranger is a tiny dark ink
+mass on the lower left third, the tower devouring the upper right two-thirds,
+huge pale sky as negative space. Locked camera; held dread before action.
+HARD CUT to SHOT 2 — MEDIUM CLOSE, 50mm, level with the ranger. Hold the
+face under the brim: stillness, a swallow, eyes lifting, fear tightening,
+then resolve setting in the jaw, each beat given TIME on twos.
+HARD CUT to SHOT 3 — LOW WIDE, 35mm, motivated drift forward that barely
+breathes. The horse shifts one hoof; the cloak snaps on twos while fog
+slides smooth. The ranger says quietly, lips synced: "Not yet."
+
+Light: cold overcast dawn, no sun, NO rays, NO beams, NO god rays, neutral
+white balance, faces readable. Audio: NO MUSIC — wind, distant thunder,
+horse breath, leather creak, sparse ash. Constraints: charcoal on twos;
+smooth atmosphere, stepped figures; scale by thirds; STYLE @Image1,
+RANGER @Image2, TOWER @Image3, ASH PLAIN @Image4, DIEGETIC SOUND @Audio1.
+```
+
+---
+
 ## Example Prompt Templates
 
 ### Template: Product Ad (15s)
