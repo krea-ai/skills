@@ -75,11 +75,39 @@ Single-source version: `VERSION` file at repo root. CI enforces that `krea-gener
 
 ## Evals
 
-`evals/run.sh` runs 40 regression scenarios through `claude -p` in headless mode and grades responses with regex (PASS / FAIL / MANUAL_REVIEW). See `evals/README.md` for methodology.
+Two layers live under `evals/`.
+
+### Hero suite — `evals/hero/`
+
+The headline Codex-plugin workflows, driven through real Codex (`codex exec`) against the live Krea MCP and graded **outcome-based** (an expensive op must not fire before the user approves) with an LLM judge for nuance. Details: [`evals/hero/README.md`](evals/hero/README.md).
+
+An **offline gate** runs on every push / PR — no secrets, no spend:
 
 ```bash
-bash evals/run.sh                 # v1 — regex + manual review
-bash evals/run.sh --judge         # v2 — Claude judge (disabled in v1)
+python evals/hero/run.py --lint       # validate case specs + fixtures
+python evals/hero/run.py --selftest   # grader unit checks
+```
+
+The **live suite** spends real Codex + Krea + judge credits (~1–1.5h), so it is gated. It runs only on:
+
+- a manual **Run workflow** dispatch of the **Hero Evals** action,
+- a pull request labeled **`run-hero-live`**,
+- a push to `main` touching `krea-*/` or `.codex-plugin/.mcp.json`,
+- a `repository_dispatch: mcp-changed` from `krea-ai/app`.
+
+> ⚠️ **Caveat:** a normal PR push (or a merge into the branch) does **not** run the live suite — you must add the exact `run-hero-live` label, or dispatch it manually:
+>
+> ```bash
+> gh workflow run evals.yml --ref <branch>           # run the full real suite
+> gh pr edit <pr-number> --add-label run-hero-live   # or trigger via the PR label
+> ```
+
+### Skill regression suite — `evals/run.sh`
+
+40 local scenarios run through `claude -p` to catch routing / UX drift when skill content changes. Regex-graded (`PASS` / `FAIL` / `MANUAL_REVIEW`); see [`evals/README.md`](evals/README.md) for methodology and the full scenario list.
+
+```bash
+bash evals/run.sh
 ```
 
 ## License
