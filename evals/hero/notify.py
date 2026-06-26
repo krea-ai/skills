@@ -39,7 +39,7 @@ def main() -> int:
     warn = s.get("warnings", 0)
     total = s.get("variants", passed + fail + review + error)
     ok = (args.outcome == "success") if args.outcome else (fail == 0 and error == 0)
-    header = f"{'✅' if ok else '❌'} Hero evals — {passed}/{total} passed"
+    header = f"{'✅' if ok else '❌'} Hero evals — {passed}/{total} variants passed"
 
     # Group results by eval (case). Within a group the content is ordered for readability:
     # one verdict line per variant first, then ALL warnings pooled, then the fix(es) last
@@ -84,7 +84,7 @@ def main() -> int:
             if fix:
                 fixes.append(f"💡 {tagmd}*fix:* {fix[:900]}")
 
-        parts = [f"{gicon}  {title_md}  ({npass}/{len(vs)})", *verdicts]
+        parts = [f"{gicon}  {title_md}  ({npass}/{len(vs)} variants passed)", *verdicts]
         if warns:
             parts += ["", *warns]   # blank line separates warnings from the verdict lines
         if fixes:
@@ -105,11 +105,12 @@ def main() -> int:
     blocks = [
         {"type": "header", "text": {"type": "plain_text", "text": header[:150], "emoji": True}},
         {"type": "section", "fields": [
-            {"type": "mrkdwn", "text": f"*Passed:* {passed}/{total}"},
-            {"type": "mrkdwn", "text": f"*Failed:* {fail}"},
-            {"type": "mrkdwn", "text": f"*Warnings:* {warn}"},
-            {"type": "mrkdwn", "text": f"*Review:* {review}"},
-            {"type": "mrkdwn", "text": f"*Errors:* {error}"},
+            {"type": "mrkdwn", "text": f"*Evals:* {len(groups)}"},
+            {"type": "mrkdwn", "text": f"*Variants:* {total} (2-3 prompt phrasings per eval)"},
+            {"type": "mrkdwn", "text": f"*✅ Passed:* {passed} variants"},
+            {"type": "mrkdwn", "text": f"*❌ Failed:* {fail} variants"},
+            {"type": "mrkdwn", "text": f"*⚠️ Warnings:* {warn}"},
+            {"type": "mrkdwn", "text": f"*Review / Errors:* {review} / {error}"},
         ]},
     ]
     blocks += case_blocks  # each eval group brings its own leading divider
@@ -124,8 +125,9 @@ def main() -> int:
 
     webhook = os.environ.get("NOTIFY_WEBHOOK_URL")
     if not webhook:
+        counts = f"{len(groups)} evals · {total} variants · {passed} pass · {fail} fail · {warn} warn"
         print("notify: NOTIFY_WEBHOOK_URL unset; summary below:\n"
-              f"{header}\n{context_line}\n" + "\n".join(lines))
+              f"{header}\n{counts}\n{context_line}\n" + "\n".join(lines))
         return 0
 
     payload = json.dumps({"text": text_fallback, "blocks": blocks}).encode()
