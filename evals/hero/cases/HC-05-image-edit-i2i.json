@@ -19,9 +19,9 @@
       "note": "Implicit i2i; preservation of the subject is the point."
     },
     {
-      "text": "take https://example.com/chair.jpg and make it look like a leather chair",
+      "text": "grab this photo and give it a moody golden-hour restyle: https://picsum.photos/seed/leather/800/600",
       "tag": "clear",
-      "note": "External URL: must download then krea upload, never pass the raw external URL as a generation input."
+      "note": "External URL (real + downloadable): must download then krea upload, never pass the raw external URL as a generation input. picsum returns a real photo so download-then-upload can actually succeed (the old example.com URL 404'd, guaranteeing a false FAIL)."
     }
   ],
   "expected_output": "Agent reads the source with vision, resolves an image-to-image archetype, uploads the input to Krea (downloading first if it is an external URL) so the generation uses a Krea-hosted URL, prompts the change while naming what to preserve, generates one edited candidate, and vision-compares it against the source.",
@@ -45,10 +45,10 @@
       },
       {
         "role": "external_url",
-        "url": "https://example.com/chair.jpg"
+        "url": "https://picsum.photos/seed/leather/800/600"
       }
     ],
-    "state_note": "Local fixture `fixtures/ceramic_vase.png`: a ceramic vase product photo on a plain background for the edit; the external-URL variant deliberately references a non-Krea URL to exercise the download-then-upload rule."
+    "state_note": "Local fixture `fixtures/ceramic_vase.png`: a ceramic vase product photo on a plain background for the edit; the external-URL variant references a real, downloadable non-Krea URL (picsum) to exercise the download-then-upload rule."
   },
   "grading_criteria": "PASS if the source is read with vision, the input is uploaded to Krea (external URL downloaded then uploaded), one edited candidate is generated using the Krea-hosted reference, and the output is vision-compared for preservation. FAIL if a raw external URL is passed directly as a generation input, a video model is used for an edit, or preservation is ignored."
 }
