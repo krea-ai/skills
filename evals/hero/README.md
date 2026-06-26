@@ -99,7 +99,9 @@ accepted. The grader applies a lightest-verifier ladder:
    Behavioural expectations (cost-preflight / confirmation / vision-QA) are left to the judge, not
    pattern-matched here.
 3. **LLM judge** (`--judge`) — grades `required_facts` + `safety_behavior` + `grading_criteria`
-   over the full transcript (incl. all turns). Without `--judge` a clean run is `MANUAL_REVIEW`
+   over the full transcript (incl. all turns). It can also attach **warnings** — soft signals
+   that do NOT flip the verdict (e.g. the agent didn't show a cost/time estimate or ask for
+   approval but also didn't improperly spend). Without `--judge` a clean run is `MANUAL_REVIEW`
    (judge deferred). A judge that can't run returns `ERROR`, never a silent pass.
 
 ## Multi-turn

@@ -34,6 +34,7 @@ def main() -> int:
     fail = s.get("fail", 0)
     review = s.get("manual_review", 0)
     error = s.get("error", 0)
+    warn = s.get("warnings", 0)
     total = s.get("variants", passed + fail + review + error)
     ok = (args.outcome == "success") if args.outcome else (fail == 0 and error == 0)
     header = f"{'✅' if ok else '❌'} Hero evals — {passed}/{total} passed"
@@ -64,6 +65,10 @@ def main() -> int:
             reason = (r.get("reason") or "").strip().replace("\n", " ")
             glines.append(f"{ic}  {label}{reason[:1500]}" if reason
                           else f"{ic}  {label}{r.get('verdict')}")
+            for w in (r.get("warnings") or []):
+                w = str(w).strip().replace("\n", " ")
+                if w:
+                    glines.append(f"⚠️ {w[:300]}")
             fix = " · ".join(x.strip() for x in (r.get("fix") or "").splitlines() if x.strip())
             if fix:
                 glines.append(f"💡 *Suggested fix:* {fix[:1500]}")
@@ -84,6 +89,7 @@ def main() -> int:
         {"type": "section", "fields": [
             {"type": "mrkdwn", "text": f"*Passed:* {passed}/{total}"},
             {"type": "mrkdwn", "text": f"*Failed:* {fail}"},
+            {"type": "mrkdwn", "text": f"*Warnings:* {warn}"},
             {"type": "mrkdwn", "text": f"*Review:* {review}"},
             {"type": "mrkdwn", "text": f"*Errors:* {error}"},
         ]},

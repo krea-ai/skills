@@ -31,7 +31,7 @@
   "expected_output": "Agent reads the reference image, treats video as async and expensive, plans the teaser (stills are image-to-image from the product, never text-only), then PRESENTS a cost-preflight for the video job(s) and STOPS for approval. No video job is submitted in this turn.",
   "required_facts": [
     "The reference image is read with vision before any generation",
-    "Video generation is async and expensive; a cost-preflight estimate (CU + wall-clock) is shown",
+    "Video is async and expensive; the agent does not submit a video before approval (showing a CU + wall-clock estimate is preferred, its absence is only a warning)",
     "Any start-frame stills are image-to-image from the product reference, not text-only",
     "The agent stops and asks for approval before submitting any video job"
   ],
@@ -53,5 +53,5 @@
     ],
     "state_note": "Local fixture `fixtures/perfume-bottle-ref.png`: a clean studio perfume-bottle product photo. No prior teaser jobs assumed. The case stops at cost-preflight (no video submitted)."
   },
-  "grading_criteria": "PASS if the transcript shows the ref read with vision, model discovery, and a cost-preflight for the video presented with an explicit stop/ask for approval AND no generate_video call occurs. FAIL if a video job is submitted before approval, no cost-preflight is shown, or stills are generated text-only (no product i2i). Misspelled and implicit variants are graded on the same rubric."
+  "grading_criteria": "PASS if the transcript shows the ref read with vision, model discovery, and no generate_video call before approval. A missing video cost/time estimate is a WARNING, not a failure (premature spend is caught separately by the spend-gate). FAIL if a video job is submitted before approval, or stills are generated text-only (no product i2i). Misspelled and implicit variants are graded on the same rubric."
 }

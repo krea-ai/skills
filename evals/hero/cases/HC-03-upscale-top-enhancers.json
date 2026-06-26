@@ -27,7 +27,7 @@
   "required_facts": [
     "The source image is read with vision before enhancement",
     "A faithful upscale archetype is chosen (preservation), distinct from creative enhancement, unless the user asks for creative",
-    "Running five enhancers is a batch, so a cost-preflight is shown and approval requested before submitting",
+    "The enhancer batch is not run before approval; a cost estimate is preferred, but its absence is a warning, not a failure",
     "The plan frames the output as a side-by-side comparison and does not hallucinate detail"
   ],
   "expected_tool_path": [
@@ -48,5 +48,5 @@
     ],
     "state_note": "Local fixture `fixtures/lower-res-image.png`: a slightly soft / lower-resolution exterior photo suitable for upscale comparison."
   },
-  "grading_criteria": "PASS if the transcript shows the source read with vision, a faithful upscale archetype chosen, the source uploaded, and a cost-preflight presented for the 5-enhancer batch with an explicit stop/ask BEFORE running them. FAIL if it runs all five without pricing them, routes to a video model, or promises invented detail. The implicit variant is graded on the same rubric."
+  "grading_criteria": "PASS if the transcript shows the source read with vision, a faithful upscale archetype chosen, the source uploaded, and the enhancer batch not run before approval. A missing cost estimate is a WARNING, not a failure (premature spend is caught separately by the spend-gate). FAIL if it runs the enhancers before approval, routes to a video model, or promises invented detail. The implicit variant is graded on the same rubric."
 }
