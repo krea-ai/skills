@@ -162,6 +162,8 @@ jobs:
           python evals/hero/notify.py \
             --summary evals/hero/runs/summary.json \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --repo "${{ github.repository }}" \
+            --ref "${{ github.sha }}" \
             --trigger "${{ github.event_name }}" \
             --reason "${{ github.event.inputs.only }}"
 

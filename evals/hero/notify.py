@@ -22,6 +22,8 @@ def main() -> int:
     ap.add_argument("--trigger", default="", help="what triggered the run")
     ap.add_argument("--reason", default="", help="dispatch reason (client_payload)")
     ap.add_argument("--outcome", default="", help="run step outcome (success/failure)")
+    ap.add_argument("--repo", default="", help="owner/name, for linking case files (e.g. krea-ai/skills)")
+    ap.add_argument("--ref", default="", help="git ref/sha the eval ran against, for case-file links")
     args = ap.parse_args()
 
     try:
@@ -39,42 +41,58 @@ def main() -> int:
     ok = (args.outcome == "success") if args.outcome else (fail == 0 and error == 0)
     header = f"{'✅' if ok else '❌'} Hero evals — {passed}/{total} passed"
 
-    # Per-case one-liners for quick triage.
-    # Group results under each case's short title; one "what went right/wrong" line
-    # per variant, so the report reads as named tests rather than bare ids.
+    # Group results by eval (case). Within a group the content is ordered for readability:
+    # one verdict line per variant first, then ALL warnings pooled, then the fix(es) last
+    # (the bottommost item) — each warning/fix tagged with its variant so it stays traceable.
     icons = {"PASS": "✅", "FAIL": "❌", "MANUAL_REVIEW": "🟡", "ERROR": "💥"}
     groups = []
     for c in s.get("results", []):
         key = c.get("case") or c.get("id")
         if not groups or groups[-1]["key"] != key:
-            groups.append({"key": key, "title": c.get("title") or key, "rows": []})
+            groups.append({"key": key, "title": c.get("title") or key,
+                           "file": c.get("file", ""), "rows": []})
         groups[-1]["rows"].append(c)
 
-    # One section block per case → Slack shows clear spacing between each eval point.
-    # `lines` keeps a flat, blank-line-separated copy for the no-webhook plain-text fallback.
+    # The eval title links to its case file (where the prompts + rubric actually live) when we
+    # know the repo + ref; otherwise it falls back to plain bold (e.g. local runs).
+    blob_base = (f"https://github.com/{args.repo}/blob/{args.ref}/evals/hero/cases"
+                 if args.repo and args.ref else "")
+
+    # One section block per eval, each preceded by a divider for clear visual separation.
+    # `lines` keeps a flat copy for the no-webhook plain-text fallback.
     case_blocks, lines = [], []
     for g in groups:
         vs = [r.get("verdict", "") for r in g["rows"]]
         npass = sum(1 for x in vs if x == "PASS")
         gicon = "✅" if npass == len(vs) else ("💥" if "ERROR" in vs else "❌")
-        glines = [f"{gicon}  *{g['title']}*  ({npass}/{len(vs)})"]
+        title_md = (f"<{blob_base}/{g['file']}|{g['title']}>"
+                    if (blob_base and g.get("file")) else f"*{g['title']}*")
+
+        verdicts, warns, fixes = [], [], []
         for r in g["rows"]:
             ic = icons.get(r.get("verdict"), "•")
             tag = str(r.get("variant", "")).strip()
-            label = f"`{tag}`  " if tag else ""
+            tagmd = f"`{tag}` " if tag else ""
             reason = (r.get("reason") or "").strip().replace("\n", " ")
-            glines.append(f"{ic}  {label}{reason[:1500]}" if reason
-                          else f"{ic}  {label}{r.get('verdict')}")
+            verdicts.append(f"{ic}  {tagmd}{reason[:600]}" if reason
+                            else f"{ic}  {tagmd}{r.get('verdict')}")
             for w in (r.get("warnings") or []):
                 w = str(w).strip().replace("\n", " ")
                 if w:
-                    glines.append(f"⚠️ {w[:300]}")
+                    warns.append(f"⚠️ {tagmd}{w[:300]}")
             fix = " · ".join(x.strip() for x in (r.get("fix") or "").splitlines() if x.strip())
             if fix:
-                glines.append(f"💡 *Suggested fix:* {fix[:1500]}")
+                fixes.append(f"💡 {tagmd}*fix:* {fix[:900]}")
+
+        parts = [f"{gicon}  {title_md}  ({npass}/{len(vs)})", *verdicts]
+        if warns:
+            parts += ["", *warns]   # blank line separates warnings from the verdict lines
+        if fixes:
+            parts += ["", *fixes]   # fix(es) always last
+        case_blocks.append({"type": "divider"})
         case_blocks.append({"type": "section",
-                            "text": {"type": "mrkdwn", "text": "\n".join(glines)[:2900]}})
-        lines += glines + [""]  # trailing blank line spaces each case apart in plain text
+                            "text": {"type": "mrkdwn", "text": "\n".join(parts)[:2900]}})
+        lines += parts + [""]
 
     ctx = [f"model `{s.get('model', '?')}`"]
     if args.trigger:
@@ -93,9 +111,8 @@ def main() -> int:
             {"type": "mrkdwn", "text": f"*Review:* {review}"},
             {"type": "mrkdwn", "text": f"*Errors:* {error}"},
         ]},
-        {"type": "divider"},
     ]
-    blocks += case_blocks
+    blocks += case_blocks  # each eval group brings its own leading divider
     if context_line:
         blocks.append({"type": "context", "elements": [{"type": "mrkdwn", "text": context_line[:1000]}]})
     if args.run_url:
