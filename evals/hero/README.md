@@ -89,19 +89,28 @@ Single- or multi-turn:
 A `codex exec --json` event stream or a Claude Code `--output-format stream-json` dump is also
 accepted. The grader applies a lightest-verifier ladder:
 
-1. **Expected tool path** — deterministic ordered-subsequence over the whole conversation (tool
-   names are mapped surface-agnostically: `mcp__krea__*`, `krea …` CLI, or already-logical step
-   names all normalize to the same steps).
-2. **LLM judge** (`--judge`) — grades `required_facts` + `safety_behavior` + `grading_criteria`
-   over the full transcript (incl. all turns). Without `--judge` a tool-path-clean run is
-   `MANUAL_REVIEW` (judge deferred). A judge that can't run returns `ERROR`, never a silent pass.
+1. **Spend gate** — outcome-based. For a cost-gated case (`spend_gate`), FAIL if an expensive op
+   (generate / enhance / video / train) fires *before* the user's approval reply. This grades the
+   side effect ("did it silently spend?"), not the wording of a preflight, so a correct agent is
+   never failed for phrasing. `spend_gate` tunes which steps are gated (e.g. only `generate_video`,
+   so cheap prep stills are fine) and how many are tolerated (e.g. one validation candidate).
+2. **Expected tool path** — deterministic ordered-subsequence over the OBSERVABLE tool calls
+   (`mcp__krea__*`, `krea …` CLI, or already-logical names all normalize to the same steps).
+   Behavioural expectations (cost-preflight / confirmation / vision-QA) are left to the judge, not
+   pattern-matched here.
+3. **LLM judge** (`--judge`) — grades `required_facts` + `safety_behavior` + `grading_criteria`
+   over the full transcript (incl. all turns). It can also attach **warnings** — soft signals
+   that do NOT flip the verdict (e.g. the agent didn't show a cost/time estimate or ask for
+   approval but also didn't improperly spend). Without `--judge` a clean run is `MANUAL_REVIEW`
+   (judge deferred). A judge that can't run returns `ERROR`, never a silent pass.
 
 ## Multi-turn
 
 Cases that need a follow-up (HC-01/02/03/04/09/10) carry `followups` — scripted user replies. The
 pattern: on turn 0 the agent should stop (cost-preflight / clarifying question); after the scripted
-reply it should proceed correctly. The grader reconstructs the tool path across **all** turns and
-the judge evaluates the whole arc.
+reply it should proceed correctly. The `spend_gate` enforces this by outcome — no expensive op may
+fire before the `approval_turn` — while the judge evaluates the whole arc. The grader reconstructs
+the observable tool path across **all** turns.
 
 ## Case format
 
@@ -112,7 +121,8 @@ One JSON file per case:
 | `prompts[]` (`text` + `tag`: clear/ambiguous/misspelled/should-not-invoke/implicit/explicit) | User prompt(s), covering a range of real-world phrasings + invocation styles |
 | `expected_output` | Representative successful final answer |
 | `required_facts` | Facts the verifier must see |
-| `expected_tool_path` | Required logical step sequence (surface-agnostic) |
+| `expected_tool_path` | Required OBSERVABLE tool-call sequence (surface-agnostic); behavioural tokens are judge-graded, not matched here |
+| `spend_gate` | `true` or `{gated_steps, max_before_approval, approval_turn}` — no expensive op before the user approves |
 | `safety_behavior` | Side-effect / confirmation behavior to enforce |
 | `fixture` | Review account + reference assets (each a local `path` or a `url`) |
 | `grading_criteria` | Pass/fail rules for the verifier |

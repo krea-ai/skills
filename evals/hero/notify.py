@@ -15,20 +15,6 @@ import urllib.error
 import urllib.request
 
 
-def _section_chunks(lines: list, limit: int = 2800) -> list:
-    """Pack lines into mrkdwn section blocks under the webhook's ~3000-char limit."""
-    blocks, buf = [], ""
-    for ln in lines:
-        if buf and len(buf) + len(ln) + 1 > limit:
-            blocks.append({"type": "section", "text": {"type": "mrkdwn", "text": buf}})
-            buf = ln
-        else:
-            buf = f"{buf}\n{ln}" if buf else ln
-    if buf:
-        blocks.append({"type": "section", "text": {"type": "mrkdwn", "text": buf}})
-    return blocks
-
-
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--summary", required=True, help="path to the run summary.json")
@@ -48,6 +34,7 @@ def main() -> int:
     fail = s.get("fail", 0)
     review = s.get("manual_review", 0)
     error = s.get("error", 0)
+    warn = s.get("warnings", 0)
     total = s.get("variants", passed + fail + review + error)
     ok = (args.outcome == "success") if args.outcome else (fail == 0 and error == 0)
     header = f"{'✅' if ok else '❌'} Hero evals — {passed}/{total} passed"
@@ -63,19 +50,31 @@ def main() -> int:
             groups.append({"key": key, "title": c.get("title") or key, "rows": []})
         groups[-1]["rows"].append(c)
 
-    lines = []
+    # One section block per case → Slack shows clear spacing between each eval point.
+    # `lines` keeps a flat, blank-line-separated copy for the no-webhook plain-text fallback.
+    case_blocks, lines = [], []
     for g in groups:
         vs = [r.get("verdict", "") for r in g["rows"]]
         npass = sum(1 for x in vs if x == "PASS")
         gicon = "✅" if npass == len(vs) else ("💥" if "ERROR" in vs else "❌")
-        lines.append(f"{gicon} *{g['title']}*  ({npass}/{len(vs)})")
+        glines = [f"{gicon}  *{g['title']}*  ({npass}/{len(vs)})"]
         for r in g["rows"]:
             ic = icons.get(r.get("verdict"), "•")
+            tag = str(r.get("variant", "")).strip()
+            label = f"`{tag}`  " if tag else ""
             reason = (r.get("reason") or "").strip().replace("\n", " ")
-            lines.append(f"   {ic} {reason[:1500]}" if reason else f"   {ic} {r.get('verdict')}")
-            fix = " · ".join(s.strip() for s in (r.get("fix") or "").splitlines() if s.strip())
+            glines.append(f"{ic}  {label}{reason[:1500]}" if reason
+                          else f"{ic}  {label}{r.get('verdict')}")
+            for w in (r.get("warnings") or []):
+                w = str(w).strip().replace("\n", " ")
+                if w:
+                    glines.append(f"⚠️ {w[:300]}")
+            fix = " · ".join(x.strip() for x in (r.get("fix") or "").splitlines() if x.strip())
             if fix:
-                lines.append(f"      💡 *Suggested fix:* {fix[:1500]}")
+                glines.append(f"💡 *Suggested fix:* {fix[:1500]}")
+        case_blocks.append({"type": "section",
+                            "text": {"type": "mrkdwn", "text": "\n".join(glines)[:2900]}})
+        lines += glines + [""]  # trailing blank line spaces each case apart in plain text
 
     ctx = [f"model `{s.get('model', '?')}`"]
     if args.trigger:
@@ -90,11 +89,13 @@ def main() -> int:
         {"type": "section", "fields": [
             {"type": "mrkdwn", "text": f"*Passed:* {passed}/{total}"},
             {"type": "mrkdwn", "text": f"*Failed:* {fail}"},
+            {"type": "mrkdwn", "text": f"*Warnings:* {warn}"},
             {"type": "mrkdwn", "text": f"*Review:* {review}"},
             {"type": "mrkdwn", "text": f"*Errors:* {error}"},
         ]},
+        {"type": "divider"},
     ]
-    blocks += _section_chunks(lines)
+    blocks += case_blocks
     if context_line:
         blocks.append({"type": "context", "elements": [{"type": "mrkdwn", "text": context_line[:1000]}]})
     if args.run_url:
