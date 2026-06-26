@@ -13,8 +13,8 @@ name: Hero Evals
 #   - repository_dispatch `mcp-changed` (fired by krea-ai/app when the MCP server changes)
 #   - manual "Run workflow" (workflow_dispatch), or a `run-hero-live` PR label
 #
-# Default suite = the real multi-turn workflow cases (HC-01..06, 09, 10). The
-# should-not-invoke / safety stubs (HC-07/08) are kept but run only on demand via `only`.
+# Default suite = the real multi-turn creative cases (HC-01..06, 09..13, incl. animation +
+# multistep chains). The safety-refusal case (HC-08) is kept but runs only on demand via `only`.
 
 on:
   push:
@@ -30,7 +30,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Space-separated case ids (blank = full real suite HC-01..06,09,10)"
+        description: "Space-separated case ids (blank = full real suite HC-01..06,09..13)"
         required: false
         default: ""
   repository_dispatch:
@@ -94,7 +94,7 @@ jobs:
     needs: live-gate
     if: needs.live-gate.outputs.run == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 240  # raised for the longer multi-turn chains (HC-12/13) + animation video
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       KREA_API_KEY: ${{ secrets.KREA_API_KEY }}
@@ -138,7 +138,7 @@ jobs:
           # global concurrency cap; per-turn timeout + the job timeout bound it.
           mkdir -p evals/hero/runs
           python evals/hero/run.py \
-            --run-suite "${HERO_ONLY:-HC-01 HC-02 HC-03 HC-04 HC-05 HC-06 HC-09 HC-10}" \
+            --run-suite "${HERO_ONLY:-HC-01 HC-02 HC-03 HC-04 HC-05 HC-06 HC-09 HC-10 HC-11 HC-12 HC-13}" \
             --judge --concurrency 4 --out-dir evals/hero/runs || true
 
       - name: Summary

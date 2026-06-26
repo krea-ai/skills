@@ -1,7 +1,8 @@
 # Hero evals
 
-Hero-use-case evals for the Krea Codex plugin: 10 cases (`cases/HC-*.json`) that each pin a real
-workflow to a golden spec, plus a runner/grader (`run.py`).
+Hero-use-case evals for the Krea Codex plugin: 12 cases (`cases/HC-*.json`) that each pin a real
+workflow to a golden spec — generic generation, marketing, image editing, archviz, LoRA, animation,
+and multistep creative chains — plus a runner/grader (`run.py`).
 
 - **`run.py --run-codex CASE`** is the automated runner. It drives the case through real Codex
   headless (`codex exec --json`, resuming the thread for follow-ups) against the connected Krea
@@ -39,16 +40,16 @@ evals/hero/
    Each run executes in a throwaway working dir carrying a routing `AGENTS.md` (see
    [Routing](#routing) below), then sends each prompt variant (and any scripted follow-up)
    through Codex, reconstructs the tool path, and grades it. The full transcript is kept on
-   each result for failure analysis. HC-03/04/05/06/07/08 run today; HC-01/02/09/10 need
-   their review-account assets first (see [Fixtures](#fixtures)).
+   each result for failure analysis. All cases ship with their fixtures committed and run today
+   (see [Fixtures](#fixtures)).
 
 **Run several in parallel.** Generation cases take ~1h each on real Codex, so run them
 concurrently instead of one-at-a-time — cases *and* their prompt variants run in parallel
 under one global cap:
 
 ```bash
-python evals/hero/run.py --run-suite "HC-03 HC-04 HC-05 HC-06 HC-07 HC-08" \
-  --judge --concurrency 4 --out-dir evals/hero/runs   # blank suite = HC-03..08
+python evals/hero/run.py --run-suite "HC-01 HC-02 HC-03 HC-04 HC-05 HC-06 HC-09 HC-10 HC-11 HC-12 HC-13" \
+  --judge --concurrency 4 --out-dir evals/hero/runs   # the full creative suite
 ```
 
 Wall-clock becomes the slowest single variant-chain, not the sum. `--out-dir` writes one
@@ -60,8 +61,8 @@ Codex ships a built-in image-generation tool, and for a generic "make an image" 
 will use that instead of Krea — the Krea MCP tools sit behind `tool_search`, and the skill
 only binds once activated. So the runner drops a small `AGENTS.md` into each run's working
 dir instructing Codex to route image/video work to the Krea MCP (and not the built-in tool).
-It's scoped to creative requests, so the should-not-invoke and safety-refusal cases are
-unaffected. Without it, implicit prompts never reach Krea.
+It's scoped to creative requests, so the safety-refusal case is unaffected. Without it,
+implicit prompts never reach Krea.
 
 ### Interactive alternative
 
@@ -106,11 +107,12 @@ accepted. The grader applies a lightest-verifier ladder:
 
 ## Multi-turn
 
-Cases that need a follow-up (HC-01/02/03/04/09/10) carry `followups` — scripted user replies. The
-pattern: on turn 0 the agent should stop (cost-preflight / clarifying question); after the scripted
-reply it should proceed correctly. The `spend_gate` enforces this by outcome — no expensive op may
-fire before the `approval_turn` — while the judge evaluates the whole arc. The grader reconstructs
-the observable tool path across **all** turns.
+Cases that need follow-ups (HC-01/02/03/04/09/10/11, plus the multistep chains HC-12 and HC-13)
+carry `followups` — scripted user replies. The pattern: on turn 0 the agent should stop
+(cost-preflight / clarifying question / storyboard); after the scripted reply it should proceed
+correctly. The `spend_gate` enforces this by outcome — no expensive op may fire before the
+`approval_turn` (which can be a later turn for the chains) — while the judge evaluates the whole
+arc. The grader reconstructs the observable tool path across **all** turns.
 
 ## Case format
 
@@ -134,8 +136,9 @@ Plus `skill` + `workflow_files` (which SKILL a failure points at — the failure
 
 `cases/*.json` reference assets under `fixture.assets[]`, each as a local `path` (committed in
 `fixtures/`, resolved relative to `evals/hero/`) or a `url`. Local-path fixtures are verified to
-exist by `--lint`. HC-03/05/06 ship with committed images; HC-01/02/09/10 still point at
-placeholder URLs and need real review-account assets before they can run live.
+exist by `--lint`. All image-driven cases ship with committed fixtures (HC-11 is text-driven;
+HC-12 reuses the blueprint, HC-13 the product photo). The HC-05 external-URL variant points at a
+real downloadable image to exercise the download-then-upload rule.
 
 ## Offline (CI)
 
