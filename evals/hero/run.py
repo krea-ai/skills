@@ -661,6 +661,7 @@ async def run_codex_cases(cases: list, judge: bool, model: str | None,
             run_variant(case, i, v, judge, model, sem)
             for i, v in enumerate(case["prompts"])])
         return {"case": case["id"], "title": case.get("title", ""),
+                "file": case.get("_file", ""),
                 "model": model or "codex-default", "results": list(results)}
 
     return list(await asyncio.gather(*[one_case(c) for c in cases]))
@@ -708,11 +709,13 @@ def summarize_runs(case_outputs: list) -> dict:
     for label, data in case_outputs:
         model = model or data.get("model")
         title = data.get("title") or label
+        file = data.get("file", "")
         for r in data.get("results", []):
             v = r.get("verdict", "ERROR")
             counts[v] = counts.get(v, 0) + 1
             rows.append({"id": f"{label} [{r.get('variant', '')}]", "case": label,
-                         "title": title, "variant": r.get("variant", ""), "verdict": v,
+                         "title": title, "file": file,
+                         "variant": r.get("variant", ""), "verdict": v,
                          "reason": (r.get("reasons") or [""])[0], "fix": r.get("fix", ""),
                          "warnings": r.get("warnings") or []})
     return {"pass": counts["PASS"], "fail": counts["FAIL"],
