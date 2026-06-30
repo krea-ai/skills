@@ -25,7 +25,7 @@ Hard prescription. Follow in order.
 4. Inspect schema for image-reference fields, aspect, and resolution.
 5. Cost-preflight for batches, 4K, or >100 CU.
 6. Upload local or external/non-Krea refs to Krea.
-7. Prompt environment, pose/use, lighting, audience cue, camera, composition, copy, and product placement. When a real reference exists, do not include product material, color, silhouette, trim, hardware, label, or garment descriptors in the generation prompt; keep those facts in the confirmation and QA checklist only.
+7. Prompt environment, pose/use, lighting, audience cue, camera, composition, copy, product placement, and value-free fidelity to the reference. When a real reference exists, do not include product material, color, silhouette, trim, hardware, label, or garment descriptors in the generation prompt; keep those facts in the confirmation and QA checklist only.
 8. Generate 1-2 candidates in the primary platform aspect.
 9. Vision-check that the product is recognizable and plausibly placed. This inspection is blocking before variants, upscale, animation, or delivery.
 10. **Deliver** with platform labels and QA notes.

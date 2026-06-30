@@ -88,7 +88,9 @@ grotesque), a narrow low-saturation palette, generous negative space, asymmetric
 composition, tactile real materials, and confident minimal copy (one quiet proof point, not
 five).
 
-**Universal tail `<TAIL>`** — append to every filled template:
+**Universal tail `<TAIL>`** — append to every filled template. This is a value-free
+preservation instruction, not permission to name a specific color, material, garment, trim,
+or hardware in the prompt:
 
 > Keep the referenced product true to the provided image in shape, colour, material and proportion. Shot
 > on medium-format or 35mm film, one practical or natural light source, real soft shadows,
@@ -187,7 +189,8 @@ subline "Insulated Bottle · 750 ml · BPA-free"; aspect 4:5 on `openai/gpt-imag
 > high-contrast serif line in warm bone reading "Cold for 24 hours.", and a quiet small
 > grotesque line beneath in muted grey reading "Insulated Bottle · 750 ml · BPA-free". A
 > tiny letter-spaced "NORD" wordmark sits low. Keep the referenced product true to the
-> provided image in shape, colour, material and proportion. Shot on medium-format film, one practical light
+> provided image in shape, colour, material and proportion. This is a preservation
+> instruction, not a named color or material descriptor. Shot on medium-format film, one practical light
 > source, real soft shadows, fine grain, believable shallow depth of field, generous
 > negative space — a photograph, not a render. No garish gradients, sparkles, starbursts,
 > sticker collages, chunky badges, CGI sheen, or centered symmetry.

@@ -37,6 +37,8 @@ Use these asset labels when planning a custom subset:
 4. Generate secondary/A+ modules from the approved main image and product references.
 5. Run a blocking QA gate for product fidelity, unsupported claims, marketplace-safe composition, text legibility, Recolored logo, and Prompt-text override before presenting the set as finished.
 
+Failure terms: **Recolored logo** means the product photo collapsed into a tinted graphic/logo-like mark instead of a photographed product. **Prompt-text override** means the output follows product words in the prompt instead of the attached reference. Reject both and retake with a scene-only, reference-led prompt.
+
 ## Compliance Guardrails
 
 - Do not invent claims, certifications, medical benefits, endorsements, ratings, or comparative promises.

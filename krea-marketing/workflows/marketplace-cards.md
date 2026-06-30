@@ -21,7 +21,7 @@ Ask once, skipping what the user already gave:
 3. Use `product-photo-hero.md` to create or validate the main image first.
 4. For secondary images, use `product-photo-lifestyle.md` and `../../krea-generate/workflows/image-text-poster.md` only when text modules are required.
 5. Generate one module type first, then batch remaining modules after visual direction is approved.
-6. **Blocking QA gate**: inspect every image before delivery for product fidelity, text legibility, unsupported claims, marketplace-safe composition, Recolored logo, and Prompt-text override. Record pass/fail; do not present a full set as ready or on-brand before this gate.
+6. **Blocking QA gate**: inspect every image before delivery for product fidelity, text legibility, unsupported claims, marketplace-safe composition, Recolored logo, and Prompt-text override; use the definitions in `../references/marketplace-cards.md`. Record pass/fail; do not present a full set as ready or on-brand before this gate.
 7. Deliver labeled URLs/paths by scope.
 
 ## Banned
