@@ -20,14 +20,14 @@ If the user gave a tight, complete brief, skip Clarify entirely and proceed to R
 Hard prescription. Follow in order.
 
 1. Load `../references/product-photoshoot.md` and classify the request into lifestyle, closeup/person, Pinterest, carousel, ad pack, virtual try-on, conceptual product, or restyle.
-2. Read product and optional people/location refs with vision.
-3. Resolve a final still model from the marketing image set in `../SKILL.md`: default `openai/gpt-image-2`, offering live Nano Banana 2 / Nano Banana Pro as alternatives the user can pick; require multi-reference support if people or rooms are involved.
+2. Read product and optional people/location refs with vision. For apparel, confirm only visible silhouette, texture, colorway, trim, hardware, pattern, closures, logo/pin/embroidery, and proportion. Use URL/PDP copy only for supported claims or copy, not visual truth.
+3. Resolve a final still model from the marketing image set in `../SKILL.md`: default `openai/gpt-image-2`, offering live Nano Banana 2 / Nano Banana Pro as alternatives the user can pick; require multi-reference support if people or rooms are involved. If Nano Banana is chosen for a real product ref, keep the prompt scene-only because prompt words can override the reference.
 4. Inspect schema for image-reference fields, aspect, and resolution.
 5. Cost-preflight for batches, 4K, or >100 CU.
 6. Upload local or external/non-Krea refs to Krea.
-7. Prompt product placement, environment, lighting, audience cue, and product preservation.
+7. Prompt environment, pose/use, lighting, audience cue, camera, composition, copy, and product placement. When a real reference exists, do not include product material, color, silhouette, trim, hardware, label, or garment descriptors in the generation prompt; keep those facts in the confirmation and QA checklist only.
 8. Generate 1-2 candidates in the primary platform aspect.
-9. Vision-check that the product is recognizable and plausibly placed.
+9. Vision-check that the product is recognizable and plausibly placed. This inspection is blocking before variants, upscale, animation, or delivery.
 10. **Deliver** with platform labels and QA notes.
 
 ### MCP path
@@ -37,6 +37,8 @@ Use the available Krea MCP tools to upload product, model, and brand references,
 ## Banned
 
 - Do not let the product become a generic prop.
+- Do not build faithful product prompts from PDP copy alone.
+- Do not let prompt text fight the reference image; remove product material/color/garment words from real-product generation prompts.
 - Do not invent claims or use cases not supported by the user brief.
 - Do not generate people wearing products without enough product detail for accuracy.
 - Do not upscale or animate a lifestyle shot before vision QA.
@@ -54,4 +56,6 @@ Use the available Krea MCP tools to upload product, model, and brand references,
 | Product not visible | Context prompt overpowered subject | Specify product size, placement, and focal priority |
 | Product changed | Weak reference anchoring | Use clearer product reference and preservation language |
 | Human hand/use looks wrong | Interaction too complex | Simplify pose or generate product-only lifestyle |
+| Recolored logo | Product flattened into a tinted graphic instead of a placed photo subject | Retake with cleaner photo reference and photo-first prompt |
+| Prompt-text override | Output follows prompt product words instead of the reference | Remove product descriptors; prompt only scene, pose, light, camera, copy, and placement |
 | User wants video ad | Scope changed | Route to `social-video-short.md` with product refs |

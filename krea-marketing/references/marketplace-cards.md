@@ -32,14 +32,15 @@ Use these asset labels when planning a custom subset:
 ## Workflow
 
 1. Ask for product image/URL, marketplace/category, scope, brand context, and required claims.
-2. Prefer real product references. If only text exists, proceed only when product details are specific.
+2. Prefer real product references. If the source is a URL/PDP, fetch product images and inspect them; use page text only for claims/copy. If only text exists, proceed only when the user accepts low product fidelity.
 3. Create the main image first unless the user already has an approved main image.
 4. Generate secondary/A+ modules from the approved main image and product references.
-5. QA for product fidelity, unsupported claims, marketplace-safe composition, and text legibility.
+5. Run a blocking QA gate for product fidelity, unsupported claims, marketplace-safe composition, text legibility, Recolored logo, and Prompt-text override before presenting the set as finished.
 
 ## Compliance Guardrails
 
 - Do not invent claims, certifications, medical benefits, endorsements, ratings, or comparative promises.
+- Do not build product visuals from PDP copy alone when a reference image exists or can be fetched.
 - Do not create fake badges, marketplace logos, or review-star systems unless the user supplied exact permitted assets.
 - Call out that exact marketplace compliance still requires human/platform review.
 - Keep module copy factual and user-supplied. If the user has no copy, generate visual modules without factual claims.
