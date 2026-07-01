@@ -36,9 +36,9 @@
     ],
     "websiteURL": "https://krea.ai",
     "defaultPrompt": [
-      "Generate 20 variations of my product in different studio backgrounds and angles",
-      "Make a 5-second product teaser from this reference image",
-      "Upscale this image with your top 5 enhancers and let me compare the results"
+      "Generate 6 exterior concepts for a modern family home: coastal, forest, desert, urban, alpine, lakeside",
+      "Render a photorealistic hillside villa at golden hour with floor-to-ceiling glass and an infinity pool",
+      "Visualize a cozy Scandinavian living room with oak floors, a linen sofa, and soft morning light"
     ]
   }
 }

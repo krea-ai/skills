@@ -186,9 +186,13 @@ def copy_assets(repo_root: Path, staging_root: Path) -> None:
         if not source.is_file() or should_skip_asset_file(source, source_root):
             continue
         relative = source.relative_to(source_root)
-        target = staging_root / "assets" / relative
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source, target)
+        # Place assets at the plugin root AND alongside the manifest so
+        # interface.logo/composerIcon resolve whether the app treats those
+        # paths as plugin-root-relative or manifest-directory-relative.
+        for base in (staging_root / "assets", staging_root / ".codex-plugin" / "assets"):
+            target = base / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, target)
 
 
 def copy_skills(repo_root: Path, staging_root: Path, *, include_wip: bool) -> None:
