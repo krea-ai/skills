@@ -36,9 +36,9 @@
     ],
     "websiteURL": "https://krea.ai",
     "defaultPrompt": [
-      "Generate 6 exterior concepts for a modern family home: coastal, forest, desert, urban, alpine, lakeside",
       "Render a photorealistic hillside villa at golden hour with floor-to-ceiling glass and an infinity pool",
-      "Visualize a cozy Scandinavian living room with oak floors, a linen sofa, and soft morning light"
+      "Make a 15-second cinematic launch video for 'Kestra', an electric city bike brand, riding misty dawn streets",
+      "Create a 10-second skincare campaign video for 'Velora' glow serum: dewy skin, water ripples, soft light"
     ]
   }
 }
