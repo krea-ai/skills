@@ -1,6 +1,6 @@
 {
   "name": "krea",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Use Krea's creative AI suite to generate, edit, enhance, and produce visual work across Krea models.",
   "author": {
     "name": "Krea",
@@ -36,9 +36,9 @@
     ],
     "websiteURL": "https://krea.ai",
     "defaultPrompt": [
-      "Generate 20 variations of my product in different studio backgrounds and angles",
-      "Make a 5-second product teaser from this reference image",
-      "Upscale this image with your top 5 enhancers and let me compare the results"
+      "Render a photorealistic hillside villa at golden hour with floor-to-ceiling glass and an infinity pool",
+      "Make a 15-second cinematic launch video for 'Kestra', an electric city bike brand, riding misty dawn streets",
+      "Create a 10-second skincare campaign video for 'Velora' glow serum: dewy skin, water ripples, soft light"
     ]
   }
 }

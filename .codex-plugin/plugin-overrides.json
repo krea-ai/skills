@@ -2,8 +2,8 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "brandColor": "#333333",
-    "composerIcon": "./assets/composerIcon.jpg",
-    "logo": "./assets/logo.jpg",
+    "composerIcon": "./assets/composerIcon.png",
+    "logo": "./assets/logo.png",
     "screenshots": []
   }
 }
