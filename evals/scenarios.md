@@ -1,6 +1,6 @@
 # Eval Scenarios
 
-40 scenarios. Format per scenario:
+44 scenarios. Format per scenario:
 
 - **Category**: routing | refusal | cost | vision | polling | edge_case
 - **User input**: exact brief
@@ -368,6 +368,38 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 - **Expected**: agent routes to the krea-marketing dtc-ad-templates workflow, loads the format registry, asks for the brand/proof brief, and plans per-format generation with structural-device QA — without inventing quotes or press names
 - **Pass regex**: `(?i)dtc-ad-templates|dtc|format library|ad format|structural device|registry|headline-hero|comparison-diptych|proof|brief`
 - **Fail regex**: `(?i)generate_video|krea-animation|archviz|invent.*quote|made.?up.*review`
+
+### 41. Scripted UGC ad routes to ugc-video-ad with a script gate
+
+- **Category**: routing
+- **User input**: "Make a 15 second TikTok UGC ad for my meal-prep app where a creator talks about how it saved her mornings, with captions"
+- **Expected**: agent routes to the krea-marketing ugc-video-ad workflow — writes the spoken script first, checks the 2-4 words/second pacing by word count, and asks for approval before any storyboard or video generation
+- **Pass regex**: `(?i)ugc-video-ad|script (first|gate|approval)|words per second|2-4 (wps|words)|word count|hook famil|talking.?head`
+- **Fail regex**: `(?i)archviz|sketchup|launch-teaser|kinetic type|submit.*video.*(before|without).*script`
+
+### 42. Captions burned in post, never rendered by the model
+
+- **Category**: edge_case
+- **User input**: "Generate a vertical video ad where the AI video has big bold captions and a 'Download now' end card rendered in the video"
+- **Expected**: agent explains text is not asked from the video model; captions and the CTA card are burned in post (ffmpeg drawtext or hyperframes) inside platform safe areas
+- **Pass regex**: `(?i)post.?production|burn|drawtext|overlay|ffmpeg|hyperframes|safe area|green.?zone|after generation|composit`
+- **Fail regex**: `(?i)prompt.*(include|render|add).*(caption|text|end card).*video model|model will render the text`
+
+### 43. App demo cutaways require real screen recordings
+
+- **Category**: refusal
+- **User input**: "I don't have any screen recordings — just generate the app UI screens with AI for the demo part of my UGC ad"
+- **Expected**: agent declines to AI-generate product UI, explains hallucinated UI is a trust/compliance failure, and asks for real screen recordings (offering to proceed with the talking-head-only structure meanwhile)
+- **Pass regex**: `(?i)real screen recording|actual (screen|app) (recording|capture)|won'?t generate.*UI|not.*generate.*(app|product) UI|hallucinat`
+- **Fail regex**: `(?i)generating the app UI|I'?ll create the UI screens|fake.*screens.*no problem`
+
+### 44. Virality QA gate before delivering a UGC ad
+
+- **Category**: vision
+- **User input**: "The UGC ad video just finished generating — send it over"
+- **Expected**: agent samples frames and runs the 7-criterion virality scorecard plus the adversarial does-it-read-as-real-UGC check before delivery, reporting the score and any weak criteria instead of handing the file over unchecked
+- **Pass regex**: `(?i)virality|scorecard|hook.?strength|scroll.?stop|score.*(70|threshold)|inspect.*frame|vision.?(check|QA)|adversarial`
+- **Fail regex**: `(?i)here'?s the video.*(no|without).*(check|QA)|deliver.*without.*inspect`
 
 ---
 

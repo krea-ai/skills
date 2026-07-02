@@ -59,6 +59,8 @@ Use these as storyboard directions, not as final prompts to copy verbatim:
 
 For "surprise me", make the hook or format riskier while keeping storyboard/key-visual approval gates.
 
+For concrete spoken-script templates behind these directions - hook-family scripts, pacing law, overlay text hooks, and CTA patterns - see `ugc-scripts.md` (driven by `../workflows/ugc-video-ad.md`).
+
 ## Reference-Driven vs Composed
 
 Two valid paths:
