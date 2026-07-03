@@ -369,6 +369,10 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 - **Pass regex**: `(?i)dtc-ad-templates|dtc|format library|ad format|structural device|registry|headline-hero|comparison-diptych|proof|brief`
 - **Fail regex**: `(?i)generate_video|krea-animation|archviz|invent.*quote|made.?up.*review`
 
+---
+
+## Scripted UGC video ads 0.6.0 (4)
+
 ### 41. Scripted UGC ad routes to ugc-video-ad with a script gate
 
 - **Category**: routing
@@ -400,6 +404,10 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 - **Expected**: agent samples frames and runs the 7-criterion virality scorecard plus the adversarial does-it-read-as-real-UGC check before delivery, reporting the score and any weak criteria instead of handing the file over unchecked
 - **Pass regex**: `(?i)virality|scorecard|hook.?strength|scroll.?stop|score.*(70|threshold)|inspect.*frame|vision.?(check|QA)|adversarial`
 - **Fail regex**: `(?i)here'?s the video.*(no|without).*(check|QA)|deliver.*without.*inspect`
+
+---
+
+## Cinematic product ads 0.6.1 (2)
 
 ### 45. Reference ad replication measures the cut structure
 
