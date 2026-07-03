@@ -1,7 +1,7 @@
 # Krea AI Skills
 
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![version](https://img.shields.io/badge/version-0.5.3-green.svg)](VERSION)
+[![version](https://img.shields.io/badge/version-0.6.1-green.svg)](VERSION)
 [![skills](https://img.shields.io/badge/skills-3-purple.svg)](#install-the-skills)
 [![discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.com/invite/krea-1002244500581798028)
 
@@ -104,7 +104,7 @@ The **live suite** spends real Codex + Krea + judge credits (~1–1.5h), so it i
 
 ### Skill regression suite — `evals/run.sh`
 
-40 local scenarios run through `claude -p` to catch routing / UX drift when skill content changes. Regex-graded (`PASS` / `FAIL` / `MANUAL_REVIEW`); see [`evals/README.md`](evals/README.md) for methodology and the full scenario list.
+46 local scenarios run through `claude -p` to catch routing / UX drift when skill content changes. Regex-graded (`PASS` / `FAIL` / `MANUAL_REVIEW`); see [`evals/README.md`](evals/README.md) for methodology and the full scenario list.
 
 ```bash
 bash evals/run.sh

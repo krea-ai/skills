@@ -2,7 +2,7 @@
 
 ## Trigger
 
-User says "make a short video", "TikTok", "Reels", "Shorts", "GRWM", "UGC", "Ori-style video", "social ad", or asks for a vertical/square clip of 15 seconds or less. Pick this if the target is one continuous social-native piece rather than many hard cuts. Requests for designed launch films, brand teasers, or kinetic-type videos route to `launch-teaser.md` - UGC realism rules do not apply there.
+User says "make a short video", "TikTok", "Reels", "Shorts", "GRWM", "UGC", "Ori-style video", "social ad", or asks for a vertical/square clip of 15 seconds or less. Pick this if the target is one continuous social-native piece rather than many hard cuts. If the piece needs a written SPOKEN script, burned captions, a CTA card, or a multi-take talking head, route to `ugc-video-ad.md` - that workflow owns scripted UGC ads. Requests for designed launch films, brand teasers, or kinetic-type videos route to `launch-teaser.md` - UGC realism rules do not apply there.
 
 ## Clarify
 

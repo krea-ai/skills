@@ -19,6 +19,7 @@ Each loose-brief variant must move at least two axes so the options are meaningf
 | Concept / premise | realistic UGC, anachronistic roleplay, fish-out-of-water, mascot POV, alternate era, impossible scale |
 | Time of day | morning, midday, golden hour, late night |
 | Format hook | caption sticker open, reaction open, product close-up open, question open, before/after open |
+| Script hook family | deception/high-stakes, identity dream, social problem, genuine shock, which-is-real - see `ugc-scripts.md` (scripted ads only) |
 
 ## Delivery Pattern
 

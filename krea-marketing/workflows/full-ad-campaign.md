@@ -21,7 +21,7 @@ If the user gave a tight, complete brief, skip Clarify entirely and proceed to R
 
 Hard prescription. Follow in order.
 
-1. **Identify first deliverable shape**. For CPG/FMCG/agency-style campaign asks, route to `key-visual-sheet.md` first. For a static ad set built around one product photo, route to `dtc-ad-templates.md`. For other digital static sets, start with cheap image drafts. For UGC/social video sets, route to `social-video-short.md`.
+1. **Identify first deliverable shape**. For CPG/FMCG/agency-style campaign asks, route to `key-visual-sheet.md` first. For a static ad set built around one product photo, route to `dtc-ad-templates.md`. For other digital static sets, start with cheap image drafts. For UGC/social video sets, route to `social-video-short.md`; if the videos need a spoken script, captions, or a CTA card (scripted UGC ads, talking-head/testimonial ads, narrated demos), route to `ugc-video-ad.md` instead.
 2. If the user chose Meta Ads context, run `meta-ads-performance.md` first and incorporate the performance read into the creative brief.
 3. Load `../references/marketing-creative-anatomy.md` and decompose the campaign into mode, product/facts, brand system, format, hook, setting, talent/identity, reference path, and CTA.
 4. **Cost-preflight** (mandatory - see `../../krea-generate/references/cost-preflight.md`). Campaigns are batches.
@@ -33,7 +33,7 @@ Hard prescription. Follow in order.
 10. Generate lightweight drafts by angle and format first, unless step 1 routed to a key-visual sheet or social storyboard gate.
 11. **Blocking draft QA gate**: read every draft with vision, compare it to the visible brief, and record pass/fail before any finals, upscale, animation, or delivery claim. Reject outputs with wrong product identity, wrong claims, Recolored logo, Prompt-text override, or generic product drift. If none pass, retake one lever at a time or ask for clearer refs.
 12. Show a contact sheet or labeled list only after the gate, with pass/fail notes; let the user pick winners for final render/upscale.
-13. Generate final winners through `product-photo-hero.md`, `product-photo-lifestyle.md`, `dtc-ad-templates.md`, `../../krea-generate/workflows/image-text-poster.md`, `key-visual-sheet.md`, or `social-video-short.md` as needed.
+13. Generate final winners through `product-photo-hero.md`, `product-photo-lifestyle.md`, `dtc-ad-templates.md`, `../../krea-generate/workflows/image-text-poster.md`, `key-visual-sheet.md`, `social-video-short.md`, or `ugc-video-ad.md` as needed.
 14. **Deliver** organized outputs by platform, with QA notes and any unsupported claims removed.
 
 ### MCP path
@@ -50,7 +50,7 @@ Use the available Krea MCP tools to list models, inspect schema for draft and fi
 - Do not start with premium renders for every angle.
 - Do not assume "storyboard" means film pre-vis in CPG/FMCG/agency campaign work; check `../references/artifact-taxonomy.md`.
 - Do not treat "make ads" as one prompt. Use `../references/marketing-creative-anatomy.md` to separate mode, format, hook, setting, talent, product, brand, reference path, and CTA.
-- Do not generate social video without routing into `social-video-short.md`.
+- Do not generate social video without routing into `social-video-short.md` (continuous clip) or `ugc-video-ad.md` (scripted ad).
 
 ## Cost & time
 
@@ -67,5 +67,5 @@ Use the available Krea MCP tools to list models, inspect schema for draft and fi
 | Output makes unsupported claims | Prompt included invented copy | Remove claims and regenerate visual-only |
 | Recolored logo | Model flattened the product photo into a tinted graphic/logo-like mark | Retake with cleaner photo reference, photo-first settings, and scene-only prompt |
 | Prompt-text override | Output follows prompt words instead of the attached product reference | Remove product descriptors from the prompt; keep scene, pose, light, copy, and placement only |
-| User asks for UGC video | Expensive sub-workflow | Route to `social-video-short.md` with cost-preflight |
+| User asks for UGC video | Expensive sub-workflow | Route to `social-video-short.md` (continuous) or `ugc-video-ad.md` (scripted) with cost-preflight |
 | User expected a key-visual sheet | Ambiguous "storyboard" or "ad" vocabulary | Route to `key-visual-sheet.md` before downstream assets |

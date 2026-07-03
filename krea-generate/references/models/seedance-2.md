@@ -164,6 +164,15 @@ For social and narrative work where realtime motion matters, avoid words that th
 
 This is a Krea workflow guardrail, not a universal language rule. If the user explicitly wants slow motion, ask for that as a deliberate style choice and budget the shot around it.
 
+### Beat budget for multi-shot timelines
+
+Live-verified on one-shot commercial timelines: Seedance commits to about **3 strongly distinct beats per generation** on its own. More beats land only when every beat is <=2.5s and fully staged (time range + shot size + lens + one move + named transition). Two failure modes to design against:
+
+- Ask for 5-6 beats with a long final hold and the model front-loads ~3 good beats, then **coasts the entire back half on one slow rotation**. Fix: no beat over ~2.5s and put "no long static holds, keep cutting" in a constraints tail.
+- "HARD CUT" between unstaged shots renders as a **soft morph**, not a cut. Fully staged shots with explicit time ranges land as real cuts - verify with ffmpeg scene detection on the output (`gt(scene,0.3)`); an empty detection list means the cuts morphed.
+
+Also verified: the start image is the quality ceiling - a garbled or cropped product reference garbles the label in every generation regardless of prompt quality, while a clean product shot holds dense printed text through an entire multi-beat timeline including the last frame.
+
 ---
 
 ## Prompt Structure Blueprint
@@ -627,6 +636,38 @@ highlight scanning light effects.
 to resolution.
 Sound: Reference @Video1's background music. Add product interaction
 sound effects.
+```
+
+### Template: One-Shot Product Commercial (12-15s, live-verified)
+
+Structured timeline for premium product ads with real cuts inside one generation. Every section is load-bearing; the constraints tail fights late-generation drift. Full workflow rules live in `../../../krea-marketing/workflows/cinematic-product-ad.md`.
+
+```
+Format: High-energy product video ad, six fast cuts in one take, 15 seconds,
+9:16, bright high-key commercial look, crisp modern color grade.
+References: @Image1 as the first frame and hero product — <product>; keep
+<every logo and printed line> exactly as shown, do not warp or re-letter
+any text.
+Consistent world across all shots: <one scene concept, palette, light>,
+shallow macro focus.
+Motion split: <ice, splash, product physics> move with real physical weight
+at realtime speed; camera moves are fast, snappy and deliberate — driving
+energy, never slow-motion, never floating.
+SHOT 1 — <NAME> (0–2.5s), medium close, 50mm. <One camera move + one physical
+event with consequences>. Whip-pan.
+SHOT 2 — <NAME> (2.5–5s), macro, 85mm. <...>. Fast cut.
+SHOT 3 — <NAME> (5–7.5s), medium, 50mm. <...>. Quick cut.
+SHOT 4 — <NAME> (7.5–10s), extreme macro, 100mm. <...>. Snap cut.
+SHOT 5 — <NAME> (10–12.5s), medium, 50mm. <...>. Punch-in cut.
+SHOT 6 — HERO SNAP (12.5–15s), hero close-up, 85mm. <Product locked, one
+quick push-in settling on the logo>.
+Audio: driving beat with a hard hit on every cut; <per-shot diegetic SFX
+list>. No voiceover.
+Constraints (reassert): six hard cuts, not morphs; no long static holds,
+keep cutting; one consistent world; product, logos and text locked exactly
+as @Image1; fast snappy realtime motion, no floating, no slow-motion; no
+on-screen text, no captions, no added graphics, no 3D, no cartoon, no
+distorted or re-lettered text.
 ```
 
 ### Template: Short Drama (15s)
