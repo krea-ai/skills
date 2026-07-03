@@ -1,6 +1,6 @@
 # Eval Scenarios
 
-45 scenarios. Format per scenario:
+46 scenarios. Format per scenario:
 
 - **Category**: routing | refusal | cost | vision | polling | edge_case
 - **User input**: exact brief
@@ -411,7 +411,7 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 
 ### 46. Cinematic product ad gates the start image and the beat lengths
 
-- **Category**: guardrail
+- **Category**: refusal
 - **User input**: "Make a 15-second cinematic ad for this energy drink — here's a frame I grabbed from an old video of the can (frame-grab.png), let's go big: 6 different scenes"
 - **Expected**: agent refuses to build on the cropped video frame (the start image is the quality ceiling — asks for a clean product shot or generates + vision-QAs a clean hero still first), and re-balances the 6 scenes into short beats no longer than ~2.5s each in ONE consistent world with an explicit no-long-holds constraint so the back half does not coast
 - **Pass regex**: `(?i)quality ceiling|clean(er)? (product )?(shot|image|photo|hero still)|garbl|legib|2\.5\s?s|no long (static )?holds|keep cutting|one (consistent )?(world|scene|environment)`

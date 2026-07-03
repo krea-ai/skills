@@ -4,7 +4,7 @@ Lightweight regression test suite for the Krea skills. Catches drift when skill 
 
 ## What this tests
 
-40 scenarios across 10 categories:
+46 scenarios across 12 groups:
 
 - **Routing accuracy (5)** — does the agent route to the right skill or workflow for a given brief?
 - **Refusal / safety (3)** — does the agent decline or rephrase when the brief hits safety boundaries?
@@ -16,6 +16,8 @@ Lightweight regression test suite for the Krea skills. Catches drift when skill 
 - **Animation production (9)** — routes studio animation work through `krea-animation` and preserves approvals, cost, async polling, QA, retakes, and app-routing boundaries
 - **Taxonomy 0.4.0 regression (8)** — proves generic generation stays in `krea-generate`, marketing routes to `krea-marketing`, Meta Ads behavior is gated, and animation still routes to `krea-animation`
 - **DTC ad templates 0.5.0 (1)** — keeps one-photo static ad set requests in the DTC template workflow
+- **Scripted UGC video ads 0.6.0 (4)** — covers script gating, caption/post assembly, real screen recordings, and virality QA before delivery
+- **Cinematic product ads 0.6.1 (2)** — covers reference-ad cut measurement, one-shot timeline prompting, start-image quality gating, and beat-length constraints
 
 Full scenario list with expected behavior and fail criteria: `scenarios.md`.
 
@@ -37,7 +39,7 @@ Requires `claude` CLI installed and authenticated. Output is one of `PASS`, `FAI
 - After any significant change to a SKILL.md's routing / UX rules
 - After a known change to the Krea MCP server's model lineup or schema shape
 
-Treat results as **regression signal**, not a gating quality bar. The 40 scenarios cover the most common paths; novel use cases will still need human review.
+Treat results as **regression signal**, not a gating quality bar. The 46 scenarios cover the most common paths; novel use cases will still need human review.
 
 ## How the runner works
 

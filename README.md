@@ -104,7 +104,7 @@ The **live suite** spends real Codex + Krea + judge credits (~1–1.5h), so it i
 
 ### Skill regression suite — `evals/run.sh`
 
-40 local scenarios run through `claude -p` to catch routing / UX drift when skill content changes. Regex-graded (`PASS` / `FAIL` / `MANUAL_REVIEW`); see [`evals/README.md`](evals/README.md) for methodology and the full scenario list.
+46 local scenarios run through `claude -p` to catch routing / UX drift when skill content changes. Regex-graded (`PASS` / `FAIL` / `MANUAL_REVIEW`); see [`evals/README.md`](evals/README.md) for methodology and the full scenario list.
 
 ```bash
 bash evals/run.sh
