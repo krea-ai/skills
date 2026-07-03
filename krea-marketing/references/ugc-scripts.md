@@ -21,6 +21,8 @@ Natural talking-head delivery sits between 2 words/second (slow, deliberate) and
 
 Every UGC ad script follows: **hook -> context -> reveal/result -> social proof or emotion -> CTA**. The hook owns the first 1-3 seconds; the CTA owns the final beat. Everything else is compression.
 
+**Open the timeline on the hook, not a neutral face.** A talking head that starts resting and neutral, then simply speaks the hook line, scores weak on hook_strength and scroll_stop_power even when the words are right — the first frame is doing no work. Open on the action or reaction instead: whip up from a product close-up into the hook line, open already mid-reaction (surprised, delighted, caught off guard), or open on the product beat itself with the hook as voiceover. The first frame a viewer sees must look different from a static portrait before they've heard a word.
+
 ## Hook Families
 
 Five brand-agnostic spoken-script families. Fill placeholders with confirmed product facts and supported claims only.

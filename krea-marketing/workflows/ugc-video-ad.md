@@ -10,7 +10,7 @@ Ask the user once, in a single batched message. Skip whichever the user already 
 
 - **Product + claims**: product reference (image/URL), required claims/copy, CTA destination.
 - **Platform + aspect**: 9:16 TikTok/Reels/Shorts (default) or 1:1 feed.
-- **Duration**: 10-15s default (completion drops hard past 15s); longer only if the script demands it.
+- **Duration**: 15s default (the maximum allowed for this format; completion drops hard past 15s) — use 10s only if the user wants a tighter cut, longer only if the script demands it and the user accepts the completion tradeoff.
 - **Talent**: text persona (one-off face), face reference image(s), or a reused campaign character/LoRA for consistency.
 - **Structure**: pure talking head, or talking head intercut with demo/b-roll cutaways. For app/software demos, ask for real screen recordings.
 - **Hook family**: let them pick from `../references/ugc-scripts.md` families or say "surprise me".

@@ -1,6 +1,6 @@
 # Eval Scenarios
 
-44 scenarios. Format per scenario:
+45 scenarios. Format per scenario:
 
 - **Category**: routing | refusal | cost | vision | polling | edge_case
 - **User input**: exact brief
@@ -400,6 +400,22 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 - **Expected**: agent samples frames and runs the 7-criterion virality scorecard plus the adversarial does-it-read-as-real-UGC check before delivery, reporting the score and any weak criteria instead of handing the file over unchecked
 - **Pass regex**: `(?i)virality|scorecard|hook.?strength|scroll.?stop|score.*(70|threshold)|inspect.*frame|vision.?(check|QA)|adversarial`
 - **Fail regex**: `(?i)here'?s the video.*(no|without).*(check|QA)|deliver.*without.*inspect`
+
+### 45. Reference ad replication measures the cut structure
+
+- **Category**: routing
+- **User input**: "Here's an ad I love (ad-reference.mp4) — make the same kind of video for my granola bar, no talking, just the product looking premium"
+- **Expected**: agent routes to the cinematic-product-ad workflow — runs ffmpeg scene detection on the reference to extract cut timestamps and shot structure, plans a beat sheet of short product beats intercut with ingredient cutaways in one consistent scene, and builds it as ONE structured multi-shot timeline prompt (staged shots with time ranges, @Image1 first-frame role inline, constraints tail); no burned captions
+- **Pass regex**: `(?i)cinematic-product-ad|scene.?detect|cut (structure|timestamps|timing)|contact sheet|beat sheet|timeline prompt|one.?shot|constraints tail|@Image1|ingredient (cutaway|shot)`
+- **Fail regex**: `(?i)ugc-video-ad|talking.?head|spoken script|hyperframes|burn(ed)? captions?|drawtext.*caption`
+
+### 46. Cinematic product ad gates the start image and the beat lengths
+
+- **Category**: guardrail
+- **User input**: "Make a 15-second cinematic ad for this energy drink — here's a frame I grabbed from an old video of the can (frame-grab.png), let's go big: 6 different scenes"
+- **Expected**: agent refuses to build on the cropped video frame (the start image is the quality ceiling — asks for a clean product shot or generates + vision-QAs a clean hero still first), and re-balances the 6 scenes into short beats no longer than ~2.5s each in ONE consistent world with an explicit no-long-holds constraint so the back half does not coast
+- **Pass regex**: `(?i)quality ceiling|clean(er)? (product )?(shot|image|photo|hero still)|garbl|legib|2\.5\s?s|no long (static )?holds|keep cutting|one (consistent )?(world|scene|environment)`
+- **Fail regex**: `(?i)6 (different )?scenes? (it is|sounds good|works)|us(e|ing) the frame.grab as.is|straight to (video|generation) with the frame`
 
 ---
 

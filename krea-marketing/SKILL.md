@@ -1,5 +1,5 @@
 ---
-version: 0.6.0
+version: 0.6.1
 name: krea-marketing
 description: "Marketing and paid-social creative workflows with Krea MCP. Use for product photoshoots, marketplace cards, DTC static ad templates, campaign key visuals, UGC/social ads, scripted UGC video ads and talking-head/testimonial ads, product URL to creative, ad storyboards, social packs, product launches, Meta Ads performance-informed creative planning, and gated Meta Ads activation. For generic media generation use krea-generate."
 license: MIT
@@ -55,6 +55,7 @@ This policy is for image generation. Resolve video models separately from live `
 | ad storyboard / key visual / campaign sheet / agency-style product layout | `workflows/key-visual-sheet.md` |
 | UGC / TikTok clip / Reels / GRWM / social video / unboxing (continuous, non-scripted) | `workflows/social-video-short.md` |
 | scripted UGC ad / talking-head ad / testimonial ad / creator ad with spoken lines / narrated product or app demo / video ad with captions + CTA | `workflows/ugc-video-ad.md` |
+| cinematic product ad / product film / "make it look like this ad" with a reference video / ingredient-story spot / multi-shot commercial with no dialogue and no type | `workflows/cinematic-product-ad.md` |
 | launch video / brand film / teaser / product reveal / kinetic type video | `workflows/launch-teaser.md` |
 | product URL -> campaign, ad set, launch assets, social variants | `workflows/full-ad-campaign.md` |
 | DTC static ad templates / ad format library / N on-brand static ads from one product photo | `workflows/dtc-ad-templates.md` |

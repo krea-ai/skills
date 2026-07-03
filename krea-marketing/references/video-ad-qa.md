@@ -69,7 +69,7 @@ Scale proportionally for other resolutions.
 
 ## Duration Sweet Spot
 
-Completion rates fall off hard with length: 7-10s very high, 10-15s high, 15-30s medium, 30s+ low. Default UGC ads to 10-15s; only go longer when the script genuinely needs it and the user accepts the completion tradeoff.
+Completion rates fall off hard with length: 7-10s very high, 10-15s high, 15-30s medium, 30s+ low. Default UGC ads to 15s (the format maximum); drop to 10s for a tighter cut, and only go longer when the script genuinely needs it and the user accepts the completion tradeoff.
 
 ## Performance Heuristics (Post-Publish)
 
