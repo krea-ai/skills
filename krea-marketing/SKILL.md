@@ -41,9 +41,19 @@ For marketing stills, ad layouts, product images, and storyboard sheets, use the
 
 Always verify the candidate with live model discovery and schema inspection through Krea MCP before submitting. Do not invent a model id that is not live.
 
-Any model in the set is acceptable. Default to `openai/gpt-image-2`; it is the strongest generalist in the set and must come first for text-heavy ad templates, key-visual sheets, posters, typography, exact copy, and storyboard sheets. For product hero, lifestyle, marketplace, and final marketing stills, do not silently pick for the user: name `openai/gpt-image-2` as the default alongside the live Nano Banana option and let the user choose; if they have no preference, use `openai/gpt-image-2`. If none of the marketing image set is available or the live schema cannot accept the required references/aspect/size, say so and pick the nearest live model only as an explicit fallback.
+Any model in the set is acceptable. Default to `openai/gpt-image-2`; it is the strongest generalist in the set and must come first for text-heavy ad templates, key-visual sheets, posters, typography, exact copy, storyboard sheets, and real-product scene composites where the attached reference must stay authoritative. For product hero, lifestyle, marketplace, and final marketing stills, do not silently pick for the user: name `openai/gpt-image-2` as the default alongside the live Nano Banana option and let the user choose; if they have no preference, use `openai/gpt-image-2`. If the user chooses Nano Banana for a real product reference, use stricter scene-only prompting: Nano Banana can obey prompt words over the reference and invent a generic product when color/material/garment words conflict with the image. If none of the marketing image set is available or the live schema cannot accept the required references/aspect/size, say so and pick the nearest live model only as an explicit fallback.
 
 This policy is for image generation. Resolve video models separately from live `list_models`.
+
+## Real Product Evidence Rules
+
+When a real product reference exists, the image is the source of truth. Product-page copy, filenames, alt text, scraped descriptions, and user-provided shorthand are secondary facts and may be wrong or incomplete.
+
+- Read product references with vision before prompt writing. For apparel, confirm only visible garment facts: silhouette, texture, colorway, trim, hardware, pattern, closures, logo/pin/embroidery, and proportion.
+- If only a URL is provided, fetch usable product images, upload them as references, and inspect them. Do not build faithful product prompts from PDP copy alone.
+- Confirm visual facts in one line before generating when a URL or scraped source was used. Do not "confirm" text-only PDP facts as product truth.
+- For real-product generation prompts, describe only the scene, pose/use, lighting, camera, composition, platform copy, and placement. Keep material, color, silhouette, label, trim, hardware, and garment descriptors in the visual confirmation and QA checklist only; let the attached reference define the product. Use text-only product descriptors only when no real reference exists and the user accepts low fidelity.
+- Run `generate -> inspect -> gate` before finals or delivery. Do not present a set as on-brand or product-faithful until every draft has a recorded vision inspection and pass/fail decision.
 
 ## Routing
 

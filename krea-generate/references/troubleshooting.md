@@ -88,6 +88,8 @@ These were uncovered during a production session that burned ~5,000 CU before pr
 | Seedance-style video models | Subject identity drifts across cuts | Pass 2-3 varied face refs; for brand-critical likeness use `../workflows/lora-train-and-use.md` |
 | Text-friendly image models | Storyboards with large technical fiches produce weak videos | Keep annotations editorial: tiny panel numbers, short action labels, side icons, header/footer |
 | OpenAI-style image models | Portrait dimensions rejected | Use dimensions accepted by schema, often multiples of 16 such as `1024x1824` for 9:16 |
+| GPT-image style models | **Recolored logo**: a real product reference is flattened into a graphic/logo-like mark and merely tinted | Reject the draft; retake with a cleaner photo reference, photo-first scene prompt, and vision QA before delivery |
+| Nano Banana style models | **Prompt-text override**: output follows product words in the prompt instead of the attached product reference | Remove product color/material/garment descriptors from the prompt; describe only scene, pose, light, copy, camera, and placement |
 
 ### Workflow disasters to avoid
 

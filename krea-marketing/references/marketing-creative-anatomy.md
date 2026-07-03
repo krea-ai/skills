@@ -11,7 +11,7 @@ mode + product/facts + brand system + format + hook + setting + talent/identity 
 ```
 
 - **Mode**: UGC review, how-to/demo, unboxing, product showcase, product review, TV spot, wild card, try-on.
-- **Product/facts**: product refs, packaging details, supported claims, price/offer only if user supplied it.
+- **Product/facts**: visible product facts from inspected references, plus supported claims/copy from the user or PDP. Keep these separate; page text is not visual truth.
 - **Brand system**: voice, palette, typography mood, graphic devices, logo/label constraints.
 - **Format**: key-visual sheet, hero still, social story, feed square, carousel, comparison, testimonial, app screenshot, marketplace module, video storyboard.
 - **Hook**: pattern interrupt, mystery/open loop, social proof, sharp benefit, comparison, offer, product-in-action, creator confession, authority/press, statistic.
@@ -78,3 +78,5 @@ Before generating campaign-tier outputs:
 2. Which tuple part is the experiment in this variant?
 3. Is the first artifact cheap enough to approve before finals/video?
 4. Is the output specific to this brand/product, or could any competitor use it?
+5. Are visible product facts confirmed from the image rather than PDP copy?
+6. Has every draft passed a recorded vision gate before being called on-brand or product-faithful?

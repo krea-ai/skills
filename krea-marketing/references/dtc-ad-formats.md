@@ -20,15 +20,18 @@ Two layers per format:
    **Drop** any format whose `required` fields the brief cannot honestly supply (no real
    press name → skip `press-feature`; no real quote → skip the testimonial formats). Never
    invent claims, quotes, press, ratings, or pricing.
-3. Fill each chosen template's `{{placeholders}}` from the brief and append the universal
+3. For real product references, keep `{{product}}` category-level, such as "the referenced
+   product" or "the referenced garment." Do not insert product color/material/garment
+   descriptors; let the reference image carry the product.
+4. Fill each chosen template's `{{placeholders}}` from the brief and append the universal
    tail (section D).
-4. Generate (see the workflow) and vision-QA each output against its structural device.
+5. Generate (see the workflow) and vision-QA each output against its structural device.
 
 ## B. Placeholders
 
 | token | meaning |
 |---|---|
-| `{{product}}` | natural description of the product, e.g. "the matte aluminium water bottle" |
+| `{{product}}` | product noun. With a real reference, use category-level wording such as "the referenced water bottle"; do not include material/color/garment descriptors |
 | `{{brand}}` | brand name as it reads on the page |
 | `{{wordmark}}` | wordmark text (usually the brand, rendered letter-spaced) |
 | `{{headline}}` | the main line (short, ≤6 words unless the format is copy-led) |
@@ -59,6 +62,10 @@ them from the product reference: palette from the product's own colours plus neu
 accent from the brand colour, surface a neutral stone/linen/wood that suits the category.
 Never emit an empty quote or a literal placeholder string into the image.
 
+For real-product work, these templates describe the ad format, scene, light, copy, and
+placement. The reference image defines the product's exact material, color, silhouette,
+trim, hardware, label, and proportion.
+
 ## C. Treatments
 
 - **HERO-CINEMATIC** — single product, one low-key practical light into near-black falloff; sparse serif headline; dramatic negative space.
@@ -81,9 +88,11 @@ grotesque), a narrow low-saturation palette, generous negative space, asymmetric
 composition, tactile real materials, and confident minimal copy (one quiet proof point, not
 five).
 
-**Universal tail `<TAIL>`** — append to every filled template:
+**Universal tail `<TAIL>`** — append to every filled template. This is a value-free
+preservation instruction, not permission to name a specific color, material, garment, trim,
+or hardware in the prompt:
 
-> Keep `{{product}}` true to the reference in shape, colour, material and proportion. Shot
+> Keep the referenced product true to the provided image in shape, colour, material and proportion. Shot
 > on medium-format or 35mm film, one practical or natural light source, real soft shadows,
 > fine grain, believable shallow depth of field, generous negative space — a photograph,
 > not a render. No garish gradients, sparkles, starbursts, sticker collages, chunky badges,
@@ -166,21 +175,22 @@ Each ends with `<TAIL>` (section D). Drop any `{{token}}` line the brief can't f
 
 ## H. Worked example
 
-Brief: brand **NORD**; product "the matte forest-green insulated water bottle"; proof
+Brief: brand **NORD**; product reference image for an insulated water bottle; proof
 points "24-hour cold / leakproof seal / lifetime warranty"; headline "Cold for 24 hours.";
 subline "Insulated Bottle · 750 ml · BPA-free"; aspect 4:5 on `openai/gpt-image-2`
 (→ portrait, 1024×1280); palette "slate-bone-steel"; surface "charcoal stone"; accent
-"warm bone". The filled `headline-hero` template:
+"warm bone". Because a real reference exists, `{{product}}` stays category-level:
 
 > Using the provided product image as the hero subject, create a portrait 4:5 (1024×1280)
-> cinematic hero. Stand the matte forest-green insulated water bottle alone, slightly
+> cinematic hero. Stand the referenced insulated water bottle alone, slightly
 > off-center on a charcoal stone surface, lit by a single low-key practical light that
 > catches it and falls off into near-black shadow; a narrow slate-bone-steel palette, real
 > soft shadow, vast dark negative space to one side. In a top corner, one sparse
 > high-contrast serif line in warm bone reading "Cold for 24 hours.", and a quiet small
 > grotesque line beneath in muted grey reading "Insulated Bottle · 750 ml · BPA-free". A
-> tiny letter-spaced "NORD" wordmark sits low. Keep the bottle true to the reference in
-> shape, colour, material and proportion. Shot on medium-format film, one practical light
+> tiny letter-spaced "NORD" wordmark sits low. Keep the referenced product true to the
+> provided image in shape, colour, material and proportion. This is a preservation
+> instruction, not a named color or material descriptor. Shot on medium-format film, one practical light
 > source, real soft shadows, fine grain, believable shallow depth of field, generous
 > negative space — a photograph, not a render. No garish gradients, sparkles, starbursts,
 > sticker collages, chunky badges, CGI sheen, or centered symmetry.

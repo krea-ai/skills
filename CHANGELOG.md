@@ -20,6 +20,12 @@
 - Added 4 eval scenarios (scripted UGC ad routing + script gate, captions-in-post, real-screen-recording demo rule, virality QA gate).
 - Bumped synced package, plugin, marketplace, codex/cursor manifest, and skill versions to `0.6.0`.
 
+## 0.5.3
+
+- Refreshed the Codex plugin default suggestion prompts to be upload-free and span the product's range: one architecture image render, one fictional-brand launch video, and one fictional skincare campaign video (replacing prompts that required the user to supply a product or reference image).
+- Converted the Codex plugin `logo`/`composerIcon` from JPG to PNG so they render in the installed-plugins list.
+- Bumped synced package, plugin, marketplace, codex/cursor manifest, and skill versions to `0.5.3`.
+
 ## 0.5.2
 
 - Documented public moodboard discovery in `krea-generate/references/models/krea-2.md`: the preset moodboard gallery at `GET https://www.krea.ai/api/preset-moodboards` answers unauthenticated (verified live 2026-06-11, ~3549 boards) and supports `limit`, `seed` (stable shuffle order), `search` (keyword filter the agent can query directly), and `cursor` pagination. Recorded the observed response shape (`items[].id` as the K2 moodboard UUID, `styleName`, `styleDescription`, `styleKeywords`, `isStaffPick`, Krea-hosted `previewImages`/`images`), a preset discovery recipe (search → shortlist → vision-check previews → pass the UUID into `moodboards: [{id, strength}]`), and kept the authenticated `/api/moodboards` rules for personal boards. The `image_style_references` fallback now names preset preview URLs as valid Krea-hosted style references.
