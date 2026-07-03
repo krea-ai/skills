@@ -47,7 +47,7 @@ Use the available Krea MCP tools: list models, inspect the schema of both the st
 - Do not use "your [personal attribute]" phrasing in scripts or overlays.
 - Do not run multi-take scripts on a text persona without a locked face reference - identity will drift.
 - Do not pass landscape references for 9:16 output, use banned pacing words, use non-Krea-hosted refs, or poll silently - all inherited from `social-video-short.md`.
-- Do not deliver below a 70 virality score without telling the user the score and what's weak.
+- Do not deliver below a 70 virality score; tell the user the score, apply the weak-criterion fixes, and re-score before delivery.
 - Do not invent post-publish performance numbers; the winner bands in `../references/video-ad-qa.md` apply only to real metrics.
 
 ## Cost & time
