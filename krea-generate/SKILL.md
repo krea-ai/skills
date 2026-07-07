@@ -13,7 +13,7 @@ Use Krea through connected Krea MCP tools only. This skill handles Krea generati
 
 ## Bootstrap
 
-Verify Krea MCP tools are present in the current agent tool list before generation. If the MCP server or a required MCP capability is missing, stop and ask the user to connect or authenticate Krea MCP. Do not use non-MCP fallbacks.
+Verify Krea MCP tools are present in the current agent tool list before generation. If the MCP server or a required MCP capability is missing or unauthenticated, stop and ask the user to connect or authenticate Krea MCP. Tell Codex plugin users they can reauthenticate by uninstalling and reinstalling the Krea plugin so the install auth flow runs again. Do not use non-MCP fallbacks.
 
 Use the tool schemas exposed in the current session. Do not invent MCP tool names or input fields.
 
