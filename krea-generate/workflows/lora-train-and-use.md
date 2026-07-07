@@ -64,4 +64,4 @@ generate_image(model="<style-aware-image-model>", input={prompt, <schema-style-f
 | Training fails mid-run | Bad URL or inaccessible asset | HEAD-check URLs and resubmit |
 | Samples ignore style | Underfit or missing trigger | Use trigger word and style strength; retrain with better set |
 | Samples all look same | Overfit | Lower style strength or retrain with more varied images |
-| User wants one portrait only | LoRA is overkill | Route to `image.md` |
+| User wants one portrait only | LoRA is overkill | Use the Image Workflow in `../SKILL.md` |

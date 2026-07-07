@@ -29,7 +29,7 @@ Installs the packaged skills. This is the supported install path across agents t
 
 The packaged Codex plugin uses a connected Krea MCP server.
 
-Check your agent's MCP tool list for `mcp__krea__*` tools. If the tools are missing, connect or authenticate the Krea MCP server before using generation skills.
+Check your agent's MCP tool list for `mcp__krea__*` tools. If the tools are missing or auth has expired, connect or authenticate the Krea MCP server before using generation skills. For Codex plugin installs, the practical reauth path is to uninstall and reinstall the Krea plugin so the install auth flow runs again.
 
 ## Use
 

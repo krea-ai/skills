@@ -6,11 +6,11 @@
 ToolError: mcp__krea__... is not available
 ```
 
-The Krea MCP server is not installed, not authenticated, or not exposed in the current session. Tell the user to connect or authenticate Krea MCP. Do not use non-MCP fallbacks.
+The Krea MCP server is not installed, not authenticated, or not exposed in the current session. Tell the user to connect or authenticate Krea MCP. For Codex plugin installs, tell them they can reauthenticate by uninstalling and reinstalling the Krea plugin so the install auth flow runs again. Do not use non-MCP fallbacks.
 
 ## Authentication
 
-The MCP handles auth on the Krea side. If you see an explicit auth error from a tool call, the MCP server isn't properly configured. Surface it to the user - don't try to work around it.
+The MCP handles auth on the Krea side. If you see an explicit auth error from a tool call, the MCP server isn't properly configured. Surface it to the user - don't try to work around it. For Codex plugin installs, suggest uninstalling and reinstalling the Krea plugin to re-run authentication.
 
 ## Validation errors
 

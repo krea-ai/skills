@@ -13,6 +13,17 @@ User asks to upscale, make sharper, increase resolution, clean up, denoise, enha
 
 When in doubt, choose precise upscale if preservation matters more than invention. Choose creative enhance only when the user welcomes stylistic change or added detail.
 
+## Model Priority
+
+Always resolve these through live `list_models` and inspect the selected schema before use. Match by live id/name/description; do not assume exact IDs.
+
+| Mode | Priority | Notes |
+|---|---|---|
+| Creative enhance | Topaz Bloom, `/topaz/bloom-enhance` | Default for creative detail injection, relight, polish, or premium-looking restyles. |
+| Faithful / realistic enhance | Topaz Standard, `/topaz/standard-enhance` | Default for normal faithful enhancement, upscaling, sharpening, denoise, cleanup, and photography. |
+
+If none of the named models are available or their schema cannot support the request, fall back to the closest live model by archetype and explain the substitution briefly.
+
 ## Clarify
 
 Ask once only if target size, preservation level, or creative direction is unclear.
@@ -30,9 +41,9 @@ If the user gave a tight, complete brief, skip Clarify and proceed to Recipe.
 Hard prescription. Follow in order.
 
 1. Read the input image with vision.
-2. Pick the mode:
-   - Precise upscale: prefer `topaz/standard-enhance`, falling back to `faithful upscale` from live `list_models`.
-   - Creative enhance: prefer `topaz/generative-enhance`, falling back to `creative enhance` or `bloom / creative detail injection` from live `list_models`.
+2. Pick the mode and model from Model Priority:
+   - Precise upscale / faithful realistic: use Topaz Standard, `/topaz/standard-enhance`.
+   - Creative enhance: use Topaz Bloom, `/topaz/bloom-enhance`.
 3. Inspect the selected model schema for image, width, height, scale, denoise, sharpen, face enhancement, creativity, strength, and prompt fields.
 4. Run `../references/cost-preflight.md` if the target is 4K, premium, or >100 CU.
 5. Upload local or external input images to Krea first.

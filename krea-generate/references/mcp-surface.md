@@ -10,7 +10,7 @@ Before using Krea, ensure Krea MCP tools are available in the current agent tool
 - generate image, video, or enhance jobs
 - get or poll job status
 
-If Krea MCP is missing, unauthenticated, or does not expose the needed capability, stop and ask the user to connect or authenticate the missing Krea MCP capability. Do not use non-MCP fallbacks.
+If Krea MCP is missing, unauthenticated, or does not expose the needed capability, stop and ask the user to connect or authenticate the missing Krea MCP capability. For Codex plugin installs, tell the user they can reauthenticate by uninstalling and reinstalling the Krea plugin so the install auth flow runs again. Do not use non-MCP fallbacks.
 
 ## Tool Use
 

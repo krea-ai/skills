@@ -26,8 +26,6 @@ These defaults apply only when the user has not named a model. Match by live id/
 | ordinary image edit or unspecified quality bar | `google/nano-banana-2` |
 | very high-quality image edit, lots of text copy, editorial overlay, or slow/pricey acceptable | `openai/gpt-image-2` |
 | small text additions in an edit | `google/nano-banana-2` or `google/nano-banana-pro` |
-| creative enhance | `topaz/generative-enhance` |
-| precise upscale/enhance | `topaz/standard-enhance` |
 | generic video | Seedance-2-fast |
 | high-end video request | Seedance-2 |
 
@@ -175,7 +173,7 @@ If a preferred model is unavailable, lacks required reference/aspect/text/durati
 
 **Intent.** Increase resolution, sharpen, denoise, or clean up an existing image while preserving content.
 
-**Default.** Prefer `topaz/standard-enhance` when live discovery confirms a matching model and schema.
+**Default.** Use the model priority in `../workflows/enhance.md`. This catalog describes the archetype only; the workflow owns enhancement model preferences.
 
 **Live catalog signals.** Look for descriptions that emphasize faithful upscale, preservation, sharpening, denoise, restoration, or non-generative enhancement.
 
@@ -187,7 +185,7 @@ If a preferred model is unavailable, lacks required reference/aspect/text/durati
 
 **Intent.** Improve an image while allowing the model to invent extra detail, lighting, texture, or polish.
 
-**Default.** Prefer `topaz/generative-enhance` when live discovery confirms a matching model and schema.
+**Default.** Use the model priority in `../workflows/enhance.md`. This catalog describes the archetype only; the workflow owns enhancement model preferences.
 
 **Live catalog signals.** Look for descriptions that emphasize creative enhancement, generative detail, relighting, refinement, or detail injection.
 
