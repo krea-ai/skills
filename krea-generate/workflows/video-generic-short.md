@@ -13,7 +13,7 @@ Route away from this workflow when:
 
 Ask once only when missing:
 
-- **Duration**: usually 4-8s.
+- **Duration**: usually 4-8s, sometimes going up to 15s.
 - **Aspect**: 16:9, 9:16, 1:1, or source aspect.
 - **Motion**: camera move, subject action, atmosphere.
 - **Audio**: none unless the model supports and user requests it.

@@ -21,7 +21,7 @@ Hard prescription. Follow in order.
 
 1. Read the 3D screenshot with vision and identify camera angle, scene type, massing, openings, visible materials, and missing context.
 2. Default to `google/nano-banana-pro` at 4K for archviz renders. Confirm that named model exists in the live catalog, then inspect its schema. Consider alternatives only if this default is unavailable or the schema cannot accept the source image and target size.
-3. Keep `openai/gpt-image-2` at 4K as the premium backup for unusually complex options, many variants, or requests that also need substantial text overlay. It is potentially better, but slower and more expensive; name that tradeoff before using it.
+3. Keep `openai/gpt-image-2` at 4K as the premium backup for particularly complex options, or requests that also need substantial text overlay. It is potentially better, but slower and more expensive; name that tradeoff before using it.
 4. Inspect schema for the exact source image field, aspect, 4K size/resolution, strength/preservation controls, and optional prompt/style fields. Do not copy field names from memory or stale examples.
 5. Cost-preflight for 4K, batches, premium models, or >100 CU.
 6. Upload the screenshot to Krea; use a source at least 1024px on the long side when possible.
