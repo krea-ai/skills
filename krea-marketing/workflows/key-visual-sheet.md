@@ -39,7 +39,7 @@ Hard prescription. Follow in order.
    - Same layout, different headlines.
    - Same headline, different grid shape.
    - Same content, different palette or graphic device.
-10. On approval, use the sheet as the brief for `social-video-short.md`, `../../krea-generate/workflows/image.md`, or `product-photo-lifestyle.md`.
+10. On approval, use the sheet as the brief for `social-video-short.md`, the Image Workflow in `../../krea-generate/SKILL.md`, or `product-photo-lifestyle.md`.
 
 ### MCP path
 

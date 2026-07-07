@@ -18,7 +18,7 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 - **Category**: routing
 - **User input**: "Render this Sketchup screenshot of a villa in golden hour, photoreal"
 - **Expected**: agent runs the archviz screenshot-to-render workflow
-- **Pass regex**: `(?i)sketchup|photoreal|render|golden hour|image-to-image|upload.*krea|screenshot`
+- **Pass regex**: `(?i)sketchup|photoreal|render|golden hour|nano.?banana.?pro|4K|upload.*krea|screenshot`
 - **Fail regex**: `(?i)tiktok|hero product|ugc|advertising|click-to-ad`
 
 ### 2. Hero product shot
@@ -305,8 +305,8 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 
 - **Category**: routing
 - **User input**: "Turn this Rhino viewport screenshot into a photoreal lobby render with realistic glass and warm evening light"
-- **Expected**: agent keeps archviz in krea-generate and treats the viewport as structural image-to-image reference
-- **Pass regex**: `(?i)krea-generate|archviz|rhino|viewport|structural|image-to-image|photoreal|render`
+- **Expected**: agent keeps archviz in krea-generate and treats the viewport as a structural reference for Nano Banana Pro 4K
+- **Pass regex**: `(?i)krea-generate|archviz|rhino|viewport|structural|nano.?banana.?pro|4K|photoreal|render`
 - **Fail regex**: `(?i)krea-marketing|marketplace|product photo|ugc|krea-animation`
 
 ### 34. Product photoshoot routes to krea-marketing

@@ -32,49 +32,91 @@ Surface `UPGRADE_AVAILABLE` or `JUST_UPGRADED` once; otherwise stay quiet.
 3. Vision-first. Read attached images before generating, and read generated stills/frames before approving or reusing them. Use `references/vision-qa.md`.
 4. For cheap images/enhance, pick the best live-discovered schema match. For video, training, batches, 4K, or >100 CU, run `references/cost-preflight.md`.
 5. Progress reporting is mandatory for async polling over 30 seconds. Use `references/progress-reporting.md`.
-6. Always list live models through Krea MCP before choosing a model, then inspect the selected model schema through Krea MCP. Use the Default Model Policy below when the user does not specify a model; if the preferred model is unavailable or the live schema does not fit, choose the nearest live alternative and say why.
+6. Always list live models through Krea MCP before choosing a model, then inspect the selected model schema through Krea MCP. Use the Model Policy below when the user does not specify a model; if the preferred model is unavailable or the live schema does not fit, choose the nearest live alternative and say why.
 7. Normalize generation references to Krea-hosted assets before generation. Local files and arbitrary external media URLs must be uploaded to Krea first; already-Krea asset URLs can be passed directly.
 8. Generic generation does not honor persistent model preference files. If the user explicitly names a model for the current request, verify it live and use it only if the schema fits.
 9. Do not pretend bad outputs are fine. Name the mismatch and offer a concrete retry path.
 
-## Default Model Policy
+## Model Policy
 
-When the user does not specify a model, prefer these defaults after confirming they exist in live `list_models` and their schemas support the request:
+Use this policy directly from `SKILL.md` for ordinary image generation and editing. It also records the default video choices used by the routed workflows. Always confirm the preferred model exists in live `list_models`, then inspect its schema before submitting. Treat these as preference order, not permission to skip discovery.
 
-| Surface | Default |
+| Request | Preferred model |
 |---|---|
-| text-to-image: illustration, graphic, expressive art, stylized visual | `krea/krea-2/medium` |
-| text-to-image: photorealism, high detail, crispness, polish, final quality | `krea/krea-2/large` |
-| image edit: quality matters | `google/nano-banana-pro` |
-| image edit: ordinary edit, speed/cost matters, or quality bar is unspecified | `google/nano-banana-2` |
-| image edit: very high quality, slow/pricey acceptable, or lots of text/editorial overlay copy | `openai/gpt-image-2` |
-| image edit: small text additions | `google/nano-banana-2` or `google/nano-banana-pro` |
-| creative enhance | `topaz/generative-enhance` |
-| precise upscale/enhance | `topaz/standard-enhance` |
+| Illustration, graphic, expressive art, stylized visual | `krea/krea-2/medium` |
+| Photorealism, high detail, crispness, polish, final still | `krea/krea-2/large` |
+| K2, Krea 2, moodboard, style reference, LoRA/style-driven prompt | Resolve `krea/krea-2/*`, then load `references/models/krea-2.md` |
+| Ordinary image edit, fast edit, or unspecified quality | `google/nano-banana-2` |
+| Higher-quality image edit or stronger preservation needs | `google/nano-banana-pro` |
+| Very high-quality edit, slow/pricey acceptable, editorial overlay, or lots of text | `openai/gpt-image-2` |
+| Small text additions in an edit | `google/nano-banana-2` or `google/nano-banana-pro` |
 | generic video | `bytedance/seedance-2-fast` |
 | high-end video request | `bytedance/seedance-2` |
 
-Treat these as preference order, not permission to skip discovery. Match by live id/name/description, inspect the schema, and fall back only when the preferred model is missing or cannot accept the required inputs.
+If the user names a model, verify it live and use it only if the schema fits. If a preferred model is missing or cannot accept the required inputs, choose the nearest live alternative and say why.
 
-## Quick Image Shortcut
+## Image Workflow
 
-Use this directly from `SKILL.md` for simple image generation with no source image, no references, no product/marketing context, no final-quality requirement, no typography-heavy copy, and no video.
+Use this directly for generic image generation, image-to-image edits, restyles, references, options, and non-marketing final stills. Do not load another workflow for ordinary image work.
 
-1. Verify Krea MCP tools are connected.
-2. List live image models and apply the Default Model Policy: `krea/krea-2/medium` for illustration/graphic/expressive art; `krea/krea-2/large` for photoreal, detailed, crisp, or polished output.
-3. Inspect the selected model schema before submitting.
-4. Generate one image using the user's prompt and explicit aspect ratio. If no aspect is given, infer it from the use case or default to 1:1.
-5. Read the generated image with vision before delivery. If it clearly misses the subject, retry once with a more literal prompt.
+### Route
 
-Load `workflows/image.md` instead when the user provides references, asks for an edit/restyle, wants final or high-quality output, needs multiple options, or the request has preservation constraints.
+| Request | Mode |
+|---|---|
+| Loose concept, quick draft, exploration | Fast draft |
+| Final, hero, production-quality, polished, detailed brief | High fidelity |
+| User provides image(s), says edit/restyle/turn this into, or needs subject preservation | Image-to-image |
+| Poster, flyer, signage, packaging copy, readable typography | Load `workflows/image-text-poster.md` |
+| Upscale, sharpen, denoise, relight, enhance, 4K | Load `workflows/enhance.md` |
+| Repeatable identity/style across many future outputs | Load `workflows/lora-train-and-use.md` |
+| Product photo, campaign, ad, UGC, marketplace, paid social | Use `../krea-marketing/SKILL.md` |
+
+### Clarify
+
+Ask once, in a single batched message, only for details that block a useful result. Skip anything the user already gave.
+
+- Goal: draft, final render, edit, restyle, or options.
+- Subject and use: what the image is for.
+- Aspect/resolution: 1:1, 4:5, 16:9, 9:16; 1K, 2K, or 4K.
+- References/preservation: product, face, pose, layout, colors, text, or non-negotiables.
+- Edit strength: subtle edit, balanced transformation, or full restyle.
+
+If the brief is specific enough to act on, proceed without asking.
+
+### Recipe
+
+1. Read every attached/source/reference image with vision before model selection.
+2. If local files or arbitrary external media URLs are used as model inputs, upload/rehost them to Krea first; pass already-Krea asset URLs directly. Use schema-confirmed media fields only.
+3. List live image models and apply the image rows in the Model Policy.
+4. Inspect the selected model schema. Confirm exact prompt, reference, aspect, size, quality, resolution, strength, mask, style, moodboard, and LoRA fields before submitting.
+5. If live discovery resolves a `krea/krea-2/*` model, or the user asks for K2, Krea 2, moodboards, style references, or Krea 2 LoRAs, load `references/models/krea-2.md` before generation.
+6. Write the prompt for the selected mode:
+   - Fast draft: concrete subject, setting, camera/style, and aspect.
+   - High fidelity: subject, composition, lighting, material, style, resolution, and deliverable constraints.
+   - Image-to-image: describe the change first, then list what must stay the same.
+   - K2 moodboard/style-reference: keep the prompt about subject/composition/scene; let the moodboard or style refs carry taste, color, texture, and art direction.
+7. Generate one candidate first. If the user asks for multiple options, keep the first batch cheap unless cost-preflight approved a premium batch.
+8. Read outputs with vision. Compare against source images, references, and non-negotiables.
+9. If the result clearly misses the subject or preservation target, retry once with a more literal prompt, stronger preservation language, lower edit strength, or a better live model.
+10. Deliver the saved path or URL plus one concise QA note.
+
+### Common Fixes
+
+| Symptom | Fix |
+|---|---|
+| Generic output | Add concrete subject, setting, camera, composition, and style |
+| Wrong aspect | Recheck schema and pass accepted aspect or explicit dimensions |
+| Reference ignored | Switch to an image-to-image/reference-capable model and re-upload the source |
+| Source changed too much | Lower edit strength and name preserved details explicitly |
+| Product/face drifted | Reduce style pressure and use clearer preservation language |
+| Good composition, low detail | Route the output through `workflows/enhance.md` |
+| Garbled text | Route to `workflows/image-text-poster.md` |
 
 ## Routing
 
 | Intent | Workflow |
 |---|---|
-| simple generic image with no references | use Quick Image Shortcut above |
-| image with references / production-quality image / final hero asset without product-marketing context | `workflows/image.md` |
-| transform / edit / restyle this image | `workflows/image.md` |
+| generic image generation, image edit, restyle, references, non-marketing final still | use Image Workflow above |
 | poster / typography / text-heavy image | `workflows/image-text-poster.md` |
 | generic short video / text-to-video / non-ad clip | `workflows/video-generic-short.md` |
 | 3D screenshot -> photoreal render / archviz | `workflows/archviz-3d-to-render.md` |
