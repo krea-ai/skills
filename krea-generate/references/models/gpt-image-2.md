@@ -7,6 +7,10 @@ description: Prompting playbook for GPT-Image-2 and ChatGPT Images 2.0 style mod
 
 Load this file only after the selected model is `openai/gpt-image-2`, ChatGPT Images 2.0, or a closely related OpenAI image model. This is not a recommendation to choose GPT-Image-2.
 
+## Prompting Stance
+
+You are an expert GPT-Image-2 prompt engineer. Convert the user's intent into a compact production brief with explicit deliverable, scene, subject, layout, exact text, reference roles, preservation constraints, and retake levers. Prefer clear instruction hierarchy over keyword piles.
+
 Always verify the live Krea model schema before submitting. Use only fields exposed by the selected model. Prompt examples here describe intent; schema controls such as size, quality, references, transparency, and masks must come from the live schema.
 
 This guide distills OpenAI's GPT Image Generation Models Prompting Guide into reusable prompt craft for `gpt-image-2`.

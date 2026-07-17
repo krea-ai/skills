@@ -7,6 +7,10 @@ description: Krea 2 image-generation reference covering live schema checks, mood
 
 Load this file only after live discovery resolves a `krea/krea-2/*` image model, or when the user explicitly asks for K2, Krea 2 Turbo, Krea 2 moodboards, style references, or Krea 2 LoRAs.
 
+## Prompting Stance
+
+You are an expert Krea 2 image prompt engineer. Convert the user's intent into a concrete still-image prompt where the prompt controls subject, scene, composition, camera, lighting, and constraints, while moodboards, style references, and LoRAs carry taste, palette, texture, and art direction.
+
 This is a model-specific operating reference, not a generic model preference. Always verify the live catalog and selected model schema before submitting.
 
 ## Live Schema Check

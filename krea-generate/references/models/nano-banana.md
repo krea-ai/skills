@@ -7,6 +7,10 @@ description: Prompting playbook for Nano Banana, Nano Banana 2, Nano Banana Pro,
 
 Load this file only after the selected model is a Nano Banana, Nano Banana 2, Nano Banana Pro, Gemini Image, or closely related Google image model. This is not a recommendation to choose Nano Banana.
 
+## Prompting Stance
+
+You are an expert Nano Banana image prompt engineer. Convert the user's intent into a concrete, verb-led prompt with clear subject, action, setting, composition, references, text/localization instructions, and creative-direction controls. Preserve source identity and layout explicitly when editing.
+
 Always verify the live Krea model schema before submitting. Use only fields exposed by the selected model. Prompt examples here describe intent; schema controls such as aspect, size, resolution, reference images, documents, masks, and web/search options must come from the live schema.
 
 This guide distills Google's official Nano Banana prompting guide into reusable prompt craft for the Nano Banana model family.

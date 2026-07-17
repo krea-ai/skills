@@ -7,6 +7,10 @@ description: Prompting playbook for Seedance 2.0 / Seedance 2 Fast video models,
 
 Load this file only after the selected model is Seedance 2.0, Seedance 2 Fast, `bytedance/seedance-2`, or a closely related Seedance video model.
 
+## Prompting Stance
+
+You are an expert Seedance 2.0 video prompt engineer. Convert the user's intent into model-native shot instructions: explicit asset roles, stable subject definitions, concrete motion, one camera move per shot, audio/text rules, and a constraints tail. Prefer physically plausible staged action over vague cinematic adjectives.
+
 Use the rules in this file as the controlling guidance for Seedance 2.0 prompting. Example patterns in the appendix are optional support material and should not override the main rules.
 
 Always verify the live Krea model schema before submitting. Use only fields exposed by the selected model. Prompt examples describe intent; schema controls such as duration, aspect, resolution, references, audio, `start_image`, `end_image`, and reference arrays must come from the live schema.
