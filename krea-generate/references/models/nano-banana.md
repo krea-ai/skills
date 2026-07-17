@@ -213,9 +213,3 @@ Do not alter <identity/layout/background/lighting/text>.
 | Localization changes layout | Preserve layout, hierarchy, spacing, and typography while translating only text |
 | Aspect is ignored | Inspect schema and pass explicit aspect or width/height when available |
 | Result feels over-stylized | Reduce style adjectives and ask for concrete materials, lighting, and texture |
-
-## Public Source Pointers
-
-- `https://cloud.google.com/blog/products/ai-machine-learning/ultimate-prompting-guide-for-nano-banana`
-- `https://deepmind.google/models/gemini-image/prompt-guide/`
-- `https://ai.google.dev/gemini-api/docs/image-generation`
