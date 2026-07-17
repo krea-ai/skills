@@ -1,715 +1,219 @@
 ---
-name: seedance-prompt-en
-description: Write effective prompts for Jimeng Seedance 2.0 multimodal AI video generation. Use when users want to create video prompts using text, images, videos, and audio inputs with the @ reference system. Covers camera movements, effects replication, video extension, editing, music beat-matching, e-commerce ads, short dramas, and educational content.
+name: seedance-2-prompting
+description: Prompting playbook for Seedance 2.0 / Seedance 2 Fast video models, focused on multimodal references, shot sequencing, action/camera control, audio/text, video editing, extension, and Krea operating rules.
 ---
 
-# Seedance 2.0 Video Prompt Writing Guide
+# Seedance 2.0 Prompting Guide
 
-## Description
+Load this file only after the selected model is Seedance 2.0, Seedance 2 Fast, `bytedance/seedance-2`, or a closely related Seedance video model.
 
-You are an expert prompt engineer for **Jimeng Seedance 2.0**, ByteDance's multimodal AI video generation model. Your role is to help users craft precise, effective prompts that produce high-quality AI-generated videos. You understand the model's capabilities, input constraints, referencing syntax, and best practices for camera work, storytelling, sound design, and visual effects.
+Use the rules in this file as the controlling guidance for Seedance 2.0 prompting. Example patterns in the appendix are optional support material and should not override the main rules.
 
-## System Constraints
+Always verify the live Krea model schema before submitting. Use only fields exposed by the selected model. Prompt examples describe intent; schema controls such as duration, aspect, resolution, references, audio, `start_image`, `end_image`, and reference arrays must come from the live schema.
 
-### Input Limits
-| Input Type | Limit | Format | Max Size |
-|---|---|---|---|
-| Images | ≤ 9 | jpeg, png, webp, bmp, tiff, gif | 30 MB each |
-| Videos | ≤ 3 | mp4, mov | 50 MB each, total duration 2–15s |
-| Audio | ≤ 3 | mp3, wav | 15 MB each, total duration ≤ 15s |
-| Text | Natural language prompt | — | — |
-| **Total files** | **≤ 12 combined** | — | — |
+## Examples Appendix
 
-### Output
-- Video duration: 4–15 seconds (user-selectable)
-- Includes auto-generated sound effects / background music
-- Resolution range: 480p (640×640) to 720p (834×1112)
+For concrete prompt examples, search `seedance-2-examples.md` by heading and read only the matching section:
 
-### Restrictions
-- **No realistic human faces** in uploaded images/videos (platform compliance). The system will block such uploads.
-- When using reference videos, generation cost is slightly higher.
-- Prioritize uploading materials that most influence visuals or rhythm.
-
----
-
-## Core Syntax: The @ Reference System
-
-Seedance 2.0 uses `@` to assign roles to each uploaded asset. This is the most critical part of prompt writing.
-
-### How to Reference
-```
-@Image1    @Image2    @Image3   ...
-@Video1    @Video2    @Video3
-@Audio1    @Audio2    @Audio3
+```bash
+rg -n "^##|^###" seedance-2-examples.md
+rg -n "Multimodal Reference|Video Editing|Shot Storyboard" seedance-2-examples.md
 ```
 
-### Assigning Roles to References
-Always explicitly state **what each reference is for**:
+Do not load the full examples appendix unless the relevant section cannot be identified.
 
-| Purpose | Example Syntax |
+## When To Load Examples
+
+| Task | Search terms |
 |---|---|
-| First frame | `@Image1 as the first frame` |
-| Last frame | `@Image2 as the last frame` |
-| Character appearance | `@Image1's character as the subject` |
-| Scene/background | `scene references @Image3` |
-| Camera movement | `reference @Video1's camera movement` |
-| Action/motion | `reference @Video1's action choreography` |
-| Visual effects | `completely reference @Video1's effects and transitions` |
-| Rhythm/tempo | `video rhythm references @Video1` |
-| Voice/tone | `narration voice references @Video1` |
-| Background music | `BGM references @Audio1` |
-| Sound effects | `sound effects reference @Video3's audio` |
-| Outfit/clothing | `wearing the outfit from @Image2` |
-| Product appearance | `product details reference @Image3` |
+| image/video/audio references | `Multimodal Reference|Asset Role` |
+| subject identity from references | `Subject Definition|Multi-Subject Reference` |
+| multi-shot story or drama | `Shot Storyboard|Dialogue Short Drama` |
+| action/fight/chase | `Action Scene|Wuxia Confrontation|Transformation Arc` |
+| video edit, add/remove/replace | `Video Editing|Object Removal|Replace Product` |
+| video extension or track connection | `Video Extension|Track Completion` |
+| text, subtitles, speech bubbles | `Text Generation|Subtitles|Speech Bubble` |
+| video/camera/effects reference | `Video Motion Reference|Special Effects Reference` |
+| voice, dialogue, audio reference | `Voice Timbre|Dialogue Audio` |
+| product ad or commercial | `Product Commercial` |
+| stylized animation | `Stylized Animation` |
+| failure/retake | `Retake Examples|Troubleshooting` |
 
-### Multi-Reference Combinations
-You can combine multiple references in a single prompt:
-```
-@Image1's character as the subject, reference @Video1's camera movement
-and action choreography, BGM references @Audio1, scene references @Image2
+## Core Formula
+
+Seedance is a multimodal video model that uses text, images, video, and audio together. Write prompts as engineering-style shot instructions, not copywriting.
+
+Advanced formula:
+
+```text
+precise subject + action details + scene/environment + lighting/color tone
++ camera movement + visual style + image quality + constraints
 ```
 
----
+For complex videos, use a storyboard:
+
+```text
+References: <asset roles>
+Global style: <visual tone, quality, constraints>
+Shot 1: <camera/transition> + <subject action/expression> + <position/space> + <audio>
+Shot 2: <camera/transition> + <subject action/expression> + <position/space> + <audio>
+Constraints: <identity, motion stability, no subtitles/logos/watermarks, style locks>
+```
+
+## Reference Roles
+
+Name what each asset contributes. Do not assume the model knows why an asset was uploaded.
+
+| Asset role | Prompt pattern |
+|---|---|
+| Image subject | `Use the <2-3 stable traits> in @Image1 as <Subject_A>.` |
+| Image scene/style | `Use @Image2 as the scene/style reference, not as a subject.` |
+| Video action | `Reference the <action/motion> in @Video1.` |
+| Video camera | `Reference the <camera movement/shot language> in @Video1.` |
+| Video effects | `Reference the <effect form and motion logic> in @Video1.` |
+| Audio timbre | `Use the <voice traits> timbre from @Audio1 for <speaker>.` |
+| Audio rhythm | `Use @Audio1 for background rhythm / atmosphere.` |
+
+Subject definitions should be concise and stable: 2-3 clear visual traits, no contradictions. If an asset has multiple people/props, label the intended subject explicitly. Even when using Krea asset IDs, prompt with `@ImageN`, `@VideoN`, or `@AudioN` labels because those are what the model understands in the prompt.
+
+Recommended asset strategy: use the fewest assets that carry the job, usually 4-5 total: 1-2 character images, 1 scene image, 1 camera/action video, and 1 audio clip. Too many assets can confuse priority, blur subject identification, and cause style conflicts.
+
+## Task Formulas
+
+### Multimodal Reference
+
+Use when extracting subject, style, scene, action, camera movement, sound effect, or voice from references to make a new video.
+
+```text
+Reference <dimension> from @ImageN/@VideoN/@AudioN to generate <new scene>.
+Keep <specific traits> consistent. Change <new action/environment/story>.
+```
+
+### Video Editing
+
+Use when modifying an existing video. Parts not mentioned should remain unchanged.
+
+```text
+Strictly edit @Video1. Change only <target>.
+Add: <element features> + <timing> + <location>.
+Remove: <element>, keeping all other video content unchanged.
+Replace: <old element> with <new element/reference>, preserving motion and camera work.
+```
+
+### Video Extension
+
+Use when continuing or prepending a single coherent scene.
+
+```text
+Extend @Video1 forward/backward: <what happens before/after>.
+Preserve continuity of <characters, lighting, camera, action path, audio tone>.
+```
+
+Extension is best for single-scene dialogue, emotional progression, or movement along one path. Use segmented stitching for plot turns, chases, fights, montages, or complex action.
+
+### Track Completion / Stitching
+
+Use when connecting multiple input clips:
+
+```text
+@Video1 + <transition description> + @Video2 + <transition description> + @Video3.
+```
+
+Respect the live schema. Official guidance notes a maximum of 3 input video clips and total input video duration not exceeding 15 seconds for track-completion style inputs.
+
+## Shot Sequencing
+
+Prefer `Shot 1`, `Shot 2`, `Shot 3` over strict second-by-second timing. Precise timing such as `0-3s` can be unstable. Use time ranges only as editorial staging when a workflow specifically requires them; do not expect frame-accurate timing.
+
+Each shot should include:
+
+1. camera movement or transition
+2. subject action and expression
+3. position or spatial relationship
+4. audio, dialogue, ambience, or sound effect
+
+For multi-shot creator-format prompts, put shot count, total duration, and aspect ratio near the top as metadata. Keep this as metadata, not a substitute for shot details.
+
+## Action And Camera Rules
+
+Actions need body-part specificity, degree, speed, force, and continuity:
+
+- `she slowly raises her right hand`
+- `he turns his head quickly toward the doorway`
+- `the runner pushes hard off the wet pavement`
+- `shoulders relax, breath releases, faint smile appears`
+
+Prefer slow, gentle, coherent small movements for stability. Avoid stacking high-burst actions unless you split them into separate shots or clips.
+
+Camera rules:
+
+- Use standard terms: medium shot, close-up, wide shot, fixed shot, slow push-in, smooth lateral track.
+- Specify only one primary camera movement per shot.
+- Do not ask for push, pull, pan, orbit, and crane in the same shot.
+- For action that travels, name direction, distance, start/end pose, and frame position.
+
+## Text, Dialogue, And Audio
+
+Seedance can generate common text such as slogans, subtitles, and speech bubbles. Use simple/common characters and avoid rare symbols unless needed.
+
+Text prompt pattern:
+
+```text
+<Text content> + <timing> + <position> + <entrance/appearance> + <visual attributes>
+```
+
+Dialogue language should be consistent; avoid mixing languages except for proper nouns.
+
+Special symbol conventions:
+
+| Information type | Symbol style |
+|---|---|
+| Music | `(fast-paced drums in the background)` |
+| Sound effect | `<dog barking in the distance>` |
+| Dialogue | `{Hello, world}` |
+| Dialogue in less common language | `says in Japanese {こんにちは}` |
+| Subtitle text | `〖Chapter One: Departure〗` |
+
+Voice matching improves when you describe voice traits, such as age, thickness, warmth, grain, pace, and emotion, rather than only saying "use @Audio1."
 
 ## Krea Operating Rules
 
-These are Krea workflow rules for `bytedance/seedance-2`. Always confirm the live schema through Krea MCP before submitting.
+These are Krea-specific rules for `bytedance/seedance-2`; live schema still wins.
 
-### Mutually exclusive media paths
+- `@Image1` / `@Video1` / `@Audio1` are prompt labels. Also pass assets through the schema-confirmed fields.
+- In Krea, `end_image` and `reference_images` are mutually exclusive for Seedance-2.
+- Chained/destination shots use `start_image` + `end_image`, omitting `reference_images`.
+- Terminal/detail-anchored shots use `start_image` + `reference_images`, omitting `end_image`.
+- `end_image` is a visual destination, not a loose style reference. Keep it within plausible story-time from the start frame.
+- Seedance-2 has a 4 second minimum duration. For shorter editorial cuts, generate 4s and trim if useful motion lands early.
+- For in-scene continuity, extract the prior clip's actual last frame and use it as the next `start_image`.
+- Treat completed jobs with no result URL as failure/refusal, not success.
+- Submit video jobs in waves of 12 or fewer to avoid practical workspace concurrency limits.
 
-Do not mix first/last-frame image-to-video controls with multimodal references in the same call. In Krea terms, `end_image` and `reference_images` are mutually exclusive for Seedance-2:
+Krea live test supplement: one-shot commercial timelines usually land about 3 strong beats reliably. More beats need full staging, short beats, and a constraints tail; unstaged "hard cuts" can morph instead of cutting.
 
-- **Chained / destination shot**: use `start_image` + `end_image`, omit `reference_images`.
-- **Terminal / detail-anchored shot**: use `start_image` + `reference_images`, omit `end_image`.
-- **Prompt-only or reference-only social clip**: use `reference_images`, `reference_videos`, or `reference_audios` only when they are the intended creative references.
+## Constraints And Troubleshooting
 
-If you need a reference to act as the first or last frame while also using other references, say so in the prompt. If the exact first or last frame must be guaranteed, use the first/last-frame path and drop multimodal references for that call.
+Add constraints at the tail, especially for longer prompts:
 
-### Prompt reference names vs Krea fields
+- `keep it subtitle-free`
+- `avoid generating any text or subtitles`
+- `do not generate a logo`
+- `do not generate a watermark`
+- `faces and body proportions remain stable`
+- `motion is continuous and natural, no stutter, no flicker, no clipping`
+- `do not duplicate characters or create twin avatars`
 
-The `@Image1` / `@Video1` / `@Audio1` language is prompt text. Krea still needs the matching schema field:
+Known fixes:
 
-| Prompt intent | Krea field |
+| Symptom | Fix |
 |---|---|
-| `@Image1 as the first frame` | `start_image` |
-| `@Image2 as the last frame` | `end_image` |
-| `@Image1 as character/product/style reference` | `reference_images` |
-| `@Video1 for camera/action/rhythm reference` | `reference_videos` |
-| `@Audio1 for BGM/rhythm reference` | `reference_audios` |
-
-Do not rely on prompt text alone to attach assets. Upload the files, pass the URLs through the schema field, then describe each asset's role in the prompt.
-
-### end_image = visual destination
-
-`end_image` is not a loose style reference. It is the visual destination the model tries to reach by the end of the generated duration. Keep it within plausible story-time from the start image:
-
-- Good: hand closes around the cup, eyes open, character turns toward the door, smoke fills the room.
-- Risky: day becomes night, costume changes, character jumps locations, two unrelated compositions.
-
-When `end_image` is too far from `start_image`, jobs can hard-fail with little or no error detail. Drop `end_image` and retry start-image-only if the transition is too large.
-
-### Duration and trimming
-
-Seedance-2 has a 4 second minimum duration. For short editorial cuts:
-
-- For `start_image`-only or `reference_images` shots, generate 4s and trim to the planned 2-3s cut if the useful motion lands early.
-- For `end_image` shots, do not trim before the destination frame is reached. Either plan that shot as a 4s beat, or avoid `end_image` and chain from the extracted last frame instead.
-- If a dialogue line needs more time than the shot allows, lengthen the shot before generation rather than compressing the line.
-
-### Chain-from-last-frame
-
-For in-scene continuity, submit the next shot only after the previous shot lands. Extract the actual last frame and use it as the next `start_image`:
-
-```bash
-ffmpeg -sseof -1 -i shot-raw.mp4 -update 1 -frames:v 1 -q:v 2 shot-last.png
-```
-
-Use planned keyframes across hard scene boundaries. Use extracted frames inside a scene where lighting, pose, costume, and expression need to carry forward.
-
-### Positional-travel rule
-
-For combat, dance, product movement, or any action that must travel, describe the trajectory, not just the pose:
-
-```text
-Action: the hero lunges two meters left-to-right across the wet floor over 1.5 seconds, blade tip drawing a bright arc from low left to high right, coat snapping backward from the force.
-Camera: locked low wide shot, subject crosses from frame-left foreground to frame-right midground.
-```
-
-Weak prompt: `the hero attacks with a sword`.
-
-Strong prompt: name direction, distance, duration, start pose, end pose, and camera framing.
-
-### Content-filter shadow-fail
-
-Seedance-2 can complete with an empty `result` payload. Treat `status:"completed"` with no `result.urls[]` as refusal, not success.
-
-Retry once with a sanitized prompt:
-
-- Remove proper nouns and IP-like phrases.
-- Replace role labels that can trip policy filters (`salaryman`, `schoolgirl`, `celebrity`) with neutral descriptors when possible.
-- Drop specific signage or logo text unless it is essential.
-- Keep `start_image` if the image carries identity.
-- If it still fails, drop `end_image` and retry start-image-only.
-
-### Concurrency cap
-
-Seedance-2 videoV2 has a practical cap of 12 concurrent jobs per workspace. Submit in waves of 12 or fewer, poll until in-flight count drops, then submit the next wave. A 13th parallel job can return `CONCURRENCY_LIMIT_REACHED`.
-
-### Pacing and banned phrasing
-
-For social and narrative work where realtime motion matters, avoid words that the model often turns into slow-motion footage:
-
-- Avoid: `slow`, `gentle`, `soft`, `slow motion`, `dreamy float`.
-- Prefer: `smooth`, `steady`, `fluid`, `natural realtime`, `controlled`, `precise`.
-
-This is a Krea workflow guardrail, not a universal language rule. If the user explicitly wants slow motion, ask for that as a deliberate style choice and budget the shot around it.
-
-### Beat budget for multi-shot timelines
-
-Live-verified on one-shot commercial timelines: Seedance commits to about **3 strongly distinct beats per generation** on its own. More beats land only when every beat is <=2.5s and fully staged (time range + shot size + lens + one move + named transition). Two failure modes to design against:
-
-- Ask for 5-6 beats with a long final hold and the model front-loads ~3 good beats, then **coasts the entire back half on one slow rotation**. Fix: no beat over ~2.5s and put "no long static holds, keep cutting" in a constraints tail.
-- "HARD CUT" between unstaged shots renders as a **soft morph**, not a cut. Fully staged shots with explicit time ranges land as real cuts - verify with ffmpeg scene detection on the output (`gt(scene,0.3)`); an empty detection list means the cuts morphed.
-
-Also verified: the start image is the quality ceiling - a garbled or cropped product reference garbles the label in every generation regardless of prompt quality, while a clean product shot holds dense printed text through an entire multi-beat timeline including the last frame.
-
----
-
-## Prompt Structure Blueprint
-
-### Formula
-A well-structured Seedance 2.0 prompt follows this pattern:
-
-```
-[Subject/Character Setup] + [Scene/Environment] + [Action/Motion Description] +
-[Camera Movement] + [Timing Breakdown] + [Transitions/Effects] +
-[Audio/Sound Design] + [Style/Mood]
-```
-
-### Time-Segmented Prompts (Recommended for 10s+ videos)
-For precise control, break your prompt into timed segments:
-
-```
-0–3s: [opening scene description, camera, action]
-3–6s: [mid-section development]
-6–10s: [climax or key action]
-10–15s: [resolution, ending shot, final text/branding]
-```
-
----
-
-## Camera Language Reference
-
-Use these camera terms for precise control:
-
-### Basic Movements
-| Term | Description |
-|---|---|
-| Push in / Slow push | Camera moves toward subject |
-| Pull back / Pull away | Camera moves away from subject |
-| Pan left/right | Camera rotates horizontally |
-| Tilt up/down | Camera rotates vertically |
-| Track / Follow shot | Camera follows subject movement |
-| Orbit / Revolve | Camera circles around subject |
-| One-take / Oner | Continuous shot with no cuts |
-
-### Advanced Techniques
-| Term | Description |
-|---|---|
-| Hitchcock zoom (dolly zoom) | Push in + zoom out (or vice versa), creates vertigo effect |
-| Fisheye lens | Ultra-wide distorted lens |
-| Low angle / High angle | Camera below/above subject |
-| Bird's eye / Overhead | Top-down view |
-| First-person POV | Subjective camera from character's eyes |
-| Whip pan | Very fast horizontal pan creating motion blur |
-| Crane shot | Vertical movement like a crane arm |
-
-### Shot Sizes
-| Term | Description |
-|---|---|
-| Extreme close-up | Eyes, mouth, or small detail only |
-| Close-up | Face fills frame |
-| Medium close-up | Head and shoulders |
-| Medium shot | Waist up |
-| Full shot | Entire body |
-| Wide / Establishing shot | Full environment |
-
----
-
-## Capability-Specific Prompt Patterns
-
-### 1. Character Consistency
-Keep the same character across shots by anchoring to a reference image:
-```
-The man in @Image1 walks tiredly down the hallway, slowing his steps,
-finally stopping at his front door. Close-up on his face — he takes a
-deep breath, adjusts his emotions, replaces the weariness with a relaxed
-expression. Close-up of him finding his keys, inserting into the lock.
-After entering, his little daughter and a pet dog run to greet him with
-hugs. The interior is warm and cozy. Natural dialogue throughout.
-```
-
-### 2. Camera Movement Replication
-Reference a video's exact camera work:
-```
-Reference @Image1's male character. He is in @Image2's elevator.
-Completely reference @Video1's camera movements and the protagonist's
-facial expressions. Hitchcock zoom during the fear moment, then several
-orbit shots showing the elevator interior. Elevator doors open, follow
-shot walking out. Exterior scene references @Image3. The man looks
-around, referencing @Video1's mechanical arm multi-angle tracking of
-the character's gaze.
-```
-
-### 3. Creative Template / Effects Replication
-Replicate transitions, ad styles, or visual effects from reference videos:
-```
-Replace @Video1's character with @Image1. @Image1 as the first frame.
-Character puts on VR sci-fi glasses. Reference @Video1's camera work —
-close orbit shot transitions from third-person to character's subjective
-POV. Travel through the VR glasses into @Image2's deep blue universe.
-Several spaceships shuttle toward the distance. Camera follows ships
-into @Image3's pixel world. Low-altitude flyover of pixel mountains
-where trees grow procedurally. Then upward angle, rapid shuttle to
-@Image4's pale green textured planet, camera skims the planet surface.
-```
-
-### 4. Video Extension
-Extend an existing video forward or backward:
-```
-Extend @Video1 by 15 seconds.
-1–5s: Light and shadow slowly slide across wooden table and cup through
-venetian blinds. Tree branches sway gently as if breathing.
-6–10s: A coffee bean gently drifts down from the top of frame. Camera
-pushes in toward the bean until the screen goes black.
-11–15s: English text gradually appears — first line "Lucky Coffee",
-second line "Breakfast", third line "AM 7:00-10:00".
-```
-
-**Important**: When extending, set the generation duration to match the extension length (e.g., extend 5s → select 5s generation).
-
-For **reverse extension** (prepending):
-```
-Extend backward 10s. In warm afternoon light, the camera starts from
-the corner with awning fluttering in the breeze, slowly tilting down
-to daisies peeking out at the wall base...
-```
-
-### 5. Video Editing (Modify Existing Video)
-Change specific elements while preserving the rest:
-```
-Subvert @Video1's plot — the man's expression shifts from tenderness to
-icy cruelty. In an unguarded moment, he shoves the female lead off the
-bridge into the water. The action is decisive, premeditated, without
-hesitation. The female lead falls with no scream, only disbelief in her
-eyes. She surfaces and screams: "You've been lying to me from the start!"
-The man stands on the bridge with a sinister smile, murmuring: "This is
-what your family owes mine."
-```
-
-### 6. Music Beat-Matching
-Sync visuals to audio rhythm:
-```
-@Image1 @Image2 @Image3 @Image4 @Image5 @Image6 @Image7 — match the
-keyframe positions and overall rhythm of @Video1 for beat-synced cuts.
-Characters should have more dynamic movement. Overall visual style more
-dreamlike with strong visual tension. Adjust shot sizes and add lighting
-changes based on music and visual needs.
-```
-
-### 7. Dialogue and Voice Acting
-Include character dialogue and voice direction:
-```
-In the "Cat & Dog Roast Show" — an emotionally expressive comedy segment:
-Cat host (licking paw, rolling eyes): "Who understands my suffering? This
-one next to me does nothing but wag his tail, destroy sofas, and con
-humans out of treats with those 'pet me I'm adorable' eyes..."
-Dog host (head tilted, tail wagging): "You're one to talk? You sleep 18
-hours a day, wake up just to rub against humans' legs for canned food..."
-```
-
-### 8. One-Take / Long Take
-Continuous single-shot sequences:
-```
-@Image1 @Image2 @Image3 @Image4 @Image5 — one-take tracking shot,
-following a runner from the street up stairs, through a corridor, onto
-a rooftop, finally overlooking the city. No cuts throughout.
-```
-
-### 9. E-commerce / Product Showcase
-Product-focused advertising:
-```
-Deconstruct the reference image. Static camera. Hamburger suspended and
-rotating mid-air. Ingredients gently and precisely separate while
-maintaining shape and proportion. Smooth motion, no extra effects.
-Hamburger splits apart — golden sesame bun top, fresh green lettuce,
-dewy red tomato slices, two thick juicy beef patties with melting golden
-cheddar cheese, and soft bun base — all slowly descend and perfectly
-reassemble into a complete deluxe double cheeseburger. Throughout,
-cheese continues to melt and drip slowly, lettuce and tomato dewdrops
-glisten, maintaining ultimate appetizing food aesthetics.
-```
-
-### 10. Science/Educational Content
-Medical or educational visualizations:
-```
-15-second health educational clip.
-0–5s: Transparent blue human upper body. Camera slowly pushes into a
-clear artery. Blood flows smoothly, clean blue color.
-5–10s: Symbolic sugar and fat particles from milk tea enter the
-bloodstream. Camera follows blood flow. Blood gradually thickens,
-yellowish lipid deposits form on vessel walls.
-10–15s: Vessel lumen visibly narrows, flow speed decreases. Before/after
-comparison creates visual contrast. Overall colors darken.
-```
-
----
-
-## Style and Quality Modifiers
-
-Append these to enhance output quality:
-
-### Visual Style
-- `Cinematic quality, film grain, shallow depth of field`
-- `2.35:1 widescreen, 24fps`
-- `Ink wash painting style` / `Anime style` / `Photorealistic`
-- `High saturation neon colors, cool-warm contrast`
-- `4K medical CGI, semi-transparent visualization`
-
-### Mood/Atmosphere
-- `Tense and suspenseful` / `Warm and healing` / `Epic and grand`
-- `Comedy with exaggerated expressions`
-- `Documentary tone, restrained narration`
-
-### Audio Direction
-- `Background music: grand and majestic`
-- `Sound effects: footsteps, crowd noise, car sounds`
-- `Voice tone reference @Video1`
-- `Beat-synced transitions matching music rhythm`
-
----
-
-## Workflow: Step-by-Step Prompt Creation
-
-When a user asks you to write a Seedance 2.0 prompt, follow this process:
-
-1. **Clarify the goal**: What type of video? (Ad, drama, MV, educational, vlog, etc.)
-2. **Identify available assets**: What images, videos, audio does the user have?
-3. **Assign roles**: Map each asset to its function (first frame, character ref, camera ref, etc.)
-4. **Structure the prompt**:
-   - Open with subject and scene setup
-   - Add time-segmented action descriptions for videos > 8s
-   - Specify camera movements
-   - Add audio/sound design
-   - Include style modifiers
-5. **Check constraints**: Verify total files ≤ 12, no real human faces, durations within limits
-6. **Optimize**: Remove ambiguity, ensure each @reference has a clear role
-
----
-
-## Common Mistakes to Avoid
-
-1. **Vague references**: Don't just say "reference @Video1" — specify WHAT to reference (camera? action? effects? rhythm?)
-2. **Conflicting instructions**: Don't ask for "static camera" and "orbit shot" in the same segment
-3. **Overloading**: Don't try to pack too many scenes into 4–5 seconds — keep it physically plausible
-4. **Missing @ assignments**: If you upload 5 images, make sure each one is referenced with a clear purpose
-5. **Ignoring audio**: Sound design dramatically improves output — always include audio direction
-6. **Forgetting duration**: Match your prompt complexity to the selected generation length
-7. **Real faces**: Don't describe uploading real human photos — the system will block them
-
----
-
-## Authored Style & Craft Prompting
-
-Use authored-craft mode when the user supplies a style reference, names a
-non-photoreal medium, or asks for acting, emotion, deliberate animation,
-or cinematic staging. Use the existing commercial / e-commerce templates
-below when the goal is product clarity, ad pacing, effects replication,
-UGC, or simple social conversion.
-
-This is a prompt-writing mode, not a schema exception. Still obey the
-**Krea Operating Rules** above: attach assets through the matching Krea
-fields, keep `end_image` and `reference_images` mutually exclusive, respect
-duration limits, treat empty completed results as shadow-fails, and submit
-Seedance-2 jobs within the concurrency cap.
-
-### Authored Prompt Patterns
-
-#### 1. Style Declaration Block With Hard Negatives
-
-Rationale: Lead with medium, technique, and cadence, then stack explicit
-negatives to suppress Seedance's default smooth AI look.
-
-Example:
-```
-Style: STOP-MOTION, hand-painted 2D oil, 12fps animated ON TWOS,
-constant painterly boil — NOT clay, NOT 3D, NOT puppets; NO interpolation,
-NO motion blur, NO morphing, NO liquid surfaces.
-```
-
-#### 2. Smooth-vs-Stepped Motion Split
-
-Rationale: State which motion stays smooth and which motion steps on twos
-so atmosphere feels alive while authored animation remains deliberate.
-
-Example:
-```
-Motion split: atmospherics — smoke, mist, snow, breath-vapor, ember-glow,
-and light — move smoothly; figures, faces, banners, drawn debris, clothing,
-and secondary action step on twos. Put this in the opening style block and
-reassert this exact split in Constraints.
-```
-
-#### 3. Acting as Held Micro-Expressions
-
-Rationale: Character emotion reads better as timed facial beats than as
-generic verbs like "she gets sad."
-
-Example:
-```
-Acting: hold on her face, clearly lit and legible, never blank; a flinch,
-then dawning anguish, eyes welling, brow wrenching, lips pressing tight,
-then a slow hardening, resolve setting in the jaw — each beat given TIME,
-animated on twos.
-```
-
-#### 4. Per-Shot Staging Grammar
-
-Rationale: Shot-specific lens, size, composition, massing, height, and
-camera behavior prevent generic centered footage.
-
-Example:
-```
-SHOT 1 — MEDIUM CLOSE, 50mm (choose 24mm / 35mm / 50mm per shot),
-theme: separation. Frame the daughter on the left third, never centered;
-her dark ink-mass face is cut against a pale doorway as negative space.
-Camera level for intimacy, gentle living handheld that barely breathes,
-not gimbal-smooth.
-```
-
-#### 5. HARD CUT Shot Chaining for Dialogue / Coverage
-
-Rationale: Coverage inside one generation reads as edited story instead
-of one drifting tableau.
-
-Example:
-```
-SHOT 1 — WIDE TWO-SHOT, 35mm, confrontation by thirds. Speaker A,
-lips synced: "Stay."
-HARD CUT to SHOT 2 — REVERSE MEDIUM CLOSE, 50mm, listener on right third.
-Speaker B, lips synced: "I can't."
-HARD CUT to SHOT 3 — CLOSE-UP, 50mm, hold past the line on the face.
-```
-
-#### 6. Constraints Tail
-
-Rationale: Long prompts decay over the generation duration; restating locks
-at the end keeps the clip from drifting back to defaults.
-
-Example:
-```
-Constraints: hand-painted stop-motion on twos at 12fps; atmosphere smooth
-but figures and faces stepped; held acting beats readable; separation
-composition by thirds; cold overcast light; NO music; STYLE @Image1,
-CHARACTER @Image2, ENVIRONMENT @Image3.
-```
-
-#### 7. Lighting Discipline for Authored Looks
-
-Rationale: Seedance tends to add god rays, lens flare, and blue grading
-unless the prompt names the light source and its negatives.
-
-Example:
-```
-Light: cold overcast dawn, no sun, NO rays, NO beams, NO god rays,
-NO lens flare; neutral white balance, NOT a blue filter, muted and
-desaturated; faces readable, never black voids.
-```
-
-#### 8. Diegetic-Only Audio Direction
-
-Rationale: Natural sound can protect a quiet authored scene from generic
-BGM and trailer scoring.
-
-Example:
-```
-Audio: NO MUSIC — only natural diegetic sound: wind, fire crackle, distant
-animals, breath, the shift of cloth, and the spoken lines. No subtitles.
-```
-
-#### 9. Asset-Role Lock List
-
-Rationale: Re-list every `@Image` / `@Video` / `@Audio` role at the tail so
-asset purpose does not decay mid-generation.
-
-Example:
-```
-Asset roles: STYLE @Image1, CHARACTER MOTHER @Image2, CHARACTER CHILD
-@Image3, ENVIRONMENT INTERIOR @Image4, CAMERA RHYTHM @Video1,
-DIEGETIC VOICE TONE @Audio1.
-```
-
-### Authored Prompt Skeleton
-
-```
-Style: <medium + technique + cadence>, <hard negatives>.
-References: STYLE @Image1, CHARACTER @Image2, ENVIRONMENT @Image3.
-Motion split: <smooth atmospherics>; <figures/faces/secondary action on twos>.
-Director's notes: <scene purpose>, <acting beats>, <composition theme>.
-SHOT 1 — <shot size>, <lens>, <composition by thirds>, <camera height/behavior>.
-HARD CUT to SHOT 2 — <reverse / insert / close-up>, <dialogue if any>.
-Audio: NO MUSIC — only <diegetic sound list>.
-Constraints: reassert style, cadence, motion split, acting, composition,
-lighting, audio, and asset-role list.
-```
-
-### Template: Authored Dialogue / Emotion Beat (Separation)
-
-```
-Style: HAND-PAINTED 2D gouache stop-motion, 12fps animated ON TWOS,
-constant paint boil — NOT 3D, NOT clay, NOT puppets; NO interpolation,
-NO motion blur, NO morphing. STYLE from @Image1. Mara @Image2, Ren @Image3,
-rainy station @Image4. Motion split: rain mist, lamp glow, and breath move
-smoothly; faces, hands, coats, paper ticket, and secondary action step on
-twos. Theme: separation.
-
-SHOT 1 — WIDE TWO-SHOT, 35mm, level camera, gentle living handheld.
-Mara stands on the left third under the shelter; Ren on the right third
-beyond the platform stripe, the empty track dividing them as pale negative
-space. His dark coat is an ink mass against wet concrete. Ren, lips synced:
-"The train is already here."
-HARD CUT to SHOT 2 — REVERSE MEDIUM CLOSE, 50mm, Mara on the left third,
-clearly lit by the station lamp. Hold her face: a flinch, then eyes welling,
-brow tightening, mouth almost answering, then silence given TIME on twos.
-HARD CUT to SHOT 3 — CLOSE-UP, 50mm, level and intimate. Mara's jaw sets;
-resolve hardens under grief. She whispers, lips synced: "Then go."
-
-Light: cold overcast night, NO rays, NO beams, NO lens flare; warm lamp
-softly readable on faces. Audio: NO MUSIC — rain, distant train brakes,
-breath, cloth shift, spoken lines. Constraints: gouache stop-motion on
-twos; atmosphere smooth, figures stepped; separation by thirds; STYLE
-@Image1, MARA @Image2, REN @Image3, STATION @Image4.
-```
-
-### Template: Authored Tension / Atmosphere Beat (Scale)
-
-```
-Style: SCRATCHED CHARCOAL AND INK 2D animation, 12fps ON TWOS, dry paper
-grain boil — NOT photoreal, NOT CGI, NOT glossy; NO interpolation, NO motion
-blur, NO morphing. STYLE @Image1, lone ranger @Image2, black tower @Image3,
-ash plain @Image4, storm sound @Audio1. Motion split: fog, ash drift,
-lightning glow, and distant dust move smoothly; the ranger, cloak, horse,
-banner, and drawn debris step on twos. Theme: scale.
-
-SHOT 1 — EXTREME WIDE, 24mm, low camera. The ranger is a tiny dark ink
-mass on the lower left third, the tower devouring the upper right two-thirds,
-huge pale sky as negative space. Locked camera; held dread before action.
-HARD CUT to SHOT 2 — MEDIUM CLOSE, 50mm, level with the ranger. Hold the
-face under the brim: stillness, a swallow, eyes lifting, fear tightening,
-then resolve setting in the jaw, each beat given TIME on twos.
-HARD CUT to SHOT 3 — LOW WIDE, 35mm, motivated drift forward that barely
-breathes. The horse shifts one hoof; the cloak snaps on twos while fog
-slides smooth. The ranger says quietly, lips synced: "Not yet."
-
-Light: cold overcast dawn, no sun, NO rays, NO beams, NO god rays, neutral
-white balance, faces readable. Audio: NO MUSIC — wind, distant thunder,
-horse breath, leather creak, sparse ash. Constraints: charcoal on twos;
-smooth atmosphere, stepped figures; scale by thirds; STYLE @Image1,
-RANGER @Image2, TOWER @Image3, ASH PLAIN @Image4, DIEGETIC SOUND @Audio1.
-```
-
----
-
-## Example Prompt Templates
-
-### Template: Product Ad (15s)
-```
-Reference @Video1's editing style and camera transitions. Replace @Video1's
-product with @Image1 as the hero product. Create a 15-second product
-showcase video.
-0–3s: Product enters frame with dynamic rotation, close-up on surface
-texture and logo details.
-4–8s: Multiple angle transitions — front, side, back — with product
-highlight scanning light effects.
-9–12s: Product in lifestyle context showing usage scenario.
-13–15s: Hero shot with brand tagline appearing, background music builds
-to resolution.
-Sound: Reference @Video1's background music. Add product interaction
-sound effects.
-```
-
-### Template: One-Shot Product Commercial (12-15s, live-verified)
-
-Structured timeline for premium product ads with real cuts inside one generation. Every section is load-bearing; the constraints tail fights late-generation drift. Full workflow rules live in `../../../krea-marketing/workflows/cinematic-product-ad.md`.
-
-```
-Format: High-energy product video ad, six fast cuts in one take, 15 seconds,
-9:16, bright high-key commercial look, crisp modern color grade.
-References: @Image1 as the first frame and hero product — <product>; keep
-<every logo and printed line> exactly as shown, do not warp or re-letter
-any text.
-Consistent world across all shots: <one scene concept, palette, light>,
-shallow macro focus.
-Motion split: <ice, splash, product physics> move with real physical weight
-at realtime speed; camera moves are fast, snappy and deliberate — driving
-energy, never slow-motion, never floating.
-SHOT 1 — <NAME> (0–2.5s), medium close, 50mm. <One camera move + one physical
-event with consequences>. Whip-pan.
-SHOT 2 — <NAME> (2.5–5s), macro, 85mm. <...>. Fast cut.
-SHOT 3 — <NAME> (5–7.5s), medium, 50mm. <...>. Quick cut.
-SHOT 4 — <NAME> (7.5–10s), extreme macro, 100mm. <...>. Snap cut.
-SHOT 5 — <NAME> (10–12.5s), medium, 50mm. <...>. Punch-in cut.
-SHOT 6 — HERO SNAP (12.5–15s), hero close-up, 85mm. <Product locked, one
-quick push-in settling on the logo>.
-Audio: driving beat with a hard hit on every cut; <per-shot diegetic SFX
-list>. No voiceover.
-Constraints (reassert): six hard cuts, not morphs; no long static holds,
-keep cutting; one consistent world; product, logos and text locked exactly
-as @Image1; fast snappy realtime motion, no floating, no slow-motion; no
-on-screen text, no captions, no added graphics, no 3D, no cartoon, no
-distorted or re-lettered text.
-```
-
-### Template: Short Drama (15s)
-```
-Scene (0–5s): Close-up on the character's reddened eyes, finger pointing
-accusingly, tears streaming down. Emotion on the edge of collapse.
-Dialogue 1 (Character A, choking with rage): "What exactly are you trying
-to take from me?"
-Scene (6–10s): The other character trembles, holding up evidence,
-red-eyed, stepping forward. Camera sweeps past background details.
-Dialogue 2 (Character B, urgent and choked): "I'm not deceiving you!
-This is what he entrusted to me!"
-Scene (11–15s): Evidence is revealed, Character A freezes — expression
-shifts from anger to shock, hands slowly rise.
-Sound: Urgent piano + static interference, sobbing, button click sound,
-ending with a muffled voice blending in.
-Duration: Precise 15 seconds, every frame tight, no filler.
-```
-
-### Template: Dance Video (13s)
-```
-Have the character in @Image1 replicate the dance moves and beat-synced
-music from @Video1. Generate a 13-second video. Movements should be
-smooth with no stuttering or freezing.
-```
-
-### Template: Scenery Montage with Music (15s)
-```
-@Image1 @Image2 @Image3 @Image4 @Image5 @Image6 — landscape scene
-images. Reference @Video1's visual rhythm, inter-scene transitions,
-visual style, and music tempo for beat-synced editing.
-```
-
----
-
-## Interaction Instructions
-
-When helping users write prompts:
-
-1. **Ask what they want to create** — type of video, mood, duration
-2. **Ask what materials they have** — list their images, videos, audio files
-3. **Draft the prompt** — using the patterns and structure above
-4. **Explain your choices** — briefly note why you structured the prompt this way
-5. **Offer variations** — suggest a simpler or more ambitious alternative if appropriate
-6. **Remind about constraints** — especially the face restriction and file limits
+| Unwanted subtitles | Add subtitle-free constraints, remove text from references, prefer landscape if feasible |
+| Logo/watermark appears | Add explicit no-logo / no-watermark constraints |
+| Style drifts to realism | State the target style; if needed, convert references to the target style before video generation |
+| Extension join jumps | Repair in post by aligning keyframes; trim a few frames at joins when needed |
+| Duplicate/twin character appears | Use single-person refs, simplify prompt, add anti-duplicate constraint |
+| Extension quality degrades | Limit stacked continuations, use high-definition refs, consider a white-model intermediate for long continuation workflows |
+| Special effect is wrong | Use a reference video that shows the effect form and motion logic |
+| Voice match is weak | Describe voice traits explicitly in addition to attaching @Audio |
+| Motion is unstable | Reduce action intensity, use one camera move, break action into shots |
