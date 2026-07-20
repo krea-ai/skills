@@ -1,58 +1,34 @@
 ---
 version: 0.6.1
 name: krea-generate
-description: "Generate and transform media through Krea MCP. Use for generic image generation, generic short video, image editing, enhancement/upscale, LoRA training, text-heavy images, and architectural visualization from 3D/CAD screenshots. For product, campaign, UGC, marketplace, or paid-social creative use krea-marketing."
+description: "Use before prompting Krea for any generation or transformation beyond the simplest one-shot request. Provides generic image, video, edit, enhancement, and reference-handling workflow guidance; route marketing, campaign, UGC, marketplace, and paid-social work to krea-marketing."
 license: MIT
 ---
 
 # Krea Generate - Media Generation
 
-You are Krea: a creative AI agent for Krea.ai. Act like a sharp creative collaborator, not a corporate chatbot. Be concise, tasteful, direct, and useful. Prefer action over analysis; if a request is specific enough to act on, act.
+This skill is a workflow layer for generic Krea generation work. The host agent owns the voice, tool-call status, model shortlist, subagent behavior, progress display, and media presentation. Do not repeat or override those instructions here.
 
-Use Krea through connected Krea MCP tools only. This skill handles Krea generation primitives and non-marketing creative workflows. It is not the marketing router and does not provide the experimental WIP production pipelines.
+Use this skill for generation primitives and non-marketing creative workflows. It is not the marketing router and does not provide the animation production pipeline.
 
-## Bootstrap
+## Tool Discipline
 
-Verify Krea MCP tools are present in the current agent tool list before generation. If the MCP server or a required MCP capability is missing or unauthenticated, stop and ask the user to connect or authenticate Krea MCP. Tell Codex plugin users they can reauthenticate by uninstalling and reinstalling the Krea plugin so the install auth flow runs again. Do not use non-MCP fallbacks.
+Use the Krea tools supplied in the current turn. For generation models, the normal flow is `list_models` -> `get_model_schema` -> submit the job -> `wait_for_job` -> inspect the result -> `present_media`.
 
-Use the tool schemas exposed in the current session. Do not invent MCP tool names or input fields.
-
-Before the first generation in a session, optionally run the passive update check only if this skill directory contains `scripts/update-check.sh`:
-
-```bash
-bash /path/to/krea-generate/scripts/update-check.sh 2>/dev/null || true
-```
-
-Surface `UPGRADE_AVAILABLE` or `JUST_UPGRADED` once; otherwise stay quiet.
+Do not invent tool names, model IDs, input fields, result URLs, job IDs, or local files. If a needed tool or capability is unavailable, say what is missing and stop or offer a simpler available path.
 
 ## Universal Rules
 
-1. Concise output. Send result path/URL plus one useful sentence. No raw IDs or JSON dumps.
-2. Detect the user's language from their first message and reply in it. Technical params stay English.
-3. Vision-first. Read attached images before generating, and read generated stills/frames before approving or reusing them. Use `references/vision-qa.md`.
-4. For cheap images/enhance, pick the best live-discovered schema match. For video, training, batches, 4K, or >100 CU, run `references/cost-preflight.md`.
-5. Progress reporting is mandatory for async polling over 30 seconds. Use `references/progress-reporting.md`.
-6. Always list live models through Krea MCP before choosing a model, then inspect the selected model schema through Krea MCP. Use the Model Policy below when the user does not specify a model; if the preferred model is unavailable or the live schema does not fit, choose the nearest live alternative and say why.
-7. Normalize generation references to Krea-hosted assets before generation. Local files and arbitrary external media URLs must be uploaded to Krea first; already-Krea asset URLs can be passed directly.
-8. Generic generation does not honor persistent model preference files. If the user explicitly names a model for the current request, verify it live and use it only if the schema fits.
-9. Do not pretend bad outputs are fine. Name the mismatch and offer a concrete retry path.
+1. Use live model discovery and schema inspection before the first use of any model in a turn.
+2. Read attached/source images before generating, and inspect generated stills/frames before approving, reusing, or presenting them. Use `references/vision-qa.md`.
+3. For video, LoRA training, batches, 4K, premium models, or >100 CU, run `references/cost-preflight.md`.
+4. Inspect references visually when understanding matters, then pass media through fields confirmed by `get_model_schema`. If a reference cannot be used directly by the selected model, use the available upload/asset tool and pass the resulting asset URL.
+5. Follow the host agent's runtime rules for async job waiting and user-visible progress. Do not define separate status-update rules in this skill.
+6. Do not pretend weak outputs are fine. Name the mismatch and offer a concrete retry path.
 
-## Model Policy
+## Model Selection
 
-Use this policy directly from `SKILL.md` for ordinary image generation and editing. It also records the default video choices used by the routed workflows. Always confirm the preferred model exists in live `list_models`, then inspect its schema before submitting. Treat these as preference order, not permission to skip discovery.
-
-| Request | Preferred model |
-|---|---|
-| Illustration, graphic, expressive art, stylized visual | `krea/krea-2/medium` |
-| Photorealism, high detail, crispness, polish, final still | `krea/krea-2/large` |
-| K2, Krea 2, moodboard, style reference, LoRA/style-driven prompt | Resolve `krea/krea-2/*`, then load `references/models/krea-2.md` |
-| Ordinary image edit, fast edit, or unspecified quality | `google/nano-banana-2` |
-| Higher-quality image edit or stronger preservation needs | `google/nano-banana-pro` |
-| Follow-up variations of a prior image, same subject at new angles, alternate views, or preserving a generated asset | `google/nano-banana-pro`; use `openai/gpt-image-2` for complex variants, high-quality editorial work, or substantial text overlay |
-| Very high-quality edit, slow/pricey acceptable, editorial overlay, or lots of text | `openai/gpt-image-2` |
-| Small text additions in an edit | `google/nano-banana-2` or `google/nano-banana-pro` |
-| generic video | `bytedance/seedance-2-fast` |
-| high-end video request | `bytedance/seedance-2` |
+Do not maintain a separate model catalog in this skill. Use the live `list_models` result, the selected model's schema, and the host agent's current model guidance. Workflow docs may name a narrow default when the task has special requirements, such as archviz preservation, enhancement, typography, or video.
 
 If the user names a model, verify it live and use it only if the schema fits. If a preferred model is missing or cannot accept the required inputs, choose the nearest live alternative and say why.
 
@@ -79,7 +55,7 @@ For implicit reference requests, you MUST:
 
 1. Use an editing/reference-capable model such as `google/nano-banana-pro`, or `openai/gpt-image-2` when the request is complex, premium, or text-heavy.
 2. Scan the conversation and track down the prior (or relevant) output and its associated prompt.
-2. Feed the existing image output into the model as a conditional image input using the exact reference/source/image field from the live schema.
+3. Feed the existing image output into the model as a conditional image input using the exact reference/source/image field from the live schema.
 
 For implicit reference requests, you MUST NOT use prompt-only text-to-image generation such as Krea 2 Large/Medium. Prompt-only regeneration creates unrelated subjects and fails the task. If the prior image is not available as a Krea asset URL, local file, or uploadable source, stop and ask the user for the image instead of generating from text alone.
 
@@ -112,7 +88,7 @@ If the brief is specific enough to act on, proceed without asking.
 
 1. Read every attached/source/reference image with vision before model selection. Treat prior generated outputs in the conversation as source/reference images when the user asks for the same subject, alternate angles/views, variations, or preservation. This is mandatory even when the user does not explicitly say "use the previous image."
 2. If local files or arbitrary external media URLs are used as model inputs, upload/rehost them to Krea first; pass already-Krea asset URLs and prior Krea generation URLs directly. Use schema-confirmed media fields only.
-3. List live image models and apply the image rows in the Model Policy.
+3. List live image models and apply the host model guidance plus any workflow-specific defaults.
 4. Inspect the selected model schema. Confirm exact prompt, reference, aspect, size, quality, resolution, strength, mask, style, moodboard, and LoRA fields before submitting.
 5. If live discovery resolves a `krea/krea-2/*` model, or the user asks for K2, Krea 2, moodboards, style references, or Krea 2 LoRAs, load `references/models/krea-2.md` before generation.
 6. Write the prompt for the selected mode:
@@ -157,17 +133,10 @@ Never submit a video generation job without loading a workflow. For marketing vi
 
 Load only what the active workflow needs:
 
-- `references/mcp-surface.md` - verify MCP availability and discover operation shape from the connected tools.
-- `references/model-catalog.md` - archetypes to resolve through live `list_models`.
-- `references/media-inputs.md` - uploads, local files, image refs, start/end frames.
-- `references/async-polling.md` - job lifecycle semantics.
 - `references/prompt-engineering.md` - prompt handling by modality.
 - `references/vision-qa.md` - output inspection and retake discipline.
-- `references/preferences.md` - model-selection boundary: live discovery plus shipped default policy.
 - `references/cost-preflight.md` - approval before expensive operations.
 - `references/budget-tracking.md` - running CU tracker.
-- `references/progress-reporting.md` - mandatory pings during long async polling.
-- `references/troubleshooting.md` - known MCP/model issues and recovery.
 - `references/models/` - per-model prompting playbooks. Load only after resolving that model; for resolved Krea 2 or any moodboard work - discovery, preset-gallery search, or moodboard-driven generation - load `references/models/krea-2.md`.
 
 ## Related Skills

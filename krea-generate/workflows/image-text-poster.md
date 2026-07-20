@@ -29,9 +29,9 @@ Hard prescription. Follow in order.
 8. If text is wrong, retry with shorter text blocks or split into design-first image plus external typography recommendation.
 9. Deliver with spelling QA notes.
 
-### MCP path
+### Tool path
 
-Use the available Krea MCP tools to list models, inspect the selected model schema, then call image generation with schema-verified prompt, aspect, text, quality, and resolution fields.
+Use the available Krea tools to list models, inspect the selected model schema, then call image generation with schema-verified prompt, aspect, text, quality, and resolution fields.
 
 ## Banned
 

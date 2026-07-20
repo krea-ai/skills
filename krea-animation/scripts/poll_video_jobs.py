@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare Krea MCP job status checks and optionally download completed raw clips."""
+"""Prepare Krea job status checks and optionally download completed raw clips."""
 
 from __future__ import annotations
 
@@ -85,13 +85,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("project", help="Project directory")
     parser.add_argument("--download", action="store_true", help="Download completed raw clips")
-    parser.add_argument("--results-jsonl", help="Optional JSONL file of MCP get_job responses to merge")
+    parser.add_argument("--results-jsonl", help="Optional JSONL file of job responses to merge")
     args = parser.parse_args()
 
     root = project_root(args.project)
     jobs_path = root / "04_generation/jobs/jobs.tsv"
     results_path = root / "04_generation/jobs/results.tsv"
-    checks_path = root / "04_generation/jobs/mcp-status-checks.jsonl"
+    checks_path = root / "04_generation/jobs/status-checks.jsonl"
     raw_dir = root / "05_edit/shots_raw"
     pending = read_jobs(jobs_path)
     if not pending:
@@ -108,7 +108,7 @@ def main() -> None:
 
     results = status_rows(pending, args.results_jsonl, raw_dir, args.download)
     results_path.write_text("\n".join(results) + "\n", encoding="utf-8")
-    print(f"Wrote MCP status checks: {checks_path}")
+    print(f"Wrote status checks: {checks_path}")
     print(f"Wrote {results_path}")
 
 

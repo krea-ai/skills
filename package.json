@@ -2,7 +2,7 @@
   "name": "krea-skills",
   "version": "0.6.1",
   "description": "Krea.ai agent skills for generation, marketing creative, and animation workflows.",
-  "keywords": ["agent-skill", "krea", "image-generation", "video-generation", "ai-art", "lora", "mcp", "archviz", "marketing", "meta-ads", "marketplace", "product-photography", "animation", "anime", "storyboard"],
+  "keywords": ["agent-skill", "krea", "image-generation", "video-generation", "ai-art", "lora", "archviz", "marketing", "meta-ads", "marketplace", "product-photography", "animation", "anime", "storyboard"],
   "author": "Krea AI",
   "license": "MIT",
   "repository": {

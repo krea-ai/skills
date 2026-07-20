@@ -30,9 +30,9 @@ Hard prescription. Follow in order.
 9. Vision-check that the product is recognizable and plausibly placed. This inspection is blocking before variants, upscale, animation, or delivery.
 10. **Deliver** with platform labels and QA notes.
 
-### MCP path
+### Tool path
 
-Use the available Krea MCP tools to upload product, model, and brand references, list models, inspect the selected model schema, then call image generation with schema-verified multi-reference, prompt, and aspect fields.
+Use the available Krea tools to upload product, model, and brand references when needed, list models, inspect the selected model schema, then call image generation with schema-verified multi-reference, prompt, and aspect fields.
 
 ## Banned
 

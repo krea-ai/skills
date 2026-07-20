@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build approved animation video job payloads for Krea MCP submission."""
+"""Build approved animation video job payloads for Krea submission."""
 
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ def payload_for(row: dict[str, str], model: str, quality: str) -> dict[str, obje
     if not selected_model:
         shot_id = row.get("shot_id", "<unknown>")
         raise SystemExit(
-            f"{shot_id}: pass --model explicitly or set the manifest model after verifying the live catalog through Krea MCP."
+            f"{shot_id}: pass --model explicitly or set the manifest model after verifying the live catalog."
         )
     input_payload: dict[str, object] = {
         "prompt": row.get("prompt", ""),
@@ -69,11 +69,11 @@ def main() -> None:
     model = resolve_model(args.model)
     payloads = [payload_for(row, model, args.quality) for row in rows]
 
-    out = jobs_dir / "mcp-video-jobs.jsonl"
+    out = jobs_dir / "video-jobs.jsonl"
     out.write_text("\n".join(json.dumps(payload, sort_keys=True) for payload in payloads) + ("\n" if payloads else ""), encoding="utf-8")
-    print(f"MCP payloads: {out}")
+    print(f"Video job payloads: {out}")
     print(f"Jobs: {len(payloads)}")
-    print("Submit these payloads with the connected Krea MCP generate_video tool, then write returned job ids to jobs.tsv.")
+    print("Submit these payloads with the available Krea video tool, then write returned job ids to jobs.tsv.")
 
 
 if __name__ == "__main__":

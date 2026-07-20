@@ -1,13 +1,13 @@
 ---
 version: 0.6.1
 name: krea-marketing
-description: "Marketing and paid-social creative workflows with Krea MCP. Use for product photoshoots, marketplace cards, DTC static ad templates, campaign key visuals, UGC/social ads, scripted UGC video ads and talking-head/testimonial ads, product URL to creative, ad storyboards, social packs, product launches, Meta Ads performance-informed creative planning, and gated Meta Ads activation. For generic media generation use krea-generate."
+description: "Marketing and paid-social creative workflows with Krea. Use for product photoshoots, marketplace cards, DTC static ad templates, campaign key visuals, UGC/social ads, scripted UGC video ads and talking-head/testimonial ads, product URL to creative, ad storyboards, social packs, product launches, Meta Ads performance-informed creative planning, and gated Meta Ads activation. For generic media generation use krea-generate."
 license: MIT
 ---
 
 # Krea Marketing - Performance-Informed Creative
 
-You are Krea: a creative AI agent for Krea.ai. Act like a sharp creative collaborator, not a corporate chatbot. Be concise, tasteful, direct, and useful.
+This skill is a workflow layer for marketing creative. The host agent owns the voice, tool-call status, model shortlist, subagent behavior, progress display, and media presentation.
 
 Use this skill when the user wants marketing creative, not just media generation. Treat Krea as the creative engine and optional Meta Ads MCP as the performance and activation layer.
 
@@ -39,7 +39,7 @@ For marketing stills, ad layouts, product images, and storyboard sheets, use the
 - a live Nano Banana 2 model when `list_models` exposes one (for example an id/name containing `nano-banana-2` or `nanobanana-2`)
 - a live Nano Banana Pro model (for example `google/nano-banana-pro`, or an id/name containing `nano-banana-pro` or `nanobanana-pro`)
 
-Always verify the candidate with live model discovery and schema inspection through Krea MCP before submitting. Do not invent a model id that is not live.
+Always verify the candidate with live model discovery and schema inspection before submitting. Do not invent a model id that is not live.
 
 Any model in the set is acceptable. Default to `openai/gpt-image-2`; it is the strongest generalist in the set and must come first for text-heavy ad templates, key-visual sheets, posters, typography, exact copy, storyboard sheets, and real-product scene composites where the attached reference must stay authoritative. For product hero, lifestyle, marketplace, and final marketing stills, do not silently pick for the user: name `openai/gpt-image-2` as the default alongside the live Nano Banana option and let the user choose; if they have no preference, use `openai/gpt-image-2`. If the user chooses Nano Banana for a real product reference, use stricter scene-only prompting: Nano Banana can obey prompt words over the reference and invent a generic product when color/material/garment words conflict with the image. If none of the marketing image set is available or the live schema cannot accept the required references/aspect/size, say so and pick the nearest live model only as an explicit fallback.
 
@@ -87,7 +87,7 @@ If the user asks for a non-marketing image/video, use `../krea-generate/SKILL.md
 - `references/video-ad-post.md` - ffmpeg caption/CTA burn, multi-take assembly, music bed mixing, delivery spec; hyperframes escape hatch for designed caption motion.
 - `references/artifact-taxonomy.md` - disambiguate storyboard, key visual, hero shot, mockup, look book.
 
-Shared Krea references live in `../krea-generate/references/`: `mcp-surface.md`, `model-catalog.md`, `media-inputs.md`, `cost-preflight.md`, `progress-reporting.md`, `vision-qa.md`, `troubleshooting.md`, and `models/`.
+Shared Krea references live in `../krea-generate/references/`: `cost-preflight.md`, `budget-tracking.md`, `vision-qa.md`, `prompt-engineering.md`, and `models/`.
 
 ## Delivery Discipline
 

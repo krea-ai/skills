@@ -34,14 +34,13 @@ Hard prescription. Follow in order.
    is a batch (one image per selected format). Restate the brief in one line (brand,
    product, aspect, format count), show `N formats × per-image ≈ total CU` and a rough
    wall-clock, and wait for go.
-2. Verify Krea MCP (`../../krea-generate/references/mcp-surface.md`). Resolve a text-capable
-   model from the marketing image set in `../SKILL.md` **live** from `list_models`.
+2. Resolve a text-capable model from the marketing image set in `../SKILL.md` **live** from `list_models`.
    Prefer `openai/gpt-image-2` when confirmed available (strong in-image text); otherwise
    use live Nano Banana 2 if available, then Nano Banana Pro.
 3. Read the product reference with vision: shape, materials, label, colour, proportions,
    hardware/trim, texture, and any visible logo/pin/embroidery — so you can judge fidelity
    later. Do not substitute PDP copy, alt text, or filenames for visual facts.
-4. **Upload the reference once** through Krea MCP; capture the asset URL and reuse it for every format through the schema-declared image-reference field.
+4. **Upload the reference once** when needed; capture the asset URL and reuse it for every format through the schema-declared image-reference field.
 5. Load `../references/dtc-ad-formats.md`. Select formats (core set, or the user's subset).
    **Drop** any format whose `required` fields the brief can't honestly supply — do not
    invent quotes, press names, ratings, certifications, or pricing.
@@ -52,10 +51,10 @@ Hard prescription. Follow in order.
    not product color/material/garment descriptors.
 7. **Generate one image per format** — submit every selected format's job first (async),
    then poll them all, so the batch's wall-clock is roughly one job's time rather than N×.
-   Model-aware hard requirements (see `../../krea-generate/references/troubleshooting.md`):
-   - `openai/gpt-image-2`: pass explicit width/height in **multiples of 16** when the MCP schema supports them, and run **async**; capture the returned job id, poll with MCP `get_job`, then download `result.urls[0]`.
+   Model-aware hard requirements:
+   - `openai/gpt-image-2`: pass explicit width/height in **multiples of 16** when the schema supports them, submit as a job, wait for completion, then inspect the result URL.
    - Nano Banana 2 / Nano Banana Pro (schema permitting): pass the live schema's
-     aspect or size fields; synchronous calls are fine only when the model completes inside the MCP timeout cap.
+     aspect or size fields; normal waits are fine when the model completes quickly.
    - Retry transient `502`/`524`/empty-job-id with backoff. Skip a format whose file already
      exists (resumable).
 8. **Blocking Vision-QA gate for each output against its structural device** (`../../krea-generate/references/vision-qa.md`).
@@ -70,9 +69,9 @@ Hard prescription. Follow in order.
    `./dtc-ads/comparison-diptych.png`), with a short QA note per image and any unsupported
    copy removed. Offer one-lever variants on request.
 
-### MCP path
+### Tool path
 
-Use the available Krea MCP tools to list models and inspect the selected model
+Use the available Krea tools to list models and inspect the selected model
 schema to confirm the image-input field and size/aspect params, then call image generation
 with the schema-verified prompt, reference, and dimensions; poll slow jobs with the available
 job-status tool.
@@ -91,8 +90,8 @@ job-status tool.
 
 ## Cost & time
 
-- One image per selected format; core set ≈ 16 images. Per-image CU is model-dependent
-  (`model-catalog.md`); submitting all jobs async and then polling keeps the batch's
+- One image per selected format; core set ≈ 16 images. Per-image CU is model-dependent;
+  submitting all jobs async and then waiting keeps the batch's
   wall-clock near a single job's time (minutes), even for the full set.
 - Regenerations from QA add a few images. No video, no upscale here.
 

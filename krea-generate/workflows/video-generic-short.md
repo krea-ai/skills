@@ -26,18 +26,17 @@ Ask once only when missing:
 4. If the prompt includes local/non-Krea references, upload them first.
 5. Prompt visible motion, camera, subject, atmosphere, and timing. Keep it one coherent clip.
 6. Submit one async job.
-7. Poll with `../references/progress-reporting.md`.
+7. Wait for completion with the available job tool. Follow the host agent's runtime rules for user-visible progress while the job runs.
 8. Download or surface the result URL. Sample frames when local media is available and check the visible action matches the brief.
 
-### MCP path
+### Tool path
 
-Use the available Krea MCP tools to upload local references, list models, inspect the selected model schema, then call video generation with schema-verified prompt, reference, duration, aspect, resolution, and audio fields.
+Use the available Krea tools to upload local references when needed, list models, inspect the selected model schema, then call video generation with schema-verified prompt, reference, duration, aspect, resolution, and audio fields.
 
 ## Banned
 
 - Do not use this for UGC/social ads; route to `krea-marketing`.
 - Do not use this for long-form/narrative/character continuity; route to `krea-animation` or ask whether to simplify to one clip.
-- Do not silently poll.
 - Do not promise exact identity or product fidelity from a text-only video prompt.
 
 ## On Failure

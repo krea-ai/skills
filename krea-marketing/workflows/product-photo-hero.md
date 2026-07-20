@@ -30,9 +30,9 @@ Hard prescription. Follow in order.
 9. Read output with vision; verify product identity, proportions, label, and color. This inspection is blocking before variants, upscale, or delivery.
 10. **Deliver** with a one-line summary and QA notes.
 
-### MCP path
+### Tool path
 
-Use the available Krea MCP tools to upload product references, list models, inspect the selected model schema, then call image generation with schema-verified product reference, prompt, aspect, and quality fields.
+Use the available Krea tools to upload product references when needed, list models, inspect the selected model schema, then call image generation with schema-verified product reference, prompt, aspect, and quality fields.
 
 ## Banned
 

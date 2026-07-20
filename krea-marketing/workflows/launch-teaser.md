@@ -39,9 +39,9 @@ Hard prescription. Follow in order - the order IS the deliverable. The quality c
 9. **Vision-QA rendered frames**: extract 4-6 frames with ffmpeg at the beat timestamps; check type legibility, clipping, safe areas, and product fidelity. Fix and re-render once.
 10. **Deliver** with a beat-map summary - what happens at each timestamp. Offer the vertical cut.
 
-### MCP path
+### Tool path
 
-Verify Krea MCP with `../../krea-generate/references/mcp-surface.md`, inspect live model schemas before submitting, and use only fields exposed by the connected MCP tools. The `hyperframes` skill owns all composition details. Skeleton:
+Inspect live model schemas before submitting, and use only fields exposed by the available Krea tools. The `hyperframes` skill owns all composition details. Skeleton:
 
 ```text
 1. Upload the product reference to Krea; use the returned Krea-hosted URL.
@@ -82,5 +82,5 @@ Verify Krea MCP with `../../krea-generate/references/mcp-surface.md`, inspect li
 | Product drifts in stills | Weak reference anchoring or prompt-text override | Remove product descriptors from the prompt, keep the reference image primary, and retake before video |
 | Recolored logo | Product still flattened into a tinted graphic | Reject still and retake with photo-first scene prompt |
 | Animated clip invents an extra part on the product (a charm, a drip, a redesigned detail) | `start_image` alone does not anchor identity for the full clip duration; on longer atmospheric motion (water, reflections, moody lighting) the model drifts small details toward whatever aesthetic the scene suggests, even with the product held at a safe distance | Pass the original product reference in `reference_images` alongside `start_image`, and repeat exact-preservation language in the motion prompt itself ("keep the [product detail] exactly as shown, do not redesign it") — not just in the still-generation prompt. Verified fix: this alone resolved a pendant that had drifted into an invented design. Re-inspect the last frame specifically, not just the first — drift is progressive. |
-| Video job fails with `content_policy` on a still that already passed vision QA | Dark/moody single-source rim light plus an orbiting camera has hit provider-side moderation false positives | Retry once with simplified, brighter wording; if it fails twice, swap to a brighter treatment instead of retrying indefinitely — see `../../krea-generate/references/troubleshooting.md` |
+| Video job fails with `content_policy` on a still that already passed vision QA | Dark/moody single-source rim light plus an orbiting camera has hit provider-side moderation false positives | Retry once with simplified, brighter wording; if it fails twice, swap to a brighter treatment instead of retrying indefinitely |
 | Footage is slow motion | Banned pacing words in prompt | Rewrite with `natural realtime`, `smooth`, `steady` |

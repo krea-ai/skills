@@ -31,13 +31,13 @@ Hard prescription. Follow in order.
 8. Avoid the Seedance aspect trap (issue #11): do not pass a landscape start image for vertical output. If the storyboard sheet is landscape and final output must be 9:16, pad the sheet to portrait before upload or drop the sheet from `reference_images` and rely on face refs plus a detailed timeline prompt.
 9. Compose a timestamped timeline prompt. Use `TIMELINE`, `STYLE`, `CAMERA`, `TRANSITIONS`, and `OUTPUT` sections. Strip the words `slow`, `gentle`, `soft`, and `slow motion`; use `smooth`, `steady`, `fluid`, or `natural realtime` instead.
 10. Submit one video job async. Use `reference_images` for storyboard/refs, not per-panel concatenation.
-11. Poll with `../../krea-generate/references/progress-reporting.md`: ping on status changes and every 25-35 seconds while unchanged.
+11. Wait with the available job tool and follow the host agent's runtime rules for user-visible progress.
 12. Download, normalize to the requested delivery frame with ffmpeg, sample 4-6 frames, and vision-check continuity/identity before delivering.
 13. **Deliver** with a one-line summary and QA notes.
 
-### MCP path
+### Tool path
 
-Use the available Krea MCP tools to list models, inspect schema for both storyboard and video models, upload the approved storyboard, then call video generation with schema-verified prompt, reference, aspect, duration, and resolution fields. Poll with the available job-status tool and progress pings.
+Use the available Krea tools to list models, inspect schema for both storyboard and video models, upload the approved storyboard, then call video generation with schema-verified prompt, reference, aspect, duration, and resolution fields. Wait with the available job tool.
 
 ## Banned
 
@@ -46,9 +46,9 @@ Use the available Krea MCP tools to list models, inspect schema for both storybo
 - Do not pass a landscape start image into Seedance for vertical output - issue #11.
 - Do not put a landscape storyboard first in `reference_images` for 9:16 unless padded to portrait - issue #11.
 - Do not use `slow`, `gentle`, `soft`, or `slow motion` in prompts - Seedance often literalizes them.
-- Do not rely on synchronous video generation waits; they can cap before the job finishes. Submit asynchronously, then poll through the available Krea surface.
+- Do not treat video generation as instant. Submit the job, then wait for completion through the available Krea surface.
 - Do not use non-Krea-hosted refs as generation inputs - issue #7.
-- Do not silently poll - issue #17; progress pings are mandatory.
+- Follow the host agent's runtime rules for visible progress on long jobs.
 - For UGC, do not use commercial-polish words or camera moves banned in `../references/ugc-social-video.md`.
 
 ## Cost & time
@@ -64,9 +64,9 @@ Use the available Krea MCP tools to list models, inspect schema for both storybo
 | Output horizontal despite `aspect_ratio="9:16"` | Landscape `start_image` or `reference_images[0]` bias, issue #11 | Drop start image; pad sheet to portrait; or use face refs plus timeline only |
 | Output is slow motion | Prompt contained banned pacing words, issue #14 | Rewrite with natural realtime, smooth, steady, fluid |
 | Video feels stitched | Per-panel generation was used, issue #15 | Use one storyboard sheet and one timeline-driven video job |
-| Upload URL empty | Upload response missing a URL | Retry upload through MCP; if it still fails, stop and surface the asset error |
-| Job times out | Sync generation wait cap | Submit async, then poll with MCP `get_job` |
+| Upload URL empty | Upload response missing a URL | Retry upload; if it still fails, stop and surface the asset error |
+| Job times out | Long-running generation or queue congestion | Check job status; retry only when the user approves another submission |
 | External URL rejected | Public API asset validation, issue #7 | Download the asset if needed, upload it to Krea, then use the returned Krea URL |
 | Identity drifts | Face refs weak, issue #16 | Use 2-3 varied refs or route to `../../krea-generate/workflows/lora-train-and-use.md` |
-| User lost trust during wait | Silent polling, issue #17 | Follow `../../krea-generate/references/progress-reporting.md` every 25-35 seconds |
+| User lost trust during wait | No visible progress on a long job | Follow the host agent's runtime rules for status updates |
 | UGC looks like a brand commercial | Storyboard lacks creator-native realism cues | Load `../references/ugc-social-video.md`, rebuild the storyboard, and QA adversarially before animating |

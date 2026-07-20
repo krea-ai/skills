@@ -16,14 +16,14 @@ Use when a storyboard and shot list are approved and the user wants to generate 
    python3 krea-animation/scripts/submit_video_jobs.py <project> --dry-run --model "$VERIFIED_MODEL_ID"
    ```
 6. Inspect the dry-run. Confirm every approved shot has a Krea-hosted `start_image` and that Seedance-style shots use only one of `end_image` or `reference_images`.
-7. Submit only approved payloads from `04_generation/jobs/mcp-video-jobs.jsonl` through the connected Krea MCP `generate_video` tool. For the first pass, submit 1-3 representative shots before the whole sequence. Write returned job IDs to `04_generation/jobs/jobs.tsv`.
-8. Prepare MCP job-status checks:
+7. Submit only approved payloads from `04_generation/jobs/video-jobs.jsonl` through the available Krea video tool. For the first pass, submit 1-3 representative shots before the whole sequence. Write returned job IDs to `04_generation/jobs/jobs.tsv`.
+8. Prepare job-status checks:
    ```bash
    python3 krea-animation/scripts/poll_video_jobs.py <project>
    ```
-9. Call Krea MCP `get_job` for each row in `04_generation/jobs/mcp-status-checks.jsonl`, save the responses as JSONL, then merge and optionally download completed clips:
+9. Check status for each row in `04_generation/jobs/status-checks.jsonl`, save the responses as JSONL, then merge and optionally download completed clips:
    ```bash
-   python3 krea-animation/scripts/poll_video_jobs.py <project> --results-jsonl <project>/04_generation/jobs/mcp-results.jsonl --download
+   python3 krea-animation/scripts/poll_video_jobs.py <project> --results-jsonl <project>/04_generation/jobs/results.jsonl --download
    ```
 10. Sample mid/end frames for the test shots. Log concrete retakes before submitting the rest of the sequence.
 11. Continue in batches. Keep in-scene continuity serialized when a shot depends on the previous shot's last frame; batch independent hard-cut shots in parallel within live model limits.
@@ -43,7 +43,7 @@ Use when a storyboard and shot list are approved and the user wants to generate 
 - A scene is not one clip. Use shot grammar from `../references/shot-grammar.md`: most scenes become 3-6 shots of 2-4 seconds each.
 - Use approved keyframes only. If the shot starts from the previous shot's extracted last frame, generate the predecessor first and update the manifest before submitting the dependent shot.
 - For Seedance-style models, `end_image` and `reference_images` are mutually exclusive. Chained shots use `start_image` + `end_image`; terminal or hard-cut shots use `start_image` + `reference_images`.
-- Discover submit fields from Krea MCP and use only fields present in the selected model schema. Do not copy MCP field names from memory.
+- Discover submit fields from the selected model schema and use only fields present there. Do not copy field names from memory.
 - Keep native generated audio only when the shot plan explicitly calls for it. Otherwise default to no generated clip audio and assemble the final audio bed separately.
 - Treat a completed job with no result URL as a failed shot. Retry once with a simpler prompt, then log a retake.
 

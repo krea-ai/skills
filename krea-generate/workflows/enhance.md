@@ -56,9 +56,9 @@ Hard prescription. Follow in order.
    - Creative enhance: lower creativity and strengthen the preserve list.
 9. Deliver with dimensions and one concise QA note. Mention meaningful drift instead of hiding it.
 
-### MCP path
+### Tool path
 
-Use available Krea MCP tools to upload inputs, list models, inspect schemas, run enhancement/upscale jobs, and poll results. Do not skip live verification of model names or input fields.
+Use available Krea tools to upload inputs when needed, list models, inspect schemas, run enhancement/upscale jobs, wait for results, inspect outputs, and present the final media. Do not skip live verification of model names or input fields.
 
 ## Banned
 

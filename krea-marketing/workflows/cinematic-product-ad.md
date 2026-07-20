@@ -53,9 +53,9 @@ Hard prescription. Follow in order. The primary path is ONE structured multi-sho
 8. **Fallback and retake path: stills-first.** When one beat needs a surgical retake, when label text must survive extreme scene-changing motion, or when the one-shot keeps morphing its cuts: generate that shot as a vision-QA'd still (marketing image model, i2i from the product reference, preserve-packaging language), animate it with ONE camera-only move and freeze language ("Nothing else changes: the product stays exactly as shown, completely static except for the camera"), QA the last frame, and cut it into the timeline with ffmpeg. Verified: dense printed packaging stays fully legible through a full orbit under camera-only motion. Cutaway stills (ingredients, textures) may be text-only prompts - no product in frame, same lighting/background family.
 9. **Assemble and deliver.** If post is needed: normalize clips to the delivery frame, trim to the beat sheet, concat with the demuxer, short fade in/out at the ends only. No burned captions, no typography overlays - this format is clean cinematography, and drawtext captions on it read cheap (verified user feedback). Deliver with the beat sheet and the prompt so the user can request per-beat retakes cheaply.
 
-### MCP path
+### Tool path
 
-Use the available Krea MCP tools: upload the gated product shot (`get_upload_url`), verify the video model schema live (`get_model_schema`) before submitting, then one `generate_video` job with the timeline prompt, `start_image`, duration, aspect, and native audio enabled per the live schema. Poll async per `../../krea-generate/references/progress-reporting.md` (congestion can stretch completions; see On failure). Scene detection, frame extraction, contact sheets, trimming, and concat run locally with ffmpeg.
+Use the available Krea tools: upload the gated product shot (`get_upload_url`) when needed, verify the video model schema live (`get_model_schema`) before submitting, then one `generate_video` job with the timeline prompt, `start_image`, duration, aspect, and native audio enabled per the live schema. Wait with the available job tool; congestion can stretch completions. Scene detection, frame extraction, contact sheets, trimming, and concat run locally with ffmpeg.
 
 ## Banned
 
@@ -74,7 +74,7 @@ Use the available Krea MCP tools: upload the gated product shot (`get_upload_url
 
 - Primary path: ONE 12-15s video job (native audio) per seed; best-of-2/3 for hero deliverables. Comparable total credits to the 3-5 separate clips it replaces, with one submit and no assembly unless retaking.
 - Fallback retakes: one still (cheap) + one 4s camera-only clip per retaken beat.
-- Wall-clock: a 15s job typically lands in 3-6 minutes; provider congestion occasionally stretches jobs to 15-25 minutes and they still complete (see troubleshooting).
+- Wall-clock: a 15s job typically lands in 3-6 minutes; provider congestion occasionally stretches jobs to 15-25 minutes and they still complete.
 
 ## On failure
 

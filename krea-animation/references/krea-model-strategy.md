@@ -4,10 +4,10 @@ Use live model discovery. Do not rely on remembered model IDs.
 
 ## Required Checks
 
-1. Verify that connected Krea MCP tools are available.
-2. List live models through Krea MCP.
-3. Inspect the selected model schema through Krea MCP.
-4. Submit using only fields exposed by the live MCP schema.
+1. Verify the needed Krea tools are available in the current session.
+2. List live models.
+3. Inspect the selected model schema.
+4. Submit using only fields exposed by the live schema.
 
 ## Selection Policy
 

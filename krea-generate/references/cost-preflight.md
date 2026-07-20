@@ -23,7 +23,7 @@ For Pro or unlimited-credit users, still show the estimate. They may not care ab
 ## What to estimate
 
 1. Resolve the workflow and model archetypes.
-2. Inspect live schema/model details through Krea MCP.
+2. Inspect live schema/model details through the available Krea tools.
 3. Estimate per-job CU from live model details or the workflow's documented default.
 4. Multiply by the planned number of jobs.
 5. Add expected wall-clock time from the workflow doc.
@@ -31,7 +31,7 @@ For Pro or unlimited-credit users, still show the estimate. They may not care ab
 If model details do not expose CU, say so and use the workflow's documented approximation:
 
 ```text
-I cannot read live CU pricing from MCP for this model, so I am using the workflow estimate: ~1564 CU per 15s video, ~10-15 minutes per run. Proceed?
+I cannot read live CU pricing for this model, so I am using the workflow estimate: ~1564 CU per 15s video, ~10-15 minutes per run. Proceed?
 ```
 
 That fallback is for a single short social-style video job. Do not reuse it for shot-grammar animation workflows; estimate per-shot video cost from the approved shot count and live model details.

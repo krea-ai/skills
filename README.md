@@ -9,7 +9,7 @@ Three packaged Agent Skills for working with [Krea.ai](https://krea.ai). Install
 
 | Skill | When to use |
 |---|---|
-| **`krea-generate`** | Canonical generic-generation router. Image, video primitives, enhancement, edits, LoRA, portraits, text/poster work, and archviz through connected Krea MCP tools. |
+| **`krea-generate`** | Canonical generic-generation router. Image, video primitives, enhancement, edits, LoRA, portraits, text/poster work, and archviz through Krea tools. |
 | **`krea-marketing`** | Marketing creative workflow: product photoshoots, marketplace image sets, DTC static ad templates (one product photo → a library of on-brand ad formats), key visuals, UGC/social ads, campaign packs, and optional Meta Ads performance context. |
 | **`krea-animation`** | Studio animation workflow: anime series, storyboard-to-video, shotlists, asset bibles, model sheets, keyframes, AI video clips, edit assembly, QA, and retakes. |
 
@@ -25,12 +25,6 @@ npx skills add krea-ai/skills
 
 Installs the packaged skills. This is the supported install path across agents that use skill packages.
 
-## Prerequisites
-
-The packaged Codex plugin uses a connected Krea MCP server.
-
-Check your agent's MCP tool list for `mcp__krea__*` tools. If the tools are missing or auth has expired, connect or authenticate the Krea MCP server before using generation skills. For Codex plugin installs, the practical reauth path is to uninstall and reinstall the Krea plugin so the install auth flow runs again.
-
 ## Use
 
 ### Default - `krea-generate` routes generic generation
@@ -41,7 +35,7 @@ Check your agent's MCP tool list for `mcp__krea__*` tools. If the tools are miss
 > Upscale this photo to 4K.
 ```
 
-These stay in `krea-generate` and route to the right model via the live MCP catalog.
+These stay in `krea-generate` and route to the right model via live model discovery.
 
 ```
 > Render this Sketchup screenshot in golden hour, photoreal.
@@ -61,25 +55,13 @@ These route through `krea-generate/workflows/archviz-3d-to-render.md` for struct
 
 These trigger `krea-marketing`. The agent starts with a compact creative intake. For paid-social, performance, campaign-analysis, catalog-performance, or activation work, it asks whether to connect performance context; otherwise it proceeds Krea-only from product refs, brand refs, and goals. Any live launch, budget, status, catalog, or publishing change stays gated and paused/draft by default unless explicitly approved.
 
-## Updates
-
-The `krea-generate` skill includes an opt-in update notification. Once per session, the agent may run `krea-generate/scripts/update-check.sh`, which checks `https://raw.githubusercontent.com/krea-ai/skills/main/VERSION` against the installed `krea-generate/VERSION` file. If a newer version exists, it prints `UPGRADE_AVAILABLE <local> <remote>` to stdout - the agent surfaces this once, then continues. Snoozes 24h -> 48h -> 7d to avoid nagging.
-
-**To upgrade**, re-run your install command (`npx skills add krea-ai/skills`, etc.).
-
-**To disable the check**: `touch ~/.krea-skills/update-check-disabled`.
-
-**To force a fresh check**: `bash krea-generate/scripts/update-check.sh --force`.
-
-Single-source version: `VERSION` file at repo root. CI enforces that `krea-generate/VERSION`, all SKILL.md frontmatters, plugin manifests, and `package.json` agree.
-
 ## Evals
 
 Two layers live under `evals/`.
 
 ### Hero suite — `evals/hero/`
 
-The headline Codex-plugin workflows, driven through real Codex (`codex exec`) against the live Krea MCP and graded **outcome-based** (an expensive op must not fire before the user approves) with an LLM judge for nuance. Details: [`evals/hero/README.md`](evals/hero/README.md).
+The headline workflows are graded **outcome-based** (an expensive op must not fire before the user approves) with an LLM judge for nuance. Details: [`evals/hero/README.md`](evals/hero/README.md).
 
 An **offline gate** runs on every push / PR — no secrets, no spend:
 
@@ -92,8 +74,8 @@ The **live suite** spends real Codex + Krea + judge credits (~1–1.5h), so it i
 
 - a manual **Run workflow** dispatch of the **Hero Evals** action,
 - a pull request labeled **`run-hero-live`**,
-- a push to `main` touching `krea-*/` or `.codex-plugin/.mcp.json`,
-- a `repository_dispatch: mcp-changed` from `krea-ai/app`.
+- a push to `main` touching `krea-*/`,
+- a repository dispatch from `krea-ai/app`.
 
 > ⚠️ **Caveat:** a normal PR push (or a merge into the branch) does **not** run the live suite — you must add the exact `run-hero-live` label, or dispatch it manually:
 >

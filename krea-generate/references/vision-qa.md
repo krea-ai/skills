@@ -1,8 +1,6 @@
-# Vision QA — read every frame before approving it
+# Vision QA - inspect every frame before approving it
 
 Every image and video frame this skill generates **must be read back with vision** before being approved, shown to the user, or used as input to a downstream model. Looking at the URL coming back from the API and trusting the prompt is not a review. Render output drifts from prompt intent constantly; the only way to catch that is to look.
-
-A blind director ships bad cuts.
 
 ## When this applies
 
@@ -14,7 +12,7 @@ A blind director ships bad cuts.
 
 ## How to QA a still
 
-After the file is on disk, open it with the `Read` tool — that's what gives the vision pipeline the pixels. Then write a short critique pass, **one observation per line**, covering:
+After the output URL is available, call `inspect_image` before deciding whether to present or reuse it. Then write a short critique pass, **one observation per line**, covering:
 
 1. **Subject legibility.** Does the named subject read clearly at thumbnail size? If you have to squint to find the protagonist, the next clip will lose them.
 2. **Named action present.** If the prompt called for "a stretched rubber arm with the fist three meters past the body", is the arm actually visible and connected? Or is the fist a disembodied blob? If the model dropped or fudged the named action, the next clip won't be able to animate it.

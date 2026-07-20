@@ -31,9 +31,9 @@ Hard prescription. Follow in order.
 10. If structure drifts, retry once with lower edit/creativity strength if available, stronger preservation language, or the premium backup when appropriate.
 11. **Deliver** with one-line summary and suggested next variant only if useful.
 
-### MCP path
+### Tool path
 
-Use the available Krea MCP tools to upload local references, verify the named default model, inspect its schema, then call image generation with schema-verified reference and aspect/size fields. Do not copy field names from memory.
+Use the available Krea tools to upload local references when needed, verify the named default model, inspect its schema, then call image generation with schema-verified reference and aspect/size fields. Do not copy field names from memory.
 
 ## Banned
 

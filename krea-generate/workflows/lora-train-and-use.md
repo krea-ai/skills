@@ -22,23 +22,22 @@ Hard prescription. Follow in order.
 1. **Cost-preflight** (mandatory - see `../references/cost-preflight.md`). Training can take 15-45 minutes.
 2. Read a sample of training images with vision; reject blurry, tiny, duplicated, or off-style inputs.
 3. If local, upload or ensure each training image has a reachable HTTPS URL.
-4. Validate URL reachability through MCP when that capability is available; otherwise rely on MCP upload/training errors.
-5. Discover or verify the current supported training base models through Krea MCP before submitting. Do not use a remembered training model id.
-6. Submit training through Krea MCP only. If MCP does not expose LoRA training, stop and tell the user this capability is not available in the connected Krea MCP server yet.
-7. Poll every 30-60 seconds using `../references/progress-reporting.md`.
+4. Validate URL reachability when that capability is available; otherwise rely on upload/training errors.
+5. Discover or verify the current supported training base models through live Krea tools before submitting. Do not use a remembered training model id.
+6. Submit training only if the current tools expose LoRA/style training. If not, tell the user this capability is not available in this session.
+7. Wait for completion with the available job tool. Follow the host agent's runtime rules for user-visible progress while the job runs.
 8. On completion, capture `style_id` and trigger word.
-9. Resolve a style-aware image model from live `list_models` and inspect schema for the exact style field, such as `style_id`, MCP `styleId`, or `styles`.
+9. Resolve a style-aware image model from live `list_models` and inspect schema for the exact style field, such as `style_id`, `styleId`, or `styles`.
 10. Generate 3-5 samples using the new style at strength ~0.85.
 11. **Deliver** style ID, trigger word, sample outputs, and QA notes.
 
-### MCP training
+### Training
 
-Verify the current MCP tool schema for LoRA/style training before use. Use only fields exposed by the connected MCP server. Do not use non-MCP endpoints or assume training payload fields from memory.
+Verify the current tool schema for LoRA/style training before use. Use only fields exposed in this session. Do not assume training payload fields from memory.
 
 ### Generate samples after training
 
 ```
-# Use MCP after completion for style-aware image generation:
 list_models()
 get_model_schema(model="<style-aware-image-model>")
 generate_image(model="<style-aware-image-model>", input={prompt, <schema-style-field>, <schema-strength-field>}, sync=true)

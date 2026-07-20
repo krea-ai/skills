@@ -25,7 +25,7 @@ Hard prescription. Follow in order.
 2. Load `../references/marketing-creative-anatomy.md` if the user has not already locked the static format family.
 3. Read product references with vision before prompt writing. If a reference is an external URL/PDP, download usable product images first and use page text only for supported claims/copy.
 4. Upload product and style/layout references to Krea. If a reference is an external URL, download it first and upload the downloaded file.
-5. Resolve a `text-friendly image model` from the marketing image set in `../SKILL.md`; prefer `openai/gpt-image-2` only if live discovery confirms it and schema supports the needed refs, aspect, and quality. If it is unavailable, use live Nano Banana 2 if available, then Nano Banana Pro. Slow models like `openai/gpt-image-2` must be submitted asynchronously and polled through Krea MCP; synchronous waits can hit gateway timeouts and lose the job id.
+5. Resolve a `text-friendly image model` from the marketing image set in `../SKILL.md`; prefer `openai/gpt-image-2` only if live discovery confirms it and schema supports the needed refs, aspect, and quality. If it is unavailable, use live Nano Banana 2 if available, then Nano Banana Pro. Slow models like `openai/gpt-image-2` must be submitted as jobs and waited on with the available job tool.
 6. Generate one sheet first, or 2-3 variants if the brief is loose. Do not generate downstream finals or videos yet.
 7. Prompt with mandatory sections:
    - **LAYOUT**: grid shape, gutters, headline placement, footer placement, and aspect.
@@ -41,9 +41,9 @@ Hard prescription. Follow in order.
    - Same content, different palette or graphic device.
 10. On approval, use the sheet as the brief for `social-video-short.md`, the Image Workflow in `../../krea-generate/SKILL.md`, or `product-photo-lifestyle.md`.
 
-### MCP path
+### Tool path
 
-Use the available Krea MCP tools to upload product/layout references, list models, inspect the selected model schema, then call image generation with schema-verified prompt, reference, text, aspect, and quality fields.
+Use the available Krea tools to upload product/layout references when needed, list models, inspect the selected model schema, then call image generation with schema-verified prompt, reference, text, aspect, and quality fields.
 
 ## Banned
 

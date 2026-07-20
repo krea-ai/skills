@@ -1,13 +1,13 @@
 ---
 version: 0.6.1
 name: krea-animation
-description: "Professional AI animation and anime production workflows with Krea MCP. Use for long-form animation, anime series, storyboard-to-video, shotlist-to-sequence, asset bibles, model sheets, keyframes, animatics, AI video clips, edit assembly, QA, retakes, and studio productivity workflows. For one-off generic image/video generation use krea-generate; for product/campaign/UGC marketing use krea-marketing."
+description: "Professional AI animation and anime production workflows with Krea. Use for long-form animation, anime series, storyboard-to-video, shotlist-to-sequence, asset bibles, model sheets, keyframes, animatics, AI video clips, edit assembly, QA, retakes, and studio productivity workflows. For one-off generic image/video generation use krea-generate; for product/campaign/UGC marketing use krea-marketing."
 license: MIT
 ---
 
 # Krea Animation - Studio Animation Production
 
-You are Krea: a creative AI agent for Krea.ai. Act like a sharp creative collaborator, not a corporate chatbot. Be concise, tasteful, direct, and useful.
+This skill is a workflow layer for animation production. The host agent owns the voice, tool-call status, model shortlist, subagent behavior, progress display, and media presentation.
 
 Use this skill when the user wants to produce animation, not just generate a clip. Treat Krea as the production engine inside an animation pipeline: premise -> bible -> storyboard -> shot list -> assets -> keyframes -> approved video jobs -> edit -> QA -> retakes -> delivery.
 
@@ -18,13 +18,12 @@ This skill is anime-first by default, but applies to any character, narrative, p
 1. Do not jump from idea to long video. First create or inspect the project bible, storyboard, and shot list.
 2. Do not animate unapproved characters, locations, keyframes, or shot prompts.
 3. Run cost preflight before any video, LoRA training, or large batch. Use `../krea-generate/references/cost-preflight.md`.
-4. Verify that connected Krea MCP tools are available. Use `../krea-generate/references/mcp-surface.md`.
-5. Prefer live model discovery over memory. List models and inspect the selected model schema through Krea MCP before relying on any field or capability.
-6. Upload local references before generation. Keep Krea asset URLs in manifests.
-7. Video jobs are async. Poll and report progress using `../krea-generate/references/progress-reporting.md`.
-8. Normalize clips before assembly. Strip random per-clip audio unless the workflow explicitly asks to keep it.
-9. Sample frames and review continuity before delivery. If a shot fails, log a retake instead of pretending it is acceptable.
-10. Do not commit copyrighted references or generated run media into this skills repo.
+4. Prefer live model discovery over memory. List models and inspect the selected model schema before relying on any field or capability.
+5. Upload local references before generation. Keep Krea asset URLs in manifests.
+6. Video jobs are async. Use the available job tools and follow the host agent's runtime rules for visible progress.
+7. Normalize clips before assembly. Strip random per-clip audio unless the workflow explicitly asks to keep it.
+8. Sample frames and review continuity before delivery. If a shot fails, log a retake instead of pretending it is acceptable.
+9. Do not commit copyrighted references or generated run media into this skills repo.
 
 ## Route
 
@@ -51,7 +50,7 @@ python3 krea-animation/scripts/scaffold_project.py \
   --fps 24
 ```
 
-Then validate, generate manifests, and build MCP payloads with the live-verified video model:
+Then validate, generate manifests, and build job payloads with the live-verified video model:
 
 ```bash
 VERIFIED_MODEL_ID="bytedance/seedance-2-fast"
@@ -79,18 +78,13 @@ Load only what the active workflow needs:
 
 Reuse sibling Krea references instead of duplicating them:
 
-- `../krea-generate/references/mcp-surface.md`
-- `../krea-generate/references/media-inputs.md`
-- `../krea-generate/references/async-polling.md`
-- `../krea-generate/references/progress-reporting.md`
-- `../krea-generate/references/troubleshooting.md`
 
 ## Scripts
 
 - `scripts/scaffold_project.py` - create the production folder structure and starter templates.
 - `scripts/validate_project.py` - check required files, shot metadata, approvals, and media references.
 - `scripts/build_manifests.py` - compile asset, keyframe, video job, duration, and concat manifests.
-- `scripts/submit_video_jobs.py` - compile approved video job plans for MCP submission.
+- `scripts/submit_video_jobs.py` - compile approved video job plans for submission.
 - `scripts/poll_video_jobs.py` - poll Krea jobs, write results, and optionally download raw clips.
 - `scripts/assemble_edit.py` - normalize, concatenate, and optionally smooth transitions.
 - `scripts/sample_qa_frames.py` - extract frames for continuity and retake review.

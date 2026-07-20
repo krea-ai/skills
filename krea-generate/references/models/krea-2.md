@@ -21,7 +21,7 @@ Observed live Krea 2 image IDs on 2026-06-11 included:
 - `krea/krea-2/medium`
 - `krea/krea-2/medium-turbo`
 
-Do not assume those IDs still exist. Confirm with live `list_models` through Krea MCP, then inspect the chosen model schema.
+Do not assume those IDs still exist. Confirm with live `list_models`, then inspect the chosen model schema.
 
 The Krea 2 schemas observed on 2026-06-11 exposed these important fields:
 
@@ -81,7 +81,7 @@ This endpoint is authenticated web-app state. In an unauthenticated request on 2
 {"message":"Unauthorized"}
 ```
 
-Treat this as separate from MCP auth unless the current Krea tooling explicitly documents otherwise. The ability to generate with a moodboard ID once the K2 schema exposes `moodboards` does not by itself prove that `www.krea.ai/api/moodboards` is accessible without a logged-in web session.
+Treat this as separate from generation-tool auth unless the current Krea tooling explicitly documents otherwise. The ability to generate with a moodboard ID once the K2 schema exposes `moodboards` does not by itself prove that `www.krea.ai/api/moodboards` is accessible without a logged-in web session.
 
 Safe discovery rules for personal boards:
 
@@ -111,7 +111,7 @@ Strength guidance, unless the user says otherwise:
 - `0.3` to `0.6`: visible moodboard influence for art direction.
 - `0.6` to `1.0`: strong moodboard pull; use carefully because it can override subject and composition.
 
-If the live schema exposes only `image_style_references`, not `moodboards`, use Krea-hosted image URLs from the moodboard as style references: the preset gallery's `previewImages`/`images` URLs qualify, as do authenticated-response assets. Do not pass arbitrary external image URLs; normalize them through `../media-inputs.md`.
+If the live schema exposes only `image_style_references`, not `moodboards`, use Krea-hosted image URLs from the moodboard as style references: the preset gallery's `previewImages`/`images` URLs qualify, as do authenticated-response assets. Do not pass arbitrary external image URLs unless the selected model schema and available tools accept them.
 
 If no moodboard or style-reference field exists in the live schema, do not fake the moodboard in the prompt. Either proceed prompt-only after telling the user the current schema lacks moodboard input, or ask the user to choose a Krea 2 surface that supports moodboards.
 
