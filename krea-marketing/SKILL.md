@@ -78,6 +78,7 @@ If the user asks for a non-marketing image/video, use `../krea-generate/SKILL.md
 - `references/marketing-creative-anatomy.md` - campaign/ad tuple, hook families, static format families.
 - `references/product-photoshoot.md` - Krea-native product photoshoot mode taxonomy adapted from Higgsfield research.
 - `references/dtc-ad-formats.md` - DTC static ad format library: per-format structural device, treatment, and brand-agnostic prompt template, organized by the static format families.
+- `references/video-ad-formats.md` - short-video ad format library (talking, sensory, spectacle, two-state, product-led families): per-format structural device and Seedance-native prompt template; the video analog of the static library, consumed at the storyboard step.
 - `references/marketplace-cards.md` - marketplace image scopes and compliance guardrails.
 - `references/meta-ads-mcp.md` - optional Meta Ads MCP discovery, reads, and write gates.
 - `references/storyboard-variations.md` - A/B/C social storyboard directions.
