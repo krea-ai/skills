@@ -61,6 +61,8 @@ For "surprise me", make the hook or format riskier while keeping storyboard/key-
 
 For concrete spoken-script templates behind these directions - hook-family scripts, pacing law, overlay text hooks, and CTA patterns - see `ugc-scripts.md` (driven by `../workflows/ugc-video-ad.md`).
 
+For a named library of short-video ad formats — talking, sensory/SFX, spectacle, two-state, and product-led families, each with structural device and a Seedance-native prompt template — see `video-ad-formats.md` (consumed at the storyboard step by the video workflows; the video analog of `dtc-ad-formats.md`).
+
 ## Reference-Driven vs Composed
 
 Two valid paths:

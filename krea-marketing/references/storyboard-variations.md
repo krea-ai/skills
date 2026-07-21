@@ -20,6 +20,7 @@ Each loose-brief variant must move at least two axes so the options are meaningf
 | Time of day | morning, midday, golden hour, late night |
 | Format hook | caption sticker open, reaction open, product close-up open, question open, before/after open |
 | Script hook family | deception/high-stakes, identity dream, social problem, genuine shock, which-is-real - see `ugc-scripts.md` (scripted ads only) |
+| Video ad format | pick from the registry in `video-ad-formats.md` (e.g. problem-relief, crush-test, giant-scale, mystery-reveal); choosing 3 formats from different families satisfies the two-axis rule on its own |
 
 ## Delivery Pattern
 

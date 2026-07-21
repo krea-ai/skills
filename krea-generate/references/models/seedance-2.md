@@ -164,6 +164,15 @@ For social and narrative work where realtime motion matters, avoid words that th
 
 This is a Krea workflow guardrail, not a universal language rule. If the user explicitly wants slow motion, ask for that as a deliberate style choice and budget the shot around it.
 
+When slow motion is deliberate, prefer a controlled speed ramp over ambient slow-mo vocabulary. Mark the ramp with explicit temporal transitions inside the action line so only the intended beat slows:
+
+```text
+He swings — RAMPS TO SLOW MOTION as the glass shatters mid-air,
+droplets hanging — SNAPS BACK to realtime as he lands.
+```
+
+This keeps the rest of the shot at realtime speed instead of letting "slow" leak into the whole generation.
+
 ### Beat budget for multi-shot timelines
 
 Live-verified on one-shot commercial timelines: Seedance commits to about **3 strongly distinct beats per generation** on its own. More beats land only when every beat is <=2.5s and fully staged (time range + shot size + lens + one move + named transition). Two failure modes to design against:
@@ -233,6 +242,46 @@ Use these camera terms for precise control:
 | Medium shot | Waist up |
 | Full shot | Entire body |
 | Wide / Establishing shot | Full environment |
+
+### Perspective Lock (POV / One-Take)
+
+For continuous POV or one-take shots, state what the camera is NOT doing. Without explicit negations, Seedance defaults to cutting between angles and breaking the viewpoint:
+
+```text
+One continuous first-person shot — no cuts, no zoom, natural head movement,
+never breaking the viewpoint. Hands visible in frame throughout.
+```
+
+Same device as the style hard-negatives: the lock holds because the default behavior is named and banned.
+
+### Handheld Intensity Vocabulary
+
+"Handheld" alone reads as mild. Name the intensity you want:
+
+| Intensity | Vocabulary |
+|---|---|
+| Intimate / living | `gentle living handheld that barely breathes, not gimbal-smooth` |
+| Documentary | `natural handheld sway, occasional reframe, imperfections accepted` |
+| Chaotic / POV action | `constant micro-jitters, aggressive head swings, abrupt jerks, frequent over-rotation and harsh correction, no smoothness, no stabilization` |
+
+Pair chaotic handheld with a wide lens (`wide-angle with strong distortion, subtle chromatic aberration near frame edges`) for a raw first-person feel.
+
+### Inline VFX Notation
+
+Embed effects inside the action description with a bracketed tag instead of a separate effects sentence, so the effect lands on the right beat:
+
+```text
+She presses her palm to the door [VFX: branching electric circuits pulsing
+with white-blue current spreading from her fingers], the metal groaning.
+```
+
+For grounded results, pair with realism negatives: `practical VFX feel, minimal CGI look, no 3D, no cartoon`.
+
+### Small Craft Tips
+
+- Shortest prompts sometimes outperform long ones for single-idea shots (`Fight of a 3D person with 2D`). Reserve full staging for multi-beat timelines.
+- For comedy, `add a visual gag in the background` lets the model invent the joke without explicit description.
+- Describe physics consequences (dust kicked up, particle behavior, impact response) as precisely as the character action itself.
 
 ---
 
