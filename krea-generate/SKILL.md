@@ -1,5 +1,5 @@
 ---
-version: 0.6.1
+version: 0.7.0
 name: krea-generate
 description: "Generate and transform media through Krea MCP. Use for generic image generation, generic short video, image editing, enhancement/upscale, LoRA training, text-heavy images, and architectural visualization from 3D/CAD screenshots. For product, campaign, UGC, marketplace, or paid-social creative use krea-marketing."
 license: MIT

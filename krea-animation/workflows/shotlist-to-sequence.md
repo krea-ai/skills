@@ -7,8 +7,9 @@ Use when a storyboard and shot list are approved and the user wants to generate 
 ## Recipe
 
 1. Run `scripts/validate_project.py <project>`. Fix blocking errors before spending credits.
-2. Run cost preflight. Estimate approved shot count, seconds per shot, model family, resolution, and retry budget.
-3. Resolve the live model with `../references/krea-model-strategy.md`. If the chosen model is Seedance-style, also load `../../krea-generate/references/models/seedance-2.md`.
+2. Run cost preflight. Estimate approved shot count, seconds per shot, Seedance variant, resolution, and retry budget.
+3. Resolve the live Seedance variant with `../references/seedance-routing.md`, and load `../../krea-generate/references/models/seedance-2.md` for the field-mapping rules. List the Seedance effects library (`../references/seedance-effects.md`) before locking shot looks.
+   Write every shot prompt with the block architecture in `../references/seedance-prompt-architecture.md`; pull camera and reveal moves from `../references/reveal-recipes.md` and `../references/dimensional-motion.md`.
 4. Run `scripts/build_manifests.py <project>` to produce video job and edit manifests.
 5. Dry-run submission:
    ```bash
@@ -42,12 +43,20 @@ Use when a storyboard and shot list are approved and the user wants to generate 
 
 - A scene is not one clip. Use shot grammar from `../references/shot-grammar.md`: most scenes become 3-6 shots of 2-4 seconds each.
 - Use approved keyframes only. If the shot starts from the previous shot's extracted last frame, generate the predecessor first and update the manifest before submitting the dependent shot.
-- For Seedance-style models, `end_image` and `reference_images` are mutually exclusive. Chained shots use `start_image` + `end_image`; terminal or hard-cut shots use `start_image` + `reference_images`.
+- `end_image` and `reference_images` are mutually exclusive on Seedance. Chained shots use `start_image` + `end_image`; terminal or hard-cut shots use `start_image` + `reference_images`.
+- Every shot prompt carries a motion split, a world lock, a light block with negatives, and a constraints tail. Quantify camera moves and state realtime physics — see `../references/seedance-prompt-architecture.md`.
+- Block shots on a fast Seedance variant, judge, then re-run approved prompts on the quality variant for delivery.
 - Discover submit fields from Krea MCP and use only fields present in the selected model schema. Do not copy MCP field names from memory.
 - Keep native generated audio only when the shot plan explicitly calls for it. Otherwise default to no generated clip audio and assemble the final audio bed separately.
 - Treat a completed job with no result URL as a failed shot. Retry once with a simpler prompt, then log a retake.
 
 ## Continuity Checks
+
+Inspect the **last** frame of every clip, not just the middle — drift is progressive. For multi-beat prompts, verify the cuts landed with scene detection instead of eyeballing them:
+
+```bash
+ffmpeg -i shot-raw.mp4 -vf "select='gt(scene,0.3)',showinfo" -f null - 2>&1 | grep showinfo
+```
 
 - character identity and proportions
 - costume, props, colors, and marks

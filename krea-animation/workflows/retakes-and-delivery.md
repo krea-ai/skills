@@ -15,8 +15,8 @@ Use after clips are generated, when the user asks to improve quality, fix contin
    - audio/subtitle issue
    - unavoidable model limitation
 3. Lock passed shots. Only regenerate failed shots.
-4. For each retake, write a short retake note tied to the shot ID and source issue.
-5. Regenerate the smallest necessary unit: keyframe first if the still is wrong, video only if the still is right.
+4. For each retake, write a short retake note tied to the shot ID and source issue. Diagnose prompt failures against the failure table in `../references/seedance-prompt-architecture.md` and change **one** block per retake with the seed pinned.
+5. Regenerate the smallest necessary unit: keyframe first if the still is wrong, video only if the still is right. The start image is the quality ceiling — a soft or badly cropped still cannot be rescued by prompt changes.
 6. Reassemble and sample QA frames again.
 7. Deliver only after `06_qa/delivery-checklist.md` is complete.
 

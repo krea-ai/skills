@@ -1,5 +1,5 @@
 ---
-version: 0.6.1
+version: 0.7.0
 name: krea-marketing
 description: "Marketing and paid-social creative workflows with Krea MCP. Use for product photoshoots, marketplace cards, DTC static ad templates, campaign key visuals, UGC/social ads, scripted UGC video ads and talking-head/testimonial ads, product URL to creative, ad storyboards, social packs, product launches, Meta Ads performance-informed creative planning, and gated Meta Ads activation. For generic media generation use krea-generate."
 license: MIT

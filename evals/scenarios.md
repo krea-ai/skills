@@ -1,6 +1,6 @@
 # Eval Scenarios
 
-46 scenarios. Format per scenario:
+49 scenarios. Format per scenario:
 
 - **Category**: routing | refusal | cost | vision | polling | edge_case
 - **User input**: exact brief
@@ -237,8 +237,8 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 
 - **Category**: routing
 - **User input**: "Animate this approved keyframe of my character blinking and steam moving in the background."
-- **Expected**: agent uses still-to-motion, reads the image first, writes a motion-only prompt, and checks for drift
-- **Pass regex**: `(?i)still.to.motion|image.to.video|read.*image|motion-only|blink|steam|drift|start.?image`
+- **Expected**: agent uses the cinematic-shot workflow, reads the image first, writes a motion-only Seedance prompt with the subject locked, and checks for drift
+- **Pass regex**: `(?i)cinematic.?shot|image.to.video|read.*image|motion.only|motion split|blink|steam|drift|start.?image|seedance`
 - **Fail regex**: `(?i)different scene|full storyboard|skip.*image`
 
 ### 26. Storyboard approval gate
@@ -353,8 +353,8 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 
 - **Category**: routing
 - **User input**: "Animate this approved character still into a 6-second shot with hair moving and camera push-in."
-- **Expected**: agent keeps still-to-motion animation work in krea-animation, reads the still, writes a motion-only prompt, and gates generation
-- **Pass regex**: `(?i)krea-animation|still-to-motion|read.*still|motion-only|hair|camera push|approval|start.?image`
+- **Expected**: agent keeps still-to-motion animation work in krea-animation, reads the still, writes a motion-only Seedance prompt with a quantified camera move, and gates generation
+- **Pass regex**: `(?i)krea-animation|cinematic.?shot|read.*still|motion.only|motion split|hair|camera push|approval|start.?image|seedance`
 - **Fail regex**: `(?i)krea-marketing|ugc|marketplace|product photoshoot`
 
 ---
@@ -424,6 +424,34 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 - **Expected**: agent refuses to build on the cropped video frame (the start image is the quality ceiling — asks for a clean product shot or generates + vision-QAs a clean hero still first), and re-balances the 6 scenes into short beats no longer than ~2.5s each in ONE consistent world with an explicit no-long-holds constraint so the back half does not coast
 - **Pass regex**: `(?i)quality ceiling|clean(er)? (product )?(shot|image|photo|hero still)|garbl|legib|2\.5\s?s|no long (static )?holds|keep cutting|one (consistent )?(world|scene|environment)`
 - **Fail regex**: `(?i)6 (different )?scenes? (it is|sounds good|works)|us(e|ing) the frame.grab as.is|straight to (video|generation) with the frame`
+
+---
+
+## Seedance cinematic animation 0.7.0 (3)
+
+### 47. Premium product reveal routes to Seedance cinematic craft
+
+- **Category**: routing
+- **User input**: "I have one photo of my watch (watch.png). Make it an elegant, dramatic 8-second reveal — dark, slow, expensive looking, like a launch film"
+- **Expected**: agent routes to the animation cinematic-shot workflow on Seedance, reads the still with vision first as the quality ceiling, and writes an architected prompt — one world (dark void), one soft source, a quantified single camera move with realtime physics stated, a named reveal recipe, and a constraints tail; it does not just pass mushy pace adverbs through
+- **Pass regex**: `(?i)seedance|cinematic-shot|start.?image.*(ceiling|quality)|read.*image|motion split|constraints? tail|21:9|void|specular|shadow (retreat|wipe)|push-?in.*(cm|centimet|constant)|realtime|no (speed.?ramp|slow.?motion)`
+- **Fail regex**: `(?i)\bkling\b|krea-marketing|burn(ed)? captions?|on-screen text overlay|just add.*slow motion|storyboard.*30 shots`
+
+### 48. Effects library is listed before hand-writing a look
+
+- **Category**: routing
+- **User input**: "Animate this sneaker render with some cool effect — whatever looks best, you pick"
+- **Expected**: agent lists the available Seedance effects through Krea MCP before proposing a look, presents the matching effects as a choice against a hand-written alternative, and applies a chosen effect by attaching its reference asset plus building the prompt from its template — not by naming an effect it invented
+- **Pass regex**: `(?i)(list|available|library).*effect|effect.*(library|list)|reference_videos?|prompt template|not exposed|hand.?writ`
+- **Fail regex**: `(?i)effect called "[A-Z]|using the .* effect preset\b(?!.*(list|librar))|no effects exist|effects are not a thing`
+
+### 49. Levitation and detail zoom get locks, not adjectives
+
+- **Category**: vision
+- **User input**: "Make the bottle float in the air, rotate a bit, then zoom right into the label so you can read the embossing"
+- **Expected**: agent uses the suspension lock (no bob/sway/drift, contact-shadow behaviour), quantifies the rotation in degrees at a constant rate about its own axis, and writes the macro dive with a named destination field of view plus focus coupled to the camera move; text on the label is locked against re-lettering and the last frame is QA'd
+- **Pass regex**: `(?i)suspend|locked|no (bob|sway|wobble|drift)|contact shadow|\d+\s?degrees|constant rate|own (vertical )?axis|focus (plane )?(travels|coupled)|field of view|never re.?letter|last frame`
+- **Fail regex**: `(?i)gently float(ing)?\b(?!.*(no|never|instead|avoid))|dreamy|just zoom in on the details\b|slow motion.*(look|feel).*(premium|elegant)`
 
 ---
 

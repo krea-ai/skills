@@ -23,7 +23,7 @@ Ingest existing production materials without flattening them into a generic prom
    - unresolved dialogue/audio
    - inconsistent aspect or FPS
 7. If gaps exist, fill only the missing production artifacts. Do not rewrite approved materials.
-8. For approved shots, continue with `shotlist-to-sequence.md`.
+8. For approved shots, continue with `shotlist-to-sequence.md`. Shots animate on Seedance — resolve the live variant with `../references/seedance-routing.md` and write prompts with `../references/seedance-prompt-architecture.md`.
 
 ## Professional Defaults
 

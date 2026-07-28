@@ -36,6 +36,10 @@ Let the user pick or remix one concept, then proceed to the production package.
 12. Stop for user approval before video generation. No storyboard and shot-list approval means no animation.
 13. Continue with `shotlist-to-sequence.md` after approval.
 
+## Seedance Notes
+
+Shots animate on Seedance. Resolve the live variant with `../references/seedance-routing.md`, write shot prompts with `../references/seedance-prompt-architecture.md`, and pull camera and reveal moves from `../references/reveal-recipes.md`. For a single hero shot outside the series pipeline, use `cinematic-shot.md`.
+
 ## Banned
 
 - Do not create a long prompt and submit a single long video.
