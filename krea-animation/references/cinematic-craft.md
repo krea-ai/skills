@@ -301,8 +301,8 @@ frame, kill the blacks and invite god rays.
 
 Restraint applies to sound too.
 
-- Default for a hero reveal: `no music; only room tone and one precise mechanical
-  sound at the moment of the event`.
+- Default for a hero reveal: `no music; room tone with one precise hit on each cut
+  and a single mechanical settle on the landing`.
 - If music is wanted: `one sustained low tone that swells once at the reveal, no
   percussion, no build-drop structure`.
 - Ban the defaults: `no trailer hits, no whoosh transitions, no risers, no
@@ -313,6 +313,9 @@ Restraint applies to sound too.
 Run this against any prompt before submitting. Each item is something Seedance
 will do unasked.
 
+- [ ] One continuous move across the full duration instead of staged beats
+- [ ] The whole subject visible in the opening beat, or shown more than once
+- [ ] Two adjacent beats sharing a shot size, camera height, or key direction
 - [ ] Two or more camera moves inside one beat
 - [ ] Pace adverbs (`slowly`, `gently`, `softly`, `dreamily`) with no quantified move
 - [ ] No motion split, so the subject drifts
@@ -320,7 +323,8 @@ will do unasked.
 - [ ] No light negatives, so god rays and flare arrive
 - [ ] No text lock with a mark in frame
 - [ ] Adjective inflation instead of an added beat
-- [ ] Long final hold in a multi-beat prompt
+- [ ] A long hold on any beat *before* the landing
+- [ ] More duration bought than beats staged, so the tail gets a replay
 - [ ] No constraints tail
 - [ ] Music not specified, so trailer scoring appears
 - [ ] Brand named as an imitation target instead of the look described in craft terms
