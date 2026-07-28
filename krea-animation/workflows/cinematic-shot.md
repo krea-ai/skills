@@ -99,25 +99,36 @@ Block on `seedance-2-fast` first. One take, then judge.
 
 ### 8. Judge the block
 
-Download and inspect. Extract first, middle and last frames:
+Download and build a contact sheet. Sampled frames cannot see a clip that resolves
+early and then replays — the first, middle and last frames of a looped piece all
+look correct. The contact sheet shows the whole timeline at once:
 
 ```bash
-ffmpeg -i shot-raw.mp4 -vf "select='eq(n\,0)'" -vsync 0 -q:v 2 frame-first.png
-ffmpeg -sseof -0.1 -i shot-raw.mp4 -update 1 -frames:v 1 -q:v 2 frame-last.png
+ffmpeg -i shot-raw.mp4 -vf "fps=4,scale=300:-1,tile=6x4" -frames:v 1 contact.png
 ```
 
-Read them with vision and answer honestly:
+Read it with vision and answer honestly:
 
+- **Does the whole subject appear exactly once, on the last beat?** Seeing it in the
+  opening cells, or twice, is a failed generation — the reveal was spent early and
+  the remaining time was padded.
+- **Does the timeline progress, or does it alternate?** A full → detail → full
+  pattern is a loop, not a build.
+- Is any beat a run of near-identical cells? That beat had no event in it.
 - Does the camera move read as deliberate, or does it drift?
 - Is the subject locked, or is it wobbling / rotating / breathing?
 - Is the physics realtime, or did it come back speed-ramped?
 - Did the light stay where you put it, or did flare and god rays arrive?
-- Is the mark intact in the **last** frame? Drift is progressive.
-- Did the cuts cut? For multi-beat prompts, prove it:
+- Is the mark intact in the final cells? Drift is progressive.
+
+Then prove the cuts landed, and count them against the beats you staged:
 
 ```bash
 ffmpeg -i shot-raw.mp4 -vf "select='gt(scene,0.3)',showinfo" -f null - 2>&1 | grep showinfo
 ```
+
+Two cuts a frame apart is a glitch, not a beat. Fewer real cuts than staged beats
+means the beats merged — restage, or cut a beat and shorten the clip to match.
 
 ### 9. Retake one thing
 

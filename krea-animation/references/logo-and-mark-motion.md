@@ -70,21 +70,24 @@ The only permitted per-letter motion is a vertical translation of 4 millimeters 
 a change in its own emitted brightness. No rotation, no scaling, no deformation, no
 redrawing. Camera locked. Realtime physics, no speed ramping.
 
-SHOT 1 — DARK (0–0.8s), medium close, 85mm. The full lockup sits in near darkness,
-letterforms just discernible as unlit shapes. Nothing moves.
-SHOT 2 — IGNITION CHAIN (0.8–3.6s), medium close, 85mm, camera locked. The
-letterforms ignite one at a time from left to right, roughly 0.4 seconds apart.
-Each letter, on its turn: rises 4 millimeters with a quick ease-out and settles
-back, while its own colour ignites from black to full saturation and stays lit.
-Every letter that has already fired remains lit and settled. The rise is a
-translation only — the glyph never stretches, squashes, rotates or changes size.
-SHOT 3 — FULL LOCKUP (3.6–4.6s), medium close, 85mm. HARD CUT. Every letterform now
-fully saturated, the whole mark evenly lit and razor sharp, holding still.
-SHOT 4 — MACRO EDGE (4.6–5.2s), extreme close-up, 100mm macro on the junction of
-two letterforms, camera 20 degrees off axis. HARD CUT. A hard specular crosses the
-edge, showing the material thickness of the mark.
-SHOT 5 — LANDING (5.2–6s), full frame, 85mm. HARD CUT back to the complete lockup,
-centered, fully lit, camera dead still for the final second.
+SHOT 1 — MACRO EDGE (0–1s), extreme close-up, 100mm macro filling the frame with the
+outer corner of one letterform — the mark is unreadable at this scale. Camera locked.
+Hard key raking from top-left at 20 degrees; everything else true black. HARD CUT.
+SHOT 2 — MACRO JUNCTION (1–2s), extreme close-up, 100mm macro where two strokes meet,
+camera 40 degrees around the mark and slightly below. HARD CUT in. Key flips to a
+hard rear source; the near edge silhouettes. Camera locked. HARD CUT.
+SHOT 3 — IGNITION CHAIN (2–4.8s), medium close, 85mm, camera locked. HARD CUT out to
+the complete lockup sitting unlit in near darkness, letterforms discernible only as
+black shapes. The letterforms then ignite one at a time from left to right, roughly
+0.4 seconds apart. Each letter, on its turn: rises 4 millimeters with a quick
+ease-out and settles back, while its own colour ignites from black to full
+saturation and stays lit. Every letter that has already fired remains lit and
+settled. The rise is a translation only — the glyph never stretches, squashes,
+rotates or changes size.
+SHOT 4 — LANDING (4.8–6s), full frame, 85mm. The final letterform fires and the
+camera pulls back 12 centimeters over 0.5 seconds at a constant rate to frame the
+complete lockup, then stops dead. Every letterform fully saturated, evenly lit,
+razor sharp, centered, absolutely still for the remaining time.
 
 Light: per-letter emission plus one soft top key on the landing beats; otherwise
 pure black. NO god rays, NO lens flare, NO bloom spill between letters, NO blue grade.
@@ -92,8 +95,11 @@ Audio: no music; one soft tick per letter ignition, one low resolving tone at 5.
 Constraints (reassert): the mark is pixel-exact to @Image1 — same letterforms,
 weights, colours and spacing, never re-lettered, never warped, never redrawn;
 per-letter motion is vertical translation only, maximum 4 millimeters; no rotation,
-no scale change, no deformation; realtime physics, no speed ramping; no additional
-text, no tagline, no captions, no watermark; no morphing.
+no scale change, no deformation; realtime physics, no speed ramping; the sequence
+plays once, forward, and resolves — after the landing the frame holds still and does
+not replay, loop, or return to any earlier beat or framing; the complete lit lockup
+appears exactly once, at the end; no additional text, no tagline, no captions, no
+watermark; no morphing.
 ```
 
 Run per-glyph vision QA on the last frame of every ignition beat, not just the

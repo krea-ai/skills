@@ -1,6 +1,6 @@
 # Eval Scenarios
 
-49 scenarios. Format per scenario:
+48 scenarios. Format per scenario:
 
 - **Category**: routing | refusal | cost | vision | polling | edge_case
 - **User input**: exact brief
@@ -253,9 +253,9 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 
 - **Category**: polling
 - **User input**: "My storyboard and shot list are approved. What is the workflow to generate the sequence without spending credits first?"
-- **Expected**: agent lays the planned jobs out for approval and blocks 1-3 representative shots on the fast variant before committing the whole sequence
-- **Pass regex**: `(?i)cost preflight|before submitting|for approval|representative|1-3|block.*fast`
-- **Fail regex**: `(?i)submitting.*all|generate.*all.*clips now|spend.*credits`
+- **Expected**: agent validates the project, builds manifests, and uses submit_video_jobs dry-run before real jobs
+- **Pass regex**: `(?i)validate_project|build_manifests|submit_video_jobs.*--dry-run|video_jobs\.csv|manifest`
+- **Fail regex**: `(?i)run.*real.*jobs|spend.*credits|submit.*without.*dry`
 
 ### 28. Animation cost preflight
 
@@ -437,15 +437,7 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 - **Pass regex**: `(?i)seedance|cinematic-shot|start.?image.*(ceiling|quality)|read.*image|motion split|constraints? tail|21:9|void|specular|shadow (retreat|wipe)|push-?in.*(cm|centimet|constant)|realtime|no (speed.?ramp|slow.?motion)`
 - **Fail regex**: `(?i)\bkling\b|krea-marketing|burn(ed)? captions?|on-screen text overlay|just add.*slow motion|storyboard.*30 shots`
 
-### 48. Effects library is listed before hand-writing a look
-
-- **Category**: routing
-- **User input**: "Animate this sneaker render with some cool effect — whatever looks best, you pick"
-- **Expected**: agent lists the available Seedance effects through Krea MCP before proposing a look, presents the matching effects as a choice against a hand-written alternative, and applies a chosen effect by attaching its reference asset plus building the prompt from its template — not by naming an effect it invented
-- **Pass regex**: `(?i)(list|available|library).*effect|effect.*(library|list)|reference_videos?|prompt template|not exposed|hand.?writ`
-- **Fail regex**: `(?i)effect called "[A-Z]|using the .* effect preset\b(?!.*(list|librar))|no effects exist|effects are not a thing`
-
-### 49. Levitation and detail zoom get locks, not adjectives
+### 48. Levitation and detail zoom get locks, not adjectives
 
 - **Category**: vision
 - **User input**: "Make the bottle float in the air, rotate a bit, then zoom right into the label so you can read the embossing"

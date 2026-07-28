@@ -243,6 +243,13 @@ neighbours. Plan to that ceiling rather than discovering it.
 
 - **Four fully staged beats in one 8s generation is the working maximum.** Every
   beat needs its own time range, size, lens, move, event and named transition.
+- **Buy only the seconds you have staged.** Duration is not free headroom — the
+  model fills unstaged time by replaying an earlier beat, usually degraded. Three
+  staged beats is a 4–5s clip, not a 6s one. If the piece resolves at 3s, the
+  request should have been 3s worth of duration, rounded up to the 4s floor.
+- **The payoff appears once.** Reveal the whole subject on the final beat and stop.
+  Cutting back to a detail *after* the reveal and then showing the whole thing again
+  reads as a loop, and it invites the model to actually loop.
 - Keep detail beats at 1–1.8s and the landing at 2–2.5s.
 - Put `no long static holds, keep cutting` in the constraints tail on every
   multi-beat prompt.

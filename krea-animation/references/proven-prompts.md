@@ -100,9 +100,12 @@ object is locked and never rotates, drifts or changes scale; every camera move i
 continuous at a constant rate with realtime physics, no speed ramping, no
 slow-motion, no floating; every printed line and mark exactly as @Image1, never
 re-lettered or warped; four real hard cuts, not morphs or dissolves; no long static
-holds before the landing, keep cutting; the whole object is not shown before SHOT 4;
-NO god rays, NO lens flare, NO bloom, NO blue grade; no on-screen text, no captions,
-no added graphics, no extra objects entering frame, no morphing, no melting.
+holds before the landing, keep cutting; the whole object is not shown before SHOT 4
+and appears exactly once; the sequence plays once, forward, and resolves — after the
+landing the frame holds still and does not replay, loop, or return to any earlier
+beat or framing; NO god rays, NO lens flare, NO bloom, NO blue grade; no on-screen
+text, no captions, no added graphics, no extra objects entering frame, no morphing,
+no melting.
 ```
 
 **Check the output** Scene detection confirms 4 cuts — if it reports fewer, the
@@ -183,7 +186,9 @@ stroke weights, same spacing, same proportions; never re-lettered, never warped,
 never redrawn, never substituted; the mark itself never moves, scales or rotates in
 any beat — only the camera position and the key direction change; four real hard
 cuts, not morphs or dissolves; no long static holds before the lockup, keep cutting;
-realtime physics, no speed ramping; no additional text, no tagline, no URL, no
+the complete mark appears exactly once, on SHOT 4; the sequence plays once, forward,
+and resolves — after the lockup the frame holds still and does not replay, loop, or
+return to any earlier beat or framing; realtime physics, no speed ramping; no additional text, no tagline, no URL, no
 captions, no watermark, no added graphics; no morphing, no letters flying or
 assembling.
 ```

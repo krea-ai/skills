@@ -147,17 +147,8 @@ then assemble.
 Re-run the approved prompt on `bytedance/seedance-2`, best-of-2 for the hero beat.
 Upscale if the live schema exposes it and delivery needs it.
 
-Path B assembly — normalize before concatenating or the cut will hitch. Download the
-approved clips into the sandbox, force one FPS, size, codec and pixel format across
-all of them, then concatenate:
-
-```bash
-for f in shot-*.mp4; do
-  ffmpeg -y -i "$f" -r 24 -s 1920x1080 -c:v libx264 -pix_fmt yuv420p -sar 1:1 -an "norm-$f"
-done
-printf "file '%s'\n" norm-shot-*.mp4 > concat.txt
-ffmpeg -y -f concat -safe 0 -i concat.txt -c copy sequence-raw.mp4
-```
+Path B assembly — normalize before concatenating or the cut will hitch. Commands in
+`references/edit-qa-retakes.md`.
 
 Strip per-clip generated audio unless the plan keeps it, and lay one designed bed
 under the whole piece.

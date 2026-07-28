@@ -2,18 +2,17 @@
 
 ## Normalization
 
-Before concatenation, normalize every clip:
+Never concatenate raw clips straight from the generator — re-encode every clip to one
+resolution, FPS, codec, pixel format and SAR (square pixels) first, dropping audio
+unless it is explicitly retained:
 
-- same resolution
-- same FPS
-- same codec
-- same pixel format
-- square pixels / SAR 1:1
-- no audio unless explicitly retained
-
-Normalize in the sandbox with FFmpeg before concatenating — re-encode every clip to
-one FPS, size, codec, pixel format and SAR, then concat the normalized copies. Never
-concatenate raw clips straight from the generator.
+```bash
+for f in shot-*.mp4; do
+  ffmpeg -y -i "$f" -r 24 -s 1920x1080 -c:v libx264 -pix_fmt yuv420p -sar 1:1 -an "norm-$f"
+done
+printf "file '%s'\n" norm-shot-*.mp4 > concat.txt
+ffmpeg -y -f concat -safe 0 -i concat.txt -c copy sequence.mp4
+```
 
 ## Transition Smoothing
 
