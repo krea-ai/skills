@@ -1,6 +1,6 @@
 # Cinematic Craft — The Language Of Chic, Elegant, Dramatic Motion
 
-This is the taste reference. `seedance-prompt-architecture.md` tells you the shape
+This is the taste reference. `references/seedance-prompt-architecture.md` tells you the shape
 of a prompt; this file tells you what to put in it so the result looks expensive
 instead of merely generated.
 
@@ -15,7 +15,7 @@ lens flare, blue grade, glossy everything, and nothing in particular happening.
 
 ## The Six Laws Of Elegance
 
-Internalize these. Every recipe in `reveal-recipes.md` is an application of them.
+Internalize these. Every recipe in `references/reveal-recipes.md` is an application of them.
 
 ### 1. Subtraction, not addition
 
@@ -48,7 +48,7 @@ travel across six to eight seconds, on a single axis, with no acceleration.
 
 Always quantify it: distance, duration, easing, and the word *continuous*. And
 always pair slow camera with realtime physics — see the pace section of
-`seedance-prompt-architecture.md`, this is the trap.
+`references/seedance-prompt-architecture.md`, this is the trap.
 
 ### 4. Nothing wobbles
 
@@ -281,8 +281,7 @@ will do unasked.
 
 ## Where To Go Next
 
-- Named, ready-to-adapt effect recipes → `reveal-recipes.md`
-- Floating, orbiting, exploded, macro-dive, 3D-render motion → `dimensional-motion.md`
-- Logos and wordmarks → `logo-and-mark-motion.md`
-- The prompt's structural rules → `seedance-prompt-architecture.md`
-- Effects that already exist in the Krea library → `seedance-effects.md`
+- Named, ready-to-adapt effect recipes → `references/reveal-recipes.md`
+- Floating, orbiting, exploded, macro-dive, 3D-render motion → `references/dimensional-motion.md`
+- Logos and wordmarks → `references/logo-and-mark-motion.md`
+- The prompt's structural rules → `references/seedance-prompt-architecture.md`

@@ -337,7 +337,7 @@ god rays, no flare.
 
 For the still-render *production* side — generating the render from a 3D or CAD
 screenshot in the first place — route to
-`../../krea-generate/workflows/archviz-3d-to-render.md`, then animate the approved
+the `krea-generate` skill's `workflows/archviz-3d-to-render.md`, then animate the approved
 still here.
 
 ### CGI Object Motion

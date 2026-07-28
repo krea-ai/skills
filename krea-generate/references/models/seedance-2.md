@@ -75,14 +75,6 @@ and action choreography, BGM references @Audio1, scene references @Image2
 
 These are Krea workflow rules for `bytedance/seedance-2`. Always confirm the live schema through Krea MCP before submitting.
 
-### List the effects library before choosing a look
-
-Krea maintains a curated library of Seedance effects — each one a reference asset plus a tuned prompt template. Discover the effects-listing capability through the connected Krea MCP and list the available effects before hand-writing a look for any Seedance shot; a curated effect that matches the brief beats an approximation of it. Discover the tool live rather than assuming a name, and if the capability is not exposed in the session, say so in one line and continue with hand-written prompts — never invent effect names.
-
-Applying an effect takes three steps: attach its reference asset through the matching schema field (`reference_videos` for a video effect, `reference_images` for an image effect), build the prompt from its template with the user's own assets substituted in, and pass the effect attribution if the live schema exposes an effects field. Attribution alone does not apply the look.
-
-Effect assets consume the same reference budget as your own references, and an attached effect puts the call on the reference path — so no `end_image` in the same submission. Full guidance: `../../../krea-animation/references/seedance-effects.md`.
-
 ### Mutually exclusive media paths
 
 Do not mix first/last-frame image-to-video controls with multimodal references in the same call. In Krea terms, `end_image` and `reference_images` are mutually exclusive for Seedance-2:

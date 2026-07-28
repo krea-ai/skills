@@ -7,7 +7,7 @@ attach, what to check first, and what to look for in the output.
 ## Status Of This File
 
 Each slot currently holds a **scaffold** — a structurally complete prompt built from
-`seedance-prompt-architecture.md` that will produce a competent shot today. Each is
+`references/seedance-prompt-architecture.md` that will produce a competent shot today. Each is
 marked:
 
 ```
@@ -27,9 +27,6 @@ When replacing one:
 
 Angle brackets `<like this>` mark values to substitute per job. Everything outside
 them is load-bearing prompt language — keep it.
-
-Before using any slot: list the Seedance effects library
-(`seedance-effects.md`). A curated effect matching the brief beats these scaffolds.
 
 ---
 
@@ -121,7 +118,7 @@ intro/outro bumper.
 `resolution` 1080p · `generate_audio` off unless the sting wants a tone · deliver on
 `seedance-2` — never ship a mark from a fast variant.
 
-**Read `logo-and-mark-motion.md` before writing this shot.** The text lock goes in
+**Read `references/logo-and-mark-motion.md` before writing this shot.** The text lock goes in
 three places and the vision QA is per-glyph.
 
 <!-- PLACEHOLDER: replace with a verified winning prompt -->
@@ -158,7 +155,7 @@ watermark, no added graphics; no morphing, no letters flying or assembling.
 ```
 
 **Check the output** Per-glyph vision QA on first, middle and last frames — see the
-checklist in `logo-and-mark-motion.md`. Any glyph error is a retake, not a note.
+checklist in `references/logo-and-mark-motion.md`. Any glyph error is a retake, not a note.
 
 **Notes** —
 
@@ -180,7 +177,7 @@ render", "fly through this space", "make this render a video".
 
 **Geometry lock is mandatory.** Without it Seedance redesigns the scene. If the
 render itself still needs producing from a 3D/CAD screenshot, route to
-`../../krea-generate/workflows/archviz-3d-to-render.md` first, then animate the
+the `krea-generate` skill's `workflows/archviz-3d-to-render.md` first, then animate the
 approved still here.
 
 <!-- PLACEHOLDER: replace with a verified winning prompt -->
@@ -247,7 +244,7 @@ motion lands early) · aspect matching the source · `resolution` 1080p ·
 identity come from the image; the prompt supplies motion, timing and locks only.
 
 For non-photoreal work, name the medium and cadence explicitly — see the authored
-style patterns in `../../krea-generate/references/models/seedance-2.md`. 2D animation
+style patterns in the `krea-generate` skill's `references/models/seedance-2.md`. 2D animation
 that inherits Seedance's default smooth interpolation looks like a filtered photo,
 not animation.
 
@@ -358,14 +355,13 @@ invented texture.
 
 ## Using A Slot
 
-1. List the effects library — a curated effect may beat the scaffold.
-2. Pick the slot; read the referenced craft file if the shot is a logo, a
+1. Pick the slot; read the referenced craft file if the shot is a logo, a
    dimensional move, or a detail dive.
-3. Gate the start image with vision. Fix it before generating, not after.
-4. Substitute every `<bracketed>` value. Delete nothing outside the brackets.
-5. Cost preflight, then block on `-fast`.
-6. Judge the block: does the camera move read as deliberate? Is the subject locked?
+2. Gate the start image with vision. Fix it before generating, not after.
+3. Substitute every `<bracketed>` value. Delete nothing outside the brackets.
+4. Cost preflight, then block on `-fast`.
+5. Judge the block: does the camera move read as deliberate? Is the subject locked?
    Did the cuts cut?
-7. Re-run the same prompt on `seedance-2` for delivery, best-of-2 for hero work.
-8. Vision QA first, middle and last frames. Drift is progressive; the last frame is
+6. Re-run the same prompt on `seedance-2` for delivery, best-of-2 for hero work.
+7. Vision QA first, middle and last frames. Drift is progressive; the last frame is
    where failure hides.

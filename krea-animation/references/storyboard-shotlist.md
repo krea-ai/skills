@@ -74,7 +74,7 @@ For AI video models, prefer 4-8 second shots unless the live schema supports lon
 
 ## Prompt Transfer
 
-The shot list should contain enough information for `video_jobs.csv`:
+Each shot list entry should carry enough information to submit its video job:
 
 - start image
 - end image or reference images

@@ -48,6 +48,6 @@ world-shop-interior_plate_warm_v001.png
 | Symptom | Fix |
 |---|---|
 | character changes shot to shot | add turnaround and expression refs to keyframe prompts |
-| costumes drift | promote costume sheet into `assets.csv` |
+| costumes drift | promote the costume sheet into the tracked asset list |
 | backgrounds mutate | use clean background plates and reference images |
 | action breaks design | reduce motion and generate clearer start/end keyframes |

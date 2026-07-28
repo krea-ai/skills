@@ -9,12 +9,12 @@ across several beats.
 
 Not this workflow:
 
-- one shot only → `cinematic-shot.md`
-- a paid social ad, UGC, or performance creative → `../../krea-marketing/` (the ad
+- one shot only → `workflows/cinematic-shot.md`
+- a paid social ad, UGC, or performance creative → the `krea-marketing` skill (the ad
   framing, hooks, captions and formats live there)
-- narrative animation with characters and story → `series-from-scratch.md`
+- narrative animation with characters and story → `workflows/series-from-scratch.md`
 - designed typography, kinetic type, end cards → generate textless footage here,
-  compose type in post per `../../krea-marketing/workflows/launch-teaser.md`
+  compose type in post per the `krea-marketing` skill's `workflows/launch-teaser.md`
 
 ## Two Construction Paths — Choose Deliberately
 
@@ -60,7 +60,7 @@ beat. Fix it before planning beats.
 ### 2. Write the beat sheet before any prompt
 
 A reveal has a shape, not a list. Use the tempo grammar from
-`../references/cinematic-craft.md`:
+`references/cinematic-craft.md`:
 
 | Beat | Length | Job |
 |---|---|---|
@@ -72,27 +72,25 @@ A reveal has a shape, not a list. Use the tempo grammar from
 
 For each beat write: shot size, lens, the one camera move, the one physical event,
 and the named transition out. Pull the moves from
-`../references/reveal-recipes.md` and `../references/dimensional-motion.md`.
+`references/reveal-recipes.md` and `references/dimensional-motion.md`.
 
 **Show the beat sheet to the user before generating.** It is cheap to change here
 and expensive to change after.
 
-### 3. Resolve Seedance and list the effects library
+### 3. Resolve Seedance
 
-Per `../references/seedance-routing.md`: MCP check → list models → get schema →
-fetch the prompting guide → **list the Seedance effects library**
-(`../references/seedance-effects.md`). If a curated effect carries the look the
-brief describes, offer it before writing it by hand.
+Per `references/seedance-routing.md`: MCP check → list models → get schema →
+fetch the prompting guide.
 
 ### 4. Cost preflight
 
-`../../krea-generate/references/cost-preflight.md`. Show: path A or B, beat count,
-seconds, blocking runs on `-fast`, delivery runs on `seedance-2`, best-of-N for the
-hero beat, and the retry budget. Wait for the go-ahead.
+Price the run before submitting. Show: path A or B, beat count, seconds, blocking runs
+on `-fast`, delivery runs on `seedance-2`, best-of-N for the hero beat, and the retry
+budget. Wait for the go-ahead.
 
 ### 5. Write the prompt(s)
 
-All nine blocks, per `../references/seedance-prompt-architecture.md`.
+All nine blocks, per `references/seedance-prompt-architecture.md`.
 
 Path A specifics:
 
@@ -149,10 +147,16 @@ then assemble.
 Re-run the approved prompt on `bytedance/seedance-2`, best-of-2 for the hero beat.
 Upscale if the live schema exposes it and delivery needs it.
 
-Path B assembly — normalize before concatenating or the cut will hitch:
+Path B assembly — normalize before concatenating or the cut will hitch. Download the
+approved clips into the sandbox, force one FPS, size, codec and pixel format across
+all of them, then concatenate:
 
 ```bash
-python3 krea-animation/scripts/assemble_edit.py <project> --fps 24 --size 1920x1080
+for f in shot-*.mp4; do
+  ffmpeg -y -i "$f" -r 24 -s 1920x1080 -c:v libx264 -pix_fmt yuv420p -sar 1:1 -an "norm-$f"
+done
+printf "file '%s'\n" norm-shot-*.mp4 > concat.txt
+ffmpeg -y -f concat -safe 0 -i concat.txt -c copy sequence-raw.mp4
 ```
 
 Strip per-clip generated audio unless the plan keeps it, and lay one designed bed

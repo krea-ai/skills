@@ -11,7 +11,9 @@ Before concatenation, normalize every clip:
 - square pixels / SAR 1:1
 - no audio unless explicitly retained
 
-Use `scripts/assemble_edit.py` for the standard path.
+Normalize in the sandbox with FFmpeg before concatenating — re-encode every clip to
+one FPS, size, codec, pixel format and SAR, then concat the normalized copies. Never
+concatenate raw clips straight from the generator.
 
 ## Transition Smoothing
 
@@ -36,7 +38,7 @@ Compare against the storyboard and asset bible.
 
 ## Retake Log
 
-Use `06_qa/retakes.csv` with:
+Keep a running retake log with these columns:
 
 ```text
 shot_id,priority,issue,fix_type,status,note

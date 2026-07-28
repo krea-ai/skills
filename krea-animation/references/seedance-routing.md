@@ -51,8 +51,8 @@ the expensive variant; do not deliver from the cheap one.
 
 Run these before writing a single prompt block:
 
-1. **MCP availability.** `../../krea-generate/references/mcp-surface.md`. No Krea MCP,
-   no generation — stop and ask the user to connect or reauthenticate.
+1. **MCP availability.** Confirm the Krea MCP tools are exposed this session. No Krea
+   MCP, no generation — stop and ask the user to connect or reauthenticate.
 2. **List models.** Confirm the Seedance variant IDs currently exposed. Model IDs
    quoted anywhere in these docs are illustrative, not authoritative.
 3. **Get the model schema** for the exact variant you picked. Submit only fields
@@ -60,9 +60,6 @@ Run these before writing a single prompt block:
 4. **Get the prompting guide.** Krea MCP serves a model-specific Seedance prompt
    guide — fetch it once per session and let it override anything here that has
    drifted.
-5. **List the Seedance effects library.** See `seedance-effects.md`. Do this
-   *before* proposing a look, because a named effect that already nails the brief
-   beats a hand-written prompt attempting the same thing.
 
 ## Expected Schema Shape
 
@@ -70,7 +67,7 @@ Confirm live; this is what to expect so you can plan the shot before the call:
 
 | Field | Notes |
 |---|---|
-| `prompt` | The shot list. Load-bearing. See `seedance-prompt-architecture.md`. |
+| `prompt` | The shot list. Load-bearing. See `references/seedance-prompt-architecture.md`. |
 | `start_image` | The first frame. **The quality ceiling of the entire clip.** |
 | `end_image` | The visual destination the model drives toward. Mutually exclusive with `reference_images`. |
 | `reference_images` | Up to 9. Identity, style, environment, product detail, effect look. |
@@ -83,12 +80,11 @@ Confirm live; this is what to expect so you can plan the shot before the call:
 | `upscale` | Post-generation upscale path on the standard variant for hero delivery. |
 | `enhance_prompt` | **Leave off for authored cinematic work.** You are writing the prompt precisely; do not let a rewriter flatten it. Acceptable when the user hands over a one-line brief and wants a fast look. |
 | `seed` | Pin it once a take is close, then vary one prompt block at a time. |
-| `effects` | Attribution for effects applied from the Krea effects library. See `seedance-effects.md`. |
 
 ## Mutually Exclusive Media Paths
 
 This is the single most common submission bug. Full rules in
-`../../krea-generate/references/models/seedance-2.md`:
+the `krea-generate` skill's `references/models/seedance-2.md`:
 
 - **Chained / destination shot** → `start_image` + `end_image`, no `reference_images`.
 - **Terminal / detail-anchored shot** → `start_image` + `reference_images`, no `end_image`.
@@ -114,8 +110,8 @@ animation, 2D animation, macro detail, character beats — routes to Seedance.
 
 ## Cost Discipline
 
-Run `../../krea-generate/references/cost-preflight.md` before any video, batch, or
-final-quality run. For cinematic work, show the user:
+Run a cost preflight before any video, batch, or final-quality run. For cinematic
+work, show the user:
 
 - shot count and seconds per shot (remember the 4s floor)
 - variant per shot: `-fast` for blocking vs `seedance-2` for the deliverable

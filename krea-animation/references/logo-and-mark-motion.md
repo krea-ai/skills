@@ -75,7 +75,7 @@ tagline, no captions, no watermark, no added graphics; no morphing.
 
 ### 2. Shadow Retreat Off The Mark
 
-Same structure, shadow instead of highlight. See recipe 1 in `reveal-recipes.md`.
+Same structure, shadow instead of highlight. See recipe 1 in `references/reveal-recipes.md`.
 Add: `the shadow edge is hard and travels at a constant rate; the letterforms
 themselves never deform as it passes`.
 
@@ -135,7 +135,7 @@ never moves at all.
 If the deliverable needs real typographic layout — kinetic type, an end card,
 a tagline with exact copy, a lockup with legal lines — **do not ask Seedance for
 it.** Generate the textless cinematic footage here and compose type deterministically
-in post. `../../krea-marketing/workflows/launch-teaser.md` covers that handoff.
+in post. the `krea-marketing` skill's `workflows/launch-teaser.md` covers that handoff.
 
 The division of labour: Seedance owns light, camera, material and motion. A layout
 tool owns letterforms it did not invent.

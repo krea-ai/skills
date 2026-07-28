@@ -12,9 +12,9 @@ and covers most requests that arrive:
 - a 2D or anime frame to put in motion
 - prompt-only motion with no source image
 
-For a multi-beat reveal film assembled from several shots, use `reveal-sequence.md`.
+For a multi-beat reveal film assembled from several shots, use `workflows/reveal-sequence.md`.
 For narrative animation with characters, story and continuity across scenes, use
-`series-from-scratch.md` or `shotlist-to-sequence.md`.
+`workflows/series-from-scratch.md` or `workflows/shotlist-to-sequence.md`.
 
 ## Recipe
 
@@ -40,41 +40,39 @@ At most three questions, and only for things you cannot infer:
 - deliverable aspect and duration
 - does it need audio, and is text going in later?
 
-Do not interrogate. Infer defaults from `../references/cinematic-craft.md` — 21:9,
+Do not interrogate. Infer defaults from `references/cinematic-craft.md` — 21:9,
 8 seconds, low-key void, one glacial move, no on-screen text — and state what you
 assumed.
 
-### 3. Resolve Seedance and list the effects library
+### 3. Resolve Seedance
 
-Per `../references/seedance-routing.md`:
+Per `references/seedance-routing.md`:
 
 1. Confirm Krea MCP availability.
 2. List models; confirm the live Seedance variant IDs.
 3. Get the schema for the variant you'll use.
 4. Fetch the Krea prompting guide for the model.
-5. **List the Seedance effects library** — `../references/seedance-effects.md`. If an
-   effect matches the brief, offer it before hand-writing the look.
 
 ### 4. Choose the move
 
 Pick from the recipe tables rather than inventing:
 
-- reveals, shadow, focus, transitions → `../references/reveal-recipes.md`
-- levitation, orbit, explode, macro dive, render camera → `../references/dimensional-motion.md`
-- logos and wordmarks → `../references/logo-and-mark-motion.md`
-- taste, light, lens, materials, tempo → `../references/cinematic-craft.md`
+- reveals, shadow, focus, transitions → `references/reveal-recipes.md`
+- levitation, orbit, explode, macro dive, render camera → `references/dimensional-motion.md`
+- logos and wordmarks → `references/logo-and-mark-motion.md`
+- taste, light, lens, materials, tempo → `references/cinematic-craft.md`
 
 **One camera move.** If two moves are tempting, that is two beats.
 
 ### 5. Cost preflight
 
-`../../krea-generate/references/cost-preflight.md`. Show variant, duration, seed count,
-and the retry budget. Get the go-ahead before spending.
+Price the run before submitting. Show variant, duration, seed count, and the retry
+budget. Get the go-ahead before spending.
 
 ### 6. Write the prompt
 
-Build all nine blocks from `../references/seedance-prompt-architecture.md`. Or start
-from a slot in `../references/proven-prompts.md` and substitute.
+Build all nine blocks from `references/seedance-prompt-architecture.md`. Or start
+from a slot in `references/proven-prompts.md` and substitute.
 
 Non-negotiable before submitting:
 
@@ -120,7 +118,7 @@ ffmpeg -i shot-raw.mp4 -vf "select='gt(scene,0.3)',showinfo" -f null - 2>&1 | gr
 ### 9. Retake one thing
 
 One change per retake, seed pinned. See the retake pattern in
-`../references/seedance-prompt-architecture.md`. Diagnose from the failure table there
+`references/seedance-prompt-architecture.md`. Diagnose from the failure table there
 rather than rewriting the prompt wholesale.
 
 ### 10. Deliver on the quality variant

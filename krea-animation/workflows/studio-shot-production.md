@@ -11,19 +11,18 @@ Ingest existing production materials without flattening them into a generic prom
 ## Recipe
 
 1. Inspect provided files first. Identify script, boards, style guides, model sheets, palettes, backgrounds, shot lists, audio, and edit references.
-2. Scaffold a project only if no production folder exists. Otherwise adapt the existing folder without renaming user assets.
-3. Map studio inputs to the canonical structure in `../references/project-structure.md`.
-4. Build or update `assets.csv`, `keyframes.csv`, and per-shot `shot.md` files.
-5. Mark every imported shot as one of: `draft`, `needs_assets`, `needs_keyframes`, `approved_for_video`, `submitted`, `complete`, `retake`, `approved_final`.
-6. Create a gap report before generation:
+2. Adopt the studio's own naming and organization. Do not rename or restructure user assets.
+3. Build a working index of what exists: assets, keyframes, and per-shot entries carrying the studio's own shot IDs.
+4. Mark every imported shot as one of: `draft`, `needs_assets`, `needs_keyframes`, `approved_for_video`, `submitted`, `complete`, `retake`, `approved_final`.
+5. Create a gap report before generation:
    - missing model sheets or turnarounds
    - missing background plates
    - missing start/end keyframes
    - unclear duration or camera
    - unresolved dialogue/audio
    - inconsistent aspect or FPS
-7. If gaps exist, fill only the missing production artifacts. Do not rewrite approved materials.
-8. For approved shots, continue with `shotlist-to-sequence.md`. Shots animate on Seedance — resolve the live variant with `../references/seedance-routing.md` and write prompts with `../references/seedance-prompt-architecture.md`.
+6. If gaps exist, fill only the missing production artifacts. Do not rewrite approved materials.
+7. For approved shots, continue with `workflows/shotlist-to-sequence.md`. Shots animate on Seedance — resolve the live variant with `references/seedance-routing.md` and write prompts with `references/seedance-prompt-architecture.md`.
 
 ## Professional Defaults
 

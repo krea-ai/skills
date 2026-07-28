@@ -6,45 +6,25 @@ Use when a storyboard and shot list are approved and the user wants to generate 
 
 ## Recipe
 
-1. Run `scripts/validate_project.py <project>`. Fix blocking errors before spending credits.
+1. Restate the shot list back to the user: shot IDs, durations, start images, and approval status. Flag blocking gaps before spending credits.
 2. Run cost preflight. Estimate approved shot count, seconds per shot, Seedance variant, resolution, and retry budget.
-3. Resolve the live Seedance variant with `../references/seedance-routing.md`, and load `../../krea-generate/references/models/seedance-2.md` for the field-mapping rules. List the Seedance effects library (`../references/seedance-effects.md`) before locking shot looks.
-   Write every shot prompt with the block architecture in `../references/seedance-prompt-architecture.md`; pull camera and reveal moves from `../references/reveal-recipes.md` and `../references/dimensional-motion.md`.
-4. Run `scripts/build_manifests.py <project>` to produce video job and edit manifests.
-5. Dry-run submission:
-   ```bash
-   VERIFIED_MODEL_ID="bytedance/seedance-2-fast"
-   python3 krea-animation/scripts/submit_video_jobs.py <project> --dry-run --model "$VERIFIED_MODEL_ID"
-   ```
-6. Inspect the dry-run. Confirm every approved shot has a Krea-hosted `start_image` and that Seedance-style shots use only one of `end_image` or `reference_images`.
-7. Submit only approved payloads from `04_generation/jobs/mcp-video-jobs.jsonl` through the connected Krea MCP `generate_video` tool. For the first pass, submit 1-3 representative shots before the whole sequence. Write returned job IDs to `04_generation/jobs/jobs.tsv`.
-8. Prepare MCP job-status checks:
-   ```bash
-   python3 krea-animation/scripts/poll_video_jobs.py <project>
-   ```
-9. Call Krea MCP `get_job` for each row in `04_generation/jobs/mcp-status-checks.jsonl`, save the responses as JSONL, then merge and optionally download completed clips:
-   ```bash
-   python3 krea-animation/scripts/poll_video_jobs.py <project> --results-jsonl <project>/04_generation/jobs/mcp-results.jsonl --download
-   ```
-10. Sample mid/end frames for the test shots. Log concrete retakes before submitting the rest of the sequence.
-11. Continue in batches. Keep in-scene continuity serialized when a shot depends on the previous shot's last frame; batch independent hard-cut shots in parallel within live model limits.
-12. Normalize and assemble:
-   ```bash
-   python3 krea-animation/scripts/assemble_edit.py <project> --fps 24 --size 1280x720
-   ```
-13. Sample QA frames:
-   ```bash
-   python3 krea-animation/scripts/sample_qa_frames.py <project>
-   ```
-14. Review against storyboard, style bible, and asset bible. Log retakes in `06_qa/retakes.csv`.
-15. Repeat generation only for failed shots. Keep passed clips locked.
+3. Resolve the live Seedance variant with `references/seedance-routing.md`, and read the `krea-generate` skill's `references/models/seedance-2.md` for the field-mapping rules.
+   Write every shot prompt with the block architecture in `references/seedance-prompt-architecture.md`; pull camera and reveal moves from `references/reveal-recipes.md` and `references/dimensional-motion.md`.
+4. Lay out the planned jobs in one table — shot ID, duration, model, aspect, start image, end image or references, prompt — so the user can approve before submission.
+5. Check each planned job against the live model schema. Confirm every approved shot has a Krea-hosted `start_image` and that Seedance-style shots use only one of `end_image` or `reference_images`.
+6. Submit only approved shots through the connected Krea MCP `generate_video` tool. For the first pass, submit 1-3 representative shots before the whole sequence. Keep the returned job IDs alongside their shot IDs.
+7. Poll each job to completion and report progress as you go.
+8. Inspect mid/end frames for the test shots. Log concrete retakes before submitting the rest of the sequence.
+9. Continue in batches. Keep in-scene continuity serialized when a shot depends on the previous shot's last frame; batch independent hard-cut shots in parallel within live model limits.
+10. Review the finished clips against the storyboard, style bible, and asset bible. Track retakes as a running list with shot ID, priority, issue, fix type, and status.
+11. Repeat generation only for failed shots. Keep passed clips locked.
 
 ## Shot Generation Rules
 
-- A scene is not one clip. Use shot grammar from `../references/shot-grammar.md`: most scenes become 3-6 shots of 2-4 seconds each.
+- A scene is not one clip. Use shot grammar from `references/shot-grammar.md`: most scenes become 3-6 shots of 2-4 seconds each.
 - Use approved keyframes only. If the shot starts from the previous shot's extracted last frame, generate the predecessor first and update the manifest before submitting the dependent shot.
 - `end_image` and `reference_images` are mutually exclusive on Seedance. Chained shots use `start_image` + `end_image`; terminal or hard-cut shots use `start_image` + `reference_images`.
-- Every shot prompt carries a motion split, a world lock, a light block with negatives, and a constraints tail. Quantify camera moves and state realtime physics — see `../references/seedance-prompt-architecture.md`.
+- Every shot prompt carries a motion split, a world lock, a light block with negatives, and a constraints tail. Quantify camera moves and state realtime physics — see `references/seedance-prompt-architecture.md`.
 - Block shots on a fast Seedance variant, judge, then re-run approved prompts on the quality variant for delivery.
 - Discover submit fields from Krea MCP and use only fields present in the selected model schema. Do not copy MCP field names from memory.
 - Keep native generated audio only when the shot plan explicitly calls for it. Otherwise default to no generated clip audio and assemble the final audio bed separately.

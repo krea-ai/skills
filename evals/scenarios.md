@@ -253,9 +253,9 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 
 - **Category**: polling
 - **User input**: "My storyboard and shot list are approved. What is the workflow to generate the sequence without spending credits first?"
-- **Expected**: agent validates the project, builds manifests, and uses submit_video_jobs dry-run before real jobs
-- **Pass regex**: `(?i)validate_project|build_manifests|submit_video_jobs.*--dry-run|video_jobs\.csv|manifest`
-- **Fail regex**: `(?i)run.*real.*jobs|spend.*credits|submit.*without.*dry`
+- **Expected**: agent lays the planned jobs out for approval and blocks 1-3 representative shots on the fast variant before committing the whole sequence
+- **Pass regex**: `(?i)cost preflight|before submitting|for approval|representative|1-3|block.*fast`
+- **Fail regex**: `(?i)submitting.*all|generate.*all.*clips now|spend.*credits`
 
 ### 28. Animation cost preflight
 

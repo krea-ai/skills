@@ -5,12 +5,8 @@ as: what it is, the prompt language that produces it, what to attach, and how it
 fails. Copy the **Write** block into the relevant SHOT line of the prompt
 architecture and adapt the nouns.
 
-Before hand-writing any of these, check whether the Krea effects library already
-carries the look — see `seedance-effects.md`. A library effect brings a reference
-asset and a tuned prompt template, which beats reinventing it.
-
 Every recipe assumes the surrounding blocks from
-`seedance-prompt-architecture.md` are present: format, references, world, motion
+`references/seedance-prompt-architecture.md` are present: format, references, world, motion
 split, light, audio, constraints.
 
 ---
@@ -302,7 +298,7 @@ under normal gravity; it does not float`.
 ### 18. Unfold / Assemble
 
 Components arrive into place. Cousin of the exploded view in
-`dimensional-motion.md`.
+`references/dimensional-motion.md`.
 
 **Write**
 ```
@@ -408,15 +404,15 @@ No text, no logo overlay, no fade — a held image.
 | "make it look premium / expensive" | 11 Glacial Push-In + 3 Travelling Specular |
 | "have it emerge from darkness" | 2 Silhouette Bloom, 6 Shadow Wipe |
 | "start blurry then sharp" | 7 Blur-In Reveal |
-| "focus on the details" | 8 Rack-Focus Handoff, 3 Travelling Specular, macro dive in `dimensional-motion.md` |
+| "focus on the details" | 8 Rack-Focus Handoff, 3 Travelling Specular, macro dive in `references/dimensional-motion.md` |
 | "show the whole thing at the end" | 12 Slow Pull-Reveal, 24 Held Landing |
 | "make it feel monumental" | 14 Low-Angle Hero Rise, 13 Crane Down |
 | "unbox / open it" | 17 Precision Settle, 21 Fabric Fall |
-| "show how it's made / what's inside" | 18 Unfold, exploded view in `dimensional-motion.md` |
+| "show how it's made / what's inside" | 18 Unfold, exploded view in `references/dimensional-motion.md` |
 | "punchy, high energy" | 16 Whip-Pan Accent, 15 Dolly-Zoom, tighter beats |
 | "moody, cinematic, film-like" | 4 Slat Crawl, 2 Silhouette Bloom, 21:9 aspect |
-| "the logo should animate" | `logo-and-mark-motion.md` |
-| "make it float / spin in the air" | `dimensional-motion.md` |
+| "the logo should animate" | `references/logo-and-mark-motion.md` |
+| "make it float / spin in the air" | `references/dimensional-motion.md` |
 
 ## Combining Recipes
 
