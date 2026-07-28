@@ -237,19 +237,25 @@ The upgrade path for a shot that feels thin:
 
 ## Beat Budget
 
-Live-verified behaviour: Seedance commits to roughly **three strongly distinct
-beats per generation** on its own initiative. More beats land only when every beat
-is fully staged and no beat runs long.
+Live-verified behaviour: Seedance commits to roughly **three to four strongly
+distinct beats per generation**. Beyond that, the extra beats merge into their
+neighbours. Plan to that ceiling rather than discovering it.
 
-- Keep beats at or under ~2.5s for multi-beat work.
-- Never end a multi-beat prompt with a long hold — the model front-loads its good
-  beats and then coasts the entire back half on one lazy rotation.
-- Put `no long static holds, keep cutting` in the constraints tail when you want
-  4+ beats.
-- **Exception — the single-beat hero shot.** One glacial 6–8s move with one event
-  is a legitimate and often superior choice for elegant reveals. That is not a
-  coasting back half; that is a held shot. The rule against long holds applies to
-  *multi-beat* prompts.
+- **Four fully staged beats in one 8s generation is the working maximum.** Every
+  beat needs its own time range, size, lens, move, event and named transition.
+- Keep detail beats at 1–1.8s and the landing at 2–2.5s.
+- Put `no long static holds, keep cutting` in the constraints tail on every
+  multi-beat prompt.
+- Never end on a long hold *before* the landing — the model front-loads its good
+  beats and coasts the back half on one lazy rotation if you let it.
+- **For five or more beats, or true ~1s staccato, stop fighting one generation.**
+  The duration floor is 4s, so a 1-second beat cannot be generated directly.
+  Generate each angle as its own 4s clip, trim it to its usable core, and
+  assemble — see `references/cut-architecture.md`. Trimming is exact and free.
+- **The single-move exception.** One continuous 6–8s move is legitimate for an
+  architectural interior, a landscape, or a brand that has explicitly asked for
+  restraint. It is a deliberate choice you name out loud, not the default. For
+  objects, products and marks, the default is the cut sequence.
 
 ## Verify That Cuts Actually Cut
 

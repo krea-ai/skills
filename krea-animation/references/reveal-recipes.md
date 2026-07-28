@@ -398,14 +398,18 @@ No text, no logo overlay, no fade — a held image.
 
 ## Recipe Selection Table
 
+Recipes are the move *inside* a beat. Choose the structure first — the standard
+build is in `references/cut-architecture.md` — then fill each beat from here.
+
 | User says | Reach for |
 |---|---|
-| "reveal it dramatically" | 1 Shadow Retreat, 2 Silhouette Bloom |
-| "make it look premium / expensive" | 11 Glacial Push-In + 3 Travelling Specular |
+| "animate this" (no further steer) | Staccato detail chain: three macro beats from different angles, then 12 Slow Pull-Reveal into 24 Held Landing |
+| "reveal it dramatically" | 1 Shadow Retreat, 2 Silhouette Bloom, cut between two of them at different scales |
+| "make it look premium / expensive" | Macro cut chain — 3 Travelling Specular and 8 Rack-Focus Handoff on separate beats — then 12 Slow Pull-Reveal to the whole |
 | "have it emerge from darkness" | 2 Silhouette Bloom, 6 Shadow Wipe |
-| "start blurry then sharp" | 7 Blur-In Reveal |
+| "start blurry then sharp" | 7 Blur-In Reveal, ideally on a pull-out so framing and focus resolve together |
 | "focus on the details" | 8 Rack-Focus Handoff, 3 Travelling Specular, macro dive in `references/dimensional-motion.md` |
-| "show the whole thing at the end" | 12 Slow Pull-Reveal, 24 Held Landing |
+| "show the whole thing at the end" | 12 Slow Pull-Reveal, 24 Held Landing — and this is the default shape for everything, not a special request |
 | "make it feel monumental" | 14 Low-Angle Hero Rise, 13 Crane Down |
 | "unbox / open it" | 17 Precision Settle, 21 Fabric Fall |
 | "show how it's made / what's inside" | 18 Unfold, exploded view in `references/dimensional-motion.md` |
@@ -416,12 +420,17 @@ No text, no logo overlay, no fade — a held image.
 
 ## Combining Recipes
 
-Two or three per generation, maximum, and never two camera moves in one beat. A
-proven three-beat elegant structure:
+One recipe per beat, never two camera moves inside a beat, and a different recipe
+on each beat — repeating one across two adjacent beats is how a cut sequence
+collapses back into a drift.
 
-1. **Blur-In** or **Silhouette Bloom** — arrival out of nothing (0–3s)
-2. **Travelling Specular** or **Shadow Retreat** — the information beat (3–5.5s)
-3. **Held Landing** after a **Glacial Push-In** — resolution (5.5–8s)
+The default four-beat build, each beat at a different scale, angle and key:
 
-Joined by a **Shadow Wipe** and a **Cut On The Highlight**. That is a complete,
-elegant, eight-second reveal built from four named recipes and nothing else.
+1. **Travelling Specular** on a macro edge — hard top-left rake (0–1.6s)
+2. **Silhouette Bloom** or **Shadow Retreat** from the opposite side — rear rim (1.6–3.2s)
+3. **Rack-Focus Handoff** on a detail, underlit, camera low (3.2–4.6s)
+4. **Slow Pull-Reveal** into **Held Landing** — the whole subject, first and last time (4.6–8s)
+
+Joined by hard cuts, each named in its beat. That is a complete eight-second piece
+built from four named recipes, and it beats any single recipe stretched across the
+full duration.

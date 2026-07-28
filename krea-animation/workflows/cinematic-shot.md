@@ -41,8 +41,8 @@ At most three questions, and only for things you cannot infer:
 - does it need audio, and is text going in later?
 
 Do not interrogate. Infer defaults from `references/cinematic-craft.md` — 21:9,
-8 seconds, low-key void, one glacial move, no on-screen text — and state what you
-assumed.
+8 seconds, low-key void, four staged beats opening on macro detail and landing on
+the whole subject, no on-screen text — and state what you assumed.
 
 ### 3. Resolve Seedance
 
@@ -53,16 +53,20 @@ Per `references/seedance-routing.md`:
 3. Get the schema for the variant you'll use.
 4. Fetch the Krea prompting guide for the model.
 
-### 4. Choose the move
+### 4. Build the beats
 
-Pick from the recipe tables rather than inventing:
+Structure the piece before choosing any individual move. Four or five beats, macro
+first, whole subject last — the standard build is in `references/cut-architecture.md`.
+
+Then pick each beat's move from the recipe tables rather than inventing:
 
 - reveals, shadow, focus, transitions → `references/reveal-recipes.md`
 - levitation, orbit, explode, macro dive, render camera → `references/dimensional-motion.md`
 - logos and wordmarks → `references/logo-and-mark-motion.md`
 - taste, light, lens, materials, tempo → `references/cinematic-craft.md`
 
-**One camera move.** If two moves are tempting, that is two beats.
+**One camera move per beat** — but four or five beats. Two moves inside one beat is
+the mistake; one move across the whole clip is the bigger one.
 
 ### 5. Cost preflight
 
@@ -137,20 +141,27 @@ Apply unless the brief says otherwise, and state that you did:
 | Setting | Default |
 |---|---|
 | Aspect | 21:9 for cinematic, 16:9 for standard delivery, 9:16 for vertical |
-| Duration | 8s single hero shot; 5s for a logo sting; 4s floor |
+| Duration | 8s; 6s for a logo sting; 4s floor |
+| Structure | 4–5 staged beats, macro first, whole subject on the final beat |
+| Beat length | 1–1.8s for detail beats, 2–2.5s for the landing |
 | Resolution | 1080p |
 | Environment | seamless charcoal-to-black void, no horizon, no set dressing |
-| Light | one large soft source high camera-left, hard falloff to true black |
-| Lens | 85mm hero, 100mm macro detail, 24mm architectural |
-| Camera | one continuous move, ~15–20cm across the full duration, constant rate |
+| Light | one hard key per beat, direction changing on every cut, hard falloff to true black |
+| Lens | 100mm macro for detail beats, 85mm for the landing, 24mm architectural |
+| Camera | one quantified move per beat, or locked with the light carrying the beat |
+| Transitions | hard cuts, named per beat; no dissolves unless the brief asks |
 | Subject | locked — no rotation, drift, or scale change unless named |
 | Physics | realtime; no speed ramping, no slow-motion |
 | Grade | low-key neutral, one warm specular; no teal-orange |
 | Text | none in-frame; type is composed in post |
-| Audio | none, or room tone plus one precise diegetic sound |
+| Audio | none, or room tone plus one precise hit per cut |
 
 ## Banned
 
+- Do not answer "animate this" with one continuous move over the full duration. That
+  is the timid-drift failure; build the beats.
+- Do not open on the whole subject. The complete view is the last beat, not the first.
+- Do not run two adjacent beats at the same shot size, camera height, or key direction.
 - Do not submit a hero shot from a start image you haven't inspected with vision.
 - Do not write two camera moves in one beat.
 - Do not use `slow`, `gently`, `softly`, `dreamy` as the only pace instruction.

@@ -1,32 +1,48 @@
-# Cinematic Craft — The Language Of Chic, Elegant, Dramatic Motion
+# Cinematic Craft — The Language Of Dramatic, Maximal Motion
 
 This is the taste reference. `references/seedance-prompt-architecture.md` tells you the shape
-of a prompt; this file tells you what to put in it so the result looks expensive
+of a prompt and `references/cut-architecture.md` tells you how to structure the
+beats; this file tells you what to put inside them so the result looks expensive
 instead of merely generated.
 
-The target register: **restrained, deliberate, dark, precise.** The kind of shot
-where almost nothing happens and it still holds the eye for eight seconds. Flagship
-hardware launch films, luxury watch and fragrance campaigns, high-end architectural
-films, gallery-grade CGI. One object, one light, one move, one idea.
+The target register: **dramatic, kinetic, high-contrast, cut hard.** Title-sequence
+energy. Flagship hardware launch films, fragrance and watch campaigns shot as a
+rapid chain of macro details, sneaker and hardware reveals that show you the stitch
+before they show you the shoe. Every second earns its place; the whole subject
+arrives last.
 
-The opposite register — which you must actively suppress, because it is Seedance's
-default — is music-video maximalism: three lights, four moves, drifting camera,
-lens flare, blue grade, glossy everything, and nothing in particular happening.
+Two opposite registers to suppress, and the first one is the more common failure:
 
-## The Six Laws Of Elegance
+- **Timid drift** — one continuous move over eight seconds, one lighting state, the
+  whole subject visible from frame one, a highlight wandering across it. This reads
+  as a screensaver. It is what the model returns when the prompt did not commit to
+  anything, and it is the single most likely way to disappoint.
+- **Untamed maximalism** — Seedance's own default: three lights at once, drifting
+  handheld, lens flare, blue grade, glossy everything, and nothing in particular
+  happening. Cutting hard is not the same as flailing.
+
+The distinction that matters: **density belongs to the edit, restraint belongs to
+the frame.** Each individual beat is still mostly darkness with one lit subject and
+one quantified move. There are just four or five of them in eight seconds, each from
+a different angle under a different light.
+
+## The Six Laws Of Dramatic Motion
 
 Internalize these. Every recipe in `references/reveal-recipes.md` is an application of them.
 
-### 1. Subtraction, not addition
+### 1. Spend on cuts, not on clutter
 
-Elegance is what's left after you remove everything that isn't load-bearing. One
-light source, not three. One camera move, not a combination. One event per beat.
-An empty frame with a single lit edge is more expensive-looking than a full frame
-of detail.
+Every frame is subtracted; the *sequence* is maximal. One light source per beat,
+not three. One camera move per beat, not a combination. One event per beat. But
+four or five beats in eight seconds, each from a new angle under a new key.
 
-Write the frame as **95% darkness and 5% information**. Then defend that ratio in
+Write each frame as **95% darkness and 5% information**, then defend that ratio in
 the constraints tail: `no additional objects, no props entering frame, no
-background detail, no set dressing`.
+background detail, no set dressing`. Richness comes from cutting between five such
+frames, never from filling one of them.
+
+When a piece feels thin, the fix is another staged beat — never another adjective
+and never another light in the same frame.
 
 ### 2. Darkness is the primary material
 
@@ -40,15 +56,26 @@ specular. The right two-thirds of frame falls to true black with no visible
 detail, no fill light, no bounce.
 ```
 
-### 3. The camera moves slower than you think
+### 3. Short beats, controlled motion inside them
 
-Almost every AI clip moves too fast. The premium grammar is a move so slow you
-notice it only by comparing the first and last frame — 15 to 30 centimeters of
-travel across six to eight seconds, on a single axis, with no acceleration.
+The beats are fast. The motion *within* a beat is not frantic — a 1.2-second beat
+carries one small, exact move, or no camera move at all with the light doing the
+work. Cutting supplies the energy; the camera stays composed.
 
-Always quantify it: distance, duration, easing, and the word *continuous*. And
-always pair slow camera with realtime physics — see the pace section of
-`references/seedance-prompt-architecture.md`, this is the trap.
+Quantify every move regardless of length: distance, duration, constant rate, and
+the word *continuous*. This matters more at speed, not less — an unquantified
+"quick push in" comes back as a smeared whip, and `slowly` / `gently` / `softly` as
+the only pace instruction comes back speed-ramped. See the pace section of
+`references/seedance-prompt-architecture.md`.
+
+```
+SHOT 3 — RAKE (3.0–4.2s), extreme close-up, 100mm macro. Camera pushes in 6
+centimeters over 1.2 seconds at a constant rate, realtime physics, no ramping.
+```
+
+The single long glacial move still has a place — a 6–8 second continuous push is
+legitimate for an architectural interior or a landing beat. It is a deliberate
+choice for a specific job, not the default answer to "animate this."
 
 ### 4. Nothing wobbles
 
@@ -60,28 +87,44 @@ The object is locked in frame — it does not rotate, tilt, bob, drift, or chang
 scale. Only the light and the camera move.
 ```
 
-### 5. Light does the work, not motion
+### 5. Light is an event per beat, not a wash across the piece
 
-The most sophisticated Seedance move is barely a move at all: the camera holds,
-and a **highlight travels**. A specular sweeping along a chamfer, a shadow
-retreating across a surface, a caustic crawling over a lens. The frame changes
-completely and nothing in it actually moved.
+Moving the key between beats is the cheapest way to make four cuts read as four
+shots. Give every beat its own lighting state and name the direction: hard rake
+from top-left at 20°, then rim-only from directly behind, then underlit throwing
+shadow up the wall, then broad top light as the piece opens out.
 
-```
-Camera locked. Over 5 seconds a single hard specular travels left to right along
-the top chamfer, crossing the engraved mark at 3 seconds and igniting it briefly.
-```
-
-### 6. End on stillness
-
-Elegant shots land. They don't fade, drift out, or keep wandering. The final beat
-resolves to a composed, held frame — the object centered or on a third, the light
-settled, the camera stopped. Say it:
+Within a beat, a travelling highlight is a legitimate *event* — a specular crossing
+an engraving, a shadow clearing a surface, a caustic crawling over glass. What it
+cannot be is the entire piece.
 
 ```
-Final beat: the camera stops dead and the frame holds absolutely still for the
-last half second, the object composed on the lower third, mark fully lit.
+SHOT 2 — IGNITION (1.4–2.6s), extreme close-up, 100mm macro, camera on the opposite
+face from SHOT 1. HARD CUT in. Key flips to a hard source directly behind the
+object; the front face drops to silhouette and a single specular fires along the
+top chamfer, crossing the engraving at 2.1s.
 ```
+
+**The anti-pattern this replaces:** one locked camera, one full view of the subject,
+and a highlight drifting across it for eight seconds. That is the shot the model
+returns when nothing was asked of it. If your prompt could be summarized as "a
+shimmer passes over it," throw it away and build the beats.
+
+### 6. The whole subject arrives last, and lands dead still
+
+Withhold the full view. Beats one through three live inside the object; the pull
+begins on beat four; the complete subject appears only on the final beat — fully
+lit, composed, camera stopped. After a fast chain of macro cuts, that stillness is
+what makes the reveal feel earned.
+
+```
+Final beat: HARD CUT to full frame. The camera stops dead and holds absolutely
+still for the last two seconds, the object composed on the lower third, key plus
+rim, every edge legible.
+```
+
+Never fade out, never drift past the landing, and never open the piece on the shot
+you intend to end it with.
 
 ## The Premium Reveal Look — Component Breakdown
 
@@ -214,18 +257,21 @@ models these convincingly if you describe the *behaviour*, not the noun.
 
 ## Tempo And The Shape Of A Cut
 
-A cinematic sequence has a rhythm, not a uniform pulse.
+A cinematic sequence has a rhythm, and for this skill that rhythm is front-loaded
+and fast. The full build lives in `references/cut-architecture.md`; the shape:
 
-- **Held opener** (2.5–3s) — near-still, establishes darkness and scale. Earns
-  everything after.
-- **Two or three information beats** (2–2.5s each) — each shows something new:
-  a detail, an angle, a mechanism.
-- **One accent** (1–1.5s) — the fast one. A snap push, a whip, a hard light hit.
-  Contrast makes the slow beats read as intentional rather than sluggish.
-- **Landing** (2–3s) — composed, still, resolved.
+- **Macro chain** (three beats, 1–1.8s each) — three details, three angles, three
+  lighting states. No establishing shot. The viewer does not yet know the whole.
+- **The pull** (1–1.5s) — the subject becomes readable but is still not complete.
+- **Landing** (2–2.5s) — the whole subject, fully lit, composed, camera stopped.
 
-Silence between accents is what makes an accent land. If every beat is exciting,
-nothing is.
+The contrast that makes this work is **fast cuts against a still landing**, not
+slow beats against one accent. Three quick macro cuts make the final held frame
+feel like an arrival; an eight-second drift makes it feel like nothing happened.
+
+Where the older grammar still applies: an architectural interior, a landscape, or
+a long product hero for a brand that has explicitly asked for restraint. Say out
+loud that you are choosing it, and why.
 
 ## Colour And Grade
 

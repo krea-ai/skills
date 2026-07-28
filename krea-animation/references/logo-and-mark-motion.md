@@ -40,10 +40,101 @@ tagline underneath a logo. Ban it explicitly.
 
 ## What Actually Reads Well
 
-Logo animation is a light-and-camera discipline. The mark holds still and the
-world around it changes. Ranked by how reliably they land:
+A logo sting is a **cut sequence through the mark**, not a lighting effect applied
+to it. The letterforms stay pixel-exact — that constraint never relaxes — but the
+camera, the scale, the key and the per-element lighting all change hard between
+beats. Ranked by impact, with the reliability caveat noted on each.
 
-### 1. Specular Sweep Across The Mark (most reliable)
+### 1. Per-Element Ignition (the default for a multi-part mark)
+
+Each letterform or element lights, lifts or resolves in turn, then the whole
+lockup holds. This is the treatment that makes a wordmark feel alive, and it is
+safe **as long as each element keeps its exact shape** — you are lighting and
+translating finished glyphs, never redrawing them.
+
+The distinction that keeps it safe: *illuminate and move* the letterforms, never
+*build* them. `the letter brightens` and `the letter rises 3 millimeters` preserve
+the glyph. `the letter forms`, `assembles`, `draws on`, or `materializes` invents a
+new one.
+
+```
+Format: Brand mark sting, 6 seconds, 16:9, black void, saturated per-letter colour,
+no added text.
+References: @Image1 as the first frame and the brand mark — every letterform,
+weight, colour and spacing pixel-exact as shown, never re-lettered, never warped,
+never redrawn.
+Consistent world: seamless pure-black void, no horizon, no floor seam, no set
+dressing. The mark sits dead center throughout.
+Motion split: each letterform keeps its exact drawn shape and spacing at all times.
+The only permitted per-letter motion is a vertical translation of 4 millimeters and
+a change in its own emitted brightness. No rotation, no scaling, no deformation, no
+redrawing. Camera locked. Realtime physics, no speed ramping.
+
+SHOT 1 — DARK (0–0.8s), medium close, 85mm. The full lockup sits in near darkness,
+letterforms just discernible as unlit shapes. Nothing moves.
+SHOT 2 — IGNITION CHAIN (0.8–3.6s), medium close, 85mm, camera locked. The
+letterforms ignite one at a time from left to right, roughly 0.4 seconds apart.
+Each letter, on its turn: rises 4 millimeters with a quick ease-out and settles
+back, while its own colour ignites from black to full saturation and stays lit.
+Every letter that has already fired remains lit and settled. The rise is a
+translation only — the glyph never stretches, squashes, rotates or changes size.
+SHOT 3 — FULL LOCKUP (3.6–4.6s), medium close, 85mm. HARD CUT. Every letterform now
+fully saturated, the whole mark evenly lit and razor sharp, holding still.
+SHOT 4 — MACRO EDGE (4.6–5.2s), extreme close-up, 100mm macro on the junction of
+two letterforms, camera 20 degrees off axis. HARD CUT. A hard specular crosses the
+edge, showing the material thickness of the mark.
+SHOT 5 — LANDING (5.2–6s), full frame, 85mm. HARD CUT back to the complete lockup,
+centered, fully lit, camera dead still for the final second.
+
+Light: per-letter emission plus one soft top key on the landing beats; otherwise
+pure black. NO god rays, NO lens flare, NO bloom spill between letters, NO blue grade.
+Audio: no music; one soft tick per letter ignition, one low resolving tone at 5.2s.
+Constraints (reassert): the mark is pixel-exact to @Image1 — same letterforms,
+weights, colours and spacing, never re-lettered, never warped, never redrawn;
+per-letter motion is vertical translation only, maximum 4 millimeters; no rotation,
+no scale change, no deformation; realtime physics, no speed ramping; no additional
+text, no tagline, no captions, no watermark; no morphing.
+```
+
+Run per-glyph vision QA on the last frame of every ignition beat, not just the
+final frame — a letter that drifted mid-chain often settles back correctly and
+hides the error.
+
+### 2. Macro Cut Chain Through The Mark
+
+Three to four extreme close-ups of different parts of the mark — a corner, a
+counter, the junction of two strokes — each from a different angle under a
+different key, cut hard, then a pull out to the full lockup. Shows off material and
+craft, and never asks a letterform to move at all, so it is the safest way to get
+maximal energy out of a mark.
+
+Build it on the standard five-beat structure in `references/cut-architecture.md`,
+with `the letterforms are pixel-exact and completely static throughout` in the
+motion split.
+
+### 3. Blur Reveal On A Pull-Out
+
+The frame opens as unreadable bokeh at macro scale; as the camera pulls back the
+focus plane travels left to right and the mark snaps sharp exactly as it becomes
+whole. One continuous move, but the frame transforms completely.
+
+```
+Motion split: the mark is locked and pixel-exact. The camera pulls back 35cm over 4
+seconds at a constant rate while the focus plane travels across the mark left to
+right at a constant rate; the leftmost letterform resolves first, sharpness
+sweeping right, the complete lockup razor sharp and fully composed at 4s. Only
+sharpness and framing change — the mark does not move, scale or deform.
+```
+
+The `only sharpness and framing change` clause is what stops Seedance from
+animating the letters into existence, which is where re-lettering happens.
+
+### 4. Specular Sweep Across The Mark (most reliable, least exciting)
+
+The safe fallback: camera locked, one hard highlight travelling across a static
+mark. Use it when the mark is fragile, extremely detailed, or has already failed a
+more ambitious treatment twice — **not** as the first answer to "animate this
+logo," which is the timid-drift failure this skill exists to prevent.
 
 ```
 Format: Brand mark sting, 5 seconds, 16:9, low-key metallic, no added text.
@@ -73,26 +164,13 @@ light-only motion at realtime speed, no speed ramping; no additional text, no
 tagline, no captions, no watermark, no added graphics; no morphing.
 ```
 
-### 2. Shadow Retreat Off The Mark
+### 5. Shadow Retreat Off The Mark
 
 Same structure, shadow instead of highlight. See recipe 1 in `references/reveal-recipes.md`.
 Add: `the shadow edge is hard and travels at a constant rate; the letterforms
 themselves never deform as it passes`.
 
-### 3. Blur-In Resolve
-
-```
-SHOT 1 — RESOLVE (0–3s), medium close, 85mm. Camera locked. The frame opens as
-complete soft bokeh with no readable letterform. Over 3 seconds the focus plane
-travels until the mark resolves into razor-sharp definition, its edges perfectly
-crisp. Focus travels at a constant rate. The mark does not move, scale, or deform
-at any point — only sharpness changes.
-```
-
-The `only sharpness changes` clause is what stops Seedance from *animating the
-letters into existence*, which is where re-lettering happens.
-
-### 4. Depth Emergence
+### 6. Depth Emergence
 
 The mark comes forward out of the surface. Effective, slightly riskier.
 
@@ -104,7 +182,7 @@ appearing beneath its edges. The letterforms keep their exact shape, weight and
 spacing throughout — they extrude, they do not redraw.
 ```
 
-### 5. Reflected Approach
+### 7. Reflected Approach
 
 ```
 SHOT 1 — REFLECTION (0–2.5s), macro, 100mm. Camera locked low on a polished black
@@ -113,7 +191,7 @@ tilts up 20 degrees in one continuous move and arrives on the mark itself, sharp
 and composed, and stops dead.
 ```
 
-### 6. Material Reveal
+### 8. Material Reveal
 
 The mark is the only lit element; the material of the surrounding surface changes
 under travelling light. Elegant and very safe for the mark itself, since the mark
@@ -121,14 +199,23 @@ never moves at all.
 
 ## What To Avoid
 
+The line is **building versus lighting**. A glyph that already exists can be lit,
+lifted, cut to, or pulled away from as hard as you like. A glyph the model has to
+construct comes back misspelled.
+
 | Don't ask for | Why | Instead |
 |---|---|---|
-| Letters flying in and assembling | Each letter gets re-drawn in flight; kerning collapses | Blur-in resolve, or specular sweep |
-| Handwriting / draw-on animation | The model invents letterforms stroke by stroke | Shadow retreat uncovering a finished mark |
+| Letters flying in and assembling | Each letter is re-drawn in flight; kerning collapses | Per-element ignition — letters already present, lighting and lifting in turn |
+| Handwriting / draw-on animation | The model invents letterforms stroke by stroke | Shadow retreat or blur reveal uncovering a finished mark |
 | Morphing one mark into another | Both marks end up wrong | Two shots with a hard cut between them |
 | Liquid or smoke forming the logo | Letterforms deform as the medium settles | Particle/haze *around* a locked mark |
-| 3D logo tumbling in space | Perspective change re-renders the glyphs | Camera orbit ≤ 20° with the mark locked |
+| 3D logo tumbling in space | Perspective change re-renders the glyphs | Macro cut chain — hard cuts between fixed angles, each ≤ 20° off axis |
 | Adding a tagline or URL | It will be invented and misspelled | Ban added text; composite type in post |
+
+What is explicitly **not** banned, and should be your default reach: cutting hard
+between macro views of the mark, per-letter illumination, per-letter translation
+within a few millimeters, colour igniting element by element, and pulling out from
+a detail to the full lockup. All of these keep the drawn glyph intact.
 
 ## Type In Frame
 

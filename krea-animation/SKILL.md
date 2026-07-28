@@ -22,10 +22,19 @@ Your job is not to describe a video. Your job is to **write a shot order** —
 architected, block by block, so the result reads as photographed rather than
 generated.
 
-The house register is **restrained, deliberate, dark, precise**: one object, one
-light, one move, one idea. The kind of shot where almost nothing happens and it
-still holds the eye for eight seconds. Suppress Seedance's untamed defaults — glossy,
-centered, blue-graded, lens-flared, faintly floaty — on purpose, every time.
+The house register is **maximal, kinetic and dramatic**. Cut hard and cut often.
+Open *inside* the subject — a chamfer, a weave, the edge of a single letter — and
+jump scale, angle and light on every cut. The whole subject is the last thing the
+viewer sees, arriving as the payoff rather than the premise.
+
+One slow move across eight seconds is the failure this skill exists to prevent. If
+the user says "animate this logo" and the answer is a highlight drifting across it,
+that is a miss — the answer is four hard cuts through the mark at macro scale from
+four different angles and lighting states, then a pull to the full lockup.
+
+Suppress Seedance's untamed defaults — glossy, centered, blue-graded, lens-flared,
+faintly floaty — on purpose, every time. Maximal does not mean sloppy: every beat is
+still fully staged, every move quantified, every lock restated.
 
 ## Hard Rules
 
@@ -37,30 +46,40 @@ centered, blue-graded, lens-flared, faintly floaty — on purpose, every time.
    prompting guide for the model. Model IDs in these docs are illustrative.
 3. **Verify MCP availability first.** Confirm the Krea MCP tools you need are exposed
    in this session before promising work that depends on them.
-4. **Gate the start image with vision.** The start image is the quality ceiling of
+4. **Cut, don't drift.** Default to a staged cut sequence — four or more beats, none
+   longer than ~2s. A single continuous move across the full duration is this skill's
+   primary failure mode, not its house style. See `references/cut-architecture.md`.
+5. **Open inside the subject; reveal the whole of it last.** Beat one is macro — a
+   detail most people never look at. The complete subject arrives on the final beat
+   as the payoff. Establishing wides are for architecture, not for objects and marks.
+6. **Jump scale, angle and light on every cut.** No two adjacent beats share a shot
+   size, a camera height, or a key direction. A cut that only changes time reads as
+   a dissolve with extra steps.
+7. **Gate the start image with vision.** The start image is the quality ceiling of
    the clip. A soft mark, wrong crop, or compressed video frame degrades every
    generation regardless of prompt quality. Fix the still before spending on video.
-5. **Never submit an unarchitected prompt.** Every shot over 4 seconds carries a
+8. **Never submit an unarchitected prompt.** Every shot over 4 seconds carries a
    motion split, a world lock, a light block with negatives, and a constraints tail.
    See `references/seedance-prompt-architecture.md`.
-6. **Slowness belongs to the camera, not the physics.** Quantify camera moves
-   (distance, duration, constant rate) and state realtime physics explicitly.
-   `slowly`, `gently`, `softly`, `dreamy float` as the only pace instruction produce
-   speed-ramped mush, not elegance.
-7. **Block cheap, deliver expensive.** Iterate prompt craft on a fast Seedance
-   variant; re-run the approved prompt on the quality variant for the deliverable.
-8. **Run cost preflight** before any video, LoRA training, or large batch. State shot
-   count, seconds per shot, variant, resolution, and retry budget before spending.
-9. **Upload references before generation.** Prompt-side `@Image1` naming attaches
-   nothing on its own — pass Krea URLs through the live schema fields.
-10. **Video jobs are async.** Poll job status and report progress as you go rather
+9. **Quantify every move and state realtime physics.** Distance, duration, constant
+   rate. `slowly`, `gently`, `softly`, `dreamy float` as the only pace instruction
+   produce speed-ramped mush — and fast beats need this as much as slow ones, since
+   an unquantified "quick push" comes back as a smeared whip.
+10. **Block cheap, deliver expensive.** Iterate prompt craft on a fast Seedance
+    variant; re-run the approved prompt on the quality variant for the deliverable.
+11. **Run cost preflight** before any video, LoRA training, or large batch. State shot
+    count, seconds per shot, variant, resolution, and retry budget before spending.
+12. **Upload references before generation.** Prompt-side `@Image1` naming attaches
+    nothing on its own — pass Krea URLs through the live schema fields.
+13. **Video jobs are async.** Poll job status and report progress as you go rather
     than going silent for the length of a generation.
-11. **Inspect the last frame, always.** Drift is progressive. Verify marks, identity,
-    world and grade on the final frame before delivering, and prove multi-beat cuts
-    with scene detection rather than eyeballing them.
-12. **Log a retake instead of pretending.** If a shot fails, name the failure and fix
+14. **Inspect the last frame, and prove the cuts cut.** Drift is progressive. Verify
+    marks, identity, world and grade on the final frame, and confirm every intended
+    cut landed with scene detection rather than eyeballing it. A four-beat prompt
+    that returns two detected cuts is a failed generation, not a stylistic variant.
+15. **Log a retake instead of pretending.** If a shot fails, name the failure and fix
     one thing at a time.
-13. **Never name a brand or studio as an imitation target.** Describe the look in
+16. **Never name a brand or studio as an imitation target.** Describe the look in
     craft terms — environment, light, lens, camera, grade, negatives.
 
 ## Route
@@ -90,13 +109,18 @@ Routing out of this skill:
 
 The Seedance craft core. Load these for any cinematic shot:
 
+- `references/cut-architecture.md` — **the house structure**: the standard
+  five-beat build, changing scale/angle/light on every cut, the recurring shapes
+  (staccato detail chain, blur-out reveal, angle slam, sequential ignition), how
+  many beats one generation actually delivers, and the trim-and-assemble path for
+  true one-second cutting.
 - `references/seedance-routing.md` — Seedance as the default engine, variant
   selection, required live checks, expected schema shape, mutually exclusive media
   paths, cost discipline.
 - `references/seedance-prompt-architecture.md` — the nine prompt blocks, the
   skeleton, commanded stillness vs accidental slow-motion, beat budget, cut
   verification, the failure table, retake prompting.
-- `references/cinematic-craft.md` — the six laws of elegance, premium reveal look
+- `references/cinematic-craft.md` — the six laws of dramatic motion, premium reveal look
   breakdown, lens and light language, shadow and focus as verbs, materials,
   composition, tempo, grade, the anti-patterns checklist.
 - `references/reveal-recipes.md` — 24 named effects with prompt language: shadow

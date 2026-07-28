@@ -32,8 +32,9 @@ them is load-bearing prompt language — keep it.
 
 ## Slot 1 — Product Hero Reveal
 
-The flagship request. One object, dark void, glacial camera, shadow or specular
-reveal, held landing. The premium launch-film register.
+The flagship request. Four hard cuts through the object at macro scale — different
+face, different angle, different key on every one — then a pull to the whole thing.
+The launch-film register, cut like a title sequence.
 
 **Route here when** the user wants a product, object, device, bottle, package or
 piece of hardware to look expensive; asks for a "reveal", "hero shot", "launch
@@ -63,41 +64,55 @@ horizon line, no floor seam, no set dressing; one large soft source high
 camera-left falling off to true black on the right; palette is <graphite, cold
 steel, one warm amber specular>; shallow depth of field throughout.
 Motion split: the object is locked — it does not rotate, wobble, drift, or change
-scale at any point. All movement belongs to the camera and the light. Three or four
-dust motes drift through the rim light at natural realtime speed. Nothing is
-speed-ramped; no slow-motion.
+scale at any point. All movement belongs to the camera and the light, and every
+camera move is quantified below. The object is never shown whole until SHOT 4.
+Nothing is speed-ramped; no slow-motion.
 
-SHOT 1 — VOID HOLD (0–2.5s), extreme wide, 35mm. Camera locked absolutely still.
-The object sits centered in near-total darkness, 80% in shadow, only its top
-<chamfer/edge> carrying a thin hard specular. Nothing moves but a single dust mote
-crossing the rim light. Shadow wipe.
-SHOT 2 — SHADOW RETREAT (2.5–5.5s), medium close, 85mm. Camera locked. A hard-edged
-shadow retreats left-to-right across the object's face at a constant rate, never
-accelerating, uncovering the surface, then the <chamfer>, and the <mark> last. The
-object stays locked. Cut on the highlight.
-SHOT 3 — LANDING (5.5–8s), medium close, 85mm. One single continuous push-in of
-roughly 15 centimeters across the beat, dead level, motion-control smooth, never
-accelerating. The camera stops dead and the frame holds absolutely still for the
-final half second, the object composed on the lower third, <mark> razor sharp and
-fully lit for the first time.
+SHOT 1 — MACRO EDGE (0–1.6s), extreme close-up, 100mm macro, filling the frame with
+the <chamfer/seam/knurl> only — the object is unrecognisable at this scale. Camera
+pushes 4 centimeters along the edge over 1.6 seconds at a constant rate. Hard key
+raking from top-left at 20 degrees; everything outside the lit edge is true black.
+A single hard specular runs the length of the edge as the camera travels. HARD CUT.
+SHOT 2 — OPPOSITE FACE (1.6–3.2s), extreme close-up, 100mm macro, camera on the
+opposite side of the object and 30 centimeters lower, looking slightly up. HARD CUT
+in. Key flips to a hard source directly behind the object: the near face falls to
+silhouette and only the rim ignites. Camera locked; the rim light sharpens across
+the beat as the source rises. HARD CUT.
+SHOT 3 — UNDERLIT DETAIL (3.2–4.6s), extreme close-up, 100mm macro on the
+<mark/mechanism/junction>, camera three-quarters and low. HARD CUT in. Hard key from
+below, throwing the object's shadow up and out of frame. Focus snaps from the
+foreground surface to the <mark> in the first 0.3 seconds and holds. HARD CUT.
+SHOT 4 — LANDING (4.6–8s), full frame, 85mm. HARD CUT to the complete object, seen
+whole for the first time. The camera pulls back 20 centimeters over the first 1.5
+seconds at a constant rate, then stops dead and holds absolutely still for the
+remaining time — object composed on the lower third, one large soft source high
+camera-left plus a rim, every edge and the <mark> razor sharp and fully legible.
 
-Light: one large soft source high camera-left, hard falloff to true black across the
-right two-thirds; a single hard <amber> specular travels the top edge. NO god rays,
-NO light beams, NO lens flare, NO bloom, NO blue filter; neutral white balance;
-blacks deep but never crushed to noise.
-Audio: no music; only room tone and one soft mechanical settle at 5.5s.
-Constraints (reassert): one continuous world, charcoal void, single soft top-left
-source; the object is locked and never rotates, drifts or changes scale; camera
-moves slow, continuous and motion-control smooth with realtime physics, no speed
-ramping, no slow-motion, no floating; every printed line and mark exactly as
-@Image1, never re-lettered or warped; three real cuts, not morphs; NO god rays, NO
-lens flare, NO bloom, NO blue grade; no on-screen text, no captions, no added
-graphics, no extra objects entering frame, no morphing, no melting.
+Light: a different hard key per beat as specified above — top-left rake, then rear
+rim, then underlit — resolving to one large soft source high camera-left plus rim on
+the landing. Hard falloff to true black in every beat. NO god rays, NO light beams,
+NO lens flare, NO bloom, NO blue filter; neutral white balance; blacks deep but
+never crushed to noise.
+Audio: no music; room tone with one soft percussive hit on each cut and a mechanical
+settle at 4.6s.
+Constraints (reassert): one continuous world, charcoal void, no set dressing; the
+object is locked and never rotates, drifts or changes scale; every camera move is
+continuous at a constant rate with realtime physics, no speed ramping, no
+slow-motion, no floating; every printed line and mark exactly as @Image1, never
+re-lettered or warped; four real hard cuts, not morphs or dissolves; no long static
+holds before the landing, keep cutting; the whole object is not shown before SHOT 4;
+NO god rays, NO lens flare, NO bloom, NO blue grade; no on-screen text, no captions,
+no added graphics, no extra objects entering frame, no morphing, no melting.
 ```
 
-**Check the output** Scene detection confirms 3 cuts. First/middle/last frames all
-show the mark intact and sharp. The object has not rotated. Blacks are black, not
-grey haze. No flare arrived.
+**Check the output** Scene detection confirms 4 cuts — if it reports fewer, the
+beats were under-staged and the piece came back as a drift. First/middle/last frames
+show the mark intact and sharp. The object has not rotated. No two beats share a
+shot size or key direction. Blacks are black, not grey haze. No flare arrived.
+
+**If you need more than four beats** or ~1-second staccato, generate each angle as
+its own 4s clip and trim — see the beat-density section of
+`references/cut-architecture.md`.
 
 **Notes** —
 
@@ -114,48 +129,68 @@ intro/outro bumper.
   higher. An upscaled small PNG will not survive.
 - `reference_images` — optional: one material or environment reference.
 
-**Settings** `duration` 5s · `aspect_ratio` 16:9 (or the delivery aspect) ·
+**Settings** `duration` 6s · `aspect_ratio` 16:9 (or the delivery aspect) ·
 `resolution` 1080p · `generate_audio` off unless the sting wants a tone · deliver on
 `seedance-2` — never ship a mark from a fast variant.
 
 **Read `references/logo-and-mark-motion.md` before writing this shot.** The text lock goes in
 three places and the vision QA is per-glyph.
 
-<!-- PLACEHOLDER: replace with a verified winning prompt -->
+**Pick the treatment first.** For a wordmark or any multi-element lockup, the
+default is **per-element ignition** — each letterform lighting and lifting in turn —
+and the full worked prompt for it lives in `references/logo-and-mark-motion.md`. The
+slot below is the other strong option: a **macro cut chain**, which never asks a
+letterform to move at all and so suits fragile, highly detailed or single-element
+marks. Both beat a highlight drifting across a static logo, which is the one answer
+to "animate this logo" you must not give.
+
 ```
-Format: Brand mark sting, 5 seconds, 16:9, low-key <metallic> look, no added text.
+Format: Brand mark sting, 6 seconds, 16:9, low-key <metallic> look, no added text.
 References: @Image1 as the first frame and the brand mark — every letterform, stroke
 weight, counter, kerning pair and proportion is fixed exactly as shown; do not
 re-letter, re-draw, re-space, warp, skew or substitute any glyph, and do not add or
 remove any character.
 Consistent world: seamless charcoal-to-black void, no horizon, no floor seam; the
 mark reads as <brushed metal inlaid in a dark matte surface>.
-Motion split: the mark is completely locked — no deformation, no scale change, no
-rotation, no perspective change. Camera locked absolutely still. Only light and
-shadow move, at natural realtime speed. Nothing is speed-ramped.
+Motion split: the mark is completely locked and pixel-exact in every beat — no
+deformation, no scale change, no rotation, no perspective change, no redrawing. The
+camera changes position between beats and the key changes direction with it. The
+complete lockup is not shown until SHOT 4. Realtime physics, nothing speed-ramped.
 
-SHOT 1 — DARK HOLD (0–1.5s), medium close, 85mm. The mark is barely visible in near
-darkness, only the faintest edge definition catching a low source. Nothing moves.
-SHOT 2 — SPECULAR SWEEP (1.5–4s), medium close, 85mm. A single hard specular
-highlight travels left to right across the mark at a perfectly constant rate,
-igniting each letterform in turn as it passes and leaving it softly lit behind. The
-letterforms do not deform as it crosses them. Camera still locked.
-SHOT 3 — SETTLE (4–5s), medium close, 85mm. The highlight clears the right edge; the
-mark holds evenly lit, razor sharp, dead center, absolutely still for the final
-second.
+SHOT 1 — MACRO CORNER (0–1.4s), extreme close-up, 100mm macro filling the frame with
+the outer corner of a single letterform — the mark is unreadable at this scale.
+Camera locked. Hard key raking from top-left at 20 degrees picks out the machined
+edge and the material grain; everything else is true black. HARD CUT.
+SHOT 2 — COUNTER (1.4–2.8s), extreme close-up, 100mm macro on the enclosed counter
+of a different letterform, camera 40 degrees around the mark and slightly below.
+HARD CUT in. Key flips to a hard rear source: the near edge silhouettes and the
+inner curve catches a thin rim. Camera locked. HARD CUT.
+SHOT 3 — JUNCTION (2.8–4.2s), extreme close-up, 100mm macro on the junction where
+two strokes meet, camera three-quarters and low. HARD CUT in. Hard key from below.
+A single specular crosses the junction at a constant rate, showing the thickness of
+the inlay. HARD CUT.
+SHOT 4 — LOCKUP (4.2–6s), full frame, 85mm. HARD CUT to the complete mark, seen
+whole for the first time, dead center. The camera pulls back 15 centimeters over the
+first second at a constant rate then stops dead and holds absolutely still, the mark
+evenly lit by one soft top key plus rim, every letterform razor sharp and legible.
 
-Light: one hard travelling source, otherwise near-black; NO god rays, NO light
+Light: a different hard key per beat as specified — top-left rake, rear rim, then
+underlit — resolving to soft top key plus rim on the lockup. NO god rays, NO light
 beams, NO lens flare, NO bloom, NO blue grade.
-Audio: no music; one low sustained tone resolving at 4s.
+Audio: no music; one soft tick per cut and a low tone resolving at 4.2s.
 Constraints (reassert): the mark is pixel-exact to @Image1 — same letterforms, same
 stroke weights, same spacing, same proportions; never re-lettered, never warped,
-never substituted; camera locked throughout; light-only motion at realtime speed,
-no speed ramping; no additional text, no tagline, no URL, no captions, no
-watermark, no added graphics; no morphing, no letters flying or assembling.
+never redrawn, never substituted; the mark itself never moves, scales or rotates in
+any beat — only the camera position and the key direction change; four real hard
+cuts, not morphs or dissolves; no long static holds before the lockup, keep cutting;
+realtime physics, no speed ramping; no additional text, no tagline, no URL, no
+captions, no watermark, no added graphics; no morphing, no letters flying or
+assembling.
 ```
 
-**Check the output** Per-glyph vision QA on first, middle and last frames — see the
-checklist in `references/logo-and-mark-motion.md`. Any glyph error is a retake, not a note.
+**Check the output** Scene detection confirms 4 cuts. Per-glyph vision QA on the last
+frame of every beat, not just the final frame — see the checklist in
+`references/logo-and-mark-motion.md`. Any glyph error is a retake, not a note.
 
 **Notes** —
 

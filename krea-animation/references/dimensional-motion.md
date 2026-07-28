@@ -385,7 +385,7 @@ movement, no zoom, no extra objects, no text overlay.
 
 | Intent | Move |
 |---|---|
-| "Make it hero / important" | Suspension lock + glacial push-in |
+| "Make it hero / important" | Suspension lock, cut between two or three angles on it, then pull out to the whole |
 | "Show all sides" | Object turntable, constant rate, named degrees |
 | "Make it cinematic while showing sides" | Camera orbit 45° at constant radius |
 | "Show what's inside / how it's built" | Explode → hold → reassemble, or cutaway |
