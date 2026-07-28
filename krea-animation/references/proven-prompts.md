@@ -105,7 +105,7 @@ and appears exactly once; the sequence plays once, forward, and resolves — aft
 landing the frame holds still and does not replay, loop, or return to any earlier
 beat or framing; NO god rays, NO lens flare, NO bloom, NO blue grade; no on-screen
 text, no captions, no added graphics, no extra objects entering frame, no morphing,
-no melting.
+no melting; no light streaks, no shine sweeps, no glints or sparkles, no bars, stripes, bands or rectangles moving across the frame, no swipe or wipe transitions, no gradient sweeps, no bokeh particles, no scan lines, no glow pulses.
 ```
 
 **Check the output** Scene detection confirms 4 cuts — if it reports fewer, the
@@ -190,7 +190,7 @@ the complete mark appears exactly once, on SHOT 4; the sequence plays once, forw
 and resolves — after the lockup the frame holds still and does not replay, loop, or
 return to any earlier beat or framing; realtime physics, no speed ramping; no additional text, no tagline, no URL, no
 captions, no watermark, no added graphics; no morphing, no letters flying or
-assembling.
+assembling; no light streaks, no shine sweeps, no glints or sparkles, no bars, stripes, bands or rectangles moving across the frame, no swipe or wipe transitions, no gradient sweeps, no bokeh particles, no scan lines, no glow pulses.
 ```
 
 **Check the output** Scene detection confirms 4 cuts. Per-glyph vision QA on the last

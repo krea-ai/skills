@@ -38,6 +38,28 @@ URL, no added graphics.
 That last line matters as much as the first: unprompted, Seedance likes to add a
 tagline underneath a logo. Ban it explicitly.
 
+## First: Is The Mark Flat Or Dimensional?
+
+This decides everything below, and getting it wrong is what produces cheap results.
+
+**A flat 2D vector mark** — solid fills, no material, no thickness, no lighting baked
+in — has nothing to reveal at macro scale. Push into it and you get a large area of
+flat colour, which is why a zoom into a vector logo looks like a mistake. It also has
+no surface to rake light across, so lighting recipes degrade into bars and streaks
+sliding over the artwork: the free-template look. For a flat mark, motion must come
+from the **elements themselves** — their brightness, colour, position and order — or
+from giving the mark real material first.
+
+- Use: per-element ignition, scale and position builds, focus resolve.
+- Do not use: macro detail beats, raking or travelling light, slat crawl, shadow
+  wipes, camera orbit, depth emergence.
+- Or: render the mark as a physical object first (inlaid metal, embossed, extruded)
+  with an image generation, approve that still, then animate it as a dimensional
+  mark.
+
+**A dimensional mark** — inlaid, embossed, extruded, printed on a real surface, or a
+3D render — has material and depth. Everything below applies.
+
 ## What Actually Reads Well
 
 A logo sting is a **cut sequence through the mark**, not a lighting effect applied
@@ -99,7 +121,7 @@ no scale change, no deformation; realtime physics, no speed ramping; the sequenc
 plays once, forward, and resolves — after the landing the frame holds still and does
 not replay, loop, or return to any earlier beat or framing; the complete lit lockup
 appears exactly once, at the end; no additional text, no tagline, no captions, no
-watermark; no morphing.
+watermark; no morphing; no light streaks, no shine sweeps, no glints or sparkles, no bars, stripes, bands or rectangles moving across the frame, no swipe or wipe transitions, no gradient sweeps, no bokeh particles, no scan lines, no glow pulses.
 ```
 
 Run per-glyph vision QA on the last frame of every ignition beat, not just the

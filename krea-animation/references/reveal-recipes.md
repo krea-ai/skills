@@ -77,6 +77,10 @@ highlight travel gets lost inside it.
 
 Chiaroscuro drama with an in-world excuse for the light.
 
+**Physical subjects only.** The slats must fall across a real surface and the wall
+behind it. On flat artwork or a vector mark this renders as white bars sliding over
+the logo — the cheapest look in this file.
+
 **Write**
 ```
 SHOT 1 — SLAT CRAWL (0–3.5s), medium, 85mm. Camera locked. Hard-edged horizontal
@@ -109,7 +113,10 @@ next beat begins in a *different framing* and name it a cut.
 
 ### 6. Shadow Wipe Transition
 
-The quiet version of the light wipe, and the more elegant one.
+The quiet version of the light wipe, and the more elegant one. Both of these fill the
+*whole frame* for a few frames and land in a new framing — that is what makes them a
+cut. A band or bar travelling across the frame while the framing stays put is not a
+wipe, it is the stock swipe transition; ban it in the tail.
 
 **Write**
 ```
@@ -414,8 +421,8 @@ build is in `references/cut-architecture.md` — then fill each beat from here.
 | "unbox / open it" | 17 Precision Settle, 21 Fabric Fall |
 | "show how it's made / what's inside" | 18 Unfold, exploded view in `references/dimensional-motion.md` |
 | "punchy, high energy" | 16 Whip-Pan Accent, 15 Dolly-Zoom, tighter beats |
-| "moody, cinematic, film-like" | 4 Slat Crawl, 2 Silhouette Bloom, 21:9 aspect |
-| "the logo should animate" | `references/logo-and-mark-motion.md` |
+| "moody, cinematic, film-like" | 4 Slat Crawl (physical subjects only), 2 Silhouette Bloom, 21:9 aspect |
+| "the logo should animate" | `references/logo-and-mark-motion.md` — check flat vs dimensional first; most of the recipes here do not apply to flat artwork |
 | "make it float / spin in the air" | `references/dimensional-motion.md` |
 
 ## Combining Recipes

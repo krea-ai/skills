@@ -324,6 +324,23 @@ will do unasked.
 - [ ] No constraints tail
 - [ ] Music not specified, so trailer scoring appears
 - [ ] Brand named as an imitation target instead of the look described in craft terms
+- [ ] Any of the cheap motion-graphics defaults below
+
+### The cheap list — ban these explicitly in every constraints tail
+
+These are the stock-template moves. They arrive unasked, they look free, and one of
+them ruins an otherwise good piece:
+
+```
+no light streaks, no shine sweeps, no glints or sparkles, no bars, stripes, bands or
+rectangles moving across the frame, no swipe or wipe transitions, no gradient sweeps,
+no lens flare, no bokeh particles, no dust overlays, no scan lines, no glow pulses
+```
+
+Two of these are legitimate *only* on a physical object with real surfaces — a
+travelling specular on a chamfer, blind shadows crawling across a wall. On flat
+artwork they degenerate into sliding bars, which is the single most recognisable
+cheap-animation tell.
 
 ## Where To Go Next
 
