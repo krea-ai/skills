@@ -50,7 +50,7 @@ sliding over the artwork: the free-template look. For a flat mark, motion must c
 from the **elements themselves** — their brightness, colour, position and order — or
 from giving the mark real material first.
 
-- Use: per-element ignition, scale and position builds, focus resolve.
+- Use: per-element choreography, scale and position builds, focus resolve.
 - Do not use: macro detail beats, raking or travelling light, slat crawl, shadow
   wipes, camera orbit, depth emergence.
 - Or: render the mark as a physical object first (inlaid metal, embossed, extruded)
@@ -67,66 +67,80 @@ to it. The letterforms stay pixel-exact — that constraint never relaxes — bu
 camera, the scale, the key and the per-element lighting all change hard between
 beats. Ranked by impact, with the reliability caveat noted on each.
 
-### 1. Per-Element Ignition (the default for a multi-part mark)
+### 1. Per-Element Choreography (the default for any mark with separable parts)
 
-Each letterform or element lights, lifts or resolves in turn, then the whole
-lockup holds. This is the treatment that makes a wordmark feel alive, and it is
-safe **as long as each element keeps its exact shape** — you are lighting and
-translating finished glyphs, never redrawing them.
+Break the mark into its actual vector parts — for a wordmark the letterforms, for a
+monogram or symbol the individual bowls, counters, strokes and dots — and give each
+part **a different small action**, staggered in time, all converging on exact final
+registration.
 
-The distinction that keeps it safe: *illuminate and move* the letterforms, never
-*build* them. `the letter brightens` and `the letter rises 3 millimeters` preserve
-the glyph. `the letter forms`, `assembles`, `draws on`, or `materializes` invents a
-new one.
+The mistake is giving every part the same action in sequence. Four shapes that each
+rise four millimetres in turn is a queue, not choreography. Four shapes where one
+rotates, one lifts and drops with a little overshoot, one slides along its own axis
+and one counter-rotates against its neighbour is a mark with personality — and it is
+no harder to prompt.
+
+**The payoff is the snap, not a light sweep.** Everything arrives at exact
+registration on the same frame, and that click into place is the moment the piece is
+built around.
+
+A menu to draw from, one per part:
+
+| Action | Magnitude |
+|---|---|
+| Rigid rotation, settling back | 5–10°, with a small overshoot |
+| Lift and drop | 4–6mm, landing with a slight bounce |
+| Slide along its own axis and return | 3–5mm |
+| Breathe — scale up and return | 2–3% |
+| Counter-rotate against an adjacent part | 5–8° the opposite way |
+| Ignite in its own colour | black to full saturation |
+
+**What keeps it safe:** rigid transforms only, small magnitudes, and an exact return.
+Each part keeps its drawn form at every frame — it rotates, it does not redraw. Say
+the maximum for each transform and say that the final frame is pixel-exact to the
+source.
 
 ```
-Format: Brand mark sting, 6 seconds, 16:9, black void, saturated per-letter colour,
-no added text.
-References: @Image1 as the first frame and the brand mark — every letterform,
-weight, colour and spacing pixel-exact as shown, never re-lettered, never warped,
-never redrawn.
+Format: Brand mark sting, 5 seconds, 16:9, pure black void, no added text.
+References: @Image1 as the first frame and the mark — every shape, curve, weight, gap
+and colour pixel-exact as shown; do not redraw, warp, re-space or substitute any part.
 Consistent world: seamless pure-black void, no horizon, no floor seam, no set
-dressing. The mark sits dead center throughout.
-Motion split: each letterform keeps its exact drawn shape and spacing at all times.
-The only permitted per-letter motion is a vertical translation of 4 millimeters and
-a change in its own emitted brightness. No rotation, no scaling, no deformation, no
-redrawing. Camera locked. Realtime physics, no speed ramping.
+dressing. The mark sits dead centre and its final position is identical to @Image1.
+Motion split: the mark is composed of separate rigid shapes. Each shape keeps its
+exact drawn form at all times — the only permitted motion is a rotation of at most 8
+degrees, a translation of at most 5 millimetres, or a scale change of at most 3
+percent, always returning to its exact position in @Image1. No shape deforms,
+stretches, squashes or redraws. Camera locked. Realtime physics, no speed ramping.
 
-SHOT 1 — MACRO EDGE (0–1s), extreme close-up, 100mm macro filling the frame with the
-outer corner of one letterform — the mark is unreadable at this scale. Camera locked.
-Hard key raking from top-left at 20 degrees; everything else true black. HARD CUT.
-SHOT 2 — MACRO JUNCTION (1–2s), extreme close-up, 100mm macro where two strokes meet,
-camera 40 degrees around the mark and slightly below. HARD CUT in. Key flips to a
-hard rear source; the near edge silhouettes. Camera locked. HARD CUT.
-SHOT 3 — IGNITION CHAIN (2–4.8s), medium close, 85mm, camera locked. HARD CUT out to
-the complete lockup sitting unlit in near darkness, letterforms discernible only as
-black shapes. The letterforms then ignite one at a time from left to right, roughly
-0.4 seconds apart. Each letter, on its turn: rises 4 millimeters with a quick
-ease-out and settles back, while its own colour ignites from black to full
-saturation and stays lit. Every letter that has already fired remains lit and
-settled. The rise is a translation only — the glyph never stretches, squashes,
-rotates or changes size.
-SHOT 4 — LANDING (4.8–6s), full frame, 85mm. The final letterform fires and the
-camera pulls back 12 centimeters over 0.5 seconds at a constant rate to frame the
-complete lockup, then stops dead. Every letterform fully saturated, evenly lit,
-razor sharp, centered, absolutely still for the remaining time.
+SHOT 1 — STAGGERED PLAY (0–3s), medium close, 85mm, camera locked. The parts of the
+mark move one at a time, 0.15 seconds apart, each doing something different: the
+upper-left shape rotates 8 degrees counter-clockwise and settles back with a small
+overshoot; the lower-left shape lifts 5 millimetres and drops, landing with a slight
+bounce; the diagonal stroke slides 4 millimetres along its own axis and returns; the
+upper-right shape counter-rotates 6 degrees clockwise, the opposite way to its
+neighbour, and settles. Each shape holds its exact drawn form throughout and moves as
+one rigid piece.
+SHOT 2 — SNAP (3–3.4s), medium close, 85mm. Every shape arrives at its exact final
+registration on the same frame with one quick ease-out. The mark is now pixel-exact
+to @Image1.
+SHOT 3 — HOLD (3.4–5s), medium close, 85mm. Absolutely still, mark composed dead
+centre, razor sharp, for the remaining time.
 
-Light: per-letter emission plus one soft top key on the landing beats; otherwise
-pure black. NO god rays, NO lens flare, NO bloom spill between letters, NO blue grade.
-Audio: no music; one soft tick per letter ignition, one low resolving tone at 5.2s.
-Constraints (reassert): the mark is pixel-exact to @Image1 — same letterforms,
-weights, colours and spacing, never re-lettered, never warped, never redrawn;
-per-letter motion is vertical translation only, maximum 4 millimeters; no rotation,
-no scale change, no deformation; realtime physics, no speed ramping; the sequence
-plays once, forward, and resolves — after the landing the frame holds still and does
-not replay, loop, or return to any earlier beat or framing; the complete lit lockup
-appears exactly once, at the end; no additional text, no tagline, no captions, no
-watermark; no morphing; no light streaks, no shine sweeps, no glints or sparkles, no bars, stripes, bands or rectangles moving across the frame, no swipe or wipe transitions, no gradient sweeps, no bokeh particles, no scan lines, no glow pulses.
+Light: flat even illumination on the mark, pure black surround. NO god rays, NO lens
+flare, NO bloom, NO gradient sweeping across the mark.
+Audio: no music; one soft tick per part as it moves, one low resolving tone at 3.4s.
+Constraints (reassert): the final frame is pixel-exact to @Image1 — same shapes, same
+weights, same spacing, same proportions; per-part motion is rigid rotation under 8
+degrees, translation under 5 millimetres, or scale under 3 percent, always returning
+to exact registration; no part deforms or redraws; no masks, no wipes, no straight
+edge travelling across the mark; no circles, rings, ripples, halos or arcs appearing
+around the mark; no uniform scale-down of the whole mark as the only motion; the
+sequence plays once, forward, and resolves; realtime physics, no speed ramping; no
+additional text, no tagline, no captions, no watermark.
 ```
 
-Run per-glyph vision QA on the last frame of every ignition beat, not just the
-final frame — a letter that drifted mid-chain often settles back correctly and
-hides the error.
+Run per-part vision QA on the last frame of the staggered beat and on the snap — a
+part that drifted mid-chain often settles back correctly and hides the error.
 
 ### 2. Macro Cut Chain Through The Mark
 
@@ -233,12 +247,15 @@ construct comes back misspelled.
 
 | Don't ask for | Why | Instead |
 |---|---|---|
-| Letters flying in and assembling | Each letter is re-drawn in flight; kerning collapses | Per-element ignition — letters already present, lighting and lifting in turn |
+| Letters flying in and assembling | Each letter is re-drawn in flight; kerning collapses | Per-element choreography — parts already present, moving as rigid pieces |
 | Handwriting / draw-on animation | The model invents letterforms stroke by stroke | Shadow retreat or blur reveal uncovering a finished mark |
 | Morphing one mark into another | Both marks end up wrong | Two shots with a hard cut between them |
 | Liquid or smoke forming the logo | Letterforms deform as the medium settles | Particle/haze *around* a locked mark |
 | 3D logo tumbling in space | Perspective change re-renders the glyphs | Macro cut chain — hard cuts between fixed angles, each ≤ 20° off axis |
 | Adding a tagline or URL | It will be invented and misspelled | Ban added text; composite type in post |
+| A straight edge or mask sliding across the mark | The 2D overlay tell — it is a slide transition, not motion the mark is doing | Per-element choreography; the parts move, nothing sweeps over them |
+| Rings, circles, ripples, halos or arcs around the mark | Free-template radar-ping preset; adds geometry that is not in the logo | Stagger the mark's own parts instead of decorating around it |
+| The whole mark uniformly scaling up or down | Not animation, just a zoom; reads as a placeholder | Give each part its own action, converging on a snap |
 
 What is explicitly **not** banned, and should be your default reach: cutting hard
 between macro views of the mark, per-letter illumination, per-letter translation

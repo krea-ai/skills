@@ -338,7 +338,9 @@ them ruins an otherwise good piece:
 ```
 no light streaks, no shine sweeps, no glints or sparkles, no bars, stripes, bands or
 rectangles moving across the frame, no swipe or wipe transitions, no gradient sweeps,
-no lens flare, no bokeh particles, no dust overlays, no scan lines, no glow pulses
+no lens flare, no bokeh particles, no dust overlays, no scan lines, no glow pulses,
+no rings, circles, ripples, halos or arcs radiating around the subject, no straight
+edge or mask sliding across it
 ```
 
 Two of these are legitimate *only* on a physical object with real surfaces — a

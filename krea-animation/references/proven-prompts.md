@@ -140,7 +140,7 @@ intro/outro bumper.
 three places and the vision QA is per-glyph.
 
 **Pick the treatment first.** For a wordmark or any multi-element lockup, the
-default is **per-element ignition** — each letterform lighting and lifting in turn —
+default is **per-element choreography** — each part given a different small action, staggered —
 and the full worked prompt for it lives in `references/logo-and-mark-motion.md`. The
 slot below is the other strong option: a **macro cut chain**, which never asks a
 letterform to move at all and so suits fragile, highly detailed or single-element
