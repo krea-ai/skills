@@ -87,12 +87,14 @@ State, separately, what moves smoothly, what moves at realtime physical speed, a
 what is **nailed down**. Without this, everything drifts a little, which reads as
 underwater.
 
+```
 Motion split: the object is locked — it does not rotate, wobble, drift, or change
 scale unless a beat says so. Camera moves are continuous and mechanically smooth,
 as if on a motion-control rig, quantified per beat (distance + duration + constant
 rate) rather than described as slow. Atmospherics — dust motes, faint haze,
 the travel of the specular highlight — move at natural realtime speed. Nothing is
 speed-ramped. No slow-motion.
+```
 
 ### 5. SHOTS
 
