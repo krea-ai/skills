@@ -105,8 +105,13 @@ early and then replays — the first, middle and last frames of a looped piece a
 look correct. The contact sheet shows the whole timeline at once:
 
 ```bash
-ffmpeg -i shot-raw.mp4 -vf "fps=4,scale=300:-1,tile=6x4" -frames:v 1 contact.png
+ffmpeg -i shot-raw.mp4 -vf "fps=3,scale=300:-1,tile=6x4" -frames:v 1 contact.png
 ```
+
+The tile is 24 cells and `-frames:v 1` writes only the first one, so the sheet covers
+`24 ÷ fps` seconds. At `fps=3` that is 8s — the default deliverable. **Set `fps` to at
+least `24 ÷ duration` or the sheet silently stops early and the landing, the beat
+these checks are about, never appears on it.** A 6s sting wants `fps=4`.
 
 Read it with vision and answer honestly:
 

@@ -1,7 +1,7 @@
 ---
 version: 0.7.0
 name: krea-animation
-description: "Cinematic animation with Seedance 2 through Krea MCP. Use for animating any still, render, product, logo or illustration; premium reveals; camera moves; levitation and floating objects; rotation and orbits; exploded views; macro detail zoom-ins; 3D/CGI and architectural motion; logo and brand-mark animation; 2D and anime motion; plus long-form animation production with storyboards, shot lists, asset bibles, keyframes, edit assembly, QA and retakes. For one-off generic image/video generation use krea-generate; for product/campaign/UGC marketing use krea-marketing."
+description: "Cinematic animation with Seedance 2. Use for animating any still, render, product, logo or illustration: reveals, camera moves, levitation, orbits, exploded views, macro detail, 3D/CGI and architectural motion, logo stings, 2D and anime motion, and storyboard-to-sequence production. For generic image or video generation use krea-generate; for marketing creative use krea-marketing."
 license: MIT
 ---
 
@@ -28,9 +28,11 @@ jump scale, angle and light on every cut. The whole subject is the last thing th
 viewer sees, arriving as the payoff rather than the premise.
 
 One slow move across eight seconds is the failure this skill exists to prevent. If
-the user says "animate this logo" and the answer is a highlight drifting across it,
-that is a miss — the answer is four hard cuts through the mark at macro scale from
-four different angles and lighting states, then a pull to the full lockup.
+the user says "animate this logo" and the answer is a highlight drifting across it —
+or a bar sweeping over it, or rings pinging around it — that is a miss. The answer is
+several hard cuts between genuinely different treatments: for a mark with real
+material and depth, macro angles under changing light; for flat vector artwork, the
+mark's own parts moving. Check which you have first — `references/logo-and-mark-motion.md`.
 
 Suppress Seedance's untamed defaults — glossy, centered, blue-graded, lens-flared,
 faintly floaty — on purpose, every time. Maximal does not mean sloppy: every beat is
@@ -52,6 +54,8 @@ still fully staged, every move quantified, every lock restated.
 5. **Open inside the subject; reveal the whole of it last.** Beat one is macro — a
    detail most people never look at. The complete subject arrives on the final beat
    as the payoff. Establishing wides are for architecture, not for objects and marks.
+   Exception: flat vector artwork has no detail to open on, so the build comes from
+   its own parts moving instead — see `references/logo-and-mark-motion.md`.
 6. **Jump scale, angle and light on every cut.** No two adjacent beats share a shot
    size, a camera height, or a key direction. A cut that only changes time reads as
    a dissolve with extra steps.

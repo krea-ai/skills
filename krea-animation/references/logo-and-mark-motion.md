@@ -71,34 +71,37 @@ beats. Ranked by impact, with the reliability caveat noted on each.
 
 Break the mark into its actual vector parts — for a wordmark the letterforms, for a
 monogram or symbol the individual bowls, counters, strokes and dots — and give each
-part **a different small action**, staggered in time, all converging on exact final
-registration.
+part **its own action**, staggered in time.
 
 The mistake is giving every part the same action in sequence. Four shapes that each
-rise four millimetres in turn is a queue, not choreography. Four shapes where one
-rotates, one lifts and drops with a little overshoot, one slides along its own axis
-and one counter-rotates against its neighbour is a mark with personality — and it is
-no harder to prompt.
+rise four millimetres in turn is a queue, not choreography.
 
-**The payoff is the snap, not a light sweep.** Everything arrives at exact
-registration on the same frame, and that click into place is the moment the piece is
-built around.
+**Invent the actions from the mark's own geometry.** A counter can spin where a
+straight stroke cannot; a dot can drop where a bowl should tilt; two shapes that
+mirror each other can move in opposite directions. The table below is a starting
+point, not a list to work through — if the mark suggests something better, do that
+instead. The only fixed requirements are the two below it.
 
-A menu to draw from, one per part:
-
-| Action | Magnitude |
+| Action | Rough magnitude |
 |---|---|
-| Rigid rotation, settling back | 5–10°, with a small overshoot |
-| Lift and drop | 4–6mm, landing with a slight bounce |
-| Slide along its own axis and return | 3–5mm |
-| Breathe — scale up and return | 2–3% |
-| Counter-rotate against an adjacent part | 5–8° the opposite way |
+| Rigid rotation | 5–10° |
+| Lift, offset or drop | 4–6mm |
+| Slide along its own axis | 3–5mm |
+| Scale | 2–3% |
+| Counter-move against an adjacent part | the opposite direction to its neighbour |
 | Ignite in its own colour | black to full saturation |
 
-**What keeps it safe:** rigid transforms only, small magnitudes, and an exact return.
-Each part keeps its drawn form at every frame — it rotates, it does not redraw. Say
-the maximum for each transform and say that the final frame is pixel-exact to the
-source.
+**Requirement one — displace, then snap.** Parts move *away* from their final position
+and **hold there**, and only in the last beat does everything arrive at exact
+registration on a single frame. If each part resolves itself as it goes, the snap has
+nothing left to travel and the tail of the clip is dead air. The click into place is
+the payoff; give it something to click from.
+
+**Requirement two — rigid transforms only.** Each part keeps its drawn form at every
+frame: it rotates, it does not redraw. State a maximum for each transform and state
+that the final frame is pixel-exact to the source. `the shape rotates 8 degrees`
+preserves the geometry; `the shape forms`, `assembles`, `draws on` or `materializes`
+invents new geometry.
 
 ```
 Format: Brand mark sting, 5 seconds, 16:9, pure black void, no added text.
@@ -109,37 +112,40 @@ dressing. The mark sits dead centre and its final position is identical to @Imag
 Motion split: the mark is composed of separate rigid shapes. Each shape keeps its
 exact drawn form at all times — the only permitted motion is a rotation of at most 8
 degrees, a translation of at most 5 millimetres, or a scale change of at most 3
-percent, always returning to its exact position in @Image1. No shape deforms,
-stretches, squashes or redraws. Camera locked. Realtime physics, no speed ramping.
+percent. No shape deforms, stretches, squashes or redraws. Realtime physics, no speed
+ramping.
 
-SHOT 1 — STAGGERED PLAY (0–3s), medium close, 85mm, camera locked. The parts of the
-mark move one at a time, 0.15 seconds apart, each doing something different: the
-upper-left shape rotates 8 degrees counter-clockwise and settles back with a small
-overshoot; the lower-left shape lifts 5 millimetres and drops, landing with a slight
-bounce; the diagonal stroke slides 4 millimetres along its own axis and returns; the
-upper-right shape counter-rotates 6 degrees clockwise, the opposite way to its
-neighbour, and settles. Each shape holds its exact drawn form throughout and moves as
-one rigid piece.
-SHOT 2 — SNAP (3–3.4s), medium close, 85mm. Every shape arrives at its exact final
-registration on the same frame with one quick ease-out. The mark is now pixel-exact
-to @Image1.
-SHOT 3 — HOLD (3.4–5s), medium close, 85mm. Absolutely still, mark composed dead
+SHOT 1 — DISPLACE (0–1.8s), medium close, 85mm, camera locked. The parts of the mark
+move out of alignment one at a time, 0.2 seconds apart, each differently: the
+upper-left shape rotates 8 degrees counter-clockwise; the lower-left shape drops 5
+millimetres; the diagonal stroke slides 4 millimetres along its own axis; the
+upper-right shape counter-rotates 6 degrees clockwise. Each part **holds its new
+offset position** once it has moved — nothing returns yet. HARD CUT.
+SHOT 2 — MACRO OFFSET (1.8–2.8s), extreme close-up, 100mm macro on the gap opened
+between two displaced parts, camera 30 degrees off axis and slightly low. HARD CUT in.
+Key rakes from top-left across the exposed edges. Nothing moves. HARD CUT.
+SHOT 3 — SNAP (2.8–3.4s), medium close, 85mm. HARD CUT back. Every displaced part
+travels back to its exact original position and all arrive on the same frame with one
+quick ease-out and a single small overshoot. The mark is now pixel-exact to @Image1.
+SHOT 4 — HOLD (3.4–5s), medium close, 85mm. Absolutely still, mark composed dead
 centre, razor sharp, for the remaining time.
 
 Light: flat even illumination on the mark, pure black surround. NO god rays, NO lens
 flare, NO bloom, NO gradient sweeping across the mark.
-Audio: no music; one soft tick per part as it moves, one low resolving tone at 3.4s.
+Audio: no music; one soft tick per part as it displaces, one resolving click at 3.4s.
 Constraints (reassert): the final frame is pixel-exact to @Image1 — same shapes, same
 weights, same spacing, same proportions; per-part motion is rigid rotation under 8
-degrees, translation under 5 millimetres, or scale under 3 percent, always returning
-to exact registration; no part deforms or redraws; no masks, no wipes, no straight
-edge travelling across the mark; no circles, rings, ripples, halos or arcs appearing
-around the mark; no uniform scale-down of the whole mark as the only motion; the
-sequence plays once, forward, and resolves; realtime physics, no speed ramping; no
+degrees, translation under 5 millimetres, or scale under 3 percent; no part deforms,
+redraws or morphs; every displaced part returns to exact registration on one frame;
+no masks, no wipes, no straight edge travelling across the mark; no bars, stripes or
+bands of any kind over the artwork; no circles, rings, ripples, halos or arcs around
+the mark; no uniform scale-down of the whole mark as the only motion; the sequence
+plays once, forward, and resolves — after the hold the frame does not replay, loop or
+return to any earlier beat; realtime physics, no speed ramping; no morphing; no
 additional text, no tagline, no captions, no watermark.
 ```
 
-Run per-part vision QA on the last frame of the staggered beat and on the snap — a
+Run per-part vision QA on the last frame of the displace beat and on the snap — a
 part that drifted mid-chain often settles back correctly and hides the error.
 
 ### 2. Macro Cut Chain Through The Mark
