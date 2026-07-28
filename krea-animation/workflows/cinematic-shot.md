@@ -63,6 +63,7 @@ Then pick each beat's move from the recipe tables rather than inventing:
 - reveals, shadow, focus, transitions → `references/reveal-recipes.md`
 - levitation, orbit, explode, macro dive, render camera → `references/dimensional-motion.md`
 - logos and wordmarks → `references/logo-and-mark-motion.md`
+- environment, surface and palette for a desirable object → `references/luxury-showcase.md`
 - taste, light, lens, materials, tempo → `references/cinematic-craft.md`
 
 **One camera move per beat** — but four or five beats. Two moves inside one beat is

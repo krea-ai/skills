@@ -87,6 +87,7 @@ still fully staged, every move quantified, every lock restated.
 | User intent | Workflow |
 |---|---|
 | Animate one still, render, product, logo, illustration, keyframe or plate; one cinematic shot; a reveal, camera move, levitation, rotation or detail zoom | `workflows/cinematic-shot.md` |
+| A design object, watch, jewellery, fragrance or leather good that must read as desirable, or any brief naming luxury, chic, elegance or a fashion house | `workflows/cinematic-shot.md` plus `references/luxury-showcase.md` for the environment |
 | Multi-beat cinematic reveal film, product launch film, brand reveal, architectural or CGI showcase (8–30s, textless) | `workflows/reveal-sequence.md` |
 | "I have an idea for an anime/animated series", novice from scratch | `workflows/series-from-scratch.md` |
 | Studio/pro team has script, boards, style guide, layouts, or shot turnover | `workflows/studio-shot-production.md` |
@@ -134,6 +135,10 @@ The Seedance craft core. Load these for any cinematic shot:
   architectural camera work with the geometry lock.
 - `references/logo-and-mark-motion.md` — the three-place text lock, what reads well
   for marks, what to never ask for, per-glyph vision QA, fallback to compositing.
+- `references/luxury-showcase.md` — environment, material and palette for desirable
+  objects: pairing the surface against the product, placing rather than presenting,
+  the single warm accent, environment-grade transitions, and translating luxury-house
+  references into craft terms.
 - `references/proven-prompts.md` — five submittable prompts for the most common
   jobs: product hero reveal, brand mark sting, 3D/architectural camera move, still
   image → cinematic motion, macro detail reveal.
