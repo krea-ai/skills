@@ -143,9 +143,6 @@ The Seedance craft core. Load these for any cinematic shot:
   objects: pairing the surface against the product, placing rather than presenting,
   the single warm accent, environment-grade transitions, and translating luxury-house
   references into craft terms.
-- `references/proven-prompts.md` — five submittable prompts for the most common
-  jobs: product hero reveal, brand mark sting, 3D/architectural camera move, still
-  image → cinematic motion, macro detail reveal.
 
 Long-form production references. Load only when the job is narrative animation:
 

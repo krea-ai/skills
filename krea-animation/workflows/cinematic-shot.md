@@ -76,8 +76,7 @@ budget. Get the go-ahead before spending.
 
 ### 6. Write the prompt
 
-Build all nine blocks from `references/seedance-prompt-architecture.md`. Or start
-from a slot in `references/proven-prompts.md` and substitute.
+Build all nine blocks from `references/seedance-prompt-architecture.md`.
 
 Non-negotiable before submitting:
 
