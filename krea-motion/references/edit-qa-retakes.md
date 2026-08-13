@@ -38,7 +38,7 @@ Sample:
 - last frame
 - boundary frames between clips
 
-Compare against the storyboard and asset bible.
+Compare against the shot plan and the approved start images.
 
 ## Retake Log
 

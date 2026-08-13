@@ -11,7 +11,7 @@ Three packaged Agent Skills for working with [Krea.ai](https://krea.ai). Install
 |---|---|
 | **`krea-generate`** | Canonical generic-generation router. Image, video primitives, enhancement, edits, LoRA, portraits, text/poster work, and archviz through connected Krea MCP tools. |
 | **`krea-marketing`** | Marketing creative workflow: product photoshoots, marketplace image sets, DTC static ad templates (one product photo → a library of on-brand ad formats), key visuals, UGC/social ads, campaign packs, and optional Meta Ads performance context. |
-| **`krea-animation`** | Studio animation workflow: anime series, storyboard-to-video, shotlists, asset bibles, model sheets, keyframes, AI video clips, edit assembly, QA, and retakes. |
+| **`krea-motion`** | Product and brand motion: cinematic shots, multi-beat reveal films, logo stings, luxury and beauty product loops, edit assembly, QA, and retakes. Not for anime or narrative animation. |
 
 Experimental app-integration material lives under `wip/` and is not installed or packaged by default.
 

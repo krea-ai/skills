@@ -4,17 +4,17 @@
     "name": "Krea AI",
     "url": "https://krea.ai"
   },
-  "description": "Krea plugins for visual generation, marketing creative, and animation production.",
+  "description": "Krea plugins for visual generation, marketing creative, and product motion.",
   "plugins": [
     {
       "name": "krea",
       "source": "./",
-      "description": "Krea skills: generation workflows, marketing creative, and animation production.",
+      "description": "Krea skills: generation workflows, marketing creative, and product motion.",
       "version": "0.7.1",
       "skills": [
         "./krea-generate",
         "./krea-marketing",
-        "./krea-animation",
+        "./krea-motion",
         "./product-photography"
       ]
     }

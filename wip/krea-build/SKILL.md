@@ -29,7 +29,7 @@ Once per session, if sibling `../../krea-generate/scripts/update-check.sh` exist
 | "Write a TypeScript helper to call Krea" | `krea-build` |
 | "Run a one-off pipeline now" | `krea-generate` |
 | "Add Krea generation to my React form" | `krea-build` |
-| "Build an animation production UI around shot lists and Krea video jobs" | `krea-build`, with `krea-animation` as the creative workflow contract |
+| "Build a motion production UI around shot orders and Krea video jobs" | `krea-build`, with `krea-motion` as the creative workflow contract |
 | "Build a producer dashboard for product ads and Meta activation" | `krea-build`, with `krea-marketing` as the workflow contract |
 
 ## Critical workflow rule: prototype in chat, productize in the app

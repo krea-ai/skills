@@ -12,7 +12,7 @@ Not this workflow:
 - one shot only → `../workflows/cinematic-shot.md`
 - a paid social ad, UGC, or performance creative → the `krea-marketing` skill (the ad
   framing, hooks, captions and formats live there)
-- narrative animation with characters and story → `../workflows/series-from-scratch.md`
+- anime or narrative animation with characters and story → the `krea-generate` skill (`../../krea-generate/SKILL.md`)
 - designed typography, kinetic type, end cards → generate textless footage here,
   compose type in post per the `krea-marketing` skill's `../../krea-marketing/workflows/launch-teaser.md`
 

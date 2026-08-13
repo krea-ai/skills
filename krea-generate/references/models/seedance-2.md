@@ -158,7 +158,7 @@ Camera rules:
 
 ## Cinematic Cut Sequences
 
-Krea house doctrine for staged multi-beat work: product reveals, logo stings, macro studies, object films. It overrides three rules above; everything else in this file still applies. For the craft behind it — what to stage, which reveal to pick, how to light it — use the `krea-animation` skill.
+Krea house doctrine for staged multi-beat work: product reveals, logo stings, macro studies, object films. It overrides three rules above; everything else in this file still applies. For the craft behind it — what to stage, which reveal to pick, how to light it — use the `krea-motion` skill.
 
 Three overrides:
 

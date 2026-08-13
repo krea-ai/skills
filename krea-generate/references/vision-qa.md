@@ -7,7 +7,7 @@ A blind director ships bad cuts.
 ## When this applies
 
 - Asset-sheet stills (character turnarounds, prop sheets, location plates)
-- Scene-composition stills in animation and campaign workflows (`krea-animation`, `key-visual-sheet.md`, `full-ad-campaign.md`)
+- Scene-composition stills in motion and campaign workflows (`krea-motion`, `key-visual-sheet.md`, `full-ad-campaign.md`)
 - Any frame that will be passed as `start_image`, `end_image`, or `reference_images` to a video model
 - Last-frame extracts pulled with ffmpeg for chain continuity
 - Final concatenated outputs (sample several frames spaced across the timeline)

@@ -9,12 +9,12 @@ and covers most requests that arrive:
 - "make this look cinematic / premium / dramatic"
 - a reveal, a camera move, a levitation, a rotation, a detail zoom
 - a logo or brand mark sting
-- a 2D or anime frame to put in motion
 - prompt-only motion with no source image
 
 For a multi-beat reveal film assembled from several shots, use `../workflows/reveal-sequence.md`.
-For narrative animation with characters, story and continuity across scenes, use
-`../workflows/series-from-scratch.md` or `../workflows/shotlist-to-sequence.md`.
+Anime and narrative animation with characters, story and continuity across scenes
+are out of scope for this skill — hand them to the `krea-generate` skill
+(`../../krea-generate/SKILL.md`).
 
 ## Recipe
 
