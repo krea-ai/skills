@@ -7,6 +7,10 @@ description: Krea 2 image-generation reference covering live schema checks, mood
 
 Load this file only after live discovery resolves a `krea/krea-2/*` image model, or when the user explicitly asks for K2, Krea 2 Turbo, Krea 2 moodboards, style references, or Krea 2 LoRAs.
 
+## Prompting Stance
+
+You are an expert Krea 2 image prompt engineer. Convert the user's intent into a concrete still-image prompt where the prompt controls subject, scene, composition, camera, lighting, and constraints, while moodboards, style references, and LoRAs carry taste, palette, texture, and art direction.
+
 This is a model-specific operating reference, not a generic model preference. Always verify the live catalog and selected model schema before submitting.
 
 ## Live Schema Check
@@ -17,7 +21,7 @@ Observed live Krea 2 image IDs on 2026-06-11 included:
 - `krea/krea-2/medium`
 - `krea/krea-2/medium-turbo`
 
-Do not assume those IDs still exist. Confirm with live `list_models` through Krea MCP, then inspect the chosen model schema.
+Do not assume those IDs still exist. Confirm with live `list_models`, then inspect the chosen model schema.
 
 The Krea 2 schemas observed on 2026-06-11 exposed these important fields:
 
@@ -34,6 +38,10 @@ The Krea 2 schemas observed on 2026-06-11 exposed these important fields:
 | `moodboards` | Array of `{id, strength}` moodboards, observed `maxItems: 1`, `id` as UUID, strength range `0` to `1`, default `0.23`. |
 
 Use only fields present in the live schema. If a field is absent, do not approximate it with an invented input key.
+
+## Generative Slider Policy
+
+`intensity`, `complexity`, `movement`, and any other K2 generative slider are opt-in controls. Never set them unless the user explicitly requests them. Do not infer slider use merely because the request is illustrative, expressive, experimental, or asks for multiple variants. When in doubt, omit the slider fields entirely.
 
 ## Moodboard Discovery
 
@@ -60,7 +68,7 @@ Preset discovery recipe:
 
 1. Search the gallery with 1-3 aesthetic keywords from the user's brief.
 2. Shortlist by `styleName`, `styleDescription`, and `styleKeywords`; prefer `isStaffPick` boards on ties.
-3. Vision-check one or two `previewImages` per candidate. If the brief is loose, show the user 2-3 labeled candidates with one-line captions before generating.
+3. If the brief is loose, show the user 2-3 labeled candidates with one-line captions before generating.
 4. Use the chosen item's `id` as the K2 moodboard UUID.
 
 ### Personal moodboards (authenticated)
@@ -77,7 +85,7 @@ This endpoint is authenticated web-app state. In an unauthenticated request on 2
 {"message":"Unauthorized"}
 ```
 
-Treat this as separate from MCP auth unless the current Krea tooling explicitly documents otherwise. The ability to generate with a moodboard ID once the K2 schema exposes `moodboards` does not by itself prove that `www.krea.ai/api/moodboards` is accessible without a logged-in web session.
+Treat this as separate from generation-tool auth unless the current Krea tooling explicitly documents otherwise. The ability to generate with a moodboard ID once the K2 schema exposes `moodboards` does not by itself prove that `www.krea.ai/api/moodboards` is accessible without a logged-in web session.
 
 Safe discovery rules for personal boards:
 
@@ -107,7 +115,7 @@ Strength guidance, unless the user says otherwise:
 - `0.3` to `0.6`: visible moodboard influence for art direction.
 - `0.6` to `1.0`: strong moodboard pull; use carefully because it can override subject and composition.
 
-If the live schema exposes only `image_style_references`, not `moodboards`, use Krea-hosted image URLs from the moodboard as style references: the preset gallery's `previewImages`/`images` URLs qualify, as do authenticated-response assets. Do not pass arbitrary external image URLs; normalize them through `../media-inputs.md`.
+If the live schema exposes only `image_style_references`, not `moodboards`, use Krea-hosted image URLs from the moodboard as style references: the preset gallery's `previewImages`/`images` URLs qualify, as do authenticated-response assets. Do not pass arbitrary external image URLs unless the selected model schema and available tools accept them.
 
 If no moodboard or style-reference field exists in the live schema, do not fake the moodboard in the prompt. Either proceed prompt-only after telling the user the current schema lacks moodboard input, or ask the user to choose a Krea 2 surface that supports moodboards.
 
