@@ -89,7 +89,7 @@ If the user asks for a non-marketing image/video, use `../krea-generate/SKILL.md
 - `references/video-ad-post.md` - ffmpeg caption/CTA burn, multi-take assembly, music bed mixing, delivery spec; hyperframes escape hatch for designed caption motion.
 - `references/artifact-taxonomy.md` - disambiguate storyboard, key visual, hero shot, mockup, look book.
 
-General prompting guides for essential models like GPT-image-2, Nano Banana Pro, Seedance 2, and Krea 2 live in `../krea-generate/references/models/`. Shared MCP ops references (`cost-preflight.md`, `progress-reporting.md`, `vision-qa.md`) live in `../krea-generate/references/`.
+General prompting guides for essential models like GPT-image-2, Nano Banana Pro, Seedance 2.5, and Krea 2 live in `../krea-generate/references/models/`. Shared MCP ops references (`cost-preflight.md`, `progress-reporting.md`, `vision-qa.md`) live in `../krea-generate/references/`.
 
 ## Delivery Discipline
 

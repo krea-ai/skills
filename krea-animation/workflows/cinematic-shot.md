@@ -161,7 +161,7 @@ rather than rewriting the prompt wholesale.
 
 ### 10. Deliver on the quality variant
 
-Re-run the approved prompt on `bytedance/seedance-2`. Best-of-2 seeds for hero
+Re-run the approved prompt on `bytedance/seedance-2-5`. Best-of-2 seeds for hero
 deliverables. Upscale if the live schema exposes it and the delivery needs it.
 
 Deliver the clip path plus one honest line on what the shot does and anything it

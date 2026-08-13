@@ -1124,7 +1124,7 @@ A page hero is almost never needed in one shape. Compose so the crops survive:
   macro detail that this register is entirely about.
 - **Textless, always.** The page owns the type. If the user wants a headline or a
   price on it, that is composition in post — route per the type note in `SKILL.md`.
-- **Silence is a delivery step, not a submit flag.** Seedance 2 forces generated audio on
+- **Silence is a delivery step, not a submit flag.** Seedance forces generated audio on
   every take whatever the prompt says. Keep `Audio: silent` — it stops the model staging
   beats around an imagined bed — then strip the track and hand back the stripped file:
 

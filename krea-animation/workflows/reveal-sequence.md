@@ -91,7 +91,7 @@ and expensive to change after.
 ### 4. Cost preflight
 
 Price the run before submitting. Show: path A or B, beat count, seconds, blocking runs
-on `-fast`, delivery runs on `seedance-2`, best-of-N for the hero beat, and the retry
+on `-fast`, delivery runs on `seedance-2-5`, best-of-N for the hero beat, and the retry
 budget. Wait for the go-ahead.
 
 ### 5. Write the prompt(s)
@@ -152,7 +152,7 @@ then assemble.
 
 ### 8. Deliver
 
-Re-run the approved prompt on `bytedance/seedance-2`, best-of-2 for the hero beat.
+Re-run the approved prompt on `bytedance/seedance-2-5`, best-of-2 for the hero beat.
 Upscale if the live schema exposes it and delivery needs it.
 
 Path B assembly — normalize before concatenating or the cut will hitch. Commands in

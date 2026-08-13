@@ -1,9 +1,9 @@
 ---
 name: seedance-2-examples
-description: Searchable concrete prompt examples for Seedance 2.0 / Seedance 2 Fast video models. Load only the section matching the active workflow.
+description: Searchable concrete prompt examples for the Seedance video family (Seedance 2.5, 2.0, Fast, Mini). Load only the section matching the active workflow.
 ---
 
-# Seedance 2.0 Examples
+# Seedance Examples
 
 Use only after reading `seedance-2.md`. Search by heading and read the smallest matching section:
 

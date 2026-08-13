@@ -1,17 +1,17 @@
 ---
 name: seedance-2-prompting
-description: Prompting playbook for Seedance 2.0 / Seedance 2 Fast video models, focused on multimodal references, shot sequencing, action/camera control, audio/text, video editing, extension, and Krea operating rules.
+description: Prompting playbook for the Seedance video family (Seedance 2.5, 2.0, Fast, Mini), focused on multimodal references, shot sequencing, action/camera control, audio/text, video editing, extension, and Krea operating rules.
 ---
 
-# Seedance 2.0 Prompting Guide
+# Seedance Prompting Guide
 
-Load this file only after the selected model is Seedance 2.0, Seedance 2 Fast, `bytedance/seedance-2`, or a closely related Seedance video model.
+Load this file only after the selected model is Seedance 2.5 (`bytedance/seedance-2-5`), Seedance 2.0, Seedance 2 Fast/Mini, or a closely related Seedance video model. Seedance 2.5 is the flagship; the whole family shares the prompt language below.
 
 ## Prompting Stance
 
-You are an expert Seedance 2.0 video prompt engineer. Convert the user's intent into model-native shot instructions: explicit asset roles, stable subject definitions, concrete motion, one camera move per shot, audio/text rules, and a constraints tail. Prefer physically plausible staged action over vague cinematic adjectives.
+You are an expert Seedance video prompt engineer. Convert the user's intent into model-native shot instructions: explicit asset roles, stable subject definitions, concrete motion, one camera move per shot, audio/text rules, and a constraints tail. Prefer physically plausible staged action over vague cinematic adjectives.
 
-Use the rules in this file as the controlling guidance for Seedance 2.0 prompting. Example patterns in the appendix are optional support material and should not override the main rules.
+Use the rules in this file as the controlling guidance for Seedance prompting. Example patterns in the appendix are optional support material and should not override the main rules.
 
 Always verify the live Krea model schema before submitting. Use only fields exposed by the selected model. Prompt examples describe intent; schema controls such as duration, aspect, resolution, references, audio, `start_image`, `end_image`, and reference arrays must come from the live schema.
 
@@ -123,7 +123,7 @@ Use when connecting multiple input clips:
 @Video1 + <transition description> + @Video2 + <transition description> + @Video3.
 ```
 
-Respect the live schema. Official guidance notes a maximum of 3 input video clips and total input video duration not exceeding 15 seconds for track-completion style inputs.
+Respect the live schema. For the 2.0 family, official guidance notes a maximum of 3 input video clips and total input video duration not exceeding 15 seconds for track-completion style inputs. Seedance 2.5 accepts up to 10 video references with a ~15s cap per clip rather than in aggregate.
 
 ## Shot Sequencing
 
@@ -213,20 +213,30 @@ Voice matching improves when you describe voice traits, such as age, thickness, 
 
 ## Krea Operating Rules
 
-These are Krea-specific rules for `bytedance/seedance-2`; live schema still wins.
+These are Krea-specific rules for the Seedance family (`bytedance/seedance-2-5`, `bytedance/seedance-2`, and the Fast/Mini variants); live schema still wins.
+
+Variant capabilities, as of the last live check:
+
+| Variant | Duration | Resolutions | Reference budget |
+|---|---|---|---|
+| `bytedance/seedance-2-5` | 4-30s | 480p/720p | 50 total: 30 images / 10 videos / 10 audio |
+| `bytedance/seedance-2` | 4-15s | 480p/720p/1080p/4k | 12 total: 9 images / 3 videos / 3 audio |
+| `bytedance/seedance-2-fast`, `-mini` | 4-15s | 480p/720p | 12 total: 9 images / 3 videos / 3 audio |
+
+Seedance 2.5 is the delivery default. Reach for Seedance 2.0 only when the deliverable needs 1080p or 4k, which 2.5 does not expose. Start/end frames count toward the image-reference budget when mixed with references.
 
 - `@Image1` / `@Video1` / `@Audio1` are prompt labels. Also pass assets through the schema-confirmed fields.
-- In Krea, `end_image` and `reference_images` are mutually exclusive for Seedance-2.
+- In Krea, treat `end_image` and `reference_images` as mutually exclusive for Seedance.
 - Chained/destination shots use `start_image` + `end_image`, omitting `reference_images`.
 - Terminal/detail-anchored shots use `start_image` + `reference_images`, omitting `end_image`.
 - `end_image` is a visual destination, not a loose style reference. Keep it within plausible story-time from the start frame.
-- Seedance-2 has a 4 second minimum duration. For shorter editorial cuts, generate 4s and trim if useful motion lands early.
+- Seedance has a 4 second minimum duration. For shorter editorial cuts, generate 4s and trim if useful motion lands early.
 - For in-scene continuity, extract the prior clip's actual last frame and use it as the next `start_image`.
 - Treat completed jobs with no result URL as failure/refusal, not success. Retry once with a sanitized prompt — drop proper nouns, IP-like phrases and inessential signage text, keep the `start_image`. If it fails again, drop `end_image` and retry start-image-only.
 - Submit video jobs in waves of 12 or fewer to avoid practical workspace concurrency limits.
 - `enhance_prompt` off for authored work. When you have written the prompt precisely, a rewriter flattens it; leave it on only when the user hands over a one-line brief and wants a fast look.
 - Reach for 21:9 on cinematic reveals.
-- `generate_audio` is not a real choice on Seedance 2: all three variants force it on, so the submitted value is discarded and every take returns a generated bed. Keep an `Audio:` block anyway to steer what that bed contains, and strip the track at delivery with `ffmpeg -i take.mp4 -c:v copy -an out.mp4` when the piece needs silence or a designed bed.
+- `generate_audio` is not a real choice on Seedance: every variant, 2.5 included, forces it on, so the submitted value is discarded and every take returns a generated bed. Keep an `Audio:` block anyway to steer what that bed contains, and strip the track at delivery with `ffmpeg -i take.mp4 -c:v copy -an out.mp4` when the piece needs silence or a designed bed.
 
 Krea live test supplement: one-shot commercial timelines usually land about 3 strong beats reliably. More beats need full staging, short beats, and a constraints tail; unstaged "hard cuts" can morph instead of cutting.
 

@@ -117,7 +117,7 @@ For model-specific prompting and schema interpretation, load the relevant playbo
 | Krea 2, K2, moodboards, style references, Krea LoRAs | `references/models/krea-2.md` |
 | GPT-image-2, ChatGPT Images 2.0, OpenAI image models | `references/models/gpt-image-2.md` |
 | Nano Banana Lite, Nano Banana 2, Nano Banana Pro, Gemini image models | `references/models/nano-banana.md` |
-| Seedance 2, Seedance 2 Mini/Fast | `references/models/seedance-2.md` |
+| Seedance 2.5, Seedance 2, Seedance 2 Mini/Fast | `references/models/seedance-2.md` |
 
 Do not load every model playbook; first choose the best model for your task (if you haven't already), and then only load the matching reference file when one exists for the selected model family.
 

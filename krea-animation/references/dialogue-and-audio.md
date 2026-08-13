@@ -6,11 +6,11 @@ Use this reference when a workflow has dialogue, subtitles, a continuous music b
 
 | Video model path | Primary audio path |
 |---|---|
-| Seedance-2 with `generate_audio=true` | Prompt dialogue, foley, ambience, and score inside each clip. Keep the native audio. |
+| Seedance (2.5 or the 2.0 family) with native audio | Prompt dialogue, foley, ambience, and score inside each clip. Keep the native audio. |
 | Silent video model | Generate or source audio separately, then mux it after visual assembly. |
 | User-supplied track | Upload or keep the track as the timing reference when the model supports audio input; otherwise use it as the final bed. |
 
-For Seedance-2, do not default to external TTS. Native dialogue and foley are part of the model's value. External TTS is a fallback when the selected model returns silent video, when Seedance dialogue is unusable after one retry, or when the user specifically requests a known voice pipeline.
+For Seedance, do not default to external TTS. Native dialogue and foley are part of the model's value. External TTS is a fallback when the selected model returns silent video, when Seedance dialogue is unusable after one retry, or when the user specifically requests a known voice pipeline.
 
 ## Prompting native audio
 
