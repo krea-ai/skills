@@ -71,13 +71,14 @@ When a real product reference exists, the image is the source of truth. Product-
 | DTC static ad templates / ad format library / N on-brand static ads from one product photo | `workflows/dtc-ad-templates.md` |
 | Meta account analysis, creative performance readout, campaign draft/activation | `workflows/meta-ads-performance.md` |
 
-For the photographic frame itself — lighting register, palette, staging, materials — read `../product-photography/SKILL.md` alongside any workflow above that renders an actual photographed frame: product-photo, lifestyle, marketplace, DTC static ads, and the per-cell shots inside a key-visual sheet. Format-specific layout rules (headline placement, wordmark, structural device, copy) in the routed workflow still govern; product-photography governs the photographic execution inside that layout.
+For photographed frames, read `references/product-photography.md` alongside the routed workflow. It governs lighting, palette, staging, materials, and photographic execution; the workflow's format-specific layout rules (headline placement, wordmark, structural device, copy) remain authoritative.
 
 If the user asks for a non-marketing image/video, use `../krea-generate/SKILL.md`. Designed motion-graphics composition inside launch work (typography, beat-synced cuts, overlays) routes through `workflows/launch-teaser.md`. If they ask to build a marketing app/tool, provide the creative workflow contract here and keep implementation guidance scoped to the user's existing stack.
 
 ## References
 
 - `references/marketing-creative-anatomy.md` - campaign/ad tuple, hook families, static format families.
+- `references/product-photography.md` - editorial product-photography direction for lighting, palette, staging, materials, prompts, and QA.
 - `references/product-photoshoot.md` - Krea-native product photoshoot mode taxonomy adapted from Higgsfield research.
 - `references/dtc-ad-formats.md` - DTC static ad format library: per-format structural device, treatment, and brand-agnostic prompt template, organized by the static format families.
 - `references/marketplace-cards.md` - marketplace image scopes and compliance guardrails.

@@ -1,13 +1,8 @@
----
-version: 0.7.1
-name: product-photography
-description: "Use for editorial product photography."
-license: MIT
----
+# Product Photography
 
-# product-photography
+Use this reference for editorial product photography in marketing work: packshots, hero frames, still lifes, launch and campaign imagery, PDP and marketplace crops, social and paid-social stills, editorial product features, gifting and bundle shots, and product restyling or re-lighting from a supplied reference image.
 
-## Use this skill when
+## Use this reference when
 
 Shooting or generating photography of a physical product: packshots, hero frames, still lifes, launch and campaign imagery, PDP and marketplace crops, social and paid-social stills, editorial product features, gifting and bundle shots. Covers beauty, skincare, fragrance, haircare, body care, supplements, beverage, food, homeware, accessories, small hardware. Also covers restyling, reshooting, or re-lighting a product the user supplies as a reference image.
 

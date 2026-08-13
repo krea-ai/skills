@@ -92,8 +92,7 @@ Then make three, not one, and make them genuinely different:
 2. **Minimal** — one held macro, per `### MIN 1`.
 3. **Maximal with nature** — the surface ground and an active substance event.
 
-For the third, generate the environment first: consult the `product-photography` skill
-for the lighting register, make a still of the product on the real material — wet stone,
+For the third, generate the environment first: consult `../../krea-marketing/references/product-photography.md` for the lighting register, make a still of the product on the real material — wet stone,
 a water film, the formula pooled — approve it, then animate that as the `start_image`. A
 reference of an actual lit material beats asking a video model to invent one around a
 plain packshot, every time. Cost it out loud first: one extra image generation per
