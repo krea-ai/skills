@@ -1,14 +1,18 @@
 {
   "name": "krea",
-  "version": "0.7.1",
+  "displayName": "Krea",
+  "version": "0.6.1",
   "description": "Krea AI skills: generation workflows, marketing creative, and animation production.",
   "author": {
     "name": "Krea AI",
     "url": "https://krea.ai"
   },
-  "homepage": "https://krea.ai",
+  "homepage": "https://www.krea.ai/mcp",
   "repository": "https://github.com/krea-ai/skills",
   "license": "MIT",
+  "skills": "./",
+  "mcpServers": "./.mcp.json",
+  "defaultEnabled": false,
   "keywords": [
     "krea",
     "image-generation",

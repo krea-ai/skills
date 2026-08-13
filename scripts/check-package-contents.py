@@ -97,20 +97,23 @@ def validate_marketplace_skills() -> list[str]:
             errors.append(f"plugins[{plugin_index}].skills must be a list")
             continue
         for skill_index, skill in enumerate(skills):
-            if not isinstance(skill, dict):
-                errors.append(f"plugins[{plugin_index}].skills[{skill_index}] must be an object")
+            if not isinstance(skill, str) or not skill:
+                errors.append(
+                    f"plugins[{plugin_index}].skills[{skill_index}] must be a non-empty path string"
+                )
                 continue
-            skill_name = str(skill.get("name", f"[{skill_index}]"))
-            raw_path = skill.get("path")
-            if not isinstance(raw_path, str) or not raw_path:
-                errors.append(f"{skill_name}: path must be a non-empty string")
-                continue
+            raw_path = skill
             skill_path = Path(raw_path)
+            skill_name = skill_path.name
             if skill_path.is_absolute() or ".." in skill_path.parts:
                 errors.append(f"{skill_name}: path must stay within the repo: {raw_path}")
                 continue
-            marketplace_dirs.add(raw_path)
-            if any(raw_path == prefix.rstrip("/") or raw_path.startswith(prefix) for prefix in FORBIDDEN_PREFIXES):
+            normalized_path = skill_path.as_posix()
+            marketplace_dirs.add(normalized_path)
+            if any(
+                normalized_path == prefix.rstrip("/") or normalized_path.startswith(prefix)
+                for prefix in FORBIDDEN_PREFIXES
+            ):
                 errors.append(f"{skill_name}: path uses removed or unpublished skill path: {raw_path}")
                 continue
             if not skill_path.is_dir():
