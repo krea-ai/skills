@@ -54,7 +54,7 @@ Use the available Krea MCP tools to upload product references, list models, insp
 | Symptom | Cause | Fix |
 |---|---|---|
 | Product looks similar but wrong | Reference too weak or prompt too aesthetic | Use higher-res ref and stronger preservation |
-| Label illegible | Image model weak at text | Route label-critical work to `../../krea-generate/workflows/image-text-poster.md` |
+| Label illegible | Image model weak at text | Route label-critical work to a text-strong model such as `openai/gpt-image-2` (see `../../krea-generate/references/models/gpt-image-2.md`) |
 | Colors shifted | Lighting biased palette | Use a clearer reference, neutral lighting, and color-fidelity constraint without naming a conflicting color |
 | Background dominates | Composition too busy | Return to clean hero prompt |
 | Recolored logo | Product flattened into a tinted graphic instead of a photo subject | Retake with cleaner photo reference and photo-first prompt |

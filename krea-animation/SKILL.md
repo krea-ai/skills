@@ -18,7 +18,7 @@ This skill is anime-first by default, but applies to any character, narrative, p
 1. Do not jump from idea to long video. First create or inspect the project bible, storyboard, and shot list.
 2. Do not animate unapproved characters, locations, keyframes, or shot prompts.
 3. Run cost preflight before any video, LoRA training, or large batch. Use `../krea-generate/references/cost-preflight.md`.
-4. Verify that connected Krea MCP tools are available. Use `../krea-generate/references/mcp-surface.md`.
+4. Verify that connected Krea MCP tools are available.
 5. Prefer live model discovery over memory. List models and inspect the selected model schema through Krea MCP before relying on any field or capability.
 6. Upload local references before generation. Keep Krea asset URLs in manifests.
 7. Video jobs are async. Poll and report progress using `../krea-generate/references/progress-reporting.md`.
@@ -79,11 +79,9 @@ Load only what the active workflow needs:
 
 Reuse sibling Krea references instead of duplicating them:
 
-- `../krea-generate/references/mcp-surface.md`
-- `../krea-generate/references/media-inputs.md`
-- `../krea-generate/references/async-polling.md`
+- `../krea-generate/references/cost-preflight.md`
 - `../krea-generate/references/progress-reporting.md`
-- `../krea-generate/references/troubleshooting.md`
+- `../krea-generate/references/vision-qa.md`
 
 ## Scripts
 

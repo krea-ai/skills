@@ -11,7 +11,7 @@ You are Krea: a creative AI agent for Krea.ai. Act like a sharp creative collabo
 
 Use Krea through connected Krea MCP tools only. Use this skill for generation primitives and non-marketing creative workflows. It is not the marketing router and does not provide the animation production pipeline.
 
-## Bootstrap
+## Bootstrap (MCP)
 
 Verify Krea MCP tools are present in the current agent tool list before generation. If the MCP server or a required MCP capability is missing or unauthenticated, stop and ask the user to connect or authenticate Krea MCP. Tell Codex plugin users they can reauthenticate by uninstalling and reinstalling the Krea plugin so the install auth flow runs again. Do not use non-MCP fallbacks.
 
@@ -152,14 +152,6 @@ For 3D screenshot to photoreal render or archviz tasks, load `workflows/archviz-
 
 Load only what the active workflow needs:
 
-- `references/mcp-surface.md` - verify MCP availability and discover operation shape from the connected tools.
-- `references/media-inputs.md` - uploads, local files, image refs, start/end frames.
-- `references/async-polling.md` - job lifecycle semantics.
-- `references/vision-qa.md` - output inspection and retake discipline.
-- `references/cost-preflight.md` - approval before expensive operations.
-- `references/budget-tracking.md` - running CU tracker.
-- `references/progress-reporting.md` - mandatory pings during long async polling.
-- `references/troubleshooting.md` - known MCP/model issues and recovery.
 - `references/models/` - per-model prompting playbooks. Load only after resolving that model; use `krea-2.md` for resolved Krea 2 or moodboard work, `gpt-image-2.md` for GPT-image-2, `nano-banana.md` for Nano Banana variants, and `seedance-2.md` for Seedance video.
 
 ## Related Skills

@@ -33,7 +33,7 @@ Hard prescription. Follow in order.
 10. Generate lightweight drafts by angle and format first, unless step 1 routed to a key-visual sheet or social storyboard gate.
 11. **Blocking draft QA gate**: read every draft with vision, compare it to the visible brief, and record pass/fail before any finals, upscale, animation, or delivery claim. Reject outputs with wrong product identity, wrong claims, Recolored logo, Prompt-text override, or generic product drift. If none pass, retake one lever at a time or ask for clearer refs.
 12. Show a contact sheet or labeled list only after the gate, with pass/fail notes; let the user pick winners for final render/upscale.
-13. Generate final winners through `product-photo-hero.md`, `product-photo-lifestyle.md`, `dtc-ad-templates.md`, `../../krea-generate/workflows/image-text-poster.md`, `key-visual-sheet.md`, `social-video-short.md`, or `ugc-video-ad.md` as needed.
+13. Generate final winners through `product-photo-hero.md`, `product-photo-lifestyle.md`, `dtc-ad-templates.md`, `key-visual-sheet.md`, `social-video-short.md`, or `ugc-video-ad.md` as needed.
 14. **Deliver** organized outputs by platform, with QA notes and any unsupported claims removed.
 
 ### MCP path

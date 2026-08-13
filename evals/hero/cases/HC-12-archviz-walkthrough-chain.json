@@ -3,8 +3,7 @@
   "title": "Architectural visualization chain: blueprint to render to variations to walkthrough video",
   "skill": "krea-generate",
   "workflow_files": [
-    "krea-generate/workflows/archviz-3d-to-render.md",
-    "krea-generate/workflows/video-generic-short.md"
+    "krea-generate/workflows/archviz-3d-to-render.md"
   ],
   "default_prompt": false,
   "invocation": "both",
@@ -44,7 +43,9 @@
     "generate_video"
   ],
   "spend_gate": {
-    "gated_steps": ["generate_video"],
+    "gated_steps": [
+      "generate_video"
+    ],
     "approval_turn": 3
   },
   "safety_behavior": "Upload-first for the blueprint as a structural archviz reference; preserve geometry. Renders use the archviz default, Nano Banana Pro 4K, with cost-preflight as required by the skill. The walkthrough VIDEO is the gated op: present a cost/time preflight and STOP; submit generate_video only after explicit approval (the final follow-up). Reuse the Krea-hosted render URL as the video start frame — never re-upload it and never pass a raw non-Krea URL as a generation input.",

@@ -34,7 +34,7 @@ Hard prescription. Follow in order.
    is a batch (one image per selected format). Restate the brief in one line (brand,
    product, aspect, format count), show `N formats × per-image ≈ total CU` and a rough
    wall-clock, and wait for go.
-2. Verify Krea MCP (`../../krea-generate/references/mcp-surface.md`). Resolve a text-capable
+2. Verify Krea MCP tools are available. Resolve a text-capable
    model from the marketing image set in `../SKILL.md` **live** from `list_models`.
    Prefer `openai/gpt-image-2` when confirmed available (strong in-image text); otherwise
    use live Nano Banana 2 if available, then Nano Banana Pro.
@@ -52,7 +52,7 @@ Hard prescription. Follow in order.
    not product color/material/garment descriptors.
 7. **Generate one image per format** — submit every selected format's job first (async),
    then poll them all, so the batch's wall-clock is roughly one job's time rather than N×.
-   Model-aware hard requirements (see `../../krea-generate/references/troubleshooting.md`):
+   Model-aware hard requirements:
    - `openai/gpt-image-2`: pass explicit width/height in **multiples of 16** when the MCP schema supports them, and run **async**; capture the returned job id, poll with MCP `get_job`, then download `result.urls[0]`.
    - Nano Banana 2 / Nano Banana Pro (schema permitting): pass the live schema's
      aspect or size fields; synchronous calls are fine only when the model completes inside the MCP timeout cap.
@@ -91,8 +91,8 @@ job-status tool.
 
 ## Cost & time
 
-- One image per selected format; core set ≈ 16 images. Per-image CU is model-dependent
-  (`model-catalog.md`); submitting all jobs async and then polling keeps the batch's
+- One image per selected format; core set ≈ 16 images. Per-image CU is model-dependent;
+  submitting all jobs async and then polling keeps the batch's
   wall-clock near a single job's time (minutes), even for the full set.
 - Regenerations from QA add a few images. No video, no upscale here.
 

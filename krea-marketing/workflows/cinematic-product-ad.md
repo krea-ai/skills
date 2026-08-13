@@ -74,7 +74,7 @@ Use the available Krea MCP tools: upload the gated product shot (`get_upload_url
 
 - Primary path: ONE 12-15s video job (native audio) per seed; best-of-2/3 for hero deliverables. Comparable total credits to the 3-5 separate clips it replaces, with one submit and no assembly unless retaking.
 - Fallback retakes: one still (cheap) + one 4s camera-only clip per retaken beat.
-- Wall-clock: a 15s job typically lands in 3-6 minutes; provider congestion occasionally stretches jobs to 15-25 minutes and they still complete (see troubleshooting).
+- Wall-clock: a 15s job typically lands in 3-6 minutes; provider congestion occasionally stretches jobs to 15-25 minutes and they still complete.
 
 ## On failure
 

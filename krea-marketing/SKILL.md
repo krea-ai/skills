@@ -87,7 +87,7 @@ If the user asks for a non-marketing image/video, use `../krea-generate/SKILL.md
 - `references/video-ad-post.md` - ffmpeg caption/CTA burn, multi-take assembly, music bed mixing, delivery spec; hyperframes escape hatch for designed caption motion.
 - `references/artifact-taxonomy.md` - disambiguate storyboard, key visual, hero shot, mockup, look book.
 
-Shared Krea references live in `../krea-generate/references/`: `mcp-surface.md`, `model-catalog.md`, `media-inputs.md`, `cost-preflight.md`, `progress-reporting.md`, `vision-qa.md`, `troubleshooting.md`, and `models/`.
+Shared Krea references live in `../krea-generate/references/`: `cost-preflight.md`, `progress-reporting.md`, `vision-qa.md`, and `models/` (per-model prompting playbooks).
 
 ## Delivery Discipline
 

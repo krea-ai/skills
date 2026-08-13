@@ -19,7 +19,7 @@ Ask once, skipping what the user already gave:
 1. Load `../references/marketplace-cards.md`.
 2. Read product references with vision and extract only visible/product-supplied facts. If the source is a URL/PDP, use page copy only for claims/copy; do not substitute PDP text, alt text, or filenames for visual product truth.
 3. Use `product-photo-hero.md` to create or validate the main image first.
-4. For secondary images, use `product-photo-lifestyle.md` and `../../krea-generate/workflows/image-text-poster.md` only when text modules are required.
+4. For secondary images, use `product-photo-lifestyle.md`, and a text-strong image model (see `../../krea-generate/references/models/gpt-image-2.md`) only when text modules are required.
 5. Generate one module type first, then batch remaining modules after visual direction is approved.
 6. **Blocking QA gate**: inspect every image before delivery for product fidelity, text legibility, unsupported claims, marketplace-safe composition, Recolored logo, and Prompt-text override; use the definitions in `../references/marketplace-cards.md`. Record pass/fail; do not present a full set as ready or on-brand before this gate.
 7. Deliver labeled URLs/paths by scope.
