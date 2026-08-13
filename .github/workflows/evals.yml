@@ -23,7 +23,7 @@ on:
       - "evals/hero/**"
       - "krea-generate/**"
       - "krea-marketing/**"
-      - "krea-animation/**"
+      - "krea-motion/**"
       - ".codex-plugin/.mcp.json"
   pull_request:
     types: [opened, synchronize, reopened, labeled]
@@ -82,7 +82,7 @@ jobs:
               BASE="${{ github.event.before }}"
               git cat-file -e "${BASE}^{commit}" 2>/dev/null || BASE="HEAD~1"
               if git diff --name-only "$BASE" HEAD | \
-                 grep -qE '^(krea-generate|krea-marketing|krea-animation)/|^\.codex-plugin/\.mcp\.json$'; then
+                 grep -qE '^(krea-generate|krea-marketing|krea-motion)/|^\.codex-plugin/\.mcp\.json$'; then
                 run=true
               fi ;;
           esac

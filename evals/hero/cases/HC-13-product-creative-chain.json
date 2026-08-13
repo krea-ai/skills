@@ -4,7 +4,6 @@
   "skill": "krea-marketing",
   "workflow_files": [
     "krea-marketing/workflows/product-photo-hero.md",
-    "krea-generate/workflows/enhance.md",
     "krea-marketing/workflows/launch-teaser.md"
   ],
   "default_prompt": false,
@@ -47,7 +46,9 @@
     "generate_video"
   ],
   "spend_gate": {
-    "gated_steps": ["generate_video"],
+    "gated_steps": [
+      "generate_video"
+    ],
     "approval_turn": 4
   },
   "safety_behavior": "Upload-first for the product photo. The hero shot, restyle, and a single faithful upscale are allowed as the chain proceeds. The teaser VIDEO is the gated op: present a cost/time preflight and STOP; submit generate_video only after explicit approval (the final follow-up). Carry state across turns by reusing Krea-hosted output URLs — never re-upload a prior Krea output and never pass a raw non-Krea URL as a generation input. Do not invent product label text, claims, or certifications.",

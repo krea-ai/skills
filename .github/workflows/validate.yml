@@ -19,10 +19,10 @@ jobs:
       - name: Validate skill frontmatter
         run: |
           bash scripts/validate-skill-frontmatter.sh \
-            krea-animation/SKILL.md \
+            krea-motion/SKILL.md \
             krea-generate/SKILL.md \
             krea-marketing/SKILL.md \
-            wip/krea-build/SKILL.md
+            product-photography/SKILL.md
 
       - name: Validate plugin manifest JSON
         run: |
@@ -36,73 +36,6 @@ jobs:
 
       - name: Check package contents
         run: python3 scripts/check-package-contents.py
-
-      - name: Smoke-test animation MCP helper scripts
-        run: |
-          set -euo pipefail
-          project="$(mktemp -d)"
-          python3 krea-animation/scripts/scaffold_project.py --project "$project" --title "Smoke" --runtime 4
-          python3 - "$project" <<'PY'
-          from pathlib import Path
-          import sys
-
-          project = Path(sys.argv[1])
-          shot = project / "03_shots/SC001/SH010/shot.md"
-          text = shot.read_text(encoding="utf-8")
-          replacements = {
-              "Status: draft": "Status: approved_for_video",
-              "Start image:": "Start image: https://krea.ai/assets/start.png",
-              "Reference images:": "Reference images: https://krea.ai/assets/ref.png",
-              "Prompt:": "Prompt: A simple camera push across the approved keyframe.",
-          }
-          for old, new in replacements.items():
-              text = text.replace(old, new)
-          shot.write_text(text, encoding="utf-8")
-          PY
-          python3 krea-animation/scripts/validate_project.py "$project"
-          python3 krea-animation/scripts/build_manifests.py "$project"
-          python3 krea-animation/scripts/submit_video_jobs.py "$project" --dry-run --model bytedance/seedance-2-fast
-          test "$(wc -l < "$project/04_generation/jobs/mcp-video-jobs.jsonl")" -eq 1
-          python3 - "$project/04_generation/jobs/mcp-video-jobs.jsonl" <<'PY'
-          import json
-          from pathlib import Path
-          import sys
-
-          payloads = [json.loads(line) for line in Path(sys.argv[1]).read_text(encoding="utf-8").splitlines()]
-          assert len(payloads) == 1
-          assert payloads[0]["model"] == "bytedance/seedance-2-fast"
-          assert payloads[0]["input"]["start_image"] == "https://krea.ai/assets/start.png"
-          PY
-          python3 - "$project/04_generation/manifests/video_jobs.csv" <<'PY'
-          import csv
-          from pathlib import Path
-          import sys
-
-          path = Path(sys.argv[1])
-          with path.open(newline="", encoding="utf-8") as handle:
-              rows = list(csv.DictReader(handle))
-          rows[0]["model"] = "bytedance/seedance-2-fast"
-          with path.open("w", newline="", encoding="utf-8") as handle:
-              writer = csv.DictWriter(handle, fieldnames=rows[0].keys())
-              writer.writeheader()
-              writer.writerows(rows)
-          PY
-          python3 krea-animation/scripts/submit_video_jobs.py "$project" --dry-run
-          printf 'SC001_SH010\tjob_123\tsubmitted\n' > "$project/04_generation/jobs/jobs.tsv"
-          cat > "$project/04_generation/jobs/mcp-results.jsonl" <<'JSONL'
-          {"jobId":"job_123","status":"completed","result":{"urls":["https://example.invalid/clip.mp4"]}}
-          JSONL
-          python3 krea-animation/scripts/poll_video_jobs.py "$project" --results-jsonl "$project/04_generation/jobs/mcp-results.jsonl"
-          results="$project/04_generation/jobs/results.tsv"
-          test "$(wc -l < "$results")" -eq 1
-          grep -qx $'SC001_SH010\tcompleted\thttps://example.invalid/clip.mp4' "$results"
-          ! grep -q $'\tpending\t' "$results"
-          cat > "$project/04_generation/jobs/mcp-results.jsonl" <<'JSONL'
-          {"jobId":"job_123","status":"completed","result":{}}
-          JSONL
-          python3 krea-animation/scripts/poll_video_jobs.py "$project" --results-jsonl "$project/04_generation/jobs/mcp-results.jsonl"
-          grep -qx $'SC001_SH010\tfailed\tcompleted without result URL' "$results"
-          echo "OK animation MCP helpers"
 
       - name: Smoke-test eval runner syntax
         run: |
@@ -127,11 +60,11 @@ jobs:
             fi
           }
           check "package.json"                    "$VERSION" "$(jq -r .version package.json)"
-          check "krea-animation/SKILL.md"         "$VERSION" "$(awk '/^version:/ {print $2; exit}' krea-animation/SKILL.md)"
+          check "krea-motion/SKILL.md"            "$VERSION" "$(awk '/^version:/ {print $2; exit}' krea-motion/SKILL.md)"
           check "krea-generate/SKILL.md"          "$VERSION" "$(awk '/^version:/ {print $2; exit}' krea-generate/SKILL.md)"
           check "krea-generate/VERSION"           "$VERSION" "$(tr -d '[:space:]' < krea-generate/VERSION)"
           check "krea-marketing/SKILL.md"         "$VERSION" "$(awk '/^version:/ {print $2; exit}' krea-marketing/SKILL.md)"
-          check "wip/krea-build/SKILL.md"         "$VERSION" "$(awk '/^version:/ {print $2; exit}' wip/krea-build/SKILL.md)"
+          check "product-photography/SKILL.md"    "$VERSION" "$(awk '/^version:/ {print $2; exit}' product-photography/SKILL.md)"
           check ".claude-plugin/plugin.json"      "$VERSION" "$(jq -r .version .claude-plugin/plugin.json)"
           check ".claude-plugin/marketplace.json" "$VERSION" "$(jq -r '.plugins[0].version' .claude-plugin/marketplace.json)"
           check ".codex-plugin/plugin.json"       "$VERSION" "$(jq -r .version .codex-plugin/plugin.json)"

@@ -23,7 +23,8 @@ DENY_PARTS = {"__pycache__", "runs", "research", "node_modules", "fixtures"}
 REQUIRED_SKILL_DIRS = {
     "krea-generate",
     "krea-marketing",
-    "krea-animation",
+    "krea-motion",
+    "product-photography",
 }
 FORBIDDEN_PREFIXES = {"krea-ai/", "wip/"}
 MARKETPLACE_PATH = Path(".claude-plugin/marketplace.json")

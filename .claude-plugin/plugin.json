@@ -1,8 +1,8 @@
 {
   "name": "krea",
   "displayName": "Krea",
-  "version": "0.6.1",
-  "description": "Krea AI skills: generation workflows, marketing creative, and animation production.",
+  "version": "0.7.1",
+  "description": "Krea AI skills: generation workflows, marketing creative, and product motion.",
   "author": {
     "name": "Krea AI",
     "url": "https://krea.ai"
@@ -17,8 +17,7 @@
     "krea",
     "image-generation",
     "video-generation",
-    "animation",
-    "anime",
+    "motion",
     "storyboard",
     "mcp",
     "archviz",

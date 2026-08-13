@@ -23,16 +23,15 @@ Hard prescription. Follow in order.
 2. Read the product reference with vision; note only visible shape, label, material, colors, proportions, and hardware/trim. Use URL/PDP copy only for supported claims or copy, not visual truth.
 3. Resolve a final still model from the marketing image set in `../SKILL.md`: default `openai/gpt-image-2`, offering live Nano Banana 2 / Nano Banana Pro as alternatives the user can pick; require image-to-image support from the live schema. If Nano Banana is chosen for a real product ref, keep the prompt scene-only because prompt words can override the reference.
 4. Inspect schema for reference fields and resolution.
-5. Run cost-preflight if generating a batch, 4K, or >100 CU.
-6. Upload product refs to Krea if local or external/non-Krea.
-7. Prompt as a hero product photograph: surface, lighting, lens, contact shadow/reflection, framing, copy, and accuracy constraints. When a real reference exists, do not include product material, color, label, trim, hardware, or garment descriptors in the generation prompt; keep those facts in the confirmation and QA checklist only.
-8. Generate one hero candidate first. Offer variants only after the product reads correctly.
-9. Read output with vision; verify product identity, proportions, label, and color. This inspection is blocking before variants, upscale, or delivery.
-10. **Deliver** with a one-line summary and QA notes.
+5. Upload product refs to Krea if local or external/non-Krea.
+6. Prompt as a hero product photograph: surface, lighting, lens, contact shadow/reflection, framing, copy, and accuracy constraints. When a real reference exists, do not include product material, color, label, trim, hardware, or garment descriptors in the generation prompt; keep those facts in the confirmation and QA checklist only.
+7. Generate one hero candidate first. Offer variants only after the product reads correctly.
+8. Read output with vision; verify product identity, proportions, label, and color. This inspection is blocking before variants, upscale, or delivery.
+9. **Deliver** with a one-line summary and QA notes.
 
-### MCP path
+### Tool path
 
-Use the available Krea MCP tools to upload product references, list models, inspect the selected model schema, then call image generation with schema-verified product reference, prompt, aspect, and quality fields.
+Use the available Krea tools to upload product references when needed, list models, inspect the selected model schema, then call image generation with schema-verified product reference, prompt, aspect, and quality fields.
 
 ## Banned
 
@@ -54,7 +53,7 @@ Use the available Krea MCP tools to upload product references, list models, insp
 | Symptom | Cause | Fix |
 |---|---|---|
 | Product looks similar but wrong | Reference too weak or prompt too aesthetic | Use higher-res ref and stronger preservation |
-| Label illegible | Image model weak at text | Route label-critical work to `../../krea-generate/workflows/image-text-poster.md` |
+| Label illegible | Image model weak at text | Retake label-critical work with a text-capable image model |
 | Colors shifted | Lighting biased palette | Use a clearer reference, neutral lighting, and color-fidelity constraint without naming a conflicting color |
 | Background dominates | Composition too busy | Return to clean hero prompt |
 | Recolored logo | Product flattened into a tinted graphic instead of a photo subject | Retake with cleaner photo reference and photo-first prompt |

@@ -21,29 +21,28 @@ Ask once, in a single batched message. References are mandatory unless the user 
 
 Hard prescription. Follow in order.
 
-1. **Cost-preflight** (see `../../krea-generate/references/cost-preflight.md`). A key-visual sheet is cheap compared with video, but it is still an approval gate for campaign work.
-2. Load `../references/marketing-creative-anatomy.md` if the user has not already locked the static format family.
-3. Read product references with vision before prompt writing. If a reference is an external URL/PDP, download usable product images first and use page text only for supported claims/copy.
-4. Upload product and style/layout references to Krea. If a reference is an external URL, download it first and upload the downloaded file.
-5. Resolve a `text-friendly image model` from the marketing image set in `../SKILL.md`; prefer `openai/gpt-image-2` only if live discovery confirms it and schema supports the needed refs, aspect, and quality. If it is unavailable, use live Nano Banana 2 if available, then Nano Banana Pro. Slow models like `openai/gpt-image-2` must be submitted asynchronously and polled through Krea MCP; synchronous waits can hit gateway timeouts and lose the job id.
-6. Generate one sheet first, or 2-3 variants if the brief is loose. Do not generate downstream finals or videos yet.
-7. Prompt with mandatory sections:
+1. Load `../references/marketing-creative-anatomy.md` if the user has not already locked the static format family.
+2. Read product references with vision before prompt writing. If a reference is an external URL/PDP, download usable product images first and use page text only for supported claims/copy.
+3. Upload product and style/layout references to Krea. If a reference is an external URL, download it first and upload the downloaded file.
+4. Resolve a `text-friendly image model` from the marketing image set in `../SKILL.md`; prefer `openai/gpt-image-2` only if live discovery confirms it and schema supports the needed refs, aspect, and quality. If it is unavailable, use live Nano Banana 2 if available, then Nano Banana Pro. Slow models like `openai/gpt-image-2` must be submitted as jobs and waited on with the available job tool.
+5. Generate one sheet first, or 2-3 variants if the brief is loose. Do not generate downstream finals or videos yet.
+6. Prompt with mandatory sections:
    - **LAYOUT**: grid shape, gutters, headline placement, footer placement, and aspect.
    - **HEADLINE**: exact copy, lettering style, and brand color.
    - **PANELS**: concrete shot description per cell.
    - **BRAND GRAPHICS**: brushwork, shapes, stickers, crops, paper texture, or other brand devices.
    - **FOOTER**: exact caption treatment.
    - **FIDELITY**: preserve product identity from the reference and factual claims. Do not include product material, color, silhouette, trim, hardware, label, or garment descriptors in the generation prompt; keep those facts in the confirmation and QA checklist only.
-8. **Blocking sheet QA gate**: read the generated sheet with vision against the product and style refs. Reject if it is film pre-vis, vertically stacked action panels, missing product identity, Recolored logo, Prompt-text override, or unsupported claims. Do not use the sheet as a downstream brief until it passes.
-9. Offer variations by moving one lever at a time:
+7. **Blocking sheet QA gate**: read the generated sheet with vision against the product and style refs. Reject if it is film pre-vis, vertically stacked action panels, missing product identity, Recolored logo, Prompt-text override, or unsupported claims. Do not use the sheet as a downstream brief until it passes.
+8. Offer variations by moving one lever at a time:
    - Same layout, different headlines.
    - Same headline, different grid shape.
    - Same content, different palette or graphic device.
-10. On approval, use the sheet as the brief for `social-video-short.md`, the Image Workflow in `../../krea-generate/SKILL.md`, or `product-photo-lifestyle.md`.
+9. On approval, use the sheet as the brief for `social-video-short.md`, generic image generation via the model-selection guidance in `../../krea-generate/SKILL.md`, or `product-photo-lifestyle.md`.
 
-### MCP path
+### Tool path
 
-Use the available Krea MCP tools to upload product/layout references, list models, inspect the selected model schema, then call image generation with schema-verified prompt, reference, text, aspect, and quality fields.
+Use the available Krea tools to upload product/layout references when needed, list models, inspect the selected model schema, then call image generation with schema-verified prompt, reference, text, aspect, and quality fields.
 
 ## Banned
 

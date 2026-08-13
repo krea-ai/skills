@@ -215,78 +215,78 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 
 ---
 
-## Animation production (9)
+## Motion production (9)
 
-### 23. Novice anime series workflow
+### 23. Anime series routes out of krea-motion
 
 - **Category**: routing
 - **User input**: "I have an idea for an anime series but no assets. Help me make the first 60-second pilot with Krea."
-- **Expected**: agent routes to the animation production workflow and starts with scaffold, brief, bible, storyboard, shotlist, and approvals before video
-- **Pass regex**: `(?i)krea-animation|animation.*pipeline|asset bible|storyboard|shot.?list|scaffold|approval|model sheet`
-- **Fail regex**: `(?i)generate.*60.*second.*video now|single prompt|submit.*video.*immediately`
+- **Expected**: agent does not run this through krea-motion — anime and narrative animation are out of the motion skill's scope and route to krea-generate
+- **Pass regex**: `(?i)krea-generate|out of scope|narrative|not.*motion skill`
+- **Fail regex**: `(?i)cut architecture|maximal.*register|logo-and-mark|reveal-sequence|asset bible|scaffold`
 
-### 24. Studio shot production ingest
+### 24. Logo sting cuts, not drift
 
 - **Category**: routing
-- **User input**: "We already have boards, character sheets, background plates, and a shot spreadsheet. Use Krea to produce the shots."
-- **Expected**: agent preserves existing studio materials and maps them into the animation production structure
-- **Pass regex**: `(?i)studio|ingest|boards|character sheets|background plates|shot spreadsheet|preserve|map.*project|approved`
-- **Fail regex**: `(?i)rewrite.*from scratch|discard.*boards|single.*video prompt`
+- **User input**: "Animate my logo into a 6-second sting."
+- **Expected**: agent uses krea-motion cinematic-shot, checks material vs flat vector first, and stages hard cuts that jump scale, angle, and light instead of one slow move
+- **Pass regex**: `(?i)krea-motion|cinematic-shot|cut|beat|macro|vector|material|scale.*angle|logo-and-mark`
+- **Fail regex**: `(?i)one continuous|single slow|gentle drift|shimmer.*across|highlight.*sweep`
 
 ### 25. Still image to motion
 
 - **Category**: routing
-- **User input**: "Animate this approved keyframe of my character blinking and steam moving in the background."
-- **Expected**: agent uses still-to-motion, reads the image first, writes a motion-only prompt, and checks for drift
-- **Pass regex**: `(?i)still.to.motion|image.to.video|read.*image|motion-only|blink|steam|drift|start.?image`
+- **User input**: "Animate this approved product keyframe with steam rising and the light shifting in the background."
+- **Expected**: agent uses cinematic-shot, reads the image first, writes a motion-only prompt, and checks for drift
+- **Pass regex**: `(?i)cinematic-shot|image.to.video|read.*image|motion-only|steam|drift|start.?image`
 - **Fail regex**: `(?i)different scene|full storyboard|skip.*image`
 
-### 26. Storyboard approval gate
+### 26. Beat sheet approval gate
 
 - **Category**: cost
-- **User input**: "Here is a rough story idea. Generate all the animation clips now."
-- **Expected**: agent refuses to skip storyboard/asset/keyframe approval before expensive video jobs
-- **Pass regex**: `(?i)storyboard|asset|keyframe|approval|before.*video|cannot.*skip|first.*shot.?list`
-- **Fail regex**: `(?i)submitting.*all|generate.*all.*clips now|video jobs.*started`
+- **User input**: "Here is my product render. Generate the full launch film right now."
+- **Expected**: agent writes a staged beat sheet and a cost preflight and stops for approval before expensive video jobs
+- **Pass regex**: `(?i)beat sheet|beats|preflight|approval|before.*video|start image`
+- **Fail regex**: `(?i)submitted|video jobs.*started|skipping.*preflight`
 
-### 27. Shotlist to sequence dry run
+### 27. Video jobs are async
 
 - **Category**: polling
-- **User input**: "My storyboard and shot list are approved. What is the workflow to generate the sequence without spending credits first?"
-- **Expected**: agent validates the project, builds manifests, and uses submit_video_jobs dry-run before real jobs
-- **Pass regex**: `(?i)validate_project|build_manifests|submit_video_jobs.*--dry-run|video_jobs\.csv|manifest`
-- **Fail regex**: `(?i)run.*real.*jobs|spend.*credits|submit.*without.*dry`
+- **User input**: "Submit the approved reveal beats and tell me when they are done."
+- **Expected**: agent submits video as async jobs, polls status, and reports progress instead of going silent
+- **Pass regex**: `(?i)async|poll|job.?id|status|progress|report`
+- **Fail regex**: `(?i)instantly ready|no need to poll|synchronous`
 
-### 28. Animation cost preflight
+### 28. Motion cost preflight
 
 - **Category**: cost
-- **User input**: "Make 24 Seedance shots for my 2-minute anime short."
+- **User input**: "Make 12 Seedance shots for my product launch reel."
 - **Expected**: agent performs a cost/time preflight and asks for approval before video submission
-- **Pass regex**: `(?i)cost|preflight|24 shots|2-minute|approval|before.*submit|retry budget|wall.?clock`
-- **Fail regex**: `(?i)submitted|started.*24|all.*jobs.*queued`
+- **Pass regex**: `(?i)cost|preflight|12 shots|approval|before.*submit|retry budget|variant`
+- **Fail regex**: `(?i)submitted|started.*12|all.*jobs.*queued`
 
 ### 29. Retake workflow
 
 - **Category**: vision
-- **User input**: "Shot SC001_SH020 looks good except the jacket changes color and a background person appears. What now?"
-- **Expected**: agent logs a retake tied to the shot and fixes the smallest unit, not the entire sequence
-- **Pass regex**: `(?i)retake|SC001_SH020|jacket|background person|smallest|prompt|keyframe|log`
+- **User input**: "Shot SH020 looks good except the label warps near the end and a lens flare creeps in. What now?"
+- **Expected**: agent logs a retake tied to the shot and fixes the smallest unit with one change at a time, not the entire sequence
+- **Pass regex**: `(?i)retake|SH020|label|flare|smallest|one.*(change|thing)|seed|log`
 - **Fail regex**: `(?i)regenerate.*entire|ignore|acceptable`
 
-### 30. Animation app stays in krea-build
+### 30. Motion app stays in krea-build
 
 - **Category**: routing
-- **User input**: "Build a React app for producers to manage animation shot lists and submit Krea jobs."
-- **Expected**: agent routes implementation to krea-build while using krea-animation as the workflow contract
-- **Pass regex**: `(?i)krea-build|react|app|producer|shot lists|workflow contract|krea-animation`
-- **Fail regex**: `(?i)only.*krea-animation|generate.*video.*instead|no.*app`
+- **User input**: "Build a React app for producers to manage product motion shot orders and submit Krea jobs."
+- **Expected**: agent routes implementation to krea-build while using krea-motion as the workflow contract
+- **Pass regex**: `(?i)krea-build|react|app|producer|shot order|workflow contract|krea-motion`
+- **Fail regex**: `(?i)only.*krea-motion|generate.*video.*instead|no.*app`
 
 ### 31. Delivery QA
 
 - **Category**: vision
-- **User input**: "The clips are generated. How do we know the final animation is ready to deliver?"
-- **Expected**: agent assembles, samples QA frames, checks continuity, retakes, runtime, audio/subtitles, and final path
-- **Pass regex**: `(?i)assemble|sample.*QA|frame|continuity|retake|runtime|audio|subtitle|delivery checklist|final path`
+- **User input**: "The clips are generated. How do we know the final film is ready to deliver?"
+- **Expected**: agent assembles, samples QA frames, verifies cuts with scene detection, checks the last frame, runtime, audio, and final path
+- **Pass regex**: `(?i)assemble|sample.*QA|frame|scene detection|last frame|continuity|retake|runtime|audio|delivery checklist|final path`
 - **Fail regex**: `(?i)just.*send|no.*need.*review|skip.*QA`
 
 ---
@@ -299,7 +299,7 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 - **User input**: "Generate a moody editorial image of a glass greenhouse in the rain"
 - **Expected**: agent uses krea-generate rather than marketing, animation, or build
 - **Pass regex**: `(?i)krea-generate|generic generation|image generation|model catalog|generate.*image|greenhouse`
-- **Fail regex**: `(?i)krea-marketing|krea-animation|krea-build|product photoshoot|storyboard|app`
+- **Fail regex**: `(?i)krea-marketing|krea-motion|krea-build|product photoshoot|storyboard|app`
 
 ### 33. Archviz stays in krea-generate
 
@@ -307,7 +307,7 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 - **User input**: "Turn this Rhino viewport screenshot into a photoreal lobby render with realistic glass and warm evening light"
 - **Expected**: agent keeps archviz in krea-generate and treats the viewport as a structural reference for Nano Banana Pro 4K
 - **Pass regex**: `(?i)krea-generate|archviz|rhino|viewport|structural|nano.?banana.?pro|4K|photoreal|render`
-- **Fail regex**: `(?i)krea-marketing|marketplace|product photo|ugc|krea-animation`
+- **Fail regex**: `(?i)krea-marketing|marketplace|product photo|ugc|krea-motion`
 
 ### 34. Product photoshoot routes to krea-marketing
 
@@ -315,7 +315,7 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 - **User input**: "Create a studio product photoshoot for my skincare serum, including lifestyle and closeup variants"
 - **Expected**: agent uses krea-marketing, product photoshoot modes, and asks for product/brand refs
 - **Pass regex**: `(?i)krea-marketing|product photoshoot|studio product|lifestyle|closeup|brand ref|product ref`
-- **Fail regex**: `(?i)krea-generate.*generic|archviz|krea-animation|single prompt`
+- **Fail regex**: `(?i)krea-generate.*generic|archviz|krea-motion|single prompt`
 
 ### 35. Marketplace full set routes to krea-marketing
 
@@ -323,7 +323,7 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 - **User input**: "Make a marketplace full set for this backpack: main image, secondary images, and A+ detail modules"
 - **Expected**: agent uses krea-marketing marketplace workflow with main, secondary, and detail-module scopes
 - **Pass regex**: `(?i)krea-marketing|marketplace|main image|secondary|A\\+|detail module|full set`
-- **Fail regex**: `(?i)krea-animation|storyboard.*video|archviz|just one image`
+- **Fail regex**: `(?i)krea-motion|storyboard.*video|archviz|just one image`
 
 ### 36. UGC ad asks Meta option but proceeds without Meta
 
@@ -349,12 +349,12 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 - **Pass regex**: `(?i)explicit approval|account|entity|action|budget|status|live|paused|draft|cannot.*launch`
 - **Fail regex**: `(?i)launched|active campaign|budget set|published live`
 
-### 39. Animation still routes to krea-animation
+### 39. Product motion still routes to krea-motion
 
 - **Category**: routing
-- **User input**: "Animate this approved character still into a 6-second shot with hair moving and camera push-in."
-- **Expected**: agent keeps still-to-motion animation work in krea-animation, reads the still, writes a motion-only prompt, and gates generation
-- **Pass regex**: `(?i)krea-animation|still-to-motion|read.*still|motion-only|hair|camera push|approval|start.?image`
+- **User input**: "Animate this approved product still into a 6-second shot with steam rising and a camera push-in."
+- **Expected**: agent keeps single-still product motion in krea-motion (cinematic-shot), reads the still, writes a motion-only prompt, and gates generation
+- **Pass regex**: `(?i)krea-motion|cinematic-shot|read.*still|motion-only|steam|camera push|approval|start.?image`
 - **Fail regex**: `(?i)krea-marketing|ugc|marketplace|product photoshoot`
 
 ---
@@ -367,7 +367,7 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 - **User input**: "Here's one photo of my water bottle — turn it into a set of on-brand static ad layouts: hero, comparison, testimonial, the works."
 - **Expected**: agent routes to the krea-marketing dtc-ad-templates workflow, loads the format registry, asks for the brand/proof brief, and plans per-format generation with structural-device QA — without inventing quotes or press names
 - **Pass regex**: `(?i)dtc-ad-templates|dtc|format library|ad format|structural device|registry|headline-hero|comparison-diptych|proof|brief`
-- **Fail regex**: `(?i)generate_video|krea-animation|archviz|invent.*quote|made.?up.*review`
+- **Fail regex**: `(?i)generate_video|krea-motion|archviz|invent.*quote|made.?up.*review`
 
 ---
 

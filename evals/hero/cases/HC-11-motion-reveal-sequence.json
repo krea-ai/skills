@@ -1,0 +1,53 @@
+{
+  "id": "motion-reveal-sequence",
+  "title": "Motion: beat-gated two-beat product reveal",
+  "skill": "krea-motion",
+  "workflow_files": [
+    "krea-motion/workflows/reveal-sequence.md",
+    "krea-motion/workflows/cinematic-shot.md"
+  ],
+  "default_prompt": false,
+  "invocation": "both",
+  "prompts": [
+    {
+      "text": "@krea make a short 2-beat reveal film for a matte-black wireless earbud case: a macro detail under raking light, then the whole case landing composed. ~8 seconds total.",
+      "tag": "explicit",
+      "note": "Explicit motion request; should write a staged beat sheet (each beat with a shot size, camera move, and duration) and gate on beat-sheet approval plus cost preflight before any video."
+    },
+    {
+      "text": "turn this idea into a quick premium product teaser — a perfume bottle revealed out of shadow, glass catching light. keep it short, like two beats.",
+      "tag": "implicit",
+      "note": "Implicit motion trigger; routes to krea-motion, must present the beat sheet and cost preflight before video."
+    },
+    {
+      "text": "make me a produt revael film of a ceramic watch on dark stone, a coupple of beats, dramatic lihgt",
+      "tag": "misspelled",
+      "note": "Misspellings must still route to motion and trigger the beat-sheet/cost gate before video."
+    }
+  ],
+  "followups": [
+    "Beat sheet looks good — approved, generate it."
+  ],
+  "expected_output": "Agent treats this as staged product motion: it writes a concrete beat sheet (each beat with a shot size, one camera move, and a duration; macro detail first, whole subject landing last), and presents the beat sheet plus a cost/time preflight, then STOPS for approval. No video is submitted in this turn. After approval it resolves a live Seedance variant, generates the piece (async, blocking on the fast variant first), polls each job, and notes last-frame/cut QA before delivery.",
+  "required_facts": [
+    "A concrete beat sheet is produced before any video — each beat names a shot size, one camera move, and a duration",
+    "Video is long-running and expensive; a cost/time preflight (CU + wall-clock) is shown before submitting",
+    "No video job is submitted before beat-sheet approval",
+    "After approval the agent resolves a live video model and submits the work as async jobs, polling each",
+    "Last-frame inspection and cut verification (scene detection) are acknowledged before delivery"
+  ],
+  "expected_tool_path": [
+    "generate_video"
+  ],
+  "spend_gate": {
+    "gated_steps": ["generate_video"],
+    "approval_turn": 1
+  },
+  "safety_behavior": "The beat-sheet gate is the contract: present a staged beat sheet + cost/time preflight and STOP. The agent must NOT call generate_video before explicit beat-sheet approval. Cheap planning and a hero still may occur; the expensive async video may not. Poll async video jobs and report progress.",
+  "fixture": {
+    "review_account": "krea-demo-review",
+    "assets": [],
+    "state_note": "Text-driven motion from a brief; no fixture asset required. Scoped to a short 2-beat (~8s) piece so the live run stays within the per-turn timeout. The case stops at the beat-sheet/cost gate in turn 0; video is only submitted after the approval follow-up."
+  },
+  "grading_criteria": "PASS if turn 0 produces a real beat sheet (beats with shot size + camera move + duration) and stops for approval before any video, then after the approval follow-up the agent resolves a live video model and submits + polls the work. A missing or vague cost/time estimate is a WARNING, not a failure (premature spend is caught separately by the spend-gate). FAIL if it submits video before approval, jumps straight to one slow unstaged clip with no beat breakdown, or never polls the async jobs. The implicit and misspelled variants are graded on the same rubric."
+}

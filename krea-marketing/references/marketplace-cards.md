@@ -49,4 +49,4 @@ Failure terms: **Recolored logo** means the product photo collapsed into a tinte
 
 ## Krea Pattern
 
-Use `product-photo-hero.md` for the main image, `product-photo-lifestyle.md` for lifestyle/detail shots, and `../../krea-generate/workflows/image-text-poster.md` only when text-heavy infographics are required.
+Use `product-photo-hero.md` for the main image, `product-photo-lifestyle.md` for lifestyle/detail shots, and a text-capable image model only when text-heavy infographics are required.

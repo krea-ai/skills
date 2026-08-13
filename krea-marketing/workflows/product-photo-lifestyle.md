@@ -23,16 +23,15 @@ Hard prescription. Follow in order.
 2. Read product and optional people/location refs with vision. For apparel, confirm only visible silhouette, texture, colorway, trim, hardware, pattern, closures, logo/pin/embroidery, and proportion. Use URL/PDP copy only for supported claims or copy, not visual truth.
 3. Resolve a final still model from the marketing image set in `../SKILL.md`: default `openai/gpt-image-2`, offering live Nano Banana 2 / Nano Banana Pro as alternatives the user can pick; require multi-reference support if people or rooms are involved. If Nano Banana is chosen for a real product ref, keep the prompt scene-only because prompt words can override the reference.
 4. Inspect schema for image-reference fields, aspect, and resolution.
-5. Cost-preflight for batches, 4K, or >100 CU.
-6. Upload local or external/non-Krea refs to Krea.
-7. Prompt environment, pose/use, lighting, audience cue, camera, composition, copy, product placement, and value-free fidelity to the reference. When a real reference exists, do not include product material, color, silhouette, trim, hardware, label, or garment descriptors in the generation prompt; keep those facts in the confirmation and QA checklist only.
-8. Generate 1-2 candidates in the primary platform aspect.
-9. Vision-check that the product is recognizable and plausibly placed. This inspection is blocking before variants, upscale, animation, or delivery.
-10. **Deliver** with platform labels and QA notes.
+5. Upload local or external/non-Krea refs to Krea.
+6. Prompt environment, pose/use, lighting, audience cue, camera, composition, copy, product placement, and value-free fidelity to the reference. When a real reference exists, do not include product material, color, silhouette, trim, hardware, label, or garment descriptors in the generation prompt; keep those facts in the confirmation and QA checklist only.
+7. Generate 1-2 candidates in the primary platform aspect.
+8. Vision-check that the product is recognizable and plausibly placed. This inspection is blocking before variants, upscale, animation, or delivery.
+9. **Deliver** with platform labels and QA notes.
 
-### MCP path
+### Tool path
 
-Use the available Krea MCP tools to upload product, model, and brand references, list models, inspect the selected model schema, then call image generation with schema-verified multi-reference, prompt, and aspect fields.
+Use the available Krea tools to upload product, model, and brand references when needed, list models, inspect the selected model schema, then call image generation with schema-verified multi-reference, prompt, and aspect fields.
 
 ## Banned
 
@@ -41,7 +40,7 @@ Use the available Krea MCP tools to upload product, model, and brand references,
 - Do not let prompt text fight the reference image; remove product material/color/garment words from real-product generation prompts.
 - Do not invent claims or use cases not supported by the user brief.
 - Do not generate people wearing products without enough product detail for accuracy.
-- Do not upscale or animate a lifestyle shot before vision QA.
+- Do not upscale or animate a lifestyle shot before the blocking inspection passes.
 
 ## Cost & time
 

@@ -19,26 +19,24 @@ If the user gave a tight, complete brief, skip Clarify entirely and proceed to R
 
 Hard prescription. Follow in order.
 
-1. **Cost-preflight** (mandatory - see `../references/cost-preflight.md`). Training can take 15-45 minutes.
-2. Read a sample of training images with vision; reject blurry, tiny, duplicated, or off-style inputs.
-3. If local, upload or ensure each training image has a reachable HTTPS URL.
-4. Validate URL reachability through MCP when that capability is available; otherwise rely on MCP upload/training errors.
-5. Discover or verify the current supported training base models through Krea MCP before submitting. Do not use a remembered training model id.
-6. Submit training through Krea MCP only. If MCP does not expose LoRA training, stop and tell the user this capability is not available in the connected Krea MCP server yet.
-7. Poll every 30-60 seconds using `../references/progress-reporting.md`.
-8. On completion, capture `style_id` and trigger word.
-9. Resolve a style-aware image model from live `list_models` and inspect schema for the exact style field, such as `style_id`, MCP `styleId`, or `styles`.
-10. Generate 3-5 samples using the new style at strength ~0.85.
-11. **Deliver** style ID, trigger word, sample outputs, and QA notes.
+1. Read a sample of training images with vision; reject blurry, tiny, duplicated, or off-style inputs.
+2. If local, upload or ensure each training image has a reachable HTTPS URL.
+3. Validate URL reachability when that capability is available; otherwise rely on upload/training errors.
+4. Discover or verify the current supported training base models through live Krea tools before submitting. Do not use a remembered training model id.
+5. Submit training only if the current tools expose LoRA/style training. If not, tell the user this capability is not available in this session.
+6. Wait for completion with the available job tool, reporting progress per `../references/progress-reporting.md`.
+7. On completion, capture `style_id` and trigger word.
+8. Resolve a style-aware image model from live `list_models` and inspect schema for the exact style field, such as `style_id`, `styleId`, or `styles`.
+9. Generate 3-5 samples using the new style at strength ~0.85.
+10. **Deliver** style ID, trigger word, sample outputs, and QA notes.
 
-### MCP training
+### Training
 
-Verify the current MCP tool schema for LoRA/style training before use. Use only fields exposed by the connected MCP server. Do not use non-MCP endpoints or assume training payload fields from memory.
+Verify the current tool schema for LoRA/style training before use. Use only fields exposed in this session. Do not assume training payload fields from memory.
 
 ### Generate samples after training
 
 ```
-# Use MCP after completion for style-aware image generation:
 list_models()
 get_model_schema(model="<style-aware-image-model>")
 generate_image(model="<style-aware-image-model>", input={prompt, <schema-style-field>, <schema-strength-field>}, sync=true)
@@ -47,7 +45,7 @@ generate_image(model="<style-aware-image-model>", input={prompt, <schema-style-f
 ## Banned
 
 - Do not train on fewer than 10 weak images unless the user accepts poor results.
-- Do not skip cost-preflight or long-running progress pings.
+- Do not skip long-running progress pings.
 - Do not assume the schema field is always `styleId` or `style_id`; inspect the model.
 - Do not persist style IDs into project files without explicit user approval.
 
@@ -64,4 +62,4 @@ generate_image(model="<style-aware-image-model>", input={prompt, <schema-style-f
 | Training fails mid-run | Bad URL or inaccessible asset | HEAD-check URLs and resubmit |
 | Samples ignore style | Underfit or missing trigger | Use trigger word and style strength; retrain with better set |
 | Samples all look same | Overfit | Lower style strength or retrain with more varied images |
-| User wants one portrait only | LoRA is overkill | Use the Image Workflow in `../SKILL.md` |
+| User wants one portrait only | LoRA is overkill | Generate directly using the model-selection guidance in `../SKILL.md` |

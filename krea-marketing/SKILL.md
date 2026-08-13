@@ -1,7 +1,7 @@
 ---
-version: 0.6.1
+version: 0.7.1
 name: krea-marketing
-description: "Marketing and paid-social creative workflows with Krea MCP. Use for product photoshoots, marketplace cards, DTC static ad templates, campaign key visuals, UGC/social ads, scripted UGC video ads and talking-head/testimonial ads, product URL to creative, ad storyboards, social packs, product launches, Meta Ads performance-informed creative planning, and gated Meta Ads activation. For generic media generation use krea-generate."
+description: "Use for marketing and paid-social creative: product photoshoots, marketplace cards, static/UGC/video ads, campaign key visuals, ad storyboards, product launches, and Meta Ads. For generic media generation use krea-generate."
 license: MIT
 ---
 
@@ -71,6 +71,8 @@ When a real product reference exists, the image is the source of truth. Product-
 | DTC static ad templates / ad format library / N on-brand static ads from one product photo | `workflows/dtc-ad-templates.md` |
 | Meta account analysis, creative performance readout, campaign draft/activation | `workflows/meta-ads-performance.md` |
 
+For the photographic frame itself — lighting register, palette, staging, materials — read `../product-photography/SKILL.md` alongside any workflow above that renders an actual photographed frame: product-photo, lifestyle, marketplace, DTC static ads, and the per-cell shots inside a key-visual sheet. Format-specific layout rules (headline placement, wordmark, structural device, copy) in the routed workflow still govern; product-photography governs the photographic execution inside that layout.
+
 If the user asks for a non-marketing image/video, use `../krea-generate/SKILL.md`. Designed motion-graphics composition inside launch work (typography, beat-synced cuts, overlays) routes through `workflows/launch-teaser.md`. If they ask to build a marketing app/tool, provide the creative workflow contract here and keep implementation guidance scoped to the user's existing stack.
 
 ## References
@@ -87,7 +89,7 @@ If the user asks for a non-marketing image/video, use `../krea-generate/SKILL.md
 - `references/video-ad-post.md` - ffmpeg caption/CTA burn, multi-take assembly, music bed mixing, delivery spec; hyperframes escape hatch for designed caption motion.
 - `references/artifact-taxonomy.md` - disambiguate storyboard, key visual, hero shot, mockup, look book.
 
-Shared Krea references live in `../krea-generate/references/`: `mcp-surface.md`, `model-catalog.md`, `media-inputs.md`, `cost-preflight.md`, `progress-reporting.md`, `vision-qa.md`, `troubleshooting.md`, and `models/`.
+General prompting guides for essential models like GPT-image-2, Nano Banana Pro, Seedance 2.5, and Krea 2 live in `../krea-generate/references/models/`. Shared MCP ops references (`cost-preflight.md`, `progress-reporting.md`, `vision-qa.md`) live in `../krea-generate/references/`.
 
 ## Delivery Discipline
 

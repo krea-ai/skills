@@ -1,6 +1,6 @@
 # Video Ad QA
 
-Delivery gate for UGC and social video ads. Run it on the assembled piece before calling anything ready: sample the first frame plus 4-6 beat frames with ffmpeg, inspect them with vision, and score. This extends, not replaces, the recorded vision inspections required by `../SKILL.md` and `../../krea-generate/references/vision-qa.md`.
+Delivery gate for UGC and social video ads. Run it on the assembled piece before calling anything ready: sample the first frame plus 4-6 beat frames with ffmpeg, inspect them with vision, and score. This extends, not replaces, the recorded inspections required by `../SKILL.md`.
 
 ## Virality Scorecard
 

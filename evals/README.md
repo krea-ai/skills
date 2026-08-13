@@ -13,8 +13,8 @@ Lightweight regression test suite for the Krea skills. Catches drift when skill 
 - **Polling discipline (3)** — image / enhance use sync, video uses async + poll?
 - **Edge cases (3)** — missing prompt, unknown model, prior-output reuse
 - **Campaign regression (2)** — catches the CPG storyboard/key-visual routing failure and loose UGC variation behavior
-- **Animation production (9)** — routes studio animation work through `krea-animation` and preserves approvals, cost, async polling, QA, retakes, and app-routing boundaries
-- **Taxonomy 0.4.0 regression (8)** — proves generic generation stays in `krea-generate`, marketing routes to `krea-marketing`, Meta Ads behavior is gated, and animation still routes to `krea-animation`
+- **Motion production (9)** — routes product/brand motion through `krea-motion`, keeps anime/narrative briefs out of it, and preserves approvals, cost, async polling, QA, retakes, and app-routing boundaries
+- **Taxonomy 0.4.0 regression (8)** — proves generic generation stays in `krea-generate`, marketing routes to `krea-marketing`, Meta Ads behavior is gated, and product motion stills route to `krea-motion`
 - **DTC ad templates 0.5.0 (1)** — keeps one-photo static ad set requests in the DTC template workflow
 - **Scripted UGC video ads 0.6.0 (4)** — covers script gating, caption/post assembly, real screen recordings, and virality QA before delivery
 - **Cinematic product ads 0.6.1 (2)** — covers reference-ad cut measurement, one-shot timeline prompting, start-image quality gating, and beat-length constraints
