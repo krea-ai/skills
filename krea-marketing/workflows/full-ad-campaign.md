@@ -24,21 +24,20 @@ Hard prescription. Follow in order.
 1. **Identify first deliverable shape**. For CPG/FMCG/agency-style campaign asks, route to `key-visual-sheet.md` first. For a static ad set built around one product photo, route to `dtc-ad-templates.md`. For other digital static sets, start with cheap image drafts. For UGC/social video sets, route to `social-video-short.md`; if the videos need a spoken script, captions, or a CTA card (scripted UGC ads, talking-head/testimonial ads, narrated demos), route to `ugc-video-ad.md` instead.
 2. If the user chose Meta Ads context, run `meta-ads-performance.md` first and incorporate the performance read into the creative brief.
 3. Load `../references/marketing-creative-anatomy.md` and decompose the campaign into mode, product/facts, brand system, format, hook, setting, talent/identity, reference path, and CTA.
-4. **Cost-preflight** (mandatory - see `../../krea-generate/references/cost-preflight.md`). Campaigns are batches.
-5. Extract text facts from the URL or user brief for claims/copy only. Do not treat PDP copy, alt text, filenames, or scraped descriptions as visual product truth.
-6. Read product images with vision and identify only visible product facts. For apparel, name silhouette, texture, colorway, trim, hardware, pattern, closures, logo/pin/embroidery, and proportion. If a URL does not expose usable product images, stop and ask for product refs before promising faithful product creative.
-7. If a URL or scraped source was used, confirm the visual brief in one line before generating: visible product facts + supported claims/copy + deliverable shape. Do not confirm PDP text facts as if they were seen.
-8. Resolve live marketing image candidates using the marketing image set in `../SKILL.md`: default `openai/gpt-image-2` (always first for copy-heavy images and real-product scene composites); for product/final stills, offer live Nano Banana 2 / Nano Banana Pro as alternatives and let the user choose. If Nano Banana is chosen with a real product ref, use stricter scene-only prompting because prompt words can override the reference.
-9. Write real-product prompts around scene, pose/use, light, camera, composition, platform copy, and placement. Do not include product color, material, silhouette, trim, hardware, label, or garment descriptors in the generation prompt; keep those facts in the visual confirmation and QA checklist only.
-10. Generate lightweight drafts by angle and format first, unless step 1 routed to a key-visual sheet or social storyboard gate.
-11. **Blocking draft QA gate**: read every draft with vision, compare it to the visible brief, and record pass/fail before any finals, upscale, animation, or delivery claim. Reject outputs with wrong product identity, wrong claims, Recolored logo, Prompt-text override, or generic product drift. If none pass, retake one lever at a time or ask for clearer refs.
-12. Show a contact sheet or labeled list only after the gate, with pass/fail notes; let the user pick winners for final render/upscale.
-13. Generate final winners through `product-photo-hero.md`, `product-photo-lifestyle.md`, `dtc-ad-templates.md`, `key-visual-sheet.md`, `social-video-short.md`, or `ugc-video-ad.md` as needed.
-14. **Deliver** organized outputs by platform, with QA notes and any unsupported claims removed.
+4. Extract text facts from the URL or user brief for claims/copy only. Do not treat PDP copy, alt text, filenames, or scraped descriptions as visual product truth.
+5. Read product images with vision and identify only visible product facts. For apparel, name silhouette, texture, colorway, trim, hardware, pattern, closures, logo/pin/embroidery, and proportion. If a URL does not expose usable product images, stop and ask for product refs before promising faithful product creative.
+6. If a URL or scraped source was used, confirm the visual brief in one line before generating: visible product facts + supported claims/copy + deliverable shape. Do not confirm PDP text facts as if they were seen.
+7. Resolve live marketing image candidates using the marketing image set in `../SKILL.md`: default `openai/gpt-image-2` (always first for copy-heavy images and real-product scene composites); for product/final stills, offer live Nano Banana 2 / Nano Banana Pro as alternatives and let the user choose. If Nano Banana is chosen with a real product ref, use stricter scene-only prompting because prompt words can override the reference.
+8. Write real-product prompts around scene, pose/use, light, camera, composition, platform copy, and placement. Do not include product color, material, silhouette, trim, hardware, label, or garment descriptors in the generation prompt; keep those facts in the visual confirmation and QA checklist only.
+9. Generate lightweight drafts by angle and format first, unless step 1 routed to a key-visual sheet or social storyboard gate.
+10. **Blocking draft QA gate**: read every draft with vision, compare it to the visible brief, and record pass/fail before any finals, upscale, animation, or delivery claim. Reject outputs with wrong product identity, wrong claims, Recolored logo, Prompt-text override, or generic product drift. If none pass, retake one lever at a time or ask for clearer refs.
+11. Show a contact sheet or labeled list only after the gate, with pass/fail notes; let the user pick winners for final render/upscale.
+12. Generate final winners through `product-photo-hero.md`, `product-photo-lifestyle.md`, `dtc-ad-templates.md`, `key-visual-sheet.md`, `social-video-short.md`, or `ugc-video-ad.md` as needed; for text-heavy stills, use a text-capable image model from `../SKILL.md`.
+13. **Deliver** organized outputs by platform, with QA notes and any unsupported claims removed.
 
-### MCP path
+### Tool path
 
-Use the available Krea MCP tools to list models, inspect schema for draft and final image models, then call image generation with schema-verified campaign prompt, reference, aspect, quality, and resolution fields.
+Use the available Krea tools to list models, inspect schema for draft and final image models, then call image generation with schema-verified campaign prompt, reference, aspect, quality, and resolution fields.
 
 ## Banned
 
@@ -67,5 +66,5 @@ Use the available Krea MCP tools to list models, inspect schema for draft and fi
 | Output makes unsupported claims | Prompt included invented copy | Remove claims and regenerate visual-only |
 | Recolored logo | Model flattened the product photo into a tinted graphic/logo-like mark | Retake with cleaner photo reference, photo-first settings, and scene-only prompt |
 | Prompt-text override | Output follows prompt words instead of the attached product reference | Remove product descriptors from the prompt; keep scene, pose, light, copy, and placement only |
-| User asks for UGC video | Expensive sub-workflow | Route to `social-video-short.md` (continuous) or `ugc-video-ad.md` (scripted) with cost-preflight |
+| User asks for UGC video | Expensive sub-workflow | Route to `social-video-short.md` (continuous) or `ugc-video-ad.md` (scripted) |
 | User expected a key-visual sheet | Ambiguous "storyboard" or "ad" vocabulary | Route to `key-visual-sheet.md` before downstream assets |

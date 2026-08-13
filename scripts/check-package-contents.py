@@ -24,6 +24,7 @@ REQUIRED_SKILL_DIRS = {
     "krea-generate",
     "krea-marketing",
     "krea-animation",
+    "product-photography",
 }
 FORBIDDEN_PREFIXES = {"krea-ai/", "wip/"}
 MARKETPLACE_PATH = Path(".claude-plugin/marketplace.json")

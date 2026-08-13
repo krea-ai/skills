@@ -10,8 +10,13 @@
       "name": "krea",
       "source": "./",
       "description": "Krea skills: generation workflows, marketing creative, and animation production.",
-      "version": "0.6.1",
-      "skills": ["./krea-generate", "./krea-marketing", "./krea-animation"]
+      "version": "0.7.1",
+      "skills": [
+        "./krea-generate",
+        "./krea-marketing",
+        "./krea-animation",
+        "./product-photography"
+      ]
     }
   ]
 }

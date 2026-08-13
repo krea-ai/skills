@@ -58,7 +58,7 @@ ffmpeg -y \
   final.mp4
 ```
 
-Use millisecond offsets from `SHOTLIST.md`. Listen to each line before muxing and sample the final mix at every dialogue timestamp.
+Take millisecond offsets from the shot list's own timings. Listen to each line before muxing and sample the final mix at every dialogue timestamp.
 
 ## Subtitles
 

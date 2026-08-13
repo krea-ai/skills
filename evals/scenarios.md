@@ -237,7 +237,7 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 
 - **Category**: routing
 - **User input**: "Animate this approved keyframe of my character blinking and steam moving in the background."
-- **Expected**: agent uses still-to-motion, reads the image first, writes a motion-only prompt, and checks for drift
+- **Expected**: agent uses cinematic-shot, reads the image first, writes a motion-only prompt, and checks for drift
 - **Pass regex**: `(?i)still.to.motion|image.to.video|read.*image|motion-only|blink|steam|drift|start.?image`
 - **Fail regex**: `(?i)different scene|full storyboard|skip.*image`
 
@@ -353,8 +353,8 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 
 - **Category**: routing
 - **User input**: "Animate this approved character still into a 6-second shot with hair moving and camera push-in."
-- **Expected**: agent keeps still-to-motion animation work in krea-animation, reads the still, writes a motion-only prompt, and gates generation
-- **Pass regex**: `(?i)krea-animation|still-to-motion|read.*still|motion-only|hair|camera push|approval|start.?image`
+- **Expected**: agent keeps single-still animation work in krea-animation (cinematic-shot), reads the still, writes a motion-only prompt, and gates generation
+- **Pass regex**: `(?i)krea-animation|cinematic-shot|read.*still|motion-only|hair|camera push|approval|start.?image`
 - **Fail regex**: `(?i)krea-marketing|ugc|marketplace|product photoshoot`
 
 ---

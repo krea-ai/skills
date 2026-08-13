@@ -42,15 +42,17 @@ Each storyboard beat needs:
 Prefer concrete camera language:
 
 - locked
-- slow push-in
+- push-in, quantified (distance + duration + constant rate)
 - dolly left/right
 - pan
 - tilt
 - rack focus
-- handheld drift
 - top-down
 - low angle
 - tracking side-on
+
+Never `slow`, `gentle` or `soft` as the pace instruction — hard rule 8. Never handheld
+or drift: this skill's motion is motion-control smooth unless a shot names otherwise.
 
 ## Continuity Hooks
 
@@ -70,11 +72,14 @@ Every hook should serve story, rhythm, or clarity. Do not add transitions as dec
 
 ## Duration Planning
 
-For AI video models, prefer 4-8 second shots unless the live schema supports longer and the action truly needs it. Long sequences are many controlled clips assembled in edit.
+Seedance has a 4-second minimum, so 4-8 seconds is what you **buy**, not what the cut
+holds. For narrative cutting the delivered shot is 2-3 seconds — generate 4s and trim to
+the core, per `../references/shot-grammar.md`. Long sequences are many controlled clips
+assembled in edit.
 
 ## Prompt Transfer
 
-The shot list should contain enough information for `video_jobs.csv`:
+Each shot list entry should carry enough information to submit its video job:
 
 - start image
 - end image or reference images

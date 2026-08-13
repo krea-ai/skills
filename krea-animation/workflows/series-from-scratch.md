@@ -24,17 +24,20 @@ Let the user pick or remix one concept, then proceed to the production package.
 
 1. Clarify once: target runtime, audience, aspect, style references, language/dialogue, delivery format, and whether this is a proof of concept or final sequence.
 2. If the premise is creatively thin, run the concept development step above and wait for a chosen direction.
-3. Scaffold a project with `scripts/scaffold_project.py`.
-4. Write `00_brief/brief.md`: logline, audience, runtime, tone, constraints, approval owner.
-5. Write `02_story/beat-sheet.md` with story spine fields from `../references/story-spine.md`: protagonist, want, obstacle, stakes, turn, new normal, dialogue posture, and final feeling.
-6. Stop for story-spine approval before storyboard or keyframe generation.
-7. Write `01_bible/style/style-guide.md`: line quality, palette, lighting, camera, animation density, banned looks.
-8. Plan required assets before image generation: characters, expressions, hands, props, environments, FX, signage, typography.
-9. Generate or collect asset sheets. Use cheap draft models first, then high quality only after the style is approved.
-10. Write `02_story/storyboard.md` with shot-by-shot panels in text if image boards do not exist yet.
-11. Create shot folders under `03_shots/SC###/SH###/shot.md`. Every shot must include duration, action, camera, start keyframe, end keyframe or references, dialogue, SFX, continuity hook, status.
-12. Stop for user approval before video generation. No storyboard and shot-list approval means no animation.
-13. Continue with `shotlist-to-sequence.md` after approval.
+3. Write the brief: logline, audience, runtime, tone, constraints, approval owner.
+4. Write the beat sheet with story spine fields from `../references/story-spine.md`: protagonist, want, obstacle, stakes, turn, new normal, dialogue posture, and final feeling.
+5. Stop for story-spine approval before storyboard or keyframe generation.
+6. Write the style guide: line quality, palette, lighting, camera, animation density, banned looks.
+7. Plan required assets before image generation: characters, expressions, hands, props, environments, FX, signage, typography.
+8. Generate or collect asset sheets. Use cheap draft models first, then high quality only after the style is approved.
+9. Write the storyboard as shot-by-shot panels in text if image boards do not exist yet.
+10. Break the storyboard into a numbered shot list. Every shot must include duration, action, camera, start keyframe, end keyframe or references, dialogue, SFX, continuity hook, status.
+11. Stop for user approval before video generation. No storyboard and shot-list approval means no animation.
+12. Continue with `../workflows/shotlist-to-sequence.md` after approval.
+
+## Seedance Notes
+
+Shots animate on Seedance. Resolve the live variant with `list_models`, write shot prompts with `../../krea-generate/references/models/seedance-2.md`, and pull camera and reveal moves from `../references/reveal-recipes.md`. For a single hero shot outside the series pipeline, use `../workflows/cinematic-shot.md`.
 
 ## Banned
 
@@ -45,7 +48,7 @@ Let the user pick or remix one concept, then proceed to the production package.
 
 ## Output
 
-Deliver a project folder path plus a brief status:
+Deliver the production package in the conversation plus a brief status:
 
 - story package ready
 - asset list ready

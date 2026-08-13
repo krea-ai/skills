@@ -2,15 +2,15 @@
 
 A 10-second scene in a movie or anime is **not** one continuous shot. It's typically 3–6 cuts: an establishing wide, a close-up on the character's face for emotional read, an insert on a hand/object, a reaction, then a final beat. One continuous 10-second take is music-video grammar; it reads as "pretty footage," not "story."
 
-The previous long-form video workflow planned 6 x 10s scenes and submitted **6 video jobs** - one continuous clip per scene. The result felt like 6 slow camera moves over tableaux, with no coverage and no rhythm. That is the failure mode this reference exists to prevent.
+The failure mode this reference exists to prevent: planning a 60-second piece as six 10-second scenes and submitting six video jobs, one continuous clip per scene. That returns six camera moves over tableaux — no coverage, no rhythm.
 
 ## The rule
 
-For every scene in `STORYBOARD.md`, write a `SHOTLIST.md` entry that **explodes** the scene into 3–6 individual shots, each 2–3 seconds. Each shot is its own video generation job. The number of shots per scene is dictated by emotional/informational beats, not by clock time.
+For every scene in the storyboard, write a shot-list entry that **explodes** the scene into 3–6 individual shots, each 2–3 seconds. Each shot is its own video generation job. The number of shots per scene is dictated by emotional/informational beats, not by clock time.
 
 A useful working count for a 60s narrative is **20–30 shots total**, not 6.
 
-## Shot vocabulary (use these names in `SHOTLIST.md`)
+## Shot vocabulary (use these names in the shot list)
 
 | Name | Frame size | Purpose |
 |---|---|---|
@@ -66,12 +66,12 @@ A useful working count for a 60s narrative is **20–30 shots total**, not 6.
 
 Mix these. A 10-second SETUP scene might be: WS establish → CU character → INSERT prop → CU character react. A 10-second CLIMAX scene might be: ECU eyes → MACRO hilt → WS leap → CU opponent.
 
-## Per-shot fields (write these into `SHOTLIST.md`)
+## Per-shot fields
 
 For every shot:
 
 - **id**: `S{scene}.{shot}` — e.g. `S3.2` is scene 3 shot 2
-- **duration**: 2.0s, 2.5s, or 3.0s (anime cutting; never longer per shot unless deliberately held)
+- **duration**: 2.0s, 2.5s, or 3.0s (anime cutting; never longer per shot unless deliberately held). Seedance's floor is 4s, so buy 4s and trim to this.
 - **frame**: WS / MS / CU / etc. from the table above
 - **action**: one sentence — what happens in this 2–3s, including camera move if any (push-in, dolly L→R, locked)
 - **subject**: which character / object / environment
@@ -94,7 +94,7 @@ Plan at least 2–3 match cuts per 60s narrative. They are what makes the assemb
 
 ## Shot count budget
 
-If a 60s narrative is 20–30 shots, estimate Seedance video spend from the live catalog before submission. The last observed 10s 720p clip was ~1,738 CU (2026-05-21); short 4s shot-grammar clips should still be quoted conservatively at ~700-1,000 CU each until live pricing says otherwise. That puts video-only cost around **~14–30k CU** for 20–30 shots. Surface this in cost-preflight; do not hide the order-of-magnitude jump from the old 6-clip plan. The right comparison is not "this costs more than before"; it's "the old plan produced a slideshow."
+If a 60s narrative is 20–30 shots, price it before submission. Do not quote credit figures from this document — nothing in the toolset exposes price, so state shot count, seconds per shot, variant and resolution, and say plainly that 20–30 shots costs several times a six-clip plan. The right comparison is not "this costs more than before"; it's "the six-clip plan produced a slideshow.".
 
 ## What this is NOT
 

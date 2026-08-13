@@ -25,7 +25,7 @@ Two layers per format:
    descriptors; let the reference image carry the product.
 4. Fill each chosen template's `{{placeholders}}` from the brief and append the universal
    tail (section D).
-5. Generate (see the workflow) and vision-QA each output against its structural device.
+5. Generate (see the workflow) and inspect each output to ensure it accurately represents the product.
 
 ## B. Placeholders
 

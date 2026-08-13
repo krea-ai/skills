@@ -34,7 +34,7 @@ AI can replace or accelerate media creation, but it should not remove the gates:
 
 | Traditional artifact | AI-assisted equivalent |
 |---|---|
-| model sheet | GPT Image 2 / Krea 2 generated turnaround, expression, hand, mouth, color sheets |
+| model sheet | generated turnaround, expression, hand, mouth and colour sheets — resolve the image model with `list_models` rather than naming one here |
 | layout | approved keyframe, background plate, camera note |
 | genga | start/end keyframes and timing beats |
 | douga | video model interpolation from start/end/reference frames |
