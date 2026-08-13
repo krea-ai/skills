@@ -14,7 +14,6 @@
     "marketing",
     "meta-ads",
     "marketplace",
-    "product-photography",
     "motion",
     "storyboard"
   ],
@@ -31,7 +30,6 @@
     "krea-generate/",
     "krea-marketing/",
     "krea-motion/",
-    "product-photography/",
     "evals/",
     "scripts/",
     ".claude-plugin/",

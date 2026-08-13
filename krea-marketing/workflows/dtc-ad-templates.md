@@ -40,17 +40,7 @@ Hard prescription. Follow in order.
 4. Load `../references/dtc-ad-formats.md`. Select formats (core set, or the user's subset).
    **Drop** any format whose `required` fields the brief can't honestly supply — do not
    invent quotes, press names, ratings, certifications, or pricing.
-5. Read `../../product-photography/SKILL.md` and pick its lighting register, palette, and
-   staging mode for each selected format's `{{surface}}`/`{{palette}}`/`{{accent}}` and light
-   clauses — honoring any color, mood, or setting the user specified over this skill's own
-   defaults. `dtc-ad-formats.md`'s treatment (HERO-CINEMATIC, STILL-LIFE-LUXE, etc.) and
-   structural device stay authoritative for layout, headline placement, and copy; product
-   photography governs only the photographic execution inside that layout.
-   staging mode for each selected format's `{{surface}}`/`{{palette}}`/`{{accent}}` and light
-   clauses — honoring any color, mood, or setting the user specified over this skill's own
-   defaults. `dtc-ad-formats.md`'s treatment (HERO-CINEMATIC, STILL-LIFE-LUXE, etc.) and
-   structural device stay authoritative for layout, headline placement, and copy; product
-   photography governs only the photographic execution inside that layout.
+5. Read `../references/product-photography.md`; choose its lighting register, palette strategy, and staging mode for each selected format's `{{surface}}`/`{{palette}}`/`{{accent}}` and light clauses, honoring any color, mood, or setting in the brief. `dtc-ad-formats.md`'s treatment (HERO-CINEMATIC, STILL-LIFE-LUXE, etc.) and structural device remain authoritative for layout, headline placement, and copy.
 6. Fill each chosen template's `{{placeholders}}` from the brief, append the universal tail,
    and resolve `{{aspect_px}}` and `{{orientation}}` from the aspect map (use the
    gpt-image-2 ÷16 column when that model is selected). For real product references,
