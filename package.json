@@ -1,6 +1,6 @@
 {
   "name": "krea-skills",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Krea.ai agent skills for generation, marketing creative, and product motion workflows.",
   "keywords": [
     "agent-skill",
@@ -24,7 +24,8 @@
     "url": "https://github.com/krea-ai/skills.git"
   },
   "scripts": {
-    "build:codex-plugin": "python3 .codex-plugin/build.py"
+    "build:codex-plugin": "python3 .codex-plugin/build.py",
+    "validate:cursor-plugin": "node scripts/validate-cursor-plugin.mjs"
   },
   "files": [
     "krea-generate/",
@@ -35,6 +36,8 @@
     ".claude-plugin/",
     ".codex-plugin/",
     ".cursor-plugin/",
+    ".mcp.json",
+    "mcp.json",
     "VERSION",
     "LICENSE",
     "README.md",

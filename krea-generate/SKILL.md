@@ -1,5 +1,5 @@
 ---
-version: 0.7.1
+version: 0.7.2
 name: krea-generate
 description: "Use before any image, video, edit, or enhancement generation (beyond the simplest one-shot request) for model recommendations and prompting guides. Route marketing, campaign, UGC, marketplace, and paid-social work to krea-marketing."
 license: MIT
@@ -13,7 +13,7 @@ Use Krea through connected Krea MCP tools only. Use this skill for generation pr
 
 ## Bootstrap (MCP)
 
-Verify Krea MCP tools are present in the current agent tool list before generation. If the MCP server or a required MCP capability is missing or unauthenticated, stop and ask the user to connect or authenticate Krea MCP. Tell Codex plugin users they can reauthenticate by uninstalling and reinstalling the Krea plugin so the install auth flow runs again. Do not use non-MCP fallbacks.
+Verify Krea MCP tools are present in the current agent tool list before generation. If the MCP server or a required MCP capability is missing or unauthenticated, stop and ask the user to connect or authenticate Krea MCP. Cursor plugin users can enable or reauthenticate the Krea server from **Customize**; tell Codex plugin users they can reauthenticate by uninstalling and reinstalling the Krea plugin so the install auth flow runs again. Do not use non-MCP fallbacks.
 
 Use the tool schemas exposed in the current session. Do not invent MCP tool names or input fields.
 
@@ -123,7 +123,7 @@ Do not load every model playbook; first choose the best model for your task (if 
 
 ### Recognize Implicit Edit Requests
 
-If the conversation already contains a generated or user-provided image, and the user follows up with an implicit edit request, you MUST use an edit model and you MUST feed the prior image into the edit model as a reference image.
+If the conversation already contains a generated or user-provided image, and the user follows up with an implicit edit request, you MUST use an edit model and you MUST feed an image into the edit model as a reference image. Which image to feed — the original source image or a prior output — is governed by "Minimize edit passes" below.
 
 Signals that the user wants you to edit a prior image:
 1. the prompt contains phrases like 'make it', 'edit', 'change', 'remove', 'what if', etc.
@@ -139,10 +139,22 @@ All examples are scenarios that MUST be considered an implicit edit request.
 For implicit reference requests, you MUST:
 
 1. First check for a region-targeted edit — instructions tied to marked rectangles or specific areas of the image (the message may call itself a "region-targeted (annotated) edit"). Those MUST use `bytedance/seedream-5-pro` per the "Region-targeted edits (annotations)" section above; complexity, quality, or premium framing is not a reason to use `google/nano-banana-pro` or `openai/gpt-image-2` instead. For all other implicit edits, use an editing/reference-capable model such as `google/nano-banana-pro`, or `openai/gpt-image-2` when the request is complex, premium, or text-heavy.
-2. Scan the conversation and track down the prior (or relevant) output and its associated prompt.
-3. Feed the existing image output into the model as a conditional image input using the exact reference/source/image field from the live schema.
+2. Scan the conversation and pick the image to edit per "Minimize edit passes".
+3. Feed that image into the model as a conditional image input using the exact reference/source/image field from the live schema.
 
 For implicit reference requests, you MUST NOT use prompt-only text-to-image generation such as Krea 2 Large/Medium. Prompt-only regeneration creates unrelated subjects and fails the task. If the prior image is not available as a Krea asset URL, local file, or uploadable source, stop and ask the user for the image instead of generating from text alone.
+
+### Minimize edit passes (edit from the source image)
+
+Every generative edit pass re-renders the whole image, so artifacts compound with each pass. Keep the passes between the **source image** — the user's upload or the original generation, before any edits — and the delivered result to a minimum. Search the conversation for that source image before choosing what to feed the edit model.
+
+- When a follow-up **corrects or adjusts your previous edit** ("no, darker", "less orange"), do NOT feed that edit's output back into the model. Re-edit the source image with a single revised prompt that folds in the correction. The same goes for any request that clearly does not depend on what the intermediate edits introduced.
+- When the request **builds on a previous output** — content a fresh run from the source would not exactly reproduce — edit that output. Editing the wrong image fails outright; extra artifacts do not. When in doubt, edit the latest output.
+
+EXAMPLE
+"make it nighttime" → one edit pass on the source photo. Follow-up: "no, it should be darker."
+WRONG: feed the nighttime output back in with "make it darker" — stacked passes.
+RIGHT: feed the ORIGINAL photo in with a revised prompt, e.g. "deep nighttime, very dark, faint ambient light" — still one pass.
 
 ## Routing
 
