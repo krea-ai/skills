@@ -25,6 +25,14 @@ REQUIRED_SKILL_DIRS = {
     "krea-marketing",
     "krea-motion",
 }
+REQUIRED_FILES = {
+    ".claude-plugin/plugin.json",
+    ".codex-plugin/.mcp.json",
+    ".codex-plugin/plugin.json",
+    ".cursor-plugin/plugin.json",
+    ".mcp.json",
+    "mcp.json",
+}
 FORBIDDEN_PREFIXES = {"krea-ai/", "wip/"}
 MARKETPLACE_PATH = Path(".claude-plugin/marketplace.json")
 
@@ -36,11 +44,13 @@ def main() -> int:
         return proc.returncode
     packs = json.loads(proc.stdout)
     bad: list[str] = []
+    included_files: set[str] = set()
     included_dirs: set[str] = set()
     forbidden: list[str] = []
     for pack in packs:
         for file_info in pack.get("files", []):
             path = file_info.get("path", "")
+            included_files.add(path)
             parts = set(Path(path).parts)
             suffix = Path(path).suffix.lower()
             if suffix in DENY_SUFFIXES or parts.intersection(DENY_PARTS):
@@ -65,6 +75,12 @@ def main() -> int:
         print("Package is missing required skill directories:", file=sys.stderr)
         for name in missing:
             print(f"  {name}/", file=sys.stderr)
+        return 1
+    missing_files = sorted(REQUIRED_FILES - included_files)
+    if missing_files:
+        print("Package is missing required plugin files:", file=sys.stderr)
+        for path in missing_files:
+            print(f"  {path}", file=sys.stderr)
         return 1
     marketplace_errors = validate_marketplace_skills()
     if marketplace_errors:

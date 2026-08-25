@@ -1,7 +1,7 @@
 # Krea AI Skills
 
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![version](https://img.shields.io/badge/version-0.7.1-green.svg)](VERSION)
+[![version](https://img.shields.io/badge/version-0.7.2-green.svg)](VERSION)
 [![skills](https://img.shields.io/badge/skills-3-purple.svg)](#install-the-skills)
 [![discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.com/invite/krea-1002244500581798028)
 
@@ -27,9 +27,25 @@ Installs the packaged skills. This is the supported install path across agents t
 
 ## Prerequisites
 
-The packaged Codex plugin uses a connected Krea MCP server.
+The packaged Codex and Cursor plugins use a connected Krea MCP server.
 
-Check your agent's MCP tool list for `mcp__krea__*` tools. If the tools are missing or auth has expired, connect or authenticate the Krea MCP server before using generation skills. For Codex plugin installs, the practical reauth path is to uninstall and reinstall the Krea plugin so the install auth flow runs again.
+Check your agent's MCP tool list for Krea tools. If the tools are missing or auth has expired, connect or authenticate the Krea MCP server before using generation skills. Cursor plugin installs discover the remote server from the root `mcp.json` and start Cursor's OAuth flow; no API key or client secret is stored in this repository. For Codex plugin installs, the practical reauth path is to uninstall and reinstall the Krea plugin so the install auth flow runs again.
+
+## Plugin packaging
+
+This is a single-plugin repository with provider-specific manifests that share the same three skills:
+
+- Cursor reads `.cursor-plugin/plugin.json`, whose explicit `skills` paths point at the existing top-level skill directories, and discovers the Krea server from `mcp.json`.
+- Codex is packaged from `.codex-plugin/plugin.json` and `.codex-plugin/.mcp.json` with `npm run build:codex-plugin`.
+- Claude reads `.claude-plugin/plugin.json` and the shared `.mcp.json` configuration.
+
+Validate the Cursor package before local testing or marketplace submission:
+
+```bash
+npm run validate:cursor-plugin
+```
+
+For local Cursor testing, symlink the repository to `~/.cursor/plugins/local/krea`, reload Cursor, verify the Krea skills and MCP server in **Customize**, and complete the Krea OAuth prompt. The public repository can then be submitted at [Cursor Marketplace Publish](https://cursor.com/marketplace/publish).
 
 ## Use
 

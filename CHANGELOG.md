@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.2
+
+- Made the repository ready for Cursor plugin review without splitting it: declared the three existing top-level skill paths in `.cursor-plugin/plugin.json`, added Cursor's required root `mcp.json` for the remote Krea MCP endpoint, reused the committed logo, removed unsupported Cursor manifest metadata, documented local testing and OAuth, and added Cursor-specific CI validation. Also ensured npm packages retain both Cursor's `mcp.json` and Claude's existing `.mcp.json`, with package checks covering every provider manifest and MCP config.
+- Synced `krea-generate` edit-request guidance with the app builtin (0.7.3): added "Minimize edit passes (edit from the source image)" — correction-style follow-ups ("no, darker") re-edit the original source image with a single revised prompt instead of feeding the previous edit's output back into the model, since generative edit passes compound artifacts; editing a prior output is reserved for requests that build on content a fresh run would not reproduce, and when in doubt the agent edits the latest output rather than risk editing the wrong image. "Recognize Implicit Edit Requests" now routes image selection through that section instead of always feeding the prior output.
+- Bumped synced package, plugin, marketplace, codex/cursor manifest, and all skill frontmatter versions to `0.7.2`.
+
 ## 0.7.1
 
 - Synced `krea-generate` with the genius builtin `krea-generate` 0.7.1 from the app repo, making the app version canonical for model selection and prompting. Replaced the Model Policy table and Image Workflow with the app's "Choosing the right model" shortlists (image, region-targeted edits, outpainting, upscaler/enhancer, video), "Writing the prompt" triage rules, Prompting Guides routing, and Recognize Implicit Edit Requests — copied near-verbatim, with exact public-API model IDs added next to each shortlist name (e.g. MiniMax H3 = `minimax/hailuo-3`, Krea 2 Turbo = `krea/krea-2/medium-turbo`, Nano Banana Lite = `google/nano-banana-flash-lite`, Seedance 2.5 = `bytedance/seedance-2-5`) since external agents cannot resolve display names against `list_models` reliably.

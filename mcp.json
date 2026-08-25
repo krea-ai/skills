@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "krea": {
+      "url": "https://api.krea.ai/mcp"
+    }
+  }
+}
