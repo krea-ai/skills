@@ -24,6 +24,7 @@ REQUIRED_SKILL_DIRS = {
     "krea-generate",
     "krea-marketing",
     "krea-motion",
+    "product-packaging-design",
 }
 REQUIRED_FILES = {
     ".claude-plugin/plugin.json",

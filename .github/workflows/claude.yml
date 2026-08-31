@@ -31,7 +31,7 @@ jobs:
             This repo ships skill packages consumed by Claude Code, Codex, and Cursor as plugins.
 
             Repository conventions to keep in mind:
-            - The public skill surface is `krea-generate` for generic generation workflows, `krea-marketing` for product/campaign/paid-social workflows, and `krea-motion` for product/brand motion workflows (not anime or narrative animation). Experimental `krea-build` material lives under `wip/` and is not packaged by default.
+            - The public skill surface is `krea-generate` for generic generation workflows, `krea-marketing` for product/campaign/paid-social workflows, `krea-motion` for product/brand motion workflows (not anime or narrative animation), and `product-packaging-design` when packaging itself is the subject. Experimental `krea-build` material lives under `wip/` and is not packaged by default.
             - `validate.yml` already enforces frontmatter, JSON validity, version sync, and the `update-check.sh` smoke test. Flag any change that would break those checks.
             - Skill prose is the product. Treat instructions, examples, and triggers as code: ambiguity, contradictions, or stale model/tool names are real bugs.
             - Relative references between skills (e.g. `../krea-generate/...`) must resolve. Call out broken links, missing referenced files, or examples that point at non-existent paths.

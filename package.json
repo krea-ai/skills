@@ -1,7 +1,7 @@
 {
   "name": "krea-skills",
   "version": "0.7.2",
-  "description": "Krea.ai agent skills for generation, marketing creative, and product motion workflows.",
+  "description": "Krea.ai agent skills for generation, marketing creative, product motion, and packaging design workflows.",
   "keywords": [
     "agent-skill",
     "krea",
@@ -15,6 +15,7 @@
     "meta-ads",
     "marketplace",
     "motion",
+    "packaging-design",
     "storyboard"
   ],
   "author": "Krea AI",
@@ -31,6 +32,7 @@
     "krea-generate/",
     "krea-marketing/",
     "krea-motion/",
+    "product-packaging-design/",
     "evals/",
     "scripts/",
     ".claude-plugin/",

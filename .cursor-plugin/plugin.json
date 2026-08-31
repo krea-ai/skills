@@ -13,13 +13,15 @@
   "skills": [
     "./krea-generate",
     "./krea-marketing",
-    "./krea-motion"
+    "./krea-motion",
+    "./product-packaging-design"
   ],
   "keywords": [
     "krea",
     "image-generation",
     "video-generation",
     "motion",
+    "packaging-design",
     "storyboard",
     "mcp",
     "archviz",
