@@ -6,7 +6,7 @@ Use this reference for editorial product photography in marketing work: packshot
 
 Shooting or generating photography of a physical product: packshots, hero frames, still lifes, launch and campaign imagery, PDP and marketplace crops, social and paid-social stills, editorial product features, gifting and bundle shots. Covers beauty, skincare, fragrance, haircare, body care, supplements, beverage, food, homeware, accessories, small hardware. Also covers restyling, reshooting, or re-lighting a product the user supplies as a reference image.
 
-Do not use this skill for: typographic posters and ad layouts (`poster-design`, `static-ads`), packaging artwork and label design itself (`product-packaging-design`), garments worn on bodies (`fashion-photography`), or non-product abstract imagery (`abstract-photography`).
+Do not use this reference for: typographic posters and ad layouts, packaging artwork and label design itself (`../workflows/product-packaging-design.md`), garments worn on bodies, or non-product abstract imagery.
 
 ## Core direction
 

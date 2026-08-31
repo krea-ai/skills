@@ -2,17 +2,16 @@
 
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![version](https://img.shields.io/badge/version-0.7.2-green.svg)](VERSION)
-[![skills](https://img.shields.io/badge/skills-4-purple.svg)](#install-the-skills)
+[![skills](https://img.shields.io/badge/skills-3-purple.svg)](#install-the-skills)
 [![discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.com/invite/krea-1002244500581798028)
 
-Four packaged Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get the Krea skill suite.
+Three packaged Agent Skills for working with [Krea.ai](https://krea.ai). Install once, get the Krea skill suite.
 
 | Skill | When to use |
 |---|---|
 | **`krea-generate`** | Canonical generic-generation router. Image, video primitives, enhancement, edits, LoRA, portraits, text/poster work, and archviz through connected Krea MCP tools. |
-| **`krea-marketing`** | Marketing creative workflow: product photoshoots, marketplace image sets, DTC static ad templates (one product photo → a library of on-brand ad formats), key visuals, UGC/social ads, campaign packs, and optional Meta Ads performance context. |
+| **`krea-marketing`** | Marketing creative workflow: packaging design and mockups, product photoshoots, marketplace image sets, DTC static ad templates (one product photo → a library of on-brand ad formats), key visuals, UGC/social ads, campaign packs, and optional Meta Ads performance context. |
 | **`krea-motion`** | Product and brand motion: cinematic shots, multi-beat reveal films, logo stings, luxury and beauty product loops, edit assembly, QA, and retakes. Not for anime or narrative animation. |
-| **`product-packaging-design`** | Premium packaging and physical product visuals where containers, labels, closures, materials, and presentation are the subject. |
 
 Experimental app-integration material lives under `wip/` and is not installed or packaged by default.
 
@@ -34,7 +33,7 @@ Check your agent's MCP tool list for Krea tools. If the tools are missing or aut
 
 ## Plugin packaging
 
-This is a single-plugin repository with provider-specific manifests that share the same four skills:
+This is a single-plugin repository with provider-specific manifests that share the same three skills:
 
 - Cursor reads `.cursor-plugin/plugin.json`, whose explicit `skills` paths point at the existing top-level skill directories, and discovers the Krea server from `mcp.json`.
 - Codex is packaged from `.codex-plugin/plugin.json` and `.codex-plugin/.mcp.json` with `npm run build:codex-plugin`.
@@ -121,7 +120,7 @@ The **live suite** spends real Codex + Krea + judge credits (~1–1.5h), so it i
 
 ### Skill regression suite — `evals/run.sh`
 
-46 local scenarios run through `claude -p` to catch routing / UX drift when skill content changes. Regex-graded (`PASS` / `FAIL` / `MANUAL_REVIEW`); see [`evals/README.md`](evals/README.md) for methodology and the full scenario list.
+47 local scenarios run through `claude -p` to catch routing / UX drift when skill content changes. Regex-graded (`PASS` / `FAIL` / `MANUAL_REVIEW`); see [`evals/README.md`](evals/README.md) for methodology and the full scenario list.
 
 ```bash
 bash evals/run.sh

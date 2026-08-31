@@ -12,7 +12,6 @@ const expectedSkills = new Set([
   "./krea-generate",
   "./krea-marketing",
   "./krea-motion",
-  "./product-packaging-design",
 ]);
 const allowedManifestFields = new Set([
   "name",

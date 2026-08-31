@@ -21,8 +21,7 @@ jobs:
           bash scripts/validate-skill-frontmatter.sh \
             krea-motion/SKILL.md \
             krea-generate/SKILL.md \
-            krea-marketing/SKILL.md \
-            product-packaging-design/SKILL.md
+            krea-marketing/SKILL.md
 
       - name: Validate plugin manifest JSON
         run: |
@@ -67,7 +66,6 @@ jobs:
           check "krea-generate/SKILL.md"          "$VERSION" "$(awk '/^version:/ {print $2; exit}' krea-generate/SKILL.md)"
           check "krea-generate/VERSION"           "$VERSION" "$(tr -d '[:space:]' < krea-generate/VERSION)"
           check "krea-marketing/SKILL.md"         "$VERSION" "$(awk '/^version:/ {print $2; exit}' krea-marketing/SKILL.md)"
-          check "product-packaging-design/SKILL.md" "$VERSION" "$(awk '/^version:/ {print $2; exit}' product-packaging-design/SKILL.md)"
           check ".claude-plugin/plugin.json"      "$VERSION" "$(jq -r .version .claude-plugin/plugin.json)"
           check ".claude-plugin/marketplace.json" "$VERSION" "$(jq -r '.plugins[0].version' .claude-plugin/marketplace.json)"
           check ".codex-plugin/plugin.json"       "$VERSION" "$(jq -r .version .codex-plugin/plugin.json)"
