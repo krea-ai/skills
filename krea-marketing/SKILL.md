@@ -1,7 +1,7 @@
 ---
 version: 0.7.2
 name: krea-marketing
-description: "Use for marketing and paid-social creative: product photoshoots, marketplace cards, static/UGC/video ads, campaign key visuals, ad storyboards, product launches, and Meta Ads. For generic media generation use krea-generate."
+description: "Use for marketing and paid-social creative: packaging design and mockups, product photoshoots, marketplace cards, static/UGC/video ads, campaign key visuals, ad storyboards, product launches, and Meta Ads. For generic media generation use krea-generate."
 license: MIT
 ---
 
@@ -15,12 +15,14 @@ This skill must work without Meta Ads. Meta context improves decisions, but it i
 
 ## Entry Intake
 
-For product, campaign, ad, UGC, paid-social, marketplace, product-launch, or more-than-3-deliverable requests, ask once in a compact message:
+For product, packaging, campaign, ad, UGC, paid-social, marketplace, product-launch, or more-than-3-deliverable requests, ask once in a compact message:
 
 1. Missing product/brand basics: product reference, URL, goal, platform, output count, required claims/copy, and visual reference.
 2. For paid-social, performance, campaign-analysis, catalog-performance, or activation requests only: whether the user wants to connect Meta Ads MCP for account-specific performance context before creative planning.
 
 If the user connects Meta, read performance context first. If they decline or cannot connect it, proceed Krea-only.
+
+Do not ask merely to complete every intake field when a packaging brief is already usable. The routed packaging workflow supplies defaults for concept count, composition, and visual direction.
 
 ## Meta Ads Rules
 
@@ -59,6 +61,7 @@ When a real product reference exists, the image is the source of truth. Product-
 
 | Intent | Workflow |
 |---|---|
+| packaging design / packaging mockup / label-led image / container, bottle, box, pouch, sleeve, or closure as the subject | `workflows/product-packaging-design.md` |
 | product photo / studio shot / hero product / PDP lead image | `workflows/product-photo-hero.md` |
 | lifestyle product / model using product / Pinterest / carousel / ad creative pack / virtual try-on / conceptual product / restyle | `workflows/product-photo-lifestyle.md` plus `references/product-photoshoot.md` |
 | marketplace listing images / secondary product images / A+ modules / full marketplace set | `workflows/marketplace-cards.md` |
@@ -79,6 +82,7 @@ If the user asks for a non-marketing image/video, use `../krea-generate/SKILL.md
 
 - `references/marketing-creative-anatomy.md` - campaign/ad tuple, hook families, static format families.
 - `references/product-photography.md` - editorial product-photography direction for lighting, palette, staging, materials, prompts, and QA.
+- `references/product-packaging-presets.md` - complete visual prompt blueprints selected only by the packaging-design workflow.
 - `references/product-photoshoot.md` - Krea-native product photoshoot mode taxonomy adapted from Higgsfield research.
 - `references/dtc-ad-formats.md` - DTC static ad format library: per-format structural device, treatment, and brand-agnostic prompt template, organized by the static format families.
 - `references/marketplace-cards.md` - marketplace image scopes and compliance guardrails.

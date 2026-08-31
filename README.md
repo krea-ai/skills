@@ -10,7 +10,7 @@ Three packaged Agent Skills for working with [Krea.ai](https://krea.ai). Install
 | Skill | When to use |
 |---|---|
 | **`krea-generate`** | Canonical generic-generation router. Image, video primitives, enhancement, edits, LoRA, portraits, text/poster work, and archviz through connected Krea MCP tools. |
-| **`krea-marketing`** | Marketing creative workflow: product photoshoots, marketplace image sets, DTC static ad templates (one product photo → a library of on-brand ad formats), key visuals, UGC/social ads, campaign packs, and optional Meta Ads performance context. |
+| **`krea-marketing`** | Marketing creative workflow: packaging design and mockups, product photoshoots, marketplace image sets, DTC static ad templates (one product photo → a library of on-brand ad formats), key visuals, UGC/social ads, campaign packs, and optional Meta Ads performance context. |
 | **`krea-motion`** | Product and brand motion: cinematic shots, multi-beat reveal films, logo stings, luxury and beauty product loops, edit assembly, QA, and retakes. Not for anime or narrative animation. |
 
 Experimental app-integration material lives under `wip/` and is not installed or packaged by default.
@@ -120,7 +120,7 @@ The **live suite** spends real Codex + Krea + judge credits (~1–1.5h), so it i
 
 ### Skill regression suite — `evals/run.sh`
 
-46 local scenarios run through `claude -p` to catch routing / UX drift when skill content changes. Regex-graded (`PASS` / `FAIL` / `MANUAL_REVIEW`); see [`evals/README.md`](evals/README.md) for methodology and the full scenario list.
+47 local scenarios run through `claude -p` to catch routing / UX drift when skill content changes. Regex-graded (`PASS` / `FAIL` / `MANUAL_REVIEW`); see [`evals/README.md`](evals/README.md) for methodology and the full scenario list.
 
 ```bash
 bash evals/run.sh

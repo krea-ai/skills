@@ -1,6 +1,6 @@
 # Eval Scenarios
 
-46 scenarios. Format per scenario:
+47 scenarios. Format per scenario:
 
 - **Category**: routing | refusal | cost | vision | polling | edge_case
 - **User input**: exact brief
@@ -424,6 +424,18 @@ Headless `claude -p` doesn't announce skill loading by name. Pass regexes detect
 - **Expected**: agent refuses to build on the cropped video frame (the start image is the quality ceiling — asks for a clean product shot or generates + vision-QAs a clean hero still first), and re-balances the 6 scenes into short beats no longer than ~2.5s each in ONE consistent world with an explicit no-long-holds constraint so the back half does not coast
 - **Pass regex**: `(?i)quality ceiling|clean(er)? (product )?(shot|image|photo|hero still)|garbl|legib|2\.5\s?s|no long (static )?holds|keep cutting|one (consistent )?(world|scene|environment)`
 - **Fail regex**: `(?i)6 (different )?scenes? (it is|sounds good|works)|us(e|ing) the frame.grab as.is|straight to (video|generation) with the frame`
+
+---
+
+## Product packaging design 0.7.2 (1)
+
+### 47. Packaging-led brief routes through krea-marketing
+
+- **Category**: routing
+- **User input**: "Design three premium packaging concepts for my new cold-brew concentrate. Make the bottle, label, closure, and material finish the hero."
+- **Expected**: agent routes through the krea-marketing product-packaging-design workflow, selects three materially different complete presets, and follows the live marketing image-model policy rather than generic product photography or a standalone packaging skill
+- **Pass regex**: `(?i)krea-marketing|product-packaging-design|packaging (design|workflow)|three (materially )?(different )?concepts|bottle|label|closure|preset|material finish`
+- **Fail regex**: `(?i)standalone (packaging )?skill|product-photo-hero|krea-generate.*generic|Nano Banana Pro, ChatGPT 2`
 
 ---
 
