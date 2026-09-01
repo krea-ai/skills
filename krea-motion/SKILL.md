@@ -1,5 +1,5 @@
 ---
-version: 0.7.2
+version: 0.7.6
 name: krea-motion
 description: "Use for product, brand, and marketing motion: animating a product still, render, logo, or mark; reveal films; web and PDP loops. Not for anime, character, or narrative animation — use krea-generate for those. For ad creative use krea-marketing."
 license: MIT

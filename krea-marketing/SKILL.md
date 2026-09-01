@@ -1,5 +1,5 @@
 ---
-version: 0.7.2
+version: 0.7.6
 name: krea-marketing
 description: "Use for marketing and paid-social creative: packaging design and mockups, product photoshoots, marketplace cards, static/UGC/video ads, campaign key visuals, ad storyboards, product launches, and Meta Ads. For generic media generation use krea-generate."
 license: MIT
