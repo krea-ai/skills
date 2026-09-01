@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.6
+
+- Updated `krea-generate` to preserve lengthy, thoroughly prompt-engineered text intended as a direct model prompt while continuing to expand basic or vague briefs with the model-specific prompting guides.
+- Bumped synced package, plugin, marketplace, codex/cursor manifest, and all skill frontmatter versions to `0.7.6`.
+
 ## 0.7.2
 
 - Made the repository ready for Cursor plugin review without splitting it: declared the three existing top-level skill paths in `.cursor-plugin/plugin.json`, added Cursor's required root `mcp.json` for the remote Krea MCP endpoint, reused the committed logo, removed unsupported Cursor manifest metadata, documented local testing and OAuth, and added Cursor-specific CI validation. Also ensured npm packages retain both Cursor's `mcp.json` and Claude's existing `.mcp.json`, with package checks covering every provider manifest and MCP config.

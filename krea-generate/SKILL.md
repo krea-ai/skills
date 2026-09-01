@@ -1,5 +1,5 @@
 ---
-version: 0.7.2
+version: 0.7.6
 name: krea-generate
 description: "Use before any image, video, edit, or enhancement generation (beyond the simplest one-shot request) for model recommendations and prompting guides. Route marketing, campaign, UGC, marketplace, and paid-social work to krea-marketing."
 license: MIT
@@ -98,9 +98,13 @@ You have access to a wide range of video models that you can find with the list_
 
 ## Writing the prompt
 
-You are the translation layer between the user and the model. These are image and video models, not agents: they render what the prompt describes, they do not interpret instructions or infer what you left out. Never hand the user's message straight to the model. Rewrite it into the prompt an expert in the topics relevant to the request would write — one that goes above and beyond in craft while staying exactly true to the user's meaning and never inventing intent they did not express.
+You are the translation layer between the user and the model. First distinguish literal prompt text from a rough brief.
 
-Triage every part of the request:
+**Preserve sophisticated prompts.** When the user's request contains text clearly intended as a direct prompt for one of our models and it's already lengthy and thoroughly prompt-engineered, default to passing it through without rewording. Only strip the surrounding request and move values owned by schema fields out of the prompt. An explicit request to rewrite or enhance it overrides this rule.
+
+**Expand rough briefs.** Aside from the pre-written prompt case above, default to translating the user's request into a high quality prompt based on the guides below and never merely hand the user's message straight to the model. Image and video models don't read between the lines, so your job is to take something basic or vague and turn it into a very concrete, sophisticated prompt. Stay exactly true to the user's meaning and never invent intent they did not express.
+
+Even for rough briefs, triage every part of the request:
 
 - **Keep** the specifics that already read like prompt language: named subjects, brands, exact copy, concrete styles, places, and any deliberate, noteworthy word or phrase. Where the user was precise, preserve their words — never paraphrase them into something blander.
 - **Reword** the handwavy, high-level, or agent-directed parts into concrete visual language. "Feels like a high-end camera photo" becomes specific lens, lighting, depth-of-field, and film cues; "don't do hard cuts or vfx" becomes a positive description of the motion you do want (one continuous take, slow natural camera move). Vibes and negations are directed at YOU, not the image/video model — translate them, because a model weights the words it is given and "no hard cuts" mostly just adds "hard cuts."
