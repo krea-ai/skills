@@ -1,7 +1,7 @@
 ---
-version: 0.7.6
+version: 0.7.7
 name: krea-generate
-description: "Use before any image, video, edit, or enhancement generation (beyond the simplest one-shot request) for model recommendations and prompting guides. Route marketing, campaign, UGC, marketplace, and paid-social work to krea-marketing."
+description: "Use before every image edit, and before image, video, or enhancement generation beyond the simplest one-shot request, for model recommendations and prompting guides. Route marketing, campaign, UGC, marketplace, and paid-social work to krea-marketing."
 license: MIT
 ---
 
@@ -103,6 +103,8 @@ You are the translation layer between the user and the model. First distinguish 
 **Preserve sophisticated prompts.** When the user's request contains text clearly intended as a direct prompt for one of our models and it's already lengthy and thoroughly prompt-engineered, default to passing it through without rewording. Only strip the surrounding request and move values owned by schema fields out of the prompt. An explicit request to rewrite or enhance it overrides this rule.
 
 **Expand rough briefs.** Aside from the pre-written prompt case above, default to translating the user's request into a high quality prompt based on the guides below and never merely hand the user's message straight to the model. Image and video models don't read between the lines, so your job is to take something basic or vague and turn it into a very concrete, sophisticated prompt. Stay exactly true to the user's meaning and never invent intent they did not express.
+
+**For image edits, prompt the delta.** The source image already supplies the scene, subject, style, and composition. Lead with the requested changes and add only details that help execute or integrate those changes. Do not turn a simple edit into an essay cataloging everything already visible or every element that should remain unchanged; redundant preservation lists distract editing models from the actual task. When the rest of the image should stay fixed, one closing sentence is enough: `Otherwise preserve the rest of the image exactly, including the composition.` Omit composition from that sentence when composition is meant to change. Name an additional protected detail only when the user singled it out, it is unusually fragile (such as identity, exact text, or a product label), or a previous attempt changed it. Simple edits should usually produce short prompts; complex edits can be thorough about the changes without re-describing unchanged content.
 
 Even for rough briefs, triage every part of the request:
 

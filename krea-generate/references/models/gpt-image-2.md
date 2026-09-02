@@ -9,7 +9,7 @@ Load this file only after the selected model is `openai/gpt-image-2`, ChatGPT Im
 
 ## Prompting Stance
 
-You are an expert GPT-Image-2 prompt engineer. Convert the user's intent into a compact production brief with explicit deliverable, scene, subject, layout, exact text, reference roles, preservation constraints, and retake levers. Prefer clear instruction hierarchy over keyword piles.
+You are an expert GPT-Image-2 prompt engineer. For generation, convert the user's intent into a compact production brief with an explicit deliverable, scene, subject, layout, exact text, and reference roles. For edits, write a delta-focused instruction that emphasizes what changes rather than re-describing the source. Prefer clear instruction hierarchy over keyword piles.
 
 Always verify the live Krea model schema before submitting. Use only fields exposed by the selected model. Prompt examples here describe intent; schema controls such as size, quality, references, transparency, and masks must come from the live schema.
 
@@ -64,7 +64,9 @@ Text, labels, or data if any
 Constraints: what to avoid, preserve, or keep unchanged
 ```
 
-For complex prompts, use short labeled blocks or line breaks. Minimal prompts, paragraphs, JSON-like prompts, tag-based prompts, and numbered instructions can all work; production templates should be skimmable.
+For complex generation prompts, use short labeled blocks or line breaks. Minimal prompts, paragraphs, JSON-like prompts, tag-based prompts, and numbered instructions can all work; production templates should be skimmable.
+
+Editing is different: the source image is already the brief for everything that is not changing. Start with the exact change, then include only change-specific execution details such as placement, material, lighting integration, perspective, or replacement text. Do not inventory unchanged people, objects, colors, lighting, framing, and other visible content. If needed, close with one compact global constraint such as `Otherwise preserve the rest of the image exactly, including the composition.` Mention a specific invariant in addition to that sentence only when it is central to the request, especially identity, exact text, a logo or product label, or something that drifted in a prior attempt.
 
 ## Specificity And Quality Cues
 
@@ -125,11 +127,11 @@ Constraints: <no extra text/logos/watermarks, safe margins, preserve simplicity>
 
 ```text
 Edit the source image: <specific change>.
-Change only: <region/object/text/style/background>.
-Preserve exactly: <identity/product shape/layout/pose/camera/lighting/text>.
-Integration: <match shadows, color temperature, occlusion, perspective>.
-Constraints: do not add unrelated objects, do not change preserved details.
+<Details required to execute or integrate the change>.
+Otherwise preserve the rest of the image exactly, including the composition.
 ```
+
+Omit the last sentence when the requested edit changes the whole image or its composition. Do not expand it into a list unless a particular protected detail is essential or has already drifted.
 
 ### Multi-Image Edit Or Composite
 
@@ -138,9 +140,9 @@ Image 1: <role, e.g. product photo>.
 Image 2: <role, e.g. style reference or background>.
 
 Task: <apply Image 2's style to Image 1 / place subject from Image 1 into Image 2>.
-Preserve from Image 1: <identity, shape, label, materials>.
 Use from Image 2: <palette, texture, environment, camera, lighting>.
-Constraints: <no extra elements, realistic contact shadows, consistent perspective>.
+Integration: <realistic contact shadows, consistent perspective, matching light>.
+<If applicable, one global preservation sentence.>
 ```
 
 ### Text And Layout
@@ -175,15 +177,15 @@ Put literal text in quotes or ALL CAPS. For unusual spellings or brand names, sp
 ## Edit Prompt Rules
 
 - **Style transfer:** name the style cues to transfer, not just "same style".
-- **Virtual try-on:** lock the person; replace only clothing; require drape, folds, occlusion, lighting, shadows, and color temperature.
-- **Sketch to render:** preserve exact layout, proportions, perspective, and composition; add realistic materials and lighting.
+- **Virtual try-on:** replace only the clothing; describe the garment's drape, folds, occlusion, lighting, shadows, and color temperature. Mention identity as the one critical invariant.
+- **Sketch to render:** add the requested realistic materials and lighting while keeping the sketch structure fixed; do not enumerate every structural element.
 - **Product extraction:** for label integrity, prefer plain opaque background plus downstream background removal; request crisp edges and no halos.
-- **Compositing:** assign each input a role; preserve source identity/product details; match perspective, shadows, lighting, reflections, and color.
-- **Background replacement:** replace only the background; preserve subject silhouette, pose, camera, labels, and foreground light.
-- **Lighting/weather changes:** transform only environmental conditions; preserve geometry, camera angle, object placement, people/products, and composition.
-- **Object removal:** remove only the target; reconstruct background naturally; preserve all surrounding content.
-- **Interior/object swaps:** use "replace ONLY"; preserve room geometry, lighting, shadows, camera, and surrounding objects.
-- **Surgical text edits:** change only target text; preserve font style, size, color, placement, line breaks, spacing, and all other text.
+- **Compositing:** assign each input a role and describe perspective, shadows, lighting, reflections, and color needed to integrate the change. Mention identity or label integrity only when critical.
+- **Background replacement:** describe the new background and how it should integrate with the foreground, then use one global preservation sentence.
+- **Lighting/weather changes:** describe the new environmental conditions and how they affect the scene, then use one global preservation sentence.
+- **Object removal:** name the target and how to reconstruct the revealed area, then use one global preservation sentence.
+- **Interior/object swaps:** use "replace only," describe the replacement and its integration, then use one global preservation sentence.
+- **Surgical text edits:** give the old and new text and say to match the existing typography; avoid reciting every typographic attribute unless one needs to change or previously drifted.
 - **Character consistency:** create a character anchor first; reuse it as image input and repeat appearance/proportion/outfit constraints.
 
 ## Transparent Backgrounds And Cutouts
@@ -207,10 +209,10 @@ crisp edges, plain background, no text, no watermark.
 | Layout is busy | Specify hierarchy, alignment, margins, and one focal point |
 | Infographic is hard to scan | Add audience, objective, required labels, arrows, white space, and "avoid tiny text" |
 | Photoreal image feels staged | Ask for candid real-photo language, imperfections, natural light, no glamorization |
-| Person identity drifts | Put face/body/pose/hair/expression preserve list immediately after the edit request |
+| Person identity drifts | Retry from the source, name identity as the critical invariant, and correct only the requested change |
 | Product extraction has halos | Ask for plain opaque background, crisp silhouette, no halos/fringing, light polish only |
 | Product label warps | Preserve label text and proportions; use source image as reference; request realistic perspective |
 | UI looks like concept art | Name real interface sections, controls, hierarchy, spacing, and "usable shipped interface" |
 | Character changes across pages | Create a character anchor, reuse it as image input, repeat appearance/proportion/outfit constraints |
-| Edit changes too much | Use "change only..." and list every protected element |
+| Edit changes too much | Retry from the source with "change only..." plus one global preservation sentence; name only the detail that actually drifted |
 | Wrong dimensions | Inspect schema; for GPT-image style models in Krea, explicit width/height may be required and may need multiples of 16 |

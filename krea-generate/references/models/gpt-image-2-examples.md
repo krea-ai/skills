@@ -258,52 +258,33 @@ Use for ecommerce previews where identity preservation is critical.
 ```text
 Put the supplied garments on the person in the source photo.
 
-Lock the model completely: face, features, skin tone, body shape, pose,
-identity, expression, hair, and proportions must remain unchanged.
-
-Only the outfit should change. Shape the garments around the existing body
-and pose with believable fabric weight, folds, overlaps, shadows, and
-matching color temperature. The result should read as a real worn outfit,
-not a collage.
-
-Keep background, camera, framing, image quality, accessories, text, logos,
-and watermarks unchanged.
+Shape the garments naturally around the existing pose with believable fabric
+weight, folds, overlaps, shadows, and matching color temperature. Preserve
+the person's exact identity. Otherwise keep the source image unchanged.
 ```
 
-Retake lever: if identity drifts, put face/pose/body preservation in the first sentence.
+Retake lever: if identity drifts, retry from the source and name identity as the critical invariant.
 
 ### Sketch To Render
 
 Use when turning a sketch into a realistic concept without losing layout.
 
 ```text
-Use the source sketch as the blueprint for a photorealistic render.
-
-Keep the sketch's layout, relative scale, perspective, and composition.
-Choose believable real-world materials, lighting, terrain, and atmosphere
-that fit the intent of the drawing.
-
-Do not introduce new objects, signs, logos, text, people, or ornamental
-reinterpretations.
+Render the source sketch photorealistically with believable real-world
+materials, lighting, terrain, and atmosphere. Preserve its exact structure
+and composition; do not add new scene elements.
 ```
 
-Retake lever: if it invents details, repeat "preserve exact layout" and list additions to remove.
+Retake lever: if it invents details, name the unwanted addition and ask to remove only that.
 
 ### Product Extraction
 
 Use for marketplace/catalog prep where edges and labels matter.
 
 ```text
-Isolate the product from the source image onto a solid white opaque
-background.
-
-Keep the product centered with clean edges and no glow, halos, or edge
-artifacts. Maintain the product's geometry, proportions, cap shape, printed
-label text, and label readability.
-
-Apply only subtle cleanup and a restrained contact shadow. Do not redesign
-or restyle the product; the change is background cleanup and presentation
-polish only.
+Place the source product on a solid white opaque background with clean edges,
+no halos, subtle cleanup, and a restrained contact shadow. Preserve the
+product and its exact label text; do not redesign it.
 ```
 
 Retake lever: if the label changes, ask to preserve label text exactly and reduce polishing.
@@ -334,16 +315,12 @@ Use when replacing only the environment.
 
 ```text
 Replace only the background with a bright modern kitchen in soft morning
-light.
-
-Preserve the foreground subject exactly: silhouette, face or product shape,
-pose, clothing, label text, camera angle, and foreground lighting.
-
-Integrate naturally with matching shadows, reflections, depth of field, and
-color temperature. Do not change the subject.
+light. Integrate it naturally with matching shadows, reflections, depth of
+field, and color temperature. Otherwise preserve the source image exactly,
+including the composition.
 ```
 
-Retake lever: if the subject changes, lead with "keep the subject pixel-consistent except edges."
+Retake lever: if the subject changes, retry from the source and name only the changed subject detail to restore.
 
 ### Lighting / Weather
 
@@ -354,9 +331,7 @@ Transform only the environmental conditions to a quiet rainy dusk scene.
 
 Change lighting direction, shadow softness, sky tone, wet ground reflections,
 air haze, and color temperature. Add subtle rain only where it fits the scene.
-
-Preserve architecture, camera angle, object placement, people, products,
-labels, proportions, and composition exactly.
+Otherwise preserve the source image exactly, including the composition.
 ```
 
 Retake lever: if geometry shifts, ask to restore the original camera and object positions.
@@ -368,9 +343,8 @@ Use for precise removals.
 ```text
 Remove only the red traffic cone from the sidewalk.
 
-Reconstruct the sidewalk texture naturally where it was removed.
-Do not change anything else: preserve composition, lighting, shadows, camera
-angle, building edges, nearby people, signs, and image quality.
+Reconstruct the sidewalk texture naturally where it was removed. Otherwise
+preserve the source image exactly, including the composition.
 ```
 
 Retake lever: if surrounding content changes, name the changed object and tell it to restore it.
@@ -380,17 +354,13 @@ Retake lever: if surrounding content changes, name the changed object and tell i
 Use for surgical material, color, or furniture changes.
 
 ```text
-In this room photo, replace ONLY the blue sofa with a deep forest green
-velvet sofa of the same size and placement.
-
-Preserve camera angle, room lighting, floor shadows, wall art, windows,
-floor geometry, pillows, rug, coffee table, and all other objects.
-
-Use photorealistic fabric texture, correct perspective, and natural contact
-shadows.
+Replace only the blue sofa with a deep forest green velvet sofa of the same
+size and placement. Use photorealistic fabric texture, correct perspective,
+and natural contact shadows. Otherwise preserve the source image exactly,
+including the composition.
 ```
 
-Retake lever: if the room redesigns, ask to change only the named object and restore every other object.
+Retake lever: if the room redesigns, retry from the source and name only the unintended change to restore.
 
 ### Text Edit
 
@@ -399,10 +369,8 @@ Use for surgical text correction on an existing design.
 ```text
 Change only the text "SUMMER SALE" to "SPRING SALE".
 
-Keep font style, size, color, placement, line breaks, spacing, background,
-icons, logo, imagery, and all other text unchanged.
-
-No extra words.
+Match the existing typography exactly. Otherwise preserve the source image
+exactly, including all other text and the composition.
 ```
 
 Retake lever: if font changes, ask to restore exact typography and change only letters.
@@ -447,17 +415,15 @@ Retake lever: if the character changes, ask to restore the anchor's face, outfit
 ### Text Correction
 
 ```text
-Retake: preserve the previous poster composition, colors, background, and
-typography hierarchy. Correct only the headline spelling to "NIGHT MARKET".
-Remove all extra background words.
+Retake: correct only the headline spelling to "NIGHT MARKET" and remove the
+extra background words. Otherwise preserve the poster exactly.
 ```
 
 ### Identity Drift
 
 ```text
-Retake: restore the original person's face, hairstyle, body shape, pose,
-expression, and camera angle. Keep the clothing edit only. Do not alter the
-background or lighting.
+Retake from the source: apply the clothing edit without changing the person's
+identity. Otherwise preserve the source image exactly.
 ```
 
 ### Layout Clutter
@@ -471,9 +437,8 @@ white space. Remove decorative elements that do not explain the process.
 ### Label Preservation
 
 ```text
-Retake: preserve the product's exact label text, logo placement, bottle
-shape, cap, and proportions. Only clean the background and improve the edge
-silhouette. Do not rewrite or redesign the label.
+Retake: only clean the background and improve the edge silhouette. Preserve
+the product's exact label text; otherwise keep the source product unchanged.
 ```
 
 ## Source
