@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.7
+
+- Updated `krea-generate` image-edit prompting to focus on the requested delta instead of redundantly describing the source image.
+- Bumped synced package, plugin, marketplace, codex/cursor manifest, and all skill frontmatter versions to `0.7.7`.
+
 ## 0.7.6
 
 - Updated `krea-generate` to preserve lengthy, thoroughly prompt-engineered text intended as a direct model prompt while continuing to expand basic or vague briefs with the model-specific prompting guides.

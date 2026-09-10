@@ -9,7 +9,7 @@ Load this file only after the selected model is a Nano Banana, Nano Banana 2, Na
 
 ## Prompting Stance
 
-You are an expert Nano Banana image prompt engineer. Convert the user's intent into a concrete, verb-led prompt with clear subject, action, setting, composition, references, text/localization instructions, and creative-direction controls. Preserve source identity and layout explicitly when editing.
+You are an expert Nano Banana image prompt engineer. For generation, convert the user's intent into a concrete, verb-led prompt with a clear subject, action, setting, composition, references, text/localization instructions, and creative-direction controls. For edits, write a concise, verb-led instruction focused on the requested changes.
 
 Always verify the live Krea model schema before submitting. Use only fields exposed by the selected model. Prompt examples here describe intent; schema controls such as aspect, size, resolution, reference images, documents, masks, and web/search options must come from the live schema.
 
@@ -112,15 +112,15 @@ Do not assume references are self-explanatory. Name what to take from each refer
 
 ## Image Editing
 
-Editing requires a different prompt shape from generation. The base image already contains the subject; focus on what changes and what stays fixed.
+Editing requires a different prompt shape from generation. The source image already defines the subject, scene, style, and composition, so prompt the delta instead of describing the whole desired image again.
 
 ```text
 Edit the source image: <specific change>.
-Change only: <target object/region/style/background>.
-Preserve exactly: <identity, pose, camera, lighting, composition, labels, surrounding objects>.
+<Details required to execute or integrate the change>.
+Otherwise preserve the rest of the image exactly, including the composition.
 ```
 
-Nano Banana responds well to conversational edits. Keep follow-ups short, but include a preserve list whenever identity, layout, product, or text matters.
+Nano Banana responds well to conversational edits. Lead with what changes and keep simple edits short. Do not enumerate all unchanged objects, visual traits, and scene properties: that dilutes the change request and can make the model alter details it was only reminded of. Use the single global preservation sentence above when needed, omitting composition when composition is supposed to change. Add one specific invariant only when the user emphasized it, it is unusually fragile (identity, exact text, logo, or product label), or a prior result drifted.
 
 ## Text Rendering And Localization
 
@@ -175,8 +175,8 @@ For same-subject variants, pass the source image and explicitly ask for the new 
 
 ```text
 Create alternate views of the same <subject> from the source image.
-Preserve exact <shape, face, label, colors, proportions, texture>.
 Change only <angle, pose, setting, lighting, or panel action>.
+Keep the subject's identity/design consistent with the source.
 ```
 
 Do not ask for same-subject variants with text only if a source image exists. Use the image as the reference.
@@ -193,16 +193,18 @@ Panel 3: <visual beat>.
 Preserve <identity/design/proportions/colors> across all panels.
 ```
 
-If the live schema supports multiple outputs or structured references, use schema fields for that. If not, generate one panel at a time with the same source image and repeated preserve list.
+If the live schema supports multiple outputs or structured references, use schema fields for that. If not, generate one panel at a time with the same source image and a compact subject-consistency instruction.
 
 ## Retake Pattern
 
 Use one correction at a time:
 
 ```text
-Retake: preserve <protected details>. Correct only <single issue>.
-Do not alter <identity/layout/background/lighting/text>.
+Retake: correct only <single issue>.
+Otherwise preserve the prior image exactly, including the composition.
 ```
+
+If the failed output changed a specific critical detail, name that detail once in the retake. Do not add a general inventory of protected details.
 
 ## Common Failure Fixes
 
@@ -210,9 +212,9 @@ Do not alter <identity/layout/background/lighting/text>.
 |---|---|
 | Output is generic | Add action, setting, composition, lighting, materiality, and production format |
 | Reference ignored | Assign each reference a role and relationship to the output |
-| Edit changes identity | Put preserve list immediately after the change request |
+| Edit changes identity | Retry from the source, name identity as the critical invariant, and correct only the requested change |
 | Too much changed | Use "change only..." and reduce style pressure |
-| Same subject drifts across views | Reuse the same source image and repeat exact preserved traits |
+| Same subject drifts across views | Reuse the same source image and ask for the same subject identity/design; name only the trait that actually drifted |
 | Text is wrong | Quote exact text, specify font/hierarchy, shorten copy, and say "no extra words" |
 | Localization changes layout | Preserve layout, hierarchy, spacing, and typography while translating only text |
 | Aspect is ignored | Inspect schema and pass explicit aspect or width/height when available |

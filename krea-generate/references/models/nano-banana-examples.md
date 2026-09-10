@@ -128,12 +128,11 @@ Use for same-subject variants from a source image.
 Create three alternate views of the same ceramic table lamp from the source
 image: front three-quarter view, side profile, and overhead detail.
 
-Preserve the exact ceramic shape, glaze color, proportions, cord placement,
-shade texture, and visible imperfections. Use the same warm studio lighting
-and neutral background across all views.
+Keep it recognizably the exact same lamp design in every view. Use consistent
+warm studio lighting and a neutral background.
 ```
 
-Retake lever: if shape drifts, reuse the source image and repeat the preserve list earlier.
+Retake lever: if a feature drifts, reuse the source image and name only that feature to correct.
 
 ### Multi-Image Story
 
@@ -147,8 +146,7 @@ Panel 2: the door opens and warm light spills onto the robot.
 Panel 3: the robot offers the package with a cheerful screen-face expression.
 Panel 4: the robot rolls away under the rain, screen-face smiling.
 
-Preserve the robot's shape, yellow color, wheel design, face screen, and
-friendly proportions across all panels.
+Keep the exact same robot design across all panels.
 ```
 
 Retake lever: if continuity fails, create a character/object anchor first and reuse it.
@@ -162,9 +160,8 @@ Use for simple follow-up edits on an existing image.
 ```text
 Remove the person standing near the left edge of the photo.
 
-Reconstruct the background naturally where they were removed. Keep the
-street, lighting, camera angle, shadows, other people, and image style
-unchanged.
+Reconstruct the background naturally where they were removed. Otherwise
+preserve the source image exactly, including the composition.
 ```
 
 Retake lever: if surrounding details change, name the altered detail and ask to restore it.
@@ -176,8 +173,8 @@ Use for precise cleanup.
 ```text
 Remove only the red construction cone from the sidewalk.
 
-Fill in the sidewalk texture and shadow naturally. Do not change the
-building, signs, people, trees, lighting, camera angle, or composition.
+Fill in the sidewalk texture and shadow naturally. Otherwise preserve the
+source image exactly, including the composition.
 ```
 
 Retake lever: if it removes too much, add "only the cone, nothing else."
@@ -189,11 +186,9 @@ Use when adding an object or combining subject and scene references.
 ```text
 Use Image 1 as the base room photo and Image 2 as the lamp to add.
 
-Place the lamp on the small table beside the sofa. Preserve the room
-perspective, camera angle, wall color, furniture, and window light.
-
-Match the lamp's scale, contact shadow, color temperature, and reflections
-so it looks naturally present in the room.
+Place the lamp on the small table beside the sofa. Match its scale, contact
+shadow, color temperature, and reflections so it looks naturally present.
+Otherwise preserve Image 1 exactly, including the composition.
 ```
 
 Retake lever: if pasted-looking, ask for stronger contact shadows and matching light direction.
@@ -204,12 +199,9 @@ Use when converting existing content into a new visual style.
 
 ```text
 Transform the source city-street photo into an expressive post-impressionist
-oil-painting style.
-
-Preserve the exact street layout, building positions, pedestrians, camera
-angle, and main composition. Change only the visual treatment: thick brush
-texture, swirling sky movement, saturated complementary colors, and visible
-paint strokes.
+oil-painting style with thick brush texture, swirling sky movement, saturated
+complementary colors, and visible paint strokes. Change only the visual
+treatment; preserve the composition exactly.
 ```
 
 Retake lever: if content changes, restate that style changes but composition stays fixed.
@@ -221,12 +213,11 @@ Use for environment swaps.
 ```text
 Change the background to a bright sunlit kitchen.
 
-Keep the mug, hand position, steam shape, camera angle, foreground lighting,
-and overall composition unchanged. Match the new background's light and
-depth of field to the original photo.
+Match the new background's light and depth of field to the foreground.
+Otherwise preserve the source image exactly, including the composition.
 ```
 
-Retake lever: if foreground changes, say background only and list foreground invariants.
+Retake lever: if the foreground changes, retry from the source and name only the altered detail to restore.
 
 ### Product In New Environment
 
@@ -236,9 +227,8 @@ Use for product mockups or lifestyle staging.
 Place the product from the source image on a wet stone countertop in a
 bright spa bathroom.
 
-Preserve the product shape, cap, label text, proportions, color, and
-materials exactly. Add realistic contact shadows, subtle reflections, and
-soft morning light. Do not redesign the label or change the product.
+Add realistic contact shadows, subtle reflections, and soft morning light.
+Preserve the product's exact label text; otherwise keep the product unchanged.
 ```
 
 Retake lever: if label warps, reduce environment complexity and emphasize label preservation.
@@ -318,9 +308,8 @@ Retake lever: if generic, replace adjectives with specific materials and surface
 ### Text Correction
 
 ```text
-Retake: keep the same poster design, product photo, background, spacing,
-colors, and typography hierarchy. Correct only the middle text line to
-"15% OFF". Do not add or change any other words.
+Retake: correct only the middle text line to "15% OFF". Otherwise preserve
+the poster exactly, including all other text.
 ```
 
 ### Reference Ignored
@@ -334,9 +323,8 @@ or color palette from Image 2.
 ### Identity Drift
 
 ```text
-Retake: preserve the exact face, hairstyle, expression, body proportions,
-pose, and camera angle from the source image. Apply only the requested style
-change.
+Retake from the source: apply only the requested style change without
+changing the person's identity. Otherwise preserve the source image exactly.
 ```
 
 ### Layout Clutter
