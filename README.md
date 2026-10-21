@@ -1,7 +1,7 @@
 # Krea AI Skills
 
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![version](https://img.shields.io/badge/version-0.7.6-green.svg)](VERSION)
+[![version](https://img.shields.io/badge/version-0.7.7-green.svg)](VERSION)
 [![skills](https://img.shields.io/badge/skills-3-purple.svg)](#install-the-skills)
 [![discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.com/invite/krea-1002244500581798028)
 
@@ -15,7 +15,7 @@ Three packaged Agent Skills for working with [Krea.ai](https://krea.ai). Install
 
 Experimental app-integration material lives under `wip/` and is not installed or packaged by default.
 
-Works with Claude Code, Cursor, Codex, Windsurf, OpenCode, Gemini, OpenClaw, and any agent that picks up `~/.<agent>/skills/<name>/SKILL.md`.
+The generation skills work with Cursor, Codex, Windsurf, OpenCode, Gemini, OpenClaw, and other agents that pick up `~/.<agent>/skills/<name>/SKILL.md`. The Claude plugin is a separate, restricted connector for balance, files, uploads, and Claude Motion imports; it does not load these generation skills.
 
 ## Install the skills
 
@@ -23,7 +23,7 @@ Works with Claude Code, Cursor, Codex, Windsurf, OpenCode, Gemini, OpenClaw, and
 npx skills add krea-ai/skills
 ```
 
-Installs the packaged skills. This is the supported install path across agents that use skill packages.
+Installs the generation skills for agents using Krea's unrestricted MCP. For Claude, use the restricted plugin below instead.
 
 ## Prerequisites
 
@@ -33,11 +33,30 @@ Check your agent's MCP tool list for Krea tools. If the tools are missing or aut
 
 ## Plugin packaging
 
-This is a single-plugin repository with provider-specific manifests that share the same three skills:
+This repository has provider-specific packages:
 
 - Cursor reads `.cursor-plugin/plugin.json`, whose explicit `skills` paths point at the existing top-level skill directories, and discovers the Krea server from `mcp.json`.
 - Codex is packaged from `.codex-plugin/plugin.json` and `.codex-plugin/.mcp.json` with `npm run build:codex-plugin`.
-- Claude reads `.claude-plugin/plugin.json` and the shared `.mcp.json` configuration.
+- Claude reads `.claude-plugin/plugin.json` and root `.mcp.json`, which points at `https://api.krea.ai/claude-mcp` with the same OAuth resource. Neither the plugin nor its marketplace entry loads generation skills. Codex and Cursor keep `https://api.krea.ai/mcp` in their own configurations.
+
+### Claude connector
+
+In Claude Code, add the marketplace and install the plugin:
+
+```text
+/plugin marketplace add krea-ai/skills
+/plugin install krea@krea
+```
+
+Authenticate the Krea server through `/mcp`. After upgrading from an older plugin, reconnect if prompted so authentication uses the restricted resource. For Claude's web connector setup, use `https://api.krea.ai/claude-mcp` as the server URL; installing a Code plugin does not install a web connector.
+
+The connector supports `get_balance`, `list_files`, `list_file_tags`, `read_files`, `create_folders`, `write_files_inline`, `write_files_upload`, `tag_files`, `get_upload_url`, `upload_asset`, and `import-claude-motion-from-url`. It does not expose AI generation, training, model discovery, or indirect workflow execution. Do not fall back to the unrestricted endpoint or generation skills when a tool is unavailable.
+
+For a Claude Motion handoff, call `import-claude-motion-from-url` immediately with the supplied `url` and `download_token`; `title` and `claude_design_project_id` are optional. Treat the URL and token as credentials: do not echo, log, or save them. The source must be an HTTPS `claudeusercontent.com` subdomain serving an MP4 of at most 100 MiB. The result is synchronous: return its `url` to the user, with no job polling. Imports are MP4 files, not editable animation timelines, and their Krea links require authentication. To browse the imported file, use the returned `parent_uri` as `list_files.root_uri` because imports land in My Drive, while the default listing uses My Context. Re-sending the same design project updates its existing file in the original workspace.
+
+Deploy the endpoint from [app#9672](https://github.com/krea-ai/app/pull/9672) before releasing this plugin update. Plugin installation does not guarantee directory approval or a Motion “Send to Krea” menu entry; those require separate Anthropic onboarding. Full Claude sign-in and end-to-end Motion import still need verification.
+
+Validate the Claude package and client isolation with `npm run validate:claude-plugin`.
 
 Validate the Cursor package before local testing or marketplace submission:
 
@@ -47,7 +66,7 @@ npm run validate:cursor-plugin
 
 For local Cursor testing, symlink the repository to `~/.cursor/plugins/local/krea`, reload Cursor, verify the Krea skills and MCP server in **Customize**, and complete the Krea OAuth prompt. The public repository can then be submitted at [Cursor Marketplace Publish](https://cursor.com/marketplace/publish).
 
-## Use
+## Use the generation skills (Codex, Cursor, and other unrestricted clients)
 
 ### Default - `krea-generate` routes generic generation
 

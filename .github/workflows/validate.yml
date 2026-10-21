@@ -25,13 +25,16 @@ jobs:
 
       - name: Validate plugin manifest JSON
         run: |
-          for f in .claude-plugin/*.json .codex-plugin/*.json .cursor-plugin/*.json mcp.json; do
+          for f in .claude-plugin/*.json .codex-plugin/*.json .cursor-plugin/*.json .mcp.json mcp.json; do
             jq -e . "$f" >/dev/null || { echo "::error::Invalid JSON: $f"; exit 1; }
             echo "OK $f"
           done
 
       - name: Validate Cursor plugin
         run: npm run validate:cursor-plugin
+
+      - name: Validate Claude connector scope and client isolation
+        run: npm run validate:claude-plugin
 
       - name: Check Krea doc references
         run: bash scripts/check-krea-doc-refs.sh

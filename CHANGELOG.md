@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.7
+
+- Switched the Claude plugin to the restricted `/claude-mcp` connector for balance, file management, uploads, and Claude Motion MP4 imports. Removed generation skill loading and generation-focused metadata from its plugin and marketplace manifests.
+- Preserved Codex and Cursor generation skills and their unrestricted `/mcp` configurations. Added CI validation for Claude's connector-only package and client isolation.
+- Documented Claude installation, OAuth reconnection, the synchronous Motion import contract, and deployment/onboarding prerequisites. Bumped all synchronized versions to `0.7.7`.
+
 ## 0.7.6
 
 - Updated `krea-generate` to preserve lengthy, thoroughly prompt-engineered text intended as a direct model prompt while continuing to expand basic or vague briefs with the model-specific prompting guides.
