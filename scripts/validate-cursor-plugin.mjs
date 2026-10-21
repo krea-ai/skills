@@ -179,7 +179,7 @@ async function validateMcp(mcp) {
     addError(`Cursor Krea MCP config contains unnecessary fields: ${unsupportedFields.join(", ")}`);
   }
 
-  for (const providerPath of [".mcp.json", ".codex-plugin/.mcp.json"]) {
+  for (const providerPath of [".codex-plugin/.mcp.json"]) {
     const providerConfig = await readJson(path.join(repoRoot, providerPath), providerPath);
     if (providerConfig?.mcpServers?.krea?.url !== krea.url) {
       addError(`${providerPath} Krea MCP URL does not match mcp.json`);

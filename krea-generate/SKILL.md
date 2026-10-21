@@ -1,5 +1,5 @@
 ---
-version: 0.7.6
+version: 0.7.7
 name: krea-generate
 description: "Use before any image, video, edit, or enhancement generation (beyond the simplest one-shot request) for model recommendations and prompting guides. Route marketing, campaign, UGC, marketplace, and paid-social work to krea-marketing."
 license: MIT

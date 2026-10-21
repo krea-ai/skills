@@ -1,6 +1,6 @@
 {
   "name": "krea-skills",
-  "version": "0.7.6",
+  "version": "0.7.7",
   "description": "Krea.ai agent skills for generation, marketing creative, product motion, and packaging design workflows.",
   "keywords": [
     "agent-skill",
@@ -26,7 +26,8 @@
   },
   "scripts": {
     "build:codex-plugin": "python3 .codex-plugin/build.py",
-    "validate:cursor-plugin": "node scripts/validate-cursor-plugin.mjs"
+    "validate:cursor-plugin": "node scripts/validate-cursor-plugin.mjs",
+    "validate:claude-plugin": "node scripts/validate-claude-plugin.mjs"
   },
   "files": [
     "krea-generate/",

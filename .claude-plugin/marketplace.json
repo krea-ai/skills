@@ -4,18 +4,15 @@
     "name": "Krea AI",
     "url": "https://krea.ai"
   },
-  "description": "Krea plugins for visual generation, marketing creative, and product motion.",
+  "metadata": {
+    "description": "Krea connector for balance, file management, uploads, and Claude Motion imports."
+  },
   "plugins": [
     {
       "name": "krea",
       "source": "./",
-      "description": "Krea skills: generation workflows, marketing creative, and product motion.",
-      "version": "0.7.6",
-      "skills": [
-        "./krea-generate",
-        "./krea-marketing",
-        "./krea-motion"
-      ]
+      "description": "Check your Krea balance, organize files, upload assets, and import Claude Motion MP4 exports into Krea.",
+      "version": "0.7.7"
     }
   ]
 }

@@ -2,8 +2,8 @@
   "mcpServers": {
     "krea": {
       "type": "http",
-      "url": "https://api.krea.ai/mcp",
-      "oauth_resource": "https://api.krea.ai/mcp"
+      "url": "https://api.krea.ai/claude-mcp",
+      "oauth_resource": "https://api.krea.ai/claude-mcp"
     }
   }
 }
